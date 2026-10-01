@@ -27,3 +27,22 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 - Windows build: succeeded, launched outside the editor, no errors in the player log.
 - Web build: succeeded and loaded over HTTP, but rendered blank (URP Lit shadow sampler
   error on WebGL) → ruling D6. Re-verification scheduled with the next Web build.
+
+### Phase 1 — Player movement, aiming, dash, health — done
+
+- Sim: `PlayerActor`/`PlayerCommand`, `PlayerMotor` (normalised camera-relative move, axis
+  slide against walls, swept dash that stops at walls, dash cooldown + i-frames capped to the
+  dash duration), `PlayerStats` resolved once per run, `ArenaSim.DamagePlayer` as the single
+  damage entry point (post-hit invulnerability; death raised once), `SimEvents`.
+- Input: `PlayerInputReader` builds Gameplay (WASD, pointer aim, LMB catch, Space dash) and
+  UI (point/click/scroll/navigate/submit, Esc/P pause) maps in code; presses are latched and
+  consumed once per fixed step; a press starting over UI is never a catch. `AimResolver`
+  projects the cursor to y=0 and fails (keeping the last aim) outside the window.
+- Presentation: `GameRoot` steps the sim at a fixed 60 Hz (frame clamp 0.1 s, accumulator
+  dropped while paused); `ArenaView` interpolates between steps; `CharacterView` is a
+  camera-facing pixel sprite on a ground-anchored root with a blob shadow; `PixelSprites`
+  generates placeholder art for every actor kind.
+- UI: code-built uGUI kit (`Ui`), `GameplayHud` (health pips, dash cooldown bar, run clock,
+  pause button, dev reset), `PauseMenu` (resume / restart / quit on desktop).
+- File naming deviates from the plan's proposal (no separate `DashController`/`PlayerHealth`
+  MonoBehaviours) — see D9.
