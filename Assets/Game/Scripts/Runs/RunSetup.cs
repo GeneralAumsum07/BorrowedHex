@@ -23,6 +23,12 @@ namespace BorrowedHex.Runs
         /// <summary>Null → derive from config (no passives, Snatcher).</summary>
         public PlayerStats Stats;
 
+        /// <summary>
+        /// Sandbox only: keep one practice acolyte alive. Off by default so unit tests get an
+        /// empty arena and control every actor themselves.
+        /// </summary>
+        public bool SandboxAutoSpawn;
+
         public static RunSetup ForSandbox(int seed) => new RunSetup { Seed = seed, Sandbox = true };
     }
 }

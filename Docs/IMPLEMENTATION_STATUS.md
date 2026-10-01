@@ -46,3 +46,22 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   pause button, dev reset), `PauseMenu` (resume / restart / quit on desktop).
 - File naming deviates from the plan's proposal (no separate `DashController`/`PlayerHealth`
   MonoBehaviours) — see D9.
+
+### Phase 2 — Incoming projectiles and one enemy source — done
+
+- Data: `CombatTuning` (attack table: bolt, lantern bolt, rocket; acolyte; lantern; spawn
+  warning and minimum spawn distance) on `GameConfig`.
+- Combat: immutable `AttackDefinition` + per-run `AttackCatalog`; value-type `AttackSnapshot`
+  (provenance: source actor, shot ID, spread offset, perfect flag) and `DamageEvent`;
+  pooled `ProjectileActor` with a full `Reset()`; `ProjectilePool`.
+- `ArenaSim.Projectiles`: single resolution path. Each tick sweeps the travelled segment;
+  earliest contact wins, ties broken capture < wall < actor. Hostile shots hit only the
+  player (and pass through while invulnerable), returned shots only enemies (pierce with a
+  per-projectile hit set). Death clears projectiles and cancels scheduled work.
+- Enemies: `EnemyActor`, `BoltAcolyte` brain (distance band + strafe, stop-and-aim telegraph
+  with aim lock, three-bolt volley at −8/0/+8°), spawn warning (harmless and immune),
+  seeded spawn-point search away from the player, pairwise separation; `AttackEmitter` is the
+  single hostile firing path; lantern fires a ±10° pair of slow bolts on demand.
+- Presentation: enemy sprites with spawn-warning ring and ground aim-line telegraph,
+  projectile glows sized from the logical radius with ground shadows, lantern prop. Sandbox
+  keeps one practice acolyte alive; dev buttons spawn an acolyte / fire the lantern.

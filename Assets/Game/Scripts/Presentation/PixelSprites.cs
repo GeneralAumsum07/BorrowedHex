@@ -219,8 +219,33 @@ namespace BorrowedHex.Presentation
             return blob;
         }
 
-        /// <summary>Flat white disc/ring sprites for telegraphs, capture cones and markers.</summary>
-        public static Sprite Disc(bool ring)
+        static Sprite disc, ring, pixel;
+
+        /// <summary>
+        /// 1x1 white sprite pivoted at its left-middle edge: scale X = length, Y = width, so
+        /// one transform draws a ground line (aim telegraphs) starting exactly at its origin.
+        /// </summary>
+        public static Sprite Pixel()
+        {
+            if (pixel != null) return pixel;
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false) { name = "Pixel", filterMode = FilterMode.Point };
+            tex.SetPixel(0, 0, Color.white);
+            tex.Apply(false, true);
+            pixel = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0f, 0.5f), 1f);
+            return pixel;
+        }
+
+        /// <summary>Flat white disc/ring sprites for telegraphs, capture cones and markers (cached).</summary>
+        public static Sprite Disc(bool ringShape)
+        {
+            if (ringShape && ring != null) return ring;
+            if (!ringShape && disc != null) return disc;
+            var made = MakeDisc(ringShape);
+            if (ringShape) ring = made; else disc = made;
+            return made;
+        }
+
+        static Sprite MakeDisc(bool ring)
         {
             const int n = 64;
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = ring ? "Ring" : "Disc" };

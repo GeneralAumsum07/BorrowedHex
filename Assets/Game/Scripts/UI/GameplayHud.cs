@@ -62,8 +62,27 @@ namespace BorrowedHex.UI
 
         public void Bind(ArenaSim s) => sim = s;
 
+        readonly List<Button> devButtons = new List<Button>();
+
+        /// <summary>
+        /// Development buttons stacked under Reset (spawn enemy, fire lantern, ...). They share
+        /// Reset's visibility: sandbox/debug runs only, never in a scored run.
+        /// </summary>
+        public Button AddDevButton(string label, Action onClick)
+        {
+            var b = Ui.Button("Dev_" + label, transform, label, onClick, 20);
+            Ui.Place((RectTransform)b.transform, new Vector2(1, 1), new Vector2(-28, -104 - devButtons.Count * 56), new Vector2(186, 48));
+            b.gameObject.SetActive(ResetButton.gameObject.activeSelf);
+            devButtons.Add(b);
+            return b;
+        }
+
         /// <summary>The dev reset only exists in sandbox/debug runs, never in a scored run.</summary>
-        public void SetResetVisible(bool on) => ResetButton.gameObject.SetActive(on);
+        public void SetResetVisible(bool on)
+        {
+            ResetButton.gameObject.SetActive(on);
+            foreach (var b in devButtons) b.gameObject.SetActive(on);
+        }
 
         void EnsurePips(int count)
         {
