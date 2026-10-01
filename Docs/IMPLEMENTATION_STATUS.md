@@ -87,3 +87,23 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   (separate ring and spin per packet, blinking in the last 0.5 s), capture/reject/release
   pops; HUD `PacketIndicator` with one shrinking countdown bar and `Kind n/12 t` label per
   slot and a catch-readiness bar.
+
+
+### Phase 4 — Enemy roster and distinct borrowed weapons — done (human gate pending)
+
+- Data: one `EnemyTuning` shape for every ordinary enemy (`acolyte`, `pursuer`, `scatter`,
+  `siege` on `CombatTuning`, looked up with `For(category)`), including kill values.
+- Brains: `RangedCaster` (Acolyte, Scatter Caster with repositioning, Siege Familiar with a
+  rocket) and `Pursuer` (seek, telegraphed strike circle resolved once at the end of the
+  wind-up, recover). Shared `EnemySteering` (band keeping, seek, reposition target).
+- `ExplosionResolver`: rockets burst on their first wall or actor contact. Returned bursts
+  damage each active enemy in radius once and never the player; hostile rockets deal one
+  player hit and burst visually only.
+- Enemy bookkeeping: `Killed` flag and a single kill event per enemy; `DespawnEnemy` raises
+  `EnemyDespawned`, never a kill; `KillValue` with the 1.5x elite factor.
+- Lantern starvation: enemies alive but no ranged enemy, no non-lantern hostile shot and no
+  stored packet for 2 s, then a pair every 2 s until it ends.
+- `EnemySpawnService`: seven authored formations (one deliberately melee-only); the sandbox
+  cycles them; dev button "+ Formation".
+- Presentation: per-shot telegraph lines (a fan shows all five), heavier orange rocket
+  telegraph, Pursuer strike disc, rocket colour, burst ring at the true damage radius.

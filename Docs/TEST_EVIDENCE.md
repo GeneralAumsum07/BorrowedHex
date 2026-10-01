@@ -111,3 +111,42 @@ Human gate (not yet done): a person must confirm that repeated catches feel deli
   worth repeating. The scripted loop suggests many returns are lost to pillars and strafing.
 Next uncompleted task: Phase 4
 ```
+
+
+## Phase 4
+
+```text
+Phase/task: Phase 4 — enemy roster and distinct borrowed weapons
+Files changed: Scripts/Data/CombatTuning.cs; Scripts/Enemies/{EnemyActor,EnemySteering,
+  RangedCaster,Pursuer,Lantern,EnemySpawnService}.cs (BoltAcolyte.cs removed, folded into
+  RangedCaster); Scripts/Combat/ExplosionResolver.cs; Scripts/Runs/{ArenaSim.Enemies,
+  ArenaSim.Projectiles,ArenaSim.Combat,SimEvents.Combat}.cs; Scripts/Presentation/
+  {ArenaView,GameRoot}.cs; Tests/EditMode/Phase4Tests.cs
+Actual CLI commands: recompile; run_tests editor; run_tests playmode --async_tests; eval
+  (play mode: mixed formation telegraphs; catch and return a siege rocket);
+  capture_game_view --source camera
+Test report: EditMode 68/68 (AttackPayloadTests 7, EnemyEncounterTests 10). PlayMode 2/2.
+  Checks: returned rocket damages enemies in radius but not a player standing in it; burst
+  damages each actor once incl. the direct-hit target; rocket bursts on a pillar; hostile
+  rocket = one player hit, no area damage; killing a shooter with its own snapshot keeps
+  source attribution; returned fan keeps its five offsets exactly; captured rocket returns as
+  a rocket costing 4; enemies never spawn within minSpawnDistance (40 seeds x all
+  formations); spawn warning harmless and immune; pursuer hits a player who stays, misses one
+  who leaves; scatter fires 5, siege fires 1 rocket; melee-only remainder makes the lantern
+  fire at 2/4/6 s and stop when a ranged enemy appears; a stored packet postpones it;
+  despawn is not a kill; overkill raises one kill; elite kill value 1.5x.
+  Mutation checks: counting lantern bolts as ammunition fails the lantern test; giving
+  hostile bursts area damage fails the hostile-rocket test. Restored code passes.
+Manual behaviour observed (play mode, scripted input, not a human):
+  - Scatter Caster telegraph shows all five aim lines; Pursuer strike disc on the player;
+    Siege telegraph drawn as a heavier orange line (shots/phase4_tele.png)
+  - Siege rocket caught (capacity 4), returned, burst for 5 damage and killed a pursuer
+    (shots/phase4_rocket.png)
+  - The burst ring itself was not visible in the capture: pops age on real frame time and had
+    expired by capture time. Visual NOT verified.
+Known issues: elites have kill value only, no behaviour modifier yet (Phase 11/12);
+  "melee-only remainder is solvable" is covered at the rule level (lantern supply + capture
+  tests), not by an end-to-end scripted kill
+Human gate (not yet done): verify each enemy's attack gives a distinct tactical opportunity
+Next uncompleted task: Phase 5
+```

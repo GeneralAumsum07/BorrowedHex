@@ -19,7 +19,7 @@ namespace BorrowedHex.Runs
             Lantern = new Lantern { ActorId = Ids.Next(), Position = Config.arena.lanternPosition };
             Events.PlayerDied += OnPlayerDied;
             if (Setup.SandboxAutoSpawn)
-                SpawnEnemy(ActorCategory.Acolyte, FindSpawnPoint(Config.combat.acolyte.bodyRadius));
+                SpawnNextSandboxFormation();
         }
 
         partial void TickCombat(in PlayerCommand cmd, double tickStart, double now, float dt)
@@ -31,6 +31,7 @@ namespace BorrowedHex.Runs
             TickEnemies(now, dt);                         // 5
             TickProjectiles(now, dt);                     // 6
             Capture.Tick(now);                            //   close the window's packet
+            TickLantern(now);                             //   ammunition starvation (section 3)
             TickSandboxDirector(now);                     // 7 (director)
             RemoveDeadEnemies();
         }

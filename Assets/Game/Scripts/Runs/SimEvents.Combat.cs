@@ -1,5 +1,6 @@
 using System;
 using BorrowedHex.Combat;
+using BorrowedHex.Core;
 using BorrowedHex.Enemies;
 
 namespace BorrowedHex.Runs
@@ -18,6 +19,9 @@ namespace BorrowedHex.Runs
         public event Action<EnemyActor, DamageEvent> EnemyDamaged;
         public event Action<EnemyActor, DamageEvent> EnemyKilled;
         public event Action LanternFired;
+        public event Action<EnemyActor> EnemyDespawned;
+        /// <summary>A rocket burst: position, radius, and whose it was (only Returned ones deal area damage).</summary>
+        public event Action<UnityEngine.Vector2, float, AttackFaction> Explosion;
         public event Action<int> CatchActivated;
         public event Action<CapturedPacket, AttackSnapshot, UnityEngine.Vector2, CaptureResult> ShotCaptured;
         public event Action<UnityEngine.Vector2, CaptureResult> CaptureRejected;
@@ -31,6 +35,8 @@ namespace BorrowedHex.Runs
         internal void RaiseEnemyDamaged(EnemyActor e, DamageEvent d) => EnemyDamaged?.Invoke(e, d);
         internal void RaiseEnemyKilled(EnemyActor e, DamageEvent d) => EnemyKilled?.Invoke(e, d);
         internal void RaiseLanternFired() => LanternFired?.Invoke();
+        internal void RaiseEnemyDespawned(EnemyActor e) => EnemyDespawned?.Invoke(e);
+        internal void RaiseExplosion(UnityEngine.Vector2 at, float radius, AttackFaction f) => Explosion?.Invoke(at, radius, f);
         internal void RaiseCatchActivated(int activation) => CatchActivated?.Invoke(activation);
         internal void RaiseShotCaptured(CapturedPacket p, AttackSnapshot s, UnityEngine.Vector2 at, CaptureResult r) => ShotCaptured?.Invoke(p, s, at, r);
         internal void RaiseCaptureRejected(UnityEngine.Vector2 at, CaptureResult r) => CaptureRejected?.Invoke(at, r);

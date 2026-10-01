@@ -35,6 +35,19 @@ namespace BorrowedHex.Enemies
         /// <summary>+1/-1 strafe preference so a group does not all orbit the same way.</summary>
         public float StrafeSign = 1f;
 
+        /// <summary>Scatter Caster's chosen firing spot for the current reposition.</summary>
+        public Vector2 MoveTarget;
+        public bool HasMoveTarget;
+
+        /// <summary>Score for killing it (section 6), resolved at spawn including the elite factor.</summary>
+        public int KillValue;
+        /// <summary>
+        /// True only when damage took it to zero health. A despawned enemy is also not Alive but
+        /// stays Killed == false: section 6 says despawning never counts as a kill, so reward
+        /// code must test this (or the kill event), never just "no longer alive".
+        /// </summary>
+        public bool Killed;
+
         public bool IsActive(double now) => Alive && now >= ActiveAt;
     }
 }

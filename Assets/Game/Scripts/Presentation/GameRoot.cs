@@ -51,8 +51,7 @@ namespace BorrowedHex.Presentation
             // Desktop gets a Quit button; in a browser tab, quitting is the browser's job.
             System.Action quit = Application.platform == RuntimePlatform.WebGLPlayer ? null : Application.Quit;
             Menu = PauseMenu.Create(canvas, () => SetMenuOpen(false), Restart, quit);
-            Hud.AddDevButton("+ Acolyte", () =>
-                Sim.SpawnEnemy(ActorCategory.Acolyte, Sim.FindSpawnPoint(config.combat.acolyte.bodyRadius)));
+            Hud.AddDevButton("+ Formation", () => Sim.SpawnNextSandboxFormation());
             Hud.AddDevButton("Lantern volley", () => Sim.FireLantern());
 
             BeginRun();
@@ -65,7 +64,7 @@ namespace BorrowedHex.Presentation
             runCounter++;
             // Phase 1 has no menus yet, so every run is a sandbox; Phase 5/7 pass a real setup.
             var setup = RunSetup.ForSandbox(runCounter);
-            setup.SandboxAutoSpawn = true; // Phase 2 practice: always one acolyte to dodge
+            setup.SandboxAutoSpawn = true; // practice: authored formations cycle while the arena is clear
             Sim = new ArenaSim(config, setup);
             View = ArenaView.Create(Sim);
             Hud.Bind(Sim);

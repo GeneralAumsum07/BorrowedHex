@@ -29,6 +29,7 @@ namespace BorrowedHex.Presentation
         static readonly Color LanternColor = new Color(1f, 0.78f, 0.35f);
         static readonly Color ReturnedColor = new Color(0.45f, 0.95f, 1f);
         static readonly Color TelegraphColor = new Color(1f, 0.25f, 0.2f);
+        static readonly Color RocketColor = new Color(1f, 0.55f, 0.1f);
 
         ArenaSim sim;
         CharacterView player;
@@ -39,7 +40,10 @@ namespace BorrowedHex.Presentation
         sealed class EnemyView
         {
             public CharacterView Body;
-            public SpriteRenderer Telegraph;
+            // One aim line per shot in the volley, so a fan's spread is visible before it fires.
+            public SpriteRenderer[] Telegraph;
+            // Pursuer: ground disc exactly where the strike will land.
+            public SpriteRenderer StrikeMarker;
             public SpriteRenderer WarningRing;
             public bool Seen;
         }
@@ -117,6 +121,9 @@ namespace BorrowedHex.Presentation
             sim.Events.ShotCaptured += (_, __, at, ___) => SpawnPop(at, ReturnedColor, 0.5f, 0.1f, 0.18f);
             sim.Events.CaptureRejected += (at, _) => SpawnPop(at, RejectColor, 0.15f, 0.7f, 0.3f);
             sim.Events.PacketReleased += (_, __) => SpawnPop(sim.Player.Position, ReturnedColor, 0.4f, 1.4f, 0.25f);
+            // Rocket burst drawn at its true damage radius (ring scale == radius), so the
+            // player learns how far a returned rocket reaches.
+            sim.Events.Explosion += (at, r, f) => SpawnPop(at, f == AttackFaction.Returned ? ReturnedColor : RocketColor, r * 0.3f, r, 0.35f);
         }
 
         /// <summary>A sprite lying flat on the ground (y slightly above the floor to avoid z-fighting).</summary>
@@ -192,20 +199,39 @@ namespace BorrowedHex.Presentation
                 }
                 v.Body.SetTint(warning ? new Color(1f, 1f, 1f, 0.45f) : Color.white);
 
-                // Telegraph: an aim line that brightens as the shot approaches and turns solid
-                // once aim locks — the moment a sidestep starts to count.
+                // Telegraph: aim lines that brighten as the attack approaches and turn solid
+                // once aim locks, the moment a sidestep starts to count. Pursuers show a
+                // ground disc instead: the exact strike circle, so dodging is about leaving it.
                 bool tele = e.Phase == EnemyPhase.Telegraph;
-                v.Telegraph.enabled = tele;
-                if (tele)
+                var tune = sim.Config.combat.For(e.Category);
+                float remaining = (float)(e.PhaseEndsAt - now);
+                float ramp = 1f - Mathf.Clamp01(remaining / Mathf.Max(0.01f, tune.telegraph));
+                bool rocket = tune.attackId == Data.AttackIds.Rocket;
+                for (int i = 0; i < v.Telegraph.Length; i++)
                 {
-                    var tune = sim.Config.combat.acolyte;
-                    float remaining = (float)(e.PhaseEndsAt - now);
-                    float k = 1f - Mathf.Clamp01(remaining / Mathf.Max(0.01f, tune.telegraph));
-                    var c = TelegraphColor;
-                    c.a = e.AimLocked ? 0.9f : Mathf.Lerp(0.15f, 0.55f, k);
-                    v.Telegraph.color = c;
-                    PlaceGroundLine(v.Telegraph.transform, pos + e.AimDirection * e.Radius, e.AimDirection, 7f,
-                        e.AimLocked ? 0.12f : 0.06f);
+                    var line = v.Telegraph[i];
+                    line.enabled = tele && e.Category != ActorCategory.Pursuer;
+                    if (!line.enabled) continue;
+                    var c = rocket ? RocketColor : TelegraphColor;
+                    c.a = e.AimLocked ? 0.9f : Mathf.Lerp(0.15f, 0.55f, ramp);
+                    line.color = c;
+                    Vector2 dir = Geometry2D.Rotate(e.AimDirection, tune.volleySpreadDeg[i]);
+                    float width = (rocket ? 2f : 1f) * (e.AimLocked ? 0.12f : 0.06f);
+                    PlaceGroundLine(line.transform, pos + dir * e.Radius, dir, 7f, width);
+                }
+                if (v.StrikeMarker != null)
+                {
+                    v.StrikeMarker.enabled = tele;
+                    if (tele)
+                    {
+                        var c = TelegraphColor;
+                        c.a = e.AimLocked ? 0.6f : Mathf.Lerp(0.1f, 0.4f, ramp);
+                        v.StrikeMarker.color = c;
+                        Vector2 sc = pos + e.AimDirection * tune.strikeReach;
+                        v.StrikeMarker.transform.position = Geometry2D.ToWorld(sc, 0.05f);
+                        // Disc sprites are 2 units across, so scale == radius.
+                        v.StrikeMarker.transform.localScale = Vector3.one * tune.strikeRadius;
+                    }
                 }
             }
 
@@ -233,7 +259,12 @@ namespace BorrowedHex.Presentation
             var v = new EnemyView { Body = body };
             // Telegraph and warning ring live under the body root but must not inherit its
             // position offsets, so they are placed in world space each frame.
-            v.Telegraph = FlatSprite("Telegraph", body.transform, PixelSprites.Pixel(), TelegraphColor);
+            int lines = Mathf.Max(1, sim.Config.combat.For(e.Category).volleySpreadDeg.Length);
+            v.Telegraph = new SpriteRenderer[lines];
+            for (int i = 0; i < lines; i++)
+                v.Telegraph[i] = FlatSprite("Telegraph", body.transform, PixelSprites.Pixel(), TelegraphColor);
+            if (e.Category == ActorCategory.Pursuer)
+                v.StrikeMarker = FlatSprite("StrikeMarker", body.transform, PixelSprites.Disc(false), TelegraphColor);
             v.WarningRing = FlatSprite("SpawnWarning", body.transform, PixelSprites.Disc(true), Color.red);
             v.WarningRing.transform.localPosition = new Vector3(0f, 0.04f, 0f);
             return v;
@@ -261,6 +292,7 @@ namespace BorrowedHex.Presentation
                 v.Root.gameObject.SetActive(true);
                 v.Root.position = Geometry2D.ToWorld(pos);
                 Color c = p.Faction == AttackFaction.Returned ? ReturnedColor
+                    : p.Shot.Kind == AttackKind.Rocket ? RocketColor
                     : p.Shot.DefinitionId == Data.AttackIds.LanternBolt ? LanternColor : HostileColor;
                 v.Glow.color = c;
                 // Glow size follows the logical radius so what you see is what can hit you

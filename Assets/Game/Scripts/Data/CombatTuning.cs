@@ -31,24 +31,39 @@ namespace BorrowedHex.Data
         public int explosionDamage;
     }
 
-    /// <summary>Section 4 roster numbers for the Bolt Acolyte. Starting defaults.</summary>
+    /// <summary>
+    /// Section 4 roster numbers. One shape for every ordinary enemy: the brains differ in
+    /// behaviour, not in what they need to be tuned by, so a designer edits the same fields
+    /// for each kind. Fields a brain does not use are simply ignored (e.g. strike* for casters).
+    /// </summary>
     [Serializable]
-    public class AcolyteTuning
+    public class EnemyTuning
     {
         public int health = 3;
         public float bodyRadius = 0.45f;
         public float moveSpeed = 2.2f;
-        [Tooltip("Keeps between these distances from the player.")]
+        [Tooltip("Ranged kinds keep between these distances from the player.")]
         public float preferredMin = 5f;
         public float preferredMax = 9f;
-        [Tooltip("Seconds the aim line tracks the player before firing.")]
+        [Tooltip("Seconds of wind-up (aim line / strike marker) before the attack.")]
         public float telegraph = 0.75f;
         [Tooltip("Final part of the telegraph where aim is locked, so a sidestep is a real dodge.")]
         public float aimLock = 0.25f;
         public float cooldown = 1.8f;
-        [Tooltip("First shot after spawning waits this long beyond the spawn warning.")]
+        [Tooltip("First attack after spawning waits this long beyond the spawn warning.")]
         public float firstShotDelay = 0.6f;
+        [Tooltip("Attack fired by ranged kinds; empty for melee-only kinds.")]
+        public string attackId = AttackIds.Bolt;
         public float[] volleySpreadDeg = { -8f, 0f, 8f };
+        [Tooltip("Scatter Caster: moves to a fresh firing spot between volleys.")]
+        public bool repositions;
+        [Tooltip("Melee: starts a wind-up when the player is this close (centre to centre).")]
+        public float strikeTrigger = 1.6f;
+        [Tooltip("Melee: the strike circle sits this far ahead of the body.")]
+        public float strikeReach = 0.8f;
+        public float strikeRadius = 0.75f;
+        [Tooltip("Score for a kill (section 6). Elite = 1.5x.")]
+        public int killValue = 10;
     }
 
     /// <summary>Section 3 arcane lantern: pair of slow capturable bolts.</summary>
@@ -79,7 +94,43 @@ namespace BorrowedHex.Data
             },
         };
 
-        public AcolyteTuning acolyte = new AcolyteTuning();
+        public EnemyTuning acolyte = new EnemyTuning();
+
+        // Section 4: approaches and performs a telegraphed close strike; supplies no ammunition.
+        public EnemyTuning pursuer = new EnemyTuning
+        {
+            health = 2, bodyRadius = 0.4f, moveSpeed = 3.0f, telegraph = 0.55f, aimLock = 0.2f,
+            cooldown = 1.1f, firstShotDelay = 0.2f, attackId = "", volleySpreadDeg = new float[0],
+            killValue = 10,
+        };
+
+        // Five-shot fan; repositions between volleys so its angle of attack keeps changing.
+        public EnemyTuning scatter = new EnemyTuning
+        {
+            health = 5, bodyRadius = 0.5f, moveSpeed = 2.6f, preferredMin = 5.5f, preferredMax = 8.5f,
+            telegraph = 0.85f, aimLock = 0.3f, cooldown = 2.4f, firstShotDelay = 0.7f,
+            volleySpreadDeg = new[] { -24f, -12f, 0f, 12f, 24f }, repositions = true, killValue = 20,
+        };
+
+        // Slow, long, clearly telegraphed single rocket: the crowd-clearing ammunition source.
+        public EnemyTuning siege = new EnemyTuning
+        {
+            health = 8, bodyRadius = 0.6f, moveSpeed = 1.1f, preferredMin = 6f, preferredMax = 10f,
+            telegraph = 1.3f, aimLock = 0.35f, cooldown = 3.4f, firstShotDelay = 0.8f,
+            attackId = AttackIds.Rocket, volleySpreadDeg = new[] { 0f }, killValue = 25,
+        };
+
+        public EnemyTuning For(ActorCategory c)
+        {
+            switch (c)
+            {
+                case ActorCategory.Acolyte: return acolyte;
+                case ActorCategory.Pursuer: return pursuer;
+                case ActorCategory.ScatterCaster: return scatter;
+                case ActorCategory.SiegeFamiliar: return siege;
+                default: throw new ArgumentOutOfRangeException(nameof(c), c, "No ordinary-enemy tuning");
+            }
+        }
         public LanternTuning lantern = new LanternTuning();
     }
 

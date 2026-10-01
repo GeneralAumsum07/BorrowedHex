@@ -134,13 +134,28 @@ namespace BorrowedHex.Runs
 
                 if (best == HitKind.Wall)
                 {
+                    // Rockets burst on the first thing they touch, walls included, so a returned
+                    // rocket aimed at a pillar still clears the crowd around it.
+                    if (p.Shot.Explodes) ExplosionResolver.Explode(this, p, hitPoint);
                     EndProjectile(p, ProjectileEndReason.HitWall);
                     return;
                 }
 
                 if (p.Faction == AttackFaction.Hostile)
                 {
+                    // Section 4: incoming versions deal one player hit, rockets included. The
+                    // hostile burst is visual only (see ExplosionResolver).
                     DamagePlayer(p.Shot.HostileDamage, p.Shot.SourceActorId);
+                    if (p.Shot.Explodes) ExplosionResolver.Explode(this, p, hitPoint);
+                    EndProjectile(p, ProjectileEndReason.HitActor);
+                    return;
+                }
+
+                if (p.Shot.Explodes)
+                {
+                    // A returned rocket's damage is ALL in the burst (direct damage is 0), and it
+                    // never pierces: one impact, one explosion, each enemy damaged at most once.
+                    ExplosionResolver.Explode(this, p, hitPoint);
                     EndProjectile(p, ProjectileEndReason.HitActor);
                     return;
                 }
@@ -161,9 +176,12 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>Returned-shot damage: base x power (upgrades) x perfect bonus (Phase 6).</summary>
-        float ReturnedDamageOf(ProjectileActor p)
+        float ReturnedDamageOf(ProjectileActor p) => ScaledReturnedDamage(p, p.Shot.ReturnedDamage);
+
+        /// <summary>Apply the projectile's power and per-payload perfect bonus to a base amount.</summary>
+        internal float ScaledReturnedDamage(ProjectileActor p, float baseAmount)
         {
-            float dmg = p.Shot.ReturnedDamage * p.PowerMultiplier;
+            float dmg = baseAmount * p.PowerMultiplier;
             if (p.Shot.Perfect) dmg *= 1f + Stats.PerfectBonus;
             return dmg;
         }
