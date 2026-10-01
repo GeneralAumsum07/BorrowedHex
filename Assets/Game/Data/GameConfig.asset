@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6858b614fecd786438820c3c237c19e7, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: BorrowedHex::BorrowedHex.Data.GameConfig
+  arena:
+    bounds:
+      serializedVersion: 2
+      x: -12
+      y: -8
+      width: 24
+      height: 16
+    wallThickness: 1
+    wallHeight: 1.2
+    pillars:
+    - serializedVersion: 2
+      x: -6.6
+      y: 2.9
+      width: 1.2
+      height: 1.2
+    - serializedVersion: 2
+      x: 5.4
+      y: 2.9
+      width: 1.2
+      height: 1.2
+    - serializedVersion: 2
+      x: -6.6
+      y: -4.1
+      width: 1.2
+      height: 1.2
+    - serializedVersion: 2
+      x: 5.4
+      y: -4.1
+      width: 1.2
+      height: 1.2
+    playerSpawn: {x: 0, y: -4}
+    lanternPosition: {x: 0, y: 6.6}
+  cameraRig:
+    position: {x: 0, y: 17, z: -17.5}
+    lookAt: {x: 0, y: 0, z: -2.2}
+    fieldOfView: 38
+  unlitMaterial: {fileID: 2100000, guid: 5f23f6f37566fe247ad4da1131ad9941, type: 2}
+  litMaterial: {fileID: 2100000, guid: b95710eda2863a94da4e6ee4dbd64c37, type: 2}
