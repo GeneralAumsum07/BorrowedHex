@@ -15,6 +15,7 @@ namespace BorrowedHex.Runs
         partial void InitCombat()
         {
             Attacks = new AttackCatalog(Config.combat);
+            InitCapture();
             Lantern = new Lantern { ActorId = Ids.Next(), Position = Config.arena.lanternPosition };
             Events.PlayerDied += OnPlayerDied;
             if (Setup.SandboxAutoSpawn)
@@ -23,10 +24,13 @@ namespace BorrowedHex.Runs
 
         partial void TickCombat(in PlayerCommand cmd, double tickStart, double now, float dt)
         {
-            // 3. packet expiry/release — Phase 3
-            TickPlayer(cmd, tickStart, now, dt);          // 4
+            // Aim first (no side effects) so a release this tick uses the freshest valid aim.
+            if (Player.Alive) PlayerMotor.UpdateAim(Player, cmd);
+            ReleaseExpiredPackets(now);                   // 3
+            TickPlayer(cmd, tickStart, now, dt);          // 4 (catch, dash, move)
             TickEnemies(now, dt);                         // 5
             TickProjectiles(now, dt);                     // 6
+            Capture.Tick(now);                            //   close the window's packet
             TickSandboxDirector(now);                     // 7 (director)
             RemoveDeadEnemies();
         }
@@ -38,6 +42,7 @@ namespace BorrowedHex.Runs
         void OnPlayerDied()
         {
             Scheduler.CancelAll();
+            CancelCapture();
             ClearProjectiles();
         }
     }

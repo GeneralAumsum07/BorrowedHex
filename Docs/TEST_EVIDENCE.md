@@ -71,3 +71,43 @@ Manual behaviour observed:
 Known issues: Web build not yet re-verified (D6); capture is still disabled (Phase 3)
 Next uncompleted task: Phase 3
 ```
+
+
+## Phase 3
+
+```text
+Phase/task: Phase 3 — catch, carry, and three-second return
+Files changed: Scripts/Combat/{CapturedPacket,CaptureController,ProjectileActor}.cs,
+  Scripts/Runs/{ArenaSim,ArenaSim.Capture,ArenaSim.Combat,ArenaSim.Projectiles,SimEvents.Combat}.cs,
+  Scripts/Presentation/{ArenaView,PixelSprites}.cs, Scripts/UI/{GameplayHud,PacketIndicator}.cs,
+  Tests/EditMode/CaptureTests.cs
+Actual CLI commands: recompile; run_tests editor; run_tests playmode --async_tests;
+  eval (play mode: drive the acolyte, catch its volley, advance to release; scripted
+  catch loop; read HUD labels); capture_game_view --source camera / --source screen
+Test report: EditMode 51/51 (CaptureRuleTests 8, CaptureIntegrationTests 13). PlayMode 2/2.
+  Boundary vectors: t=1.0 packet not released at 3.99, released once at 4.0; append at 1.20
+  keeps expiry 4.0; rocket cost 4 rejected at 10/12 and the packet is unchanged; shooter
+  removed before release does not break release and attribution survives.
+  Checks: same-tick capture prevents damage; exact capture/impact tie captures;
+  uncaptured, out-of-cone and rear shots still hurt; two slots expire independently; ten
+  paused seconds leave expiry untouched; returned shots are not recaptured; full-packet
+  rejection leaves the shot flying and it hurts; death cancels packets and their releases;
+  expiry frees a slot that a catch can use on the same tick.
+  Mutation check: swapping the capture/actor tie order makes the tie test fail (expected 3 HP,
+  was 2); restored code passes. This check also exposed a dead body-contact clause in
+  CaptureGeometry, removed under D16.
+Manual behaviour observed (play mode, scripted input, not a human):
+  - Catch toward the acolyte took all 3 bolts into one packet at 3/3 HP; cone and 3 orbit
+    dots drawn (shots/phase3_catch.png)
+  - Release fired on the expiry tick exactly (expires 5.8167, released 5.8167) as 3 returned
+    shots toward the current aim (shots/phase3_release.png); that volley hit a pillar
+  - Scripted stationary catch loop: 6 catches, 16 shots captured, 0 damage taken, acolyte
+    killed by 3 returned hits in 19.3 s; 8 of 11 returned shots ended on walls
+  - HUD labels after one catch: "Bolt  1/12  2.5s", "empty", catch bar "..."
+Known issues: screen captures stay stale while the Game view is unfocused (layout verified,
+  live values read via eval); restart cancellation relies on the one-sim-per-run design
+  (old sim and view are discarded), with no separate test; Web build still to re-verify (D6)
+Human gate (not yet done): a person must confirm that repeated catches feel deliberate and
+  worth repeating. The scripted loop suggests many returns are lost to pillars and strafing.
+Next uncompleted task: Phase 4
+```

@@ -31,6 +31,8 @@ namespace BorrowedHex.Combat
         public int PierceRemaining;
         /// <summary>Actors already damaged, so piercing never hits the same target twice.</summary>
         public readonly HashSet<int> HitActors = new HashSet<int>();
+        /// <summary>Catch activation that already rejected this shot (packet/slots full).</summary>
+        public int CaptureRejectedActivation;
 
         public float Radius => Shot.Radius;
         public Vector2 Direction => Velocity.sqrMagnitude > 1e-12f ? Velocity.normalized : Vector2.up;
@@ -48,6 +50,7 @@ namespace BorrowedHex.Combat
             PowerMultiplier = 1f;
             PierceRemaining = 0;
             HitActors.Clear();
+            CaptureRejectedActivation = 0;
         }
     }
 

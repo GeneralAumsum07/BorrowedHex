@@ -58,9 +58,17 @@ namespace BorrowedHex.UI
             Ui.Place((RectTransform)PauseButton.transform, new Vector2(1, 1), new Vector2(-28, -28), new Vector2(64, 64));
             ResetButton = Ui.Button("Reset", root, "Reset", onReset, 22);
             Ui.Place((RectTransform)ResetButton.transform, new Vector2(1, 1), new Vector2(-104, -28), new Vector2(110, 64));
+
+            Packets = PacketIndicator.Create(root);
         }
 
-        public void Bind(ArenaSim s) => sim = s;
+        public PacketIndicator Packets { get; private set; }
+
+        public void Bind(ArenaSim s)
+        {
+            sim = s;
+            Packets.Bind(s);
+        }
 
         readonly List<Button> devButtons = new List<Button>();
 

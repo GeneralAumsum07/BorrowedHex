@@ -1,0 +1,124 @@
+using System.Collections.Generic;
+using BorrowedHex.Runs;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace BorrowedHex.UI
+{
+    /// <summary>
+    /// Packet slots and catch readiness (Phase 3). One panel per slot, each with its OWN
+    /// shrinking countdown bar, so two stored packets are never merged into a single timer:
+    /// the player has to read which bundle fires first.
+    ///
+    /// Panels are filled oldest-first. Packets share one lifetime, so the oldest always
+    /// expires first and the leftmost bar is always "next to fire", which is easier to
+    /// read than panels pinned to a slot index that would leave a gap when one releases.
+    ///
+    /// Like the rest of the HUD it only polls the sim, so a restart needs just Bind().
+    /// </summary>
+    public sealed class PacketIndicator : MonoBehaviour
+    {
+        sealed class Panel
+        {
+            public Image Back, Fill;
+            public Text Label;
+        }
+
+        static readonly Color FillColor = new Color(0.45f, 0.95f, 1f);
+        static readonly Color UrgentColor = new Color(1f, 1f, 1f);
+        static readonly Color EmptyBack = new Color(0f, 0f, 0f, 0.35f);
+        static readonly Color UsedBack = new Color(0f, 0.1f, 0.15f, 0.7f);
+
+        ArenaSim sim;
+        RectTransform root;
+        readonly List<Panel> panels = new List<Panel>();
+        Image catchFill;
+        Text catchLabel;
+
+        const float PanelW = 210f, PanelH = 54f, Gap = 14f;
+
+        public static PacketIndicator Create(RectTransform parent)
+        {
+            var rt = Ui.Place(Ui.Rect("Packets", parent), new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(600, 110));
+            var pi = rt.gameObject.AddComponent<PacketIndicator>();
+            pi.root = rt;
+            pi.BuildCatchBar();
+            return pi;
+        }
+
+        public void Bind(ArenaSim s) => sim = s;
+
+        void BuildCatchBar()
+        {
+            var bg = Ui.Image("CatchBar", root, new Color(0, 0, 0, 0.55f));
+            Ui.Place(bg.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 0), new Vector2(240, 12));
+            catchFill = Ui.Image("Fill", bg.transform, FillColor);
+            var fr = catchFill.rectTransform;
+            fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one; fr.pivot = new Vector2(0, 0.5f);
+            fr.offsetMin = fr.offsetMax = Vector2.zero;
+            catchLabel = Ui.Label("CatchLabel", root, "CATCH", 18);
+            Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(240, 22));
+        }
+
+        Panel AddPanel()
+        {
+            var p = new Panel { Back = Ui.Image("Slot", root, EmptyBack) };
+            p.Fill = Ui.Image("Countdown", p.Back.transform, FillColor);
+            var fr = p.Fill.rectTransform;
+            // A thin bar along the panel's bottom edge; its width shrinks with time left.
+            fr.anchorMin = Vector2.zero; fr.anchorMax = new Vector2(1, 0); fr.pivot = new Vector2(0, 0);
+            fr.offsetMin = Vector2.zero; fr.offsetMax = new Vector2(0, 8);
+            p.Label = Ui.Label("Text", p.Back.transform, "", 20);
+            Ui.Stretch(p.Label.rectTransform);
+            p.Label.rectTransform.offsetMin = new Vector2(0, 8);
+            panels.Add(p);
+            return p;
+        }
+
+        void LateUpdate()
+        {
+            if (sim == null) return;
+            double now = sim.Clock.Now;
+            int slots = sim.Packets.SlotCount;
+            while (panels.Count < slots) AddPanel();
+
+            float total = slots * PanelW + (slots - 1) * Gap;
+            var packets = sim.Packets.Packets;
+            for (int i = 0; i < panels.Count; i++)
+            {
+                var p = panels[i];
+                bool shown = i < slots;
+                p.Back.gameObject.SetActive(shown);
+                if (!shown) continue;
+                Ui.Place(p.Back.rectTransform, new Vector2(0.5f, 0),
+                    new Vector2(-total * 0.5f + PanelW * 0.5f + i * (PanelW + Gap), 50), new Vector2(PanelW, PanelH));
+
+                if (i < packets.Count)
+                {
+                    var pk = packets[i];
+                    float left = pk.Remaining(now);
+                    float frac = Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime));
+                    p.Back.color = UsedBack;
+                    p.Fill.enabled = true;
+                    p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
+                    p.Fill.color = left < 0.5f ? UrgentColor : FillColor;
+                    p.Label.text = $"{pk.DominantKind}  {pk.CapacityUsed}/{pk.Capacity}  {left:0.0}s";
+                }
+                else
+                {
+                    p.Back.color = EmptyBack;
+                    p.Fill.enabled = false;
+                    p.Label.text = "empty";
+                }
+            }
+
+            // Catch readiness: drains while the window + recovery run, full when ready again.
+            var c = sim.Capture;
+            float span = Mathf.Max(0.0001f, (float)(c.RecoveryEndsAt - c.WindowOpensAt));
+            float ready = c.IsReady(now) ? 1f : Mathf.Clamp01((float)((now - c.WindowOpensAt) / span));
+            catchFill.rectTransform.anchorMax = new Vector2(ready, 1);
+            catchFill.color = ready >= 1f ? FillColor : new Color(0.3f, 0.5f, 0.55f);
+            catchLabel.text = c.IsWindowOpen(now) ? "CATCHING" : ready >= 1f ? "CATCH" : "...";
+        }
+    }
+}

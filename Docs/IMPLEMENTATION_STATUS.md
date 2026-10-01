@@ -65,3 +65,25 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 - Presentation: enemy sprites with spawn-warning ring and ground aim-line telegraph,
   projectile glows sized from the logical radius with ground shadows, lantern prop. Sandbox
   keeps one practice acolyte alive; dev buttons spawn an acolyte / fire the lantern.
+
+
+### Phase 3 — Catch, carry, and three-second return — done (human gate pending)
+
+- `CapturedPacket` / `PacketStore`: packets with fixed expiry (`CapturedAt + lifetime`),
+  capacity in units, payload snapshots; a store of N independent slots that expires packets
+  with a 1e-9 tolerance so accumulated 1/60 steps still release on the intended tick.
+- `CaptureController`: one directional window per activation, then recovery. First success
+  creates the packet; later successes in the same window append within capacity. Rejections:
+  not eligible (returned / echo / non-capturable), window closed, packet full, slots full.
+  An empty activation costs recovery but no slot.
+- `CaptureGeometry`: a shot is catchable only while inside the live aim cone and range and
+  approaching the player. The resolver samples each tick's swept segment (≤0.1 units, plus
+  the exact player-impact time) so capture competes in the same earliest-contact ordering as
+  walls and actors; a rejected shot keeps flying and re-resolves without capture.
+- `ArenaSim.Capture` + `ReleaseService`: expired packets release at step 3 at the current
+  player position and aim (aim is updated first), each payload keeping its spread offset and
+  original source actor; one root release ID per packet. Death cancels packets and releases.
+- Presentation: cone sector shown only while the window is open, orbit dots per stored shot
+  (separate ring and spin per packet, blinking in the last 0.5 s), capture/reject/release
+  pops; HUD `PacketIndicator` with one shrinking countdown bar and `Kind n/12 t` label per
+  slot and a catch-readiness bar.

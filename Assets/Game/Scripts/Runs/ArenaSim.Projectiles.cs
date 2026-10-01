@@ -89,12 +89,20 @@ namespace BorrowedHex.Runs
 
                 if (p.Faction == AttackFaction.Hostile)
                 {
-                    // Phase 3 adds the capture sweep here (HitKind.Capture), ahead of the player.
                     // Invulnerable players (dash / post-hit) let hostile shots pass through: a
                     // dash THROUGH a volley is a deliberate, readable skill expression.
+                    float tp = -1f;
                     if (Player.Alive && !Player.IsInvulnerable(Clock.Now)
-                        && Geometry2D.SweepCircleVsCircle(start, end, p.Radius, Player.Position, Player.Radius, out float tp))
+                        && Geometry2D.SweepCircleVsCircle(start, end, p.Radius, Player.Position, Player.Radius, out tp))
                         Consider(tp, HitKind.Actor, null);
+                    else tp = -1f;
+
+                    // Capture is tested along the same segment, including the exact impact
+                    // time, so an interception that coincides with a hit wins (section 3).
+                    if (CanAttemptCapture(p)
+                        && CaptureGeometry.EarliestEntry(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
+                            Stats.CaptureRange, start, end, p.Velocity, p.Radius, tp, out float tc))
+                        Consider(tc, HitKind.Capture, null);
                 }
                 else
                 {
@@ -114,6 +122,15 @@ namespace BorrowedHex.Runs
 
                 Vector2 hitPoint = Vector2.Lerp(start, end, bestT);
                 p.Position = hitPoint;
+
+                if (best == HitKind.Capture)
+                {
+                    if (TryCaptureProjectile(p)) return;
+                    // Rejected: it keeps flying. Re-resolve the same segment without capture
+                    // (CanAttemptCapture is now false for this projectile and activation).
+                    p.Position = start;
+                    continue;
+                }
 
                 if (best == HitKind.Wall)
                 {

@@ -18,6 +18,10 @@ namespace BorrowedHex.Runs
         public event Action<EnemyActor, DamageEvent> EnemyDamaged;
         public event Action<EnemyActor, DamageEvent> EnemyKilled;
         public event Action LanternFired;
+        public event Action<int> CatchActivated;
+        public event Action<CapturedPacket, AttackSnapshot, UnityEngine.Vector2, CaptureResult> ShotCaptured;
+        public event Action<UnityEngine.Vector2, CaptureResult> CaptureRejected;
+        public event Action<CapturedPacket, int> PacketReleased;
 
         internal void RaiseProjectileSpawned(ProjectileActor p) => ProjectileSpawned?.Invoke(p);
         internal void RaiseProjectileEnded(ProjectileActor p, ProjectileEndReason r) => ProjectileEnded?.Invoke(p, r);
@@ -27,5 +31,9 @@ namespace BorrowedHex.Runs
         internal void RaiseEnemyDamaged(EnemyActor e, DamageEvent d) => EnemyDamaged?.Invoke(e, d);
         internal void RaiseEnemyKilled(EnemyActor e, DamageEvent d) => EnemyKilled?.Invoke(e, d);
         internal void RaiseLanternFired() => LanternFired?.Invoke();
+        internal void RaiseCatchActivated(int activation) => CatchActivated?.Invoke(activation);
+        internal void RaiseShotCaptured(CapturedPacket p, AttackSnapshot s, UnityEngine.Vector2 at, CaptureResult r) => ShotCaptured?.Invoke(p, s, at, r);
+        internal void RaiseCaptureRejected(UnityEngine.Vector2 at, CaptureResult r) => CaptureRejected?.Invoke(at, r);
+        internal void RaisePacketReleased(CapturedPacket p, int root) => PacketReleased?.Invoke(p, root);
     }
 }

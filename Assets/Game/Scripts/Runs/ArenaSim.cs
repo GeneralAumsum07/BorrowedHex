@@ -77,6 +77,7 @@ namespace BorrowedHex.Runs
         {
             if (!Player.Alive) return;
             PlayerMotor.UpdateAim(Player, cmd);
+            if (cmd.Catch) TryCatch(now);
             if (cmd.Dash) TryDash(cmd.Move, tickStart);
             PlayerMotor.Move(Player, cmd.Move, Stats, now, dt, Walls);
         }

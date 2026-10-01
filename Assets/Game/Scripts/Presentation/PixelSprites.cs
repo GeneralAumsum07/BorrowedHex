@@ -245,6 +245,39 @@ namespace BorrowedHex.Presentation
             return made;
         }
 
+        static readonly Dictionary<int, Sprite> sectors = new Dictionary<int, Sprite>();
+
+        /// <summary>
+        /// Filled circular sector pointing along +X with its pivot at the apex and radius 1 unit,
+        /// so scale == range and a yaw rotation aims it. A brighter rim marks the far edge, which
+        /// is the line incoming shots must cross. Cached per whole-degree half-angle because the
+        /// angle only changes with capture style / Precision upgrades, never per frame.
+        /// </summary>
+        public static Sprite Sector(float halfAngleDeg)
+        {
+            int key = Mathf.RoundToInt(halfAngleDeg);
+            if (sectors.TryGetValue(key, out var s) && s != null) return s;
+            const int n = 128; // texture spans x∈[-1,1], y∈[-1,1]; apex at the centre
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = "Sector" + key };
+            var px = new Color32[n * n];
+            float cosHalf = Mathf.Cos(key * Mathf.Deg2Rad);
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    bool inside = d <= 1f && d > 1e-4f && dx / d >= cosHalf;
+                    // Alpha encodes fill vs rim; the SpriteRenderer colour supplies the hue.
+                    byte a = !inside ? (byte)0 : d >= 0.93f ? (byte)255 : (byte)110;
+                    px[y * n + x] = new Color32(255, 255, 255, a);
+                }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            s = Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), n / 2f);
+            sectors[key] = s;
+            return s;
+        }
+
         static Sprite MakeDisc(bool ring)
         {
             const int n = 64;

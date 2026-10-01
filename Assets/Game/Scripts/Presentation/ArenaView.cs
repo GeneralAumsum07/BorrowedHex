@@ -56,6 +56,24 @@ namespace BorrowedHex.Presentation
 
         readonly List<ShotView> shots = new List<ShotView>();
         Transform shotRoot, enemyRoot;
+
+        // Phase 3 capture visuals. The cone is drawn only while the window is open, so its
+        // appearance IS the timing feedback; orbit dots stand in for stored shots until real
+        // packet art exists; pops are short-lived rings for capture/rejection flourishes.
+        static readonly Color ConeColor = new Color(0.55f, 0.95f, 1f, 0.55f);
+        static readonly Color RejectColor = new Color(1f, 0.3f, 0.3f);
+        SpriteRenderer cone;
+        readonly List<SpriteRenderer> orbitDots = new List<SpriteRenderer>();
+        Transform orbitRoot;
+
+        sealed class Pop
+        {
+            public SpriteRenderer Ring;
+            public float Age, Life, From, To;
+            public Color Color;
+        }
+
+        readonly List<Pop> pops = new List<Pop>();
         Camera cam;
 
         public CharacterView PlayerView => player;
@@ -88,6 +106,17 @@ namespace BorrowedHex.Presentation
             sim.Events.PlayerHit += (_, __) => player.Flash(0.12f);
             sim.Events.EnemyDamaged += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.1f); };
             sim.Events.LanternFired += () => lantern.Flash(0.2f);
+
+            cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(sim.Stats.CaptureConeAngle * 0.5f), ConeColor);
+            cone.sortingOrder = -4;
+            orbitRoot = new GameObject("PacketOrbits").transform;
+            orbitRoot.SetParent(transform, false);
+
+            // Successful capture: a cyan pinch where the shot was taken. Rejection: a red ring
+            // at the shot, so "why did that hit me?" has a visible answer (packet/slots full).
+            sim.Events.ShotCaptured += (_, __, at, ___) => SpawnPop(at, ReturnedColor, 0.5f, 0.1f, 0.18f);
+            sim.Events.CaptureRejected += (at, _) => SpawnPop(at, RejectColor, 0.15f, 0.7f, 0.3f);
+            sim.Events.PacketReleased += (_, __) => SpawnPop(sim.Player.Position, ReturnedColor, 0.4f, 1.4f, 0.25f);
         }
 
         /// <summary>A sprite lying flat on the ground (y slightly above the floor to avoid z-fighting).</summary>
@@ -116,6 +145,8 @@ namespace BorrowedHex.Presentation
             RenderPlayer(alpha);
             RenderEnemies(alpha);
             RenderProjectiles(alpha);
+            RenderCapture(alpha);
+            RenderPops();
         }
 
         void RenderPlayer(float alpha)
@@ -257,6 +288,97 @@ namespace BorrowedHex.Presentation
             var v = new ShotView { Root = root, Glow = glow, Shadow = shadow };
             shots.Add(v);
             return v;
+        }
+
+        void RenderCapture(float alpha)
+        {
+            var p = sim.Player;
+            double now = sim.Clock.Now;
+            Vector2 pos = Vector2.Lerp(prevPlayer, currPlayer, alpha);
+
+            // The cone follows the CURRENT aim, matching the sim, which tests capture against
+            // the live aim on every tick of the window (directional, not a snapshot).
+            bool open = p.Alive && sim.Capture.IsWindowOpen(now);
+            cone.enabled = open;
+            if (open)
+            {
+                cone.transform.position = Geometry2D.ToWorld(pos, 0.04f);
+                float yaw = -Mathf.Atan2(p.AimDirection.y, p.AimDirection.x) * Mathf.Rad2Deg;
+                cone.transform.rotation = Quaternion.Euler(90f, yaw, 0f);
+                cone.transform.localScale = Vector3.one * sim.Stats.CaptureRange;
+            }
+
+            // Orbit placeholders: one dot per stored shot, each packet on its own ring radius
+            // and spin direction so two slots read as two separate bundles. Spin speeds up as
+            // expiry nears; the HUD carries the exact countdown, this only says "incoming".
+            int used = 0;
+            var packets = sim.Packets.Packets;
+            for (int k = 0; k < packets.Count; k++)
+            {
+                var pk = packets[k];
+                float left = pk.Remaining(now);
+                float urgency = 1f - Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime));
+                float radius = 0.75f + 0.3f * k;
+                float spin = (float)now * (1.5f + 5f * urgency) * (k % 2 == 0 ? 1f : -1f);
+                int count = pk.Payloads.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    var dot = used < orbitDots.Count ? orbitDots[used] : AddOrbitDot();
+                    used++;
+                    float a = spin + i * Mathf.PI * 2f / count;
+                    Vector2 off = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius;
+                    dot.gameObject.SetActive(true);
+                    dot.transform.position = Geometry2D.ToWorld(pos + off, 0.7f);
+                    // Blink during the final half second: the release is about to happen.
+                    bool blink = left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;
+                    dot.color = blink ? Color.white : ReturnedColor;
+                    if (cam != null) dot.transform.rotation = cam.transform.rotation;
+                }
+            }
+            for (int i = used; i < orbitDots.Count; i++) orbitDots[i].gameObject.SetActive(false);
+        }
+
+        SpriteRenderer AddOrbitDot()
+        {
+            var go = new GameObject("OrbitDot");
+            go.transform.SetParent(orbitRoot, false);
+            go.transform.localScale = Vector3.one * 0.12f;
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = PixelSprites.Disc(false);
+            sr.sortingOrder = 6;
+            orbitDots.Add(sr);
+            return sr;
+        }
+
+        void SpawnPop(Vector2 at, Color color, float from, float to, float life)
+        {
+            Pop pop = null;
+            foreach (var q in pops) if (!q.Ring.enabled) { pop = q; break; }
+            if (pop == null)
+            {
+                pop = new Pop { Ring = FlatSprite("Pop", transform, PixelSprites.Disc(true), color) };
+                pops.Add(pop);
+            }
+            pop.Ring.enabled = true;
+            pop.Ring.transform.position = Geometry2D.ToWorld(at, 0.06f);
+            pop.Age = 0f; pop.Life = life; pop.From = from; pop.To = to; pop.Color = color;
+        }
+
+        void RenderPops()
+        {
+            // Unscaled frame time: these are cosmetic flourishes. While paused no new ones
+            // spawn, and letting an existing one finish fading is harmless.
+            float dt = Time.unscaledDeltaTime;
+            foreach (var q in pops)
+            {
+                if (!q.Ring.enabled) continue;
+                q.Age += dt;
+                float f = q.Age / q.Life;
+                if (f >= 1f) { q.Ring.enabled = false; continue; }
+                q.Ring.transform.localScale = Vector3.one * Mathf.Lerp(q.From, q.To, f);
+                var c = q.Color; c.a = 1f - f;
+                q.Ring.color = c;
+            }
         }
     }
 }
