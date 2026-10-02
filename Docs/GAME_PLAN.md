@@ -31,7 +31,7 @@ make the player feel it:
 | The magician's attention | Only the **selected** packet decays; the other is frozen. Swapping (Q) chooses which hex is burning | 3 |
 | Power | A hex grows stronger the longer it decays, so the best shot is the latest one the player dares | 3 |
 | Life | The **run clock is health**: kills add seconds, hits and backfires take them away | 6 |
-| Cover | Pillars **decay over time** and crumble; hits speed it up | 4 |
+| Cover | Pillars **decay over time** and crumble | 4 |
 | Upgrades | A chosen upgrade lasts **one encounter** only | 5 |
 | Enemies' patience | An enemy left alive too long **turns into something worse** | 4 |
 
@@ -252,8 +252,8 @@ with time on their own**, and come back each encounter.
 
 - Each pillar has **12 durability** and loses 1 every few active seconds on its own. Each pillar's interval is seeded
   between 5 and 8 s (*proposal*), so they fall at different times (roughly 60–95 s each) rather than all at once.
-- Hits speed it up (*working default, not owner-stated*): any projectile that hits a pillar (hostile or returned)
-  removes 1; a rocket burst touching it removes 3; a Collector slam whose circle touches it removes 3.
+- **Only time** wears a pillar down (owner direction): hits, rockets and slams never damage it. The same rule holds for
+  any future world decay.
 - The pillar shows its damage in stages (cracks at 8 and 4).
 - At 0 it crumbles: it stops blocking movement, projectiles and line of sight, and leaves visible rubble with no
   collision. Enemy routing (`EnemySteering.Waypoint`, recomputed each tick) and the Collector's line-of-sight check
@@ -286,7 +286,7 @@ seeded 50/50 slam or sweep, and its wind-up starts on arrival. No teleport at th
 sweep 0.77 s, slam 0.8 s.
 
 Returned boss bolts are heavy bolts (section 3). Crumbling pillars change the fight: a hidden player draws slams, and
-slams wear the pillar down. A repeated endless boss gains one predefined pattern variation rather than only health.
+pillars fall on their own schedule, so cover disappears mid-fight. A repeated endless boss gains one predefined pattern variation rather than only health.
 
 ## 5. Encounter upgrades
 
@@ -560,7 +560,7 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - [ ] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
 - [ ] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
       last change; floating gain/loss numbers; the clock as the main HUD element.
-- [ ] Pillar durability that decays over time (seeded per-pillar rate) and from hits, damage stages, crumbling
+- [ ] Pillar durability that decays over time only (seeded per-pillar rate), damage stages, crumbling
       (collision, line of sight and routing ignore it), restoration at each encounter start and at the boss transition.
 - [ ] Overstay timer, warning ring, one-time overstayed modifiers, an "evolved" placeholder view per enemy type; elite
       score/XP values.
@@ -577,7 +577,7 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - Both slots full, a catch catches nothing and the projectile keeps flying (no upgrade).
 - Clock at 8 s and a 10 s hit → run ends `Death`; clock at 0.01 s ticking → `TimeExpired`.
 - Clock at 298 s and a +3 s kill → 300 s, not 301.
-- A pillar at 1 durability hit by a returned bolt crumbles that tick; the bolt is stopped by it; the next shot passes.
+- A pillar at 1 durability is hit by a returned bolt: the bolt stops and the pillar keeps its durability.
 - An untouched pillar with a 6 s interval crumbles at exactly 72 s of active time; pausing does not advance it.
 - An enemy alive 25 s past its warning becomes overstayed once; at 50 s it is still overstayed once.
 
@@ -746,7 +746,7 @@ working defaults. Values marked *proposal* in the text are still untested tuning
 | Q3 | Power curve: how strong is a hex fired at the last moment compared with one fired at once? | Default accepted: linear, 1.0 → 2.05 over the 3 s |
 | Q4 | Per-enemy hexes: are piercing acolyte bolts, a shotgun from scatter casters (±12°, 1.5 per pellet, 6-unit range), rockets as now, and 2-damage boss bolts the right identities? | Default accepted |
 | Q5 | What does "turn into something worse" mean? | Owner: yes to the default (25 s; 1.5× health, faster, 1.5× score, once, not the boss), and the sprite evolves into something more horrifying |
-| Q6 | Pillar durability, and do pillars come back? | Owner: pillars degrade and break with time on their own, and come back each encounter. A constantly decaying world with per-encounter environments is deferred until assets exist |
+| Q6 | Pillar durability, and do pillars come back? | Owner: pillars degrade and break with time only (never from hits), and come back each encounter. A constantly decaying world with per-encounter environments is deferred until assets exist |
 | Q7 | Quick Draw and Fusion: upgrades or tree nodes? | Owner: Quick Draw is a skill-tree node; Fusion is a temporary encounter upgrade |
 | Q8 | Starting clock and kill rewards? | Default accepted: 300 s start and cap; +3 / +5 / +6 s per kill |
 | Q9 | Endless: same 300 s life clock? | Default accepted: yes, +30 s per boss kill |
