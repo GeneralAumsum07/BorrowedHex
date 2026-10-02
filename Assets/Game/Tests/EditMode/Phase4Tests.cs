@@ -161,7 +161,7 @@ namespace BorrowedHex.Tests
         }
     }
 
-    // Phase 4: enemy behaviour, spawning, starvation, kill bookkeeping.
+    // Phase 4: enemy behaviour, spawning, kill bookkeeping.
     public class EnemyEncounterTests
     {
         [Test]
@@ -235,46 +235,6 @@ namespace BorrowedHex.Tests
             P4.Run(sim, Mathf.CeilToInt(sim.Config.combat.siege.telegraph / P4.Dt) + 2);
             Assert.AreEqual(5, fired[s.ActorId].Count);
             CollectionAssert.AreEqual(new[] { AttackKind.Rocket }, fired[f.ActorId]);
-        }
-
-        [Test]
-        public void MeleeOnlyRemainder_LanternFeedsAmmunitionEveryTwoSeconds()
-        {
-            var sim = P4.Sim();
-            sim.Player.InvulnerableUntil = double.MaxValue; // keep the player alive through the bolts
-            var e = sim.SpawnEnemy(ActorCategory.Pursuer, new Vector2(8f, -5f));
-            e.ActiveAt = double.MaxValue; // perpetual (harmless) warning: alive, melee-only
-            var times = new List<double>();
-            sim.Events.LanternFired += () => times.Add(sim.Clock.Now);
-            P4.Run(sim, 60 * 6 + 5);
-            Assert.AreEqual(3, times.Count, "fires at 2, 4, 6 s");
-            Assert.AreEqual(2.0, times[0], 0.02);
-            Assert.AreEqual(4.0, times[1], 0.02);
-            Assert.AreEqual(6.0, times[2], 0.02);
-
-            // A ranged enemy appearing ends starvation.
-            P4.Parked(sim, ActorCategory.Acolyte, new Vector2(-8f, -5f));
-            P4.Run(sim, 60 * 4);
-            Assert.AreEqual(3, times.Count);
-        }
-
-        [Test]
-        public void StoredPacket_PostponesTheLantern()
-        {
-            var sim = P4.Sim();
-            sim.Player.InvulnerableUntil = double.MaxValue;
-            var e = sim.SpawnEnemy(ActorCategory.Pursuer, new Vector2(8f, -5f));
-            e.ActiveAt = double.MaxValue;
-            sim.Capture.TryActivate(0, sim.Stats);
-            var snap = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 77, sim.Ids.Next(), 0f);
-            sim.Capture.TryCapture(snap, AttackFaction.Hostile, false, 0, sim.Packets, sim.Stats, sim.Ids);
-            int fires = 0;
-            sim.Events.LanternFired += () => fires++;
-            // Packet lives 3 s, then starvation needs 2 more seconds.
-            P4.Run(sim, Mathf.FloorToInt((sim.Stats.PacketLifetime + 1.9f) / P4.Dt));
-            Assert.AreEqual(0, fires);
-            P4.Run(sim, 20);
-            Assert.AreEqual(1, fires);
         }
 
         [Test]

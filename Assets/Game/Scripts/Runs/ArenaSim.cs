@@ -17,9 +17,9 @@ namespace BorrowedHex.Runs
     ///   2. run due scheduled actions (echoes, delayed spawns)
     ///   3. expire packets and release them   ← before captures, so a freed slot is usable
     ///   4. player aim, catch activation, dash, movement
-    ///   5. enemies think/move/emit
+    ///   5. enemies think/move/emit (a Pursuer strike may be parried here)
     ///   6. projectiles sweep: walls → capture → actor impact, in travel order
-    ///   7. upgrade auras, lantern, director
+    ///   7. upgrade auras, director
     ///   8. terminal resolution (death beats boss defeat beats time expiry)
     /// Later phases fill steps 3 and 5–8 in other partial files.
     /// </summary>

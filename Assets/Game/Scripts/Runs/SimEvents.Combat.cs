@@ -18,7 +18,8 @@ namespace BorrowedHex.Runs
         public event Action<EnemyActor> EnemyFired;
         public event Action<EnemyActor, DamageEvent> EnemyDamaged;
         public event Action<EnemyActor, DamageEvent> EnemyKilled;
-        public event Action LanternFired;
+        /// <summary>A melee strike was parried: the attacker, and where the strike would have landed.</summary>
+        public event Action<EnemyActor, UnityEngine.Vector2> StrikeParried;
         public event Action<EnemyActor> EnemyDespawned;
         /// <summary>A rocket burst: position, radius, and whose it was (only Returned ones deal area damage).</summary>
         public event Action<UnityEngine.Vector2, float, AttackFaction> Explosion;
@@ -34,7 +35,7 @@ namespace BorrowedHex.Runs
         internal void RaiseEnemyFired(EnemyActor e) => EnemyFired?.Invoke(e);
         internal void RaiseEnemyDamaged(EnemyActor e, DamageEvent d) => EnemyDamaged?.Invoke(e, d);
         internal void RaiseEnemyKilled(EnemyActor e, DamageEvent d) => EnemyKilled?.Invoke(e, d);
-        internal void RaiseLanternFired() => LanternFired?.Invoke();
+        internal void RaiseStrikeParried(EnemyActor e, UnityEngine.Vector2 at) => StrikeParried?.Invoke(e, at);
         internal void RaiseEnemyDespawned(EnemyActor e) => EnemyDespawned?.Invoke(e);
         internal void RaiseExplosion(UnityEngine.Vector2 at, float radius, AttackFaction f) => Explosion?.Invoke(at, radius, f);
         internal void RaiseCatchActivated(int activation) => CatchActivated?.Invoke(activation);

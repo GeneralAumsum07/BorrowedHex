@@ -12,8 +12,14 @@ namespace BorrowedHex.Runs
     public sealed partial class ArenaSim
     {
         public readonly List<EnemyActor> Enemies = new List<EnemyActor>();
-        public Lantern Lantern { get; private set; }
         bool sandboxSpawnPending;
+
+        /// <summary>
+        /// Sandbox director switch. Starts from <c>Setup.SandboxAutoSpawn</c> but can be flipped
+        /// mid-run from the dev panel, so a playtester can freeze the arena on one summoned enemy
+        /// without the director topping it up with a formation.
+        /// </summary>
+        public bool AutoSpawn;
 
         public EnemyActor SpawnEnemy(ActorCategory category, Vector2 position, bool elite = false)
         {
@@ -30,7 +36,7 @@ namespace BorrowedHex.Runs
                 Phase = EnemyPhase.Warning,
                 StrafeSign = Random.NextFloat() < 0.5f ? -1f : 1f,
             };
-            // For() throws on a category with no ordinary-enemy tuning (boss, player, lantern):
+            // For() throws on a category with no ordinary-enemy tuning (boss, player):
             // fail loudly rather than spawn something with no brain.
             var t = c.For(category);
             e.Radius = t.bodyRadius;
@@ -62,47 +68,9 @@ namespace BorrowedHex.Runs
             SeparateEnemies();
         }
 
-        /// <summary>True for kinds that supply capturable ammunition (section 3 starvation rule).</summary>
+        /// <summary>True for kinds that fire capturable ammunition (formation authoring, director).</summary>
         public static bool IsRanged(ActorCategory c) =>
             c == ActorCategory.Acolyte || c == ActorCategory.ScatterCaster || c == ActorCategory.SiegeFamiliar;
-
-        /// <summary>
-        /// Section 3 ammunition starvation. Starving = enemies remain, but no ranged enemy, no
-        /// hostile shot in flight, and no stored packet. After <c>starvationDelay</c> seconds of
-        /// that, the lantern fires a pair every <c>interval</c> seconds until it ends.
-        ///
-        /// The lantern's OWN bolts do not count as "a hostile shot in flight": otherwise each
-        /// pair would reset the condition and the cadence would stretch to flight time + delay.
-        /// Once the player catches them they become a stored packet, which does end starvation
-        /// until it is released, exactly as the rule reads.
-        /// </summary>
-        void TickLantern(double now)
-        {
-            bool starving = Player.Alive && AliveEnemyCount() > 0;
-            if (starving)
-                foreach (var e in Enemies)
-                    if (e.Alive && IsRanged(e.Category)) { starving = false; break; }
-            if (starving)
-                foreach (var p in Projectiles)
-                    if (p.Active && p.Faction == AttackFaction.Hostile && p.Shot.SourceActorId != Lantern.ActorId) { starving = false; break; }
-            if (starving && Packets.Packets.Count > 0) starving = false;
-
-            if (!starving)
-            {
-                Lantern.StarvedSince = -1;
-                return;
-            }
-            if (Lantern.StarvedSince < 0)
-            {
-                Lantern.StarvedSince = now;
-                Lantern.NextFireAt = now + Config.combat.lantern.starvationDelay;
-            }
-            if (now >= Lantern.NextFireAt - 1e-9)
-            {
-                FireLantern();
-                Lantern.NextFireAt = now + Config.combat.lantern.interval;
-            }
-        }
 
         /// <summary>
         /// Cheap pairwise push-apart so enemies never stack into one unreadable sprite.
@@ -220,13 +188,14 @@ namespace BorrowedHex.Runs
         /// </summary>
         void TickSandboxDirector(double now)
         {
-            if (!Setup.SandboxAutoSpawn || sandboxSpawnPending || !Player.Alive) return;
+            if (!AutoSpawn || sandboxSpawnPending || !Player.Alive) return;
             if (AliveEnemyCount() > 0) return;
             sandboxSpawnPending = true;
             Scheduler.Schedule(now + 1.5, () =>
             {
                 sandboxSpawnPending = false;
-                if (Player.Alive) SpawnNextSandboxFormation();
+                // Re-check the switch: it may have been turned off during the breather.
+                if (Player.Alive && AutoSpawn) SpawnNextSandboxFormation();
             });
         }
 
@@ -239,13 +208,25 @@ namespace BorrowedHex.Runs
             return f;
         }
 
-        /// <summary>Fire the lantern's pair of slow bolts at the player now.</summary>
-        public void FireLantern()
+        /// <summary>
+        /// Playtest control: one enemy of exactly this kind at a legal spawn point (same rules
+        /// as a formation member: spawn warning, minimum player distance, clear of pillars).
+        /// </summary>
+        public EnemyActor SummonEnemy(ActorCategory category) =>
+            SpawnEnemy(category, FindSpawnPoint(Config.combat.For(category).bodyRadius));
+
+        /// <summary>
+        /// Playtest control: despawn every enemy (never counted as kills) and remove hostile
+        /// shots in flight, so a fresh matchup starts without leftovers. Stored packets and
+        /// the player's own returned shots are kept — they belong to the player.
+        /// </summary>
+        public void ClearArena()
         {
-            var aim = Player.Position - Lantern.Position;
-            AttackEmitter.FireVolley(this, AttackIds.LanternBolt, Lantern.ActorId, Lantern.Position, Lantern.BodyRadius,
-                aim, Config.combat.lantern.pairSpreadDeg);
-            Events.RaiseLanternFired();
+            foreach (var e in Enemies) DespawnEnemy(e);
+            foreach (var p in Projectiles)
+                if (p.Active && p.Faction == AttackFaction.Hostile) EndProjectile(p, ProjectileEndReason.Cleared);
+            RemoveDeadEnemies();
+            CompactProjectiles();
         }
     }
 }

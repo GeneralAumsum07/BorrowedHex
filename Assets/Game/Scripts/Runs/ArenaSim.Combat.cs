@@ -16,9 +16,9 @@ namespace BorrowedHex.Runs
         {
             Attacks = new AttackCatalog(Config.combat);
             InitCapture();
-            Lantern = new Lantern { ActorId = Ids.Next(), Position = Config.arena.lanternPosition };
             Events.PlayerDied += OnPlayerDied;
-            if (Setup.SandboxAutoSpawn)
+            AutoSpawn = Setup.SandboxAutoSpawn;
+            if (AutoSpawn)
                 SpawnNextSandboxFormation();
         }
 
@@ -28,10 +28,9 @@ namespace BorrowedHex.Runs
             if (Player.Alive) PlayerMotor.UpdateAim(Player, cmd);
             ReleaseExpiredPackets(now);                   // 3
             TickPlayer(cmd, tickStart, now, dt);          // 4 (catch, dash, move)
-            TickEnemies(now, dt);                         // 5
+            TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6
             Capture.Tick(now);                            //   close the window's packet
-            TickLantern(now);                             //   ammunition starvation (section 3)
             TickSandboxDirector(now);                     // 7 (director)
             RemoveDeadEnemies();
         }

@@ -29,7 +29,8 @@ namespace BorrowedHex.Enemies
     /// Phase 4: "author small mixed formations instead of adding more enemy types". Each group
     /// pairs a pressure source with an ammunition source, so the answer to the threat is
     /// always on screen. Every formation except the deliberate melee-only one carries a ranged
-    /// enemy; that one exists so the lantern's starvation rule is exercised in normal play.
+    /// enemy; that one exists so the parry (D26), the answer to a melee-only wave, gets
+    /// exercised in normal play.
     /// The Phase 5 encounter director draws from this list.
     /// </summary>
     public static class EnemySpawnService
@@ -49,7 +50,7 @@ namespace BorrowedHex.Enemies
             // Rocket ammunition with bodies to spend it on.
             new Formation("Siege escort", F, P, P),
             new Formation("Crossfire", S, A),
-            // Melee-only on purpose: the lantern must step in (section 3).
+            // Melee-only on purpose: no bolts to catch, so the player must parry (D26).
             new Formation("Pack", P, P, P),
             new Formation("Bombardment", F, S, P),
         };

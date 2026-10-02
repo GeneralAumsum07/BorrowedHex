@@ -24,7 +24,6 @@ namespace BorrowedHex.Data
             new Rect(5.4f, -4.1f, 1.2f, 1.2f),
         };
         public Vector2 playerSpawn = new Vector2(0f, -4f);
-        public Vector2 lanternPosition = new Vector2(0f, 6.6f);
 
         /// <summary>Every solid box: the four border walls plus pillars.</summary>
         public List<Rect> BuildObstacles()

@@ -26,7 +26,8 @@ namespace BorrowedHex.Presentation
         const float ProjectileHeight = 0.55f;
 
         static readonly Color HostileColor = new Color(1f, 0.38f, 0.28f);
-        static readonly Color LanternColor = new Color(1f, 0.78f, 0.35f);
+        // Riposte: gold, so a parried strike reads as different from a packet release.
+        static readonly Color RiposteColor = new Color(1f, 0.85f, 0.35f);
         static readonly Color ReturnedColor = new Color(0.45f, 0.95f, 1f);
         static readonly Color TelegraphColor = new Color(1f, 0.25f, 0.2f);
         static readonly Color RocketColor = new Color(1f, 0.55f, 0.1f);
@@ -35,7 +36,6 @@ namespace BorrowedHex.Presentation
         CharacterView player;
         SpriteRenderer aimMarker;
         Vector2 prevPlayer, currPlayer;
-        CharacterView lantern;
 
         sealed class EnemyView
         {
@@ -99,9 +99,6 @@ namespace BorrowedHex.Presentation
             aimMarker = FlatSprite("AimMarker", transform, PixelSprites.Disc(true), new Color(1f, 0.85f, 0.35f, 0.85f));
             aimMarker.transform.localScale = Vector3.one * 0.32f;
 
-            lantern = CharacterView.Create(transform, "Lantern", PixelSprites.Kind.Lantern, 1.1f, 0.4f);
-            lantern.transform.position = Geometry2D.ToWorld(sim.Lantern.Position);
-
             enemyRoot = new GameObject("Enemies").transform;
             enemyRoot.SetParent(transform, false);
             shotRoot = new GameObject("Projectiles").transform;
@@ -109,7 +106,6 @@ namespace BorrowedHex.Presentation
 
             sim.Events.PlayerHit += (_, __) => player.Flash(0.12f);
             sim.Events.EnemyDamaged += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.1f); };
-            sim.Events.LanternFired += () => lantern.Flash(0.2f);
 
             cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(sim.Stats.CaptureConeAngle * 0.5f), ConeColor);
             cone.sortingOrder = -4;
@@ -124,6 +120,13 @@ namespace BorrowedHex.Presentation
             // Rocket burst drawn at its true damage radius (ring scale == radius), so the
             // player learns how far a returned rocket reaches.
             sim.Events.Explosion += (at, r, f) => SpawnPop(at, f == AttackFaction.Returned ? ReturnedColor : RocketColor, r * 0.3f, r, 0.35f);
+            // Parry: a gold ring snaps shut on the strike circle (the hit that didn't land) and
+            // the attacker flashes (not the player: a player flash already means "you were hit").
+            sim.Events.StrikeParried += (e, at) =>
+            {
+                SpawnPop(at, RiposteColor, sim.Config.combat.pursuer.strikeRadius * 1.4f, 0.15f, 0.22f);
+                if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.15f);
+            };
         }
 
         /// <summary>A sprite lying flat on the ground (y slightly above the floor to avoid z-fighting).</summary>
@@ -291,9 +294,9 @@ namespace BorrowedHex.Presentation
                 Vector2 pos = Vector2.Lerp(p.PrevPosition, p.Position, alpha);
                 v.Root.gameObject.SetActive(true);
                 v.Root.position = Geometry2D.ToWorld(pos);
-                Color c = p.Faction == AttackFaction.Returned ? ReturnedColor
-                    : p.Shot.Kind == AttackKind.Rocket ? RocketColor
-                    : p.Shot.DefinitionId == Data.AttackIds.LanternBolt ? LanternColor : HostileColor;
+                Color c = p.Shot.Kind == AttackKind.Riposte ? RiposteColor
+                    : p.Faction == AttackFaction.Returned ? ReturnedColor
+                    : p.Shot.Kind == AttackKind.Rocket ? RocketColor : HostileColor;
                 v.Glow.color = c;
                 // Glow size follows the logical radius so what you see is what can hit you
                 // (Disc sprites are 2 units across, so scale == radius gives a true-size disc;

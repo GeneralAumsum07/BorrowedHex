@@ -11,7 +11,7 @@ namespace BorrowedHex.Presentation
     /// </summary>
     public static class PixelSprites
     {
-        public enum Kind { Magician, Acolyte, Pursuer, ScatterCaster, SiegeFamiliar, Collector, Lantern }
+        public enum Kind { Magician, Acolyte, Pursuer, ScatterCaster, SiegeFamiliar, Collector }
 
         // '.' transparent; other characters index the palette given per sprite.
         static readonly string[] Magician =
@@ -85,22 +85,6 @@ namespace BorrowedHex.Presentation
             ".BBBB..BBBB.",
         };
 
-        static readonly string[] LanternMap =
-        {
-            "....HH....",
-            "...H..H...",
-            "..HHHHHH..",
-            "..HGGGGH..",
-            "..HGEEGH..",
-            "..HGEEGH..",
-            "..HGGGGH..",
-            "..HHHHHH..",
-            "....BB....",
-            "....BB....",
-            "....BB....",
-            "...BBBB...",
-        };
-
         static Dictionary<char, Color32> Palette(Kind kind)
         {
             Color32 skin = new Color32(240, 200, 160, 255), eye = new Color32(20, 16, 30, 255), boot = new Color32(40, 32, 40, 255);
@@ -158,7 +142,6 @@ namespace BorrowedHex.Presentation
                 case Kind.Magician: return Magician;
                 case Kind.Pursuer: return Beast;
                 case Kind.SiegeFamiliar: return Golem;
-                case Kind.Lantern: return LanternMap;
                 default: return Hooded;
             }
         }

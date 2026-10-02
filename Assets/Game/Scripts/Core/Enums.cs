@@ -6,13 +6,14 @@ namespace BorrowedHex.Core
 
     public enum RunEndReason { Victory, Death, TimeExpired, Retired }
 
-    public enum AttackKind { Bolt, HeavyShot, Rocket }
+    // Riposte = a parried melee strike redirected by the player (D26); never fired by enemies.
+    public enum AttackKind { Bolt, HeavyShot, Rocket, Riposte }
 
     // Hostile = fired by enemies (can hurt the player, can be captured).
     // Returned = released by the player (hurts enemies, never recapturable).
     public enum AttackFaction { Hostile, Returned }
 
-    public enum ActorCategory { Player, Acolyte, Pursuer, ScatterCaster, SiegeFamiliar, Boss, Lantern }
+    public enum ActorCategory { Player, Acolyte, Pursuer, ScatterCaster, SiegeFamiliar, Boss }
 
     // Every reason the gameplay clock may be frozen. Using a set of reasons instead of a
     // single bool means overlapping pauses (focus loss during an upgrade choice) cannot

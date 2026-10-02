@@ -43,7 +43,6 @@ MonoBehaviour:
       width: 1.2
       height: 1.2
     playerSpawn: {x: 0, y: -4}
-    lanternPosition: {x: 0, y: 6.6}
   cameraRig:
     position: {x: 0, y: 17, z: -17.5}
     lookAt: {x: 0, y: 0, z: -2.2}

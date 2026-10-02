@@ -51,11 +51,37 @@ namespace BorrowedHex.Presentation
             // Desktop gets a Quit button; in a browser tab, quitting is the browser's job.
             System.Action quit = Application.platform == RuntimePlatform.WebGLPlayer ? null : Application.Quit;
             Menu = PauseMenu.Create(canvas, () => SetMenuOpen(false), Restart, quit);
-            Hud.AddDevButton("+ Formation", () => Sim.SpawnNextSandboxFormation());
-            Hud.AddDevButton("Lantern volley", () => Sim.FireLantern());
+            BuildDevPanel();
 
             BeginRun();
         }
+
+        /// <summary>
+        /// Playtest controls (sandbox/debug only, hidden in scored runs with the Reset button).
+        /// Single-kind summons let one matchup be practised in isolation — e.g. auto-spawn off,
+        /// one Pursuer, drill the parry timing.
+        /// </summary>
+        void BuildDevPanel()
+        {
+            Hud.AddDevButton("+ Formation", () => Sim.SpawnNextSandboxFormation());
+            Hud.AddDevButton("+ Acolyte", () => Sim.SummonEnemy(ActorCategory.Acolyte));
+            Hud.AddDevButton("+ Pursuer", () => Sim.SummonEnemy(ActorCategory.Pursuer));
+            Hud.AddDevButton("+ Scatter", () => Sim.SummonEnemy(ActorCategory.ScatterCaster));
+            Hud.AddDevButton("+ Siege", () => Sim.SummonEnemy(ActorCategory.SiegeFamiliar));
+            autoSpawnButton = Hud.AddDevButton(AutoSpawnLabel, () =>
+            {
+                autoSpawn = !autoSpawn;
+                Sim.AutoSpawn = autoSpawn;
+                autoSpawnButton.GetComponentInChildren<UnityEngine.UI.Text>().text = AutoSpawnLabel;
+            });
+            Hud.AddDevButton("Clear arena", () => Sim.ClearArena());
+        }
+
+        // Held here, not on the sim, so the choice survives Reset: a tester drilling one enemy
+        // should not have the director switch back on every restart.
+        bool autoSpawn = true;
+        UnityEngine.UI.Button autoSpawnButton;
+        string AutoSpawnLabel => autoSpawn ? "Auto-spawn: ON" : "Auto-spawn: OFF";
 
         /// <summary>Start a fresh run: a new sim and a new view; the old ones are discarded whole.</summary>
         public void BeginRun()
@@ -64,7 +90,7 @@ namespace BorrowedHex.Presentation
             runCounter++;
             // Phase 1 has no menus yet, so every run is a sandbox; Phase 5/7 pass a real setup.
             var setup = RunSetup.ForSandbox(runCounter);
-            setup.SandboxAutoSpawn = true; // practice: authored formations cycle while the arena is clear
+            setup.SandboxAutoSpawn = autoSpawn; // practice: formations cycle while the arena is clear (toggleable)
             Sim = new ArenaSim(config, setup);
             View = ArenaView.Create(Sim);
             Hud.Bind(Sim);

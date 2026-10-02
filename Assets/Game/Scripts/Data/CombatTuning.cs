@@ -66,15 +66,6 @@ namespace BorrowedHex.Data
         public int killValue = 10;
     }
 
-    /// <summary>Section 3 arcane lantern: pair of slow capturable bolts.</summary>
-    [Serializable]
-    public class LanternTuning
-    {
-        public float interval = 2f;
-        public float starvationDelay = 2f;
-        public float[] pairSpreadDeg = { -10f, 10f };
-    }
-
     [Serializable]
     public class CombatTuning
     {
@@ -86,7 +77,15 @@ namespace BorrowedHex.Data
         public List<AttackTuning> attacks = new List<AttackTuning>
         {
             new AttackTuning { id = AttackIds.Bolt },
-            new AttackTuning { id = AttackIds.LanternBolt, speed = 4.5f, radius = 0.2f, lifetime = 6f },
+            // The parried strike (D26). Fast and short-lived so it reads as a slash flung back
+            // rather than a bolt; 2 damage kills an ordinary Pursuer outright, which is what
+            // makes parry the answer to a melee-only wave now that the lantern is gone.
+            // Not capturable and costs no packet energy: it never enters the packet economy.
+            new AttackTuning
+            {
+                id = AttackIds.Riposte, kind = AttackKind.Riposte, speed = 18f, radius = 0.3f,
+                returnedDamage = 2, hostileDamage = 0, energyCost = 0, lifetime = 0.5f, capturable = false,
+            },
             new AttackTuning
             {
                 id = AttackIds.Rocket, kind = AttackKind.Rocket, speed = 6f, radius = 0.28f,
@@ -131,14 +130,16 @@ namespace BorrowedHex.Data
                 default: throw new ArgumentOutOfRangeException(nameof(c), c, "No ordinary-enemy tuning");
             }
         }
-        public LanternTuning lantern = new LanternTuning();
+
+        [Tooltip("Parry: extra enemies the riposte passes through after the attacker (D26).")]
+        public int ripostePierce = 1;
     }
 
     /// <summary>String IDs shared by data, snapshots, stats and save files.</summary>
     public static class AttackIds
     {
         public const string Bolt = "bolt";
-        public const string LanternBolt = "lantern_bolt";
+        public const string Riposte = "riposte";
         public const string Rocket = "rocket";
     }
 

@@ -24,7 +24,7 @@ namespace BorrowedHex.Runs
         public PlayerStats Stats;
 
         /// <summary>
-        /// Sandbox only: keep one practice acolyte alive. Off by default so unit tests get an
+        /// Sandbox only: start with the formation director on (ArenaSim.AutoSpawn). Off by default so unit tests get an
         /// empty arena and control every actor themselves.
         /// </summary>
         public bool SandboxAutoSpawn;

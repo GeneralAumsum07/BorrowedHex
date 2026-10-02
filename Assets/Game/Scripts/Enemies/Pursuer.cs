@@ -6,8 +6,9 @@ namespace BorrowedHex.Enemies
 {
     /// <summary>
     /// Pursuer (section 4): runs at the player and performs a telegraphed close strike. It
-    /// supplies no ammunition, which is the point: it pressures positioning and is a crowd
-    /// target for returned shots and rockets.
+    /// fires nothing capturable; instead its strike can be PARRIED (D26): catch it facing the
+    /// attacker and it comes back as a riposte. So it pressures positioning, is a crowd target
+    /// for returned shots and rockets, and is its own answer when no caster is left.
     ///
     /// Rhythm: Idle (seek) → Telegraph (stop; a ground marker shows exactly where the strike
     /// lands; aim tracks then locks) → strike resolves ONCE at the end of the wind-up against
@@ -52,12 +53,18 @@ namespace BorrowedHex.Enemies
                         // DamagePlayer itself respects dash / post-hit invulnerability.
                         Vector2 c = StrikeCentre(e, t);
                         float r = t.strikeRadius + player.Radius;
-                        if (player.Alive && (player.Position - c).sqrMagnitude <= r * r)
-                            sim.DamagePlayer(1, e.ActorId);
+                        bool wouldHit = player.Alive && (player.Position - c).sqrMagnitude <= r * r;
+                        // Parry is checked first: a strike caught in the open window is redirected
+                        // instead of landing, even if the player is also dash-invulnerable.
+                        bool parried = sim.TryParry(e, c, wouldHit);
+                        if (wouldHit && !parried) sim.DamagePlayer(1, e.ActorId);
                         sim.Events.RaiseEnemyFired(e);
                         e.Phase = EnemyPhase.Recover;
                         e.AimLocked = false;
-                        e.PhaseEndsAt = now + t.cooldown * 0.5f;
+                        // A parried attacker that survives the riposte (elite tuning, future
+                        // health buffs) is staggered for a full cooldown: the follow-up window
+                        // is part of the reward.
+                        e.PhaseEndsAt = now + t.cooldown * (parried ? 1f : 0.5f);
                     }
                     break;
 

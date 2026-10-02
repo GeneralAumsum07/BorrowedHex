@@ -73,7 +73,7 @@ namespace BorrowedHex.UI
         readonly List<Button> devButtons = new List<Button>();
 
         /// <summary>
-        /// Development buttons stacked under Reset (spawn enemy, fire lantern, ...). They share
+        /// Development buttons stacked under Reset (summon enemies, toggle auto-spawn, clear). They share
         /// Reset's visibility: sandbox/debug runs only, never in a scored run.
         /// </summary>
         public Button AddDevButton(string label, Action onClick)

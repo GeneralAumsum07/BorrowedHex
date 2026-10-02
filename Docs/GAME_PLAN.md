@@ -131,6 +131,11 @@ Death cancels every pending packet, echo, explosion, enemy action, and delayed s
 
 Enemy compositions must normally keep ranged ammunition available. Also implement a visible arcane lantern as a safety source: if enemies remain but there are no ranged enemies, hostile projectiles, or stored packets for two seconds, it emits a pair of slow capturable bolts every two seconds until the condition ends. Lantern attacks are hostile but generate no capture XP or score by themselves. This prevents a melee-only remainder from making the game unwinnable without giving the player a direct gun.
 
+> **Superseded after the Phase 4 playtest (owner direction, D26).** The arcane lantern is removed: it read as random
+> and out of place. A melee-only remainder is answered by the **parry** instead: a catch window open while facing a
+> Pursuer when its strike resolves intercepts the strike and redirects it at the attacker as a riposte (2 damage,
+> pierce 1). It stays a borrowed attack, not a direct gun: a riposte exists only when an enemy commits a strike.
+
 ## 4. Enemies and borrowed attack types
 
 ### Initial roster
@@ -524,7 +529,7 @@ Complete the phases in ascending order. Each phase includes a playable deliverab
 - [ ] Add five-shot fans that preserve their spread on return.
 - [ ] Add rockets with a single-impact explosion and per-target deduplication.
 - [ ] Add spawn warning markers and a safe minimum distance from the player.
-- [ ] Enable the lantern's ammunition-starvation condition from section 3.
+- [ ] ~~Enable the lantern's ammunition-starvation condition from section 3.~~ Replaced by the parry (D26).
 - [ ] Author small mixed formations instead of adding more enemy types.
 
 **Checks:** A returned rocket damages enemies but not the player; its explosion hits an actor once; killing a shooter with its own snapshot preserves source attribution; a melee-only remainder remains solvable; an enemy cannot spawn on the player; a returned fan remains recognizable. Verify each enemy's attack provides a distinct tactical opportunity.

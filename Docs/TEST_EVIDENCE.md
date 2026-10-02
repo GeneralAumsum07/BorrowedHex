@@ -150,3 +150,32 @@ Known issues: elites have kill value only, no behaviour modifier yet (Phase 11/1
 Human gate (not yet done): verify each enemy's attack gives a distinct tactical opportunity
 Next uncompleted task: Phase 5
 ```
+
+
+## Post-Phase 4: lantern removed, parry, playtest controls
+
+```text
+Phase/task: owner playtest feedback before Phase 5
+Files changed: Scripts/Core/Enums.cs; Scripts/Data/{CombatTuning,GameConfig}.cs;
+  Data/GameConfig.asset; Scripts/Enemies/{Pursuer,AttackEmitter,EnemySpawnService}.cs
+  (Lantern.cs removed); Scripts/Runs/{ArenaSim,ArenaSim.Combat,ArenaSim.Enemies,
+  SimEvents.Combat,RunSetup}.cs; Scripts/Runs/ArenaSim.Parry.cs (new);
+  Scripts/Presentation/{ArenaView,PixelSprites,GameRoot}.cs; Scripts/UI/GameplayHud.cs;
+  Tests/EditMode/ParryTests.cs (new); Tests/EditMode/Phase4Tests.cs (lantern tests removed)
+Actual CLI commands: recompile; run_tests editor; run_tests playmode --async_tests; eval
+  (play mode, dev buttons invoked); capture_game_view --source camera
+Test report: EditMode 78/78 (ParryTests 8, SandboxControlTests 4; 2 lantern tests removed).
+  PlayMode 2/2.
+  Mutation checks: dropping the cone check fails FacingAway_TheStrikeStillHurts; dropping the
+  would-hit check fails AStrikeThatWouldMiss_IsNotParried; blocking parry on full slots fails
+  ParryWorks_EvenWithBothPacketSlotsFull. Restored code passes.
+Manual behaviour observed (play mode, scripted input, not a human):
+  - Dev buttons invoked by name: Auto-spawn toggled to OFF (label updated), Clear arena,
+    + Pursuer summoned exactly one Pursuer
+  - Aiming at it and pressing catch 0.1 s before the strike: 1 parry, health 3/3, Pursuer
+    killed by the riposte (shots/parry.png: gold riposte leaving the cone; no lantern)
+Known issues: parry has no dedicated sound or tutorial prompt yet (Phase 12 polish)
+Human gate (not yet done): does parry timing feel fair, and does the Pack formation now read
+  as "parry them" without being told?
+Next uncompleted task: Phase 5
+```

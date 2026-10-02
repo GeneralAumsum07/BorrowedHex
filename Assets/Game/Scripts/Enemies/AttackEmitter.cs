@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BorrowedHex.Enemies
 {
     /// <summary>
-    /// The one way anything hostile fires: enemies, the lantern and (Phase 5) the boss all
+    /// The one way anything hostile fires: enemies and (Phase 5) the boss both
     /// emit through here, so every shot gets a unique ShotId, a snapshot and the same spawn
     /// rules. The player's returns use ReleaseService (Phase 3) with the same projectile code.
     /// </summary>

@@ -107,3 +107,18 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   cycles them; dev button "+ Formation".
 - Presentation: per-shot telegraph lines (a fan shows all five), heavier orange rocket
   telegraph, Pursuer strike disc, rocket colour, burst ring at the true damage radius.
+
+
+### Post-Phase 4 playtest changes (owner direction) — done (human gate pending)
+
+- Arcane lantern removed entirely: sim state, starvation tick, attack definition, sprite,
+  view, dev button, tests and the config field.
+- Parry (`ArenaSim.Parry.cs`, called from `Pursuer`): catch window open + attacker inside the
+  capture cone + a strike that would hit → no damage, a riposte (`AttackKind.Riposte`,
+  returned, 2 damage, pierce 1, not capturable, no packet energy) flies from the player at the
+  attacker; `StrikeParried` event; a surviving attacker is staggered for a full cooldown.
+  Presentation: gold riposte, gold ring closing on the strike circle, attacker flash.
+- Playtest controls (sandbox/debug only): `+ Acolyte`, `+ Pursuer`, `+ Scatter`, `+ Siege`
+  (`ArenaSim.SummonEnemy`), `Auto-spawn: ON/OFF` (`ArenaSim.AutoSpawn`, remembered across
+  Reset), `Clear arena` (`ArenaSim.ClearArena`: despawn, never kills; hostile shots removed;
+  stored packets kept).
