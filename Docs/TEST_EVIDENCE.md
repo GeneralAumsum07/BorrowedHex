@@ -326,3 +326,22 @@ Human gate (not yet done): is the rim window fair while the strike still tracks;
   enough for three cleared encounters plus the boss; do 2-heart boss bolts feel right?
 Next uncompleted task: Phase 6
 ```
+
+## Post-Phase 5: Collector variety and movement (D52)
+
+```text
+Files changed: Scripts/Data/RunTuning.cs; Scripts/Enemies/CollectorBoss.cs;
+  Tests/EditMode/ShortRunTests.cs
+Test report: EditMode 160/160, PlayMode 2/2.
+  New: Choose_SameAttackTwiceInARow_SwitchesToItsPartner;
+  ThePlayerStandingStill_AtAnyRange_NeverSeesOneAttackThreeTimesInARow (1.5/3/6/9 units);
+  RangedPatterns_StrafeToAFiringSpot_OffTheStraightLine; Tuning_TeleportFromSixUnits_...
+  RED: first as a compile failure (new Choose overload and fields). Then, with the rule
+  disabled (maxSameInARow 99), the range test failed with
+  "FanVolley,FanVolley,FanVolley,FanVolley,FanVolley,..." at 6 units, the owner's bug; restored, green.
+  The strafe test first failed on a spot where both swung spots overlapped pillars and the
+  boss fell back to straight back; fixed by trying the swing range ends before giving up.
+  Zero-passive bot: boss defeated 35.6 s into the fight (run clock 64.6 s), down from 64.0 s.
+  Why it is faster is not established (inference: more fans/streams mean more bolts to capture).
+Human gate: does the boss now feel varied and mobile enough?
+```

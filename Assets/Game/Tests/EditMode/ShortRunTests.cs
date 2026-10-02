@@ -116,12 +116,13 @@ namespace BorrowedHex.Tests
         /// Choose reads only the two positions, line of sight and the streak, so any enemy
         /// can stand in for the boss's body here; the sandbox arena has the shipped pillars.
         /// </summary>
-        static BossPattern ChooseFor(Vector2 boss, Vector2 player, int streak = 0)
+        static BossPattern ChooseFor(Vector2 boss, Vector2 player, int streak = 0,
+            BossPattern? last = null, int sameInARow = 0)
         {
             var sim = P4.Sim();
             var stand = sim.SpawnEnemy(ActorCategory.Pursuer, boss);
             sim.Player.Position = player;
-            return CollectorBoss.Choose(sim, stand, sim.Config.collector, streak);
+            return CollectorBoss.Choose(sim, stand, sim.Config.collector, streak, last, sameInARow);
         }
 
         [Test]
@@ -153,6 +154,92 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(BossPattern.BoltStream, ChooseFor(b, b + Vector2.down * 8.5f, streak: 2));
             Assert.AreEqual(BossPattern.FanVolley, ChooseFor(new Vector2(6f, 1f), new Vector2(6f, 6f), streak: 2), "hidden: ammunition first");
             Assert.AreEqual(BossPattern.Slam, ChooseFor(b, b + Vector2.down * 1.5f, streak: 1), "one melee is not yet a streak");
+        }
+
+        // ---- No attack more than twice in a row (owner direction, D52) ------------------
+
+        [Test]
+        public void Choose_SameAttackTwiceInARow_SwitchesToItsPartner()
+        {
+            Vector2 b = new Vector2(0f, 1f);
+            Vector2 mid = b + Vector2.down * 6f, far = b + Vector2.down * 8.5f;
+            // Ranged: fan and stream swap, so ammunition still comes.
+            Assert.AreEqual(BossPattern.BoltStream, ChooseFor(b, mid, last: BossPattern.FanVolley, sameInARow: 2));
+            Assert.AreEqual(BossPattern.FanVolley, ChooseFor(b, far, last: BossPattern.BoltStream, sameInARow: 2));
+            // Melee: slam and sweep swap.
+            Assert.AreEqual(BossPattern.Sweep, ChooseFor(b, b + Vector2.down * 1.5f, last: BossPattern.Slam, sameInARow: 2));
+            Assert.AreEqual(BossPattern.Slam, ChooseFor(b, b + Vector2.down * 3f, last: BossPattern.Sweep, sameInARow: 2));
+            // Once is fine; and the partner rule only bites on the SAME pattern.
+            Assert.AreEqual(BossPattern.FanVolley, ChooseFor(b, mid, last: BossPattern.FanVolley, sameInARow: 1));
+            Assert.AreEqual(BossPattern.FanVolley, ChooseFor(b, mid, last: BossPattern.BoltStream, sameInARow: 2));
+        }
+
+        [Test]
+        public void ThePlayerStandingStill_AtAnyRange_NeverSeesOneAttackThreeTimesInARow(
+            [Values(1.5f, 3f, 6f, 9f)] float range)
+        {
+            var (sim, boss) = BossFight();
+            // Teleports re-place the boss; keep the player at a fixed RANGE from it instead of a
+            // fixed spot, so each run sits in one band of the choice table — the case where the
+            // same pick repeated forever before this rule.
+            var seen = new List<BossPattern>();
+            int lastStarted = boss.Boss.PatternsStarted;
+            for (int i = 0; i < 60 * 40 && sim.State == RunState.BossCombat; i++)
+            {
+                if (boss.Boss.Stage == BossStage.Reposition || boss.Boss.Stage == BossStage.Recover)
+                {
+                    Vector2 dir = boss.AimDirection.sqrMagnitude > 0 ? boss.AimDirection : Vector2.down;
+                    sim.Player.Position = boss.Position + dir * range;
+                }
+                sim.Tick(P5.Still, P5.Dt);
+                if (boss.Boss.PatternsStarted != lastStarted)
+                {
+                    lastStarted = boss.Boss.PatternsStarted;
+                    seen.Add(boss.Boss.Pattern);
+                }
+            }
+            Assert.GreaterOrEqual(seen.Count, 8, "fixture: enough patterns to judge");
+            for (int i = 2; i < seen.Count; i++)
+                Assert.IsFalse(seen[i] == seen[i - 1] && seen[i] == seen[i - 2],
+                    $"three {seen[i]} in a row at range {range}: {string.Join(",", seen)}");
+        }
+
+        // ---- Moves around more (owner direction, D52) ------------------------------------
+
+        [Test]
+        public void RangedPatterns_StrafeToAFiringSpot_OffTheStraightLine()
+        {
+            var (sim, boss) = BossFight();
+            var t = sim.Config.collector;
+            int checkedSpots = 0;
+            int lastStarted = boss.Boss.PatternsStarted;
+            for (int i = 0; i < 60 * 40 && sim.State == RunState.BossCombat; i++)
+            {
+                sim.Player.Position = new Vector2(0f, -1f);
+                Vector2 bossBefore = boss.Position;
+                sim.Tick(P5.Still, P5.Dt);
+                var b = boss.Boss;
+                if (b.PatternsStarted == lastStarted) continue;
+                lastStarted = b.PatternsStarted;
+                if (b.Pattern != BossPattern.FanVolley && b.Pattern != BossPattern.BoltStream) continue;
+                // The angle between "where the boss was" and "where it goes", seen from the
+                // player: walking straight back would be ~0. Clamping at the arena edge can shrink
+                // it, so the check uses a margin well under the tuned minimum.
+                float turn = Vector2.Angle(bossBefore - sim.Player.Position, b.MoveTarget - sim.Player.Position);
+                Assert.GreaterOrEqual(turn, t.strafeMinDeg * 0.5f, $"firing spot {b.MoveTarget} straight behind the boss");
+                checkedSpots++;
+            }
+            Assert.GreaterOrEqual(checkedSpots, 3, "fixture: enough ranged patterns");
+        }
+
+        [Test]
+        public void Tuning_TeleportFromSixUnits_EveryFiveSeconds_AndLongerRepositioning()
+        {
+            var t = GameConfig.CreateDefault().collector;
+            Assert.AreEqual(6f, t.teleportMinDistance);
+            Assert.AreEqual(5f, t.teleportCooldown);
+            Assert.AreEqual(2, t.maxSameInARow);
+            Assert.Greater(t.repositionMax, 1.0f, "more walking between attacks than before");
         }
 
         [Test]

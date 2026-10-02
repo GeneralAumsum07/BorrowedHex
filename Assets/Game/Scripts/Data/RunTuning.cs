@@ -28,11 +28,17 @@ namespace BorrowedHex.Data
         [Tooltip("Seconds of harmless spawn warning after the intro banner.")]
         public float spawnWarning = 1.0f;
         [Tooltip("Longest a repositioning gap may last before the next pattern starts anyway.")]
-        public float repositionMax = 1.0f;
+        // 1.0 → 1.5 (owner, D52: "move around a little more"). It also lengthens the worst
+        // bolt drought; ShortRunTests computes that bound from this field.
+        public float repositionMax = 1.5f;
         [Tooltip("Pause after each pattern: the punish window.")]
         public float recover = 0.5f;
         [Tooltip("Ranged patterns try to fire from about this far away.")]
         public float rangedDistance = 6f;
+        [Tooltip("Ranged firing spots are swung this many degrees (at least) round the player, either way, so the boss circles instead of backing straight off.")]
+        public float strafeMinDeg = 25f;
+        [Tooltip("...and at most this many.")]
+        public float strafeMaxDeg = 55f;
 
         [Header("Choosing a pattern (D48)")]
         [Tooltip("Closer than this: slam.")]
@@ -43,15 +49,17 @@ namespace BorrowedHex.Data
         public float fanMaxDistance = 7.5f;
         [Tooltip("After this many melee patterns in a row the next is ranged, so bolts keep coming.")]
         public int maxMeleeInARow = 2;
+        [Tooltip("The same pattern at most this many times in a row; then its partner (fan↔stream, slam↔sweep).")]
+        public int maxSameInARow = 2;
 
         [Header("Teleport (D49)")]
         [Tooltip("Only considered when the player is at least this far away.")]
-        public float teleportMinDistance = 7f;
+        public float teleportMinDistance = 6f;
         [Tooltip("Chance per pattern start, when far away and off cooldown (seeded).")]
         [Range(0f, 1f)] public float teleportChance = 0.35f;
         [Tooltip("Visible wind-up: the boss fades and the arrival spot is marked.")]
         public float teleportTelegraph = 0.6f;
-        public float teleportCooldown = 6f;
+        public float teleportCooldown = 5f;
         [Tooltip("Arrives this far behind the player (opposite their aim).")]
         public float teleportBehindDistance = 2.6f;
 

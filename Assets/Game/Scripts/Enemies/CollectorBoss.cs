@@ -25,6 +25,8 @@ namespace BorrowedHex.Enemies
         public int PatternsStarted;
         /// <summary>Melee patterns in a row; capped so ammunition keeps arriving (see Choose).</summary>
         public int MeleeStreak;
+        /// <summary>How many times in a row the current <see cref="Pattern"/> has started (D52).</summary>
+        public int SameStreak;
 
         public Vector2 MoveTarget;
 
@@ -169,7 +171,11 @@ namespace BorrowedHex.Enemies
                 return;
             }
 
-            b.Pattern = Choose(sim, e, t, b.MeleeStreak);
+            // The very first pattern has no "previous" one to repeat.
+            BossPattern? last = b.PatternsStarted > 0 ? b.Pattern : (BossPattern?)null;
+            var next = Choose(sim, e, t, b.MeleeStreak, last, b.SameStreak);
+            b.SameStreak = last == next ? b.SameStreak + 1 : 1;
+            b.Pattern = next;
             b.MeleeStreak = IsMelee(b.Pattern) ? b.MeleeStreak + 1 : 0;
             b.PatternsStarted++;
             b.Stage = BossStage.Reposition;
@@ -179,9 +185,22 @@ namespace BorrowedHex.Enemies
 
         /// <summary>
         /// Pattern from the player's position (owner direction, D48), public for tests:
-        /// the melee cap first (ammunition guarantee), then line of sight, then distance.
+        /// the melee cap first (ammunition guarantee), then line of sight, then distance; and
+        /// last, no pattern more than <c>maxSameInARow</c> times running (D52).
         /// </summary>
-        public static BossPattern Choose(ArenaSim sim, EnemyActor e, BossTuning t, int meleeStreak)
+        public static BossPattern Choose(ArenaSim sim, EnemyActor e, BossTuning t, int meleeStreak,
+            BossPattern? last = null, int sameInARow = 0)
+        {
+            var pick = ChooseByPosition(sim, e, t, meleeStreak);
+            // Why a swap and not a re-roll: the position table already says what fits where
+            // the player stands, so the partner is the next-best fit for that same spot. Melee
+            // swaps with melee and ranged with ranged, which keeps the melee cap's ammunition
+            // guarantee intact: a forced ranged pick can only become the other ranged pattern.
+            if (pick == last && sameInARow >= t.maxSameInARow) pick = PartnerOf(pick);
+            return pick;
+        }
+
+        static BossPattern ChooseByPosition(ArenaSim sim, EnemyActor e, BossTuning t, int meleeStreak)
         {
             float dist = (sim.Player.Position - e.Position).magnitude;
             if (meleeStreak >= t.maxMeleeInARow)
@@ -191,6 +210,17 @@ namespace BorrowedHex.Enemies
             if (dist <= t.sweepChooseDistance) return BossPattern.Sweep;
             if (dist <= t.fanMaxDistance) return BossPattern.FanVolley;
             return BossPattern.BoltStream;
+        }
+
+        static BossPattern PartnerOf(BossPattern p)
+        {
+            switch (p)
+            {
+                case BossPattern.Slam: return BossPattern.Sweep;
+                case BossPattern.Sweep: return BossPattern.Slam;
+                case BossPattern.FanVolley: return BossPattern.BoltStream;
+                default: return BossPattern.FanVolley;
+            }
         }
 
         /// <summary>True when no wall or pillar crosses the straight line between the two points.</summary>
@@ -230,14 +260,35 @@ namespace BorrowedHex.Enemies
         static readonly float[] TeleportAngles = { 0f, 30f, -30f, 60f, -60f, 90f, -90f };
 
         /// <summary>
-        /// A spot about <c>rangedDistance</c> from the player on the boss's side, pulled inside
-        /// the arena. From there a fan's full width crosses the player's area with room to read it.
+        /// A spot about <c>rangedDistance</c> from the player, swung a seeded strafeMin..Max
+        /// degrees round them from the boss's current side, pulled inside the arena. From there
+        /// a fan's full width crosses the player's area with room to read it.
+        /// Why the swing (owner, D52: "move around a little more"): without it the boss backs
+        /// straight off along the line to the player and, once at range, barely moves between
+        /// volleys. Circling makes it travel every time and changes the angle shots come from.
+        /// If the swung spot sits in a pillar the mirror is tried, then the ends of the swing
+        /// range both ways (pillars are small; one of those is nearly always clear), and only
+        /// then the straight-back spot.
         /// </summary>
         static Vector2 FiringSpot(ArenaSim sim, EnemyActor e, BossTuning t)
         {
             Vector2 away = e.Position - sim.Player.Position;
             if (away.sqrMagnitude < 1e-6f) away = Vector2.up;
-            Vector2 spot = sim.Player.Position + away.normalized * t.rangedDistance;
+            float swing = Mathf.Lerp(t.strafeMinDeg, t.strafeMaxDeg, sim.Random.NextFloat());
+            if (sim.Random.NextFloat() < 0.5f) swing = -swing;
+            foreach (float deg in new[] { swing, -swing, t.strafeMaxDeg, -t.strafeMaxDeg, t.strafeMinDeg, -t.strafeMinDeg, 0f })
+            {
+                Vector2 spot = Clamped(sim, e, sim.Player.Position + Geometry2D.Rotate(away.normalized, deg) * t.rangedDistance);
+                bool blocked = false;
+                foreach (var w in sim.Walls)
+                    if (Geometry2D.CircleOverlapsRect(spot, e.Radius + 0.2f, w)) { blocked = true; break; }
+                if (!blocked || deg == 0f) return spot;
+            }
+            return e.Position; // unreachable: the loop always returns on its last entry
+        }
+
+        static Vector2 Clamped(ArenaSim sim, EnemyActor e, Vector2 spot)
+        {
             var bounds = sim.Config.arena.bounds;
             float m = e.Radius + 0.6f;
             spot.x = Mathf.Clamp(spot.x, bounds.xMin + m, bounds.xMax - m);
