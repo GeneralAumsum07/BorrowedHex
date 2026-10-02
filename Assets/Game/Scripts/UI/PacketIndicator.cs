@@ -89,6 +89,7 @@ namespace BorrowedHex.UI
         void LateUpdate()
         {
             if (sim == null) return;
+            hint.enabled = DisplayOptions.ShowHints;
             double now = sim.Clock.Now;
             int slots = sim.Packets.SlotCount;
             while (panels.Count < slots) AddPanel();

@@ -608,10 +608,10 @@ packet fires or backfires; a merged packet backfires once.
 **Depends on:** Phase 7.  
 **Deliverable:** Launch, play, finish, close and reopen with valid saved records.
 
-- [ ] Versioned profile JSON, default profile, Windows file and Web PlayerPrefs adapters, validation and recovery.
-- [ ] One idempotent finalization path for run summaries.
-- [ ] Main menu (Play Short, Settings, Quit; unavailable modes visibly disabled), replacing the D43 switch.
-- [ ] Settings: sensitivity, fullscreen/window behaviour, readability options. Browser Quit returns to the menu.
+- [x] Versioned profile JSON, default profile, Windows file and Web PlayerPrefs adapters, validation and recovery (D73, D77).
+- [x] One idempotent finalization path for run summaries (D75).
+- [x] Main menu (Play Short, Settings, Quit; unavailable modes visibly disabled), replacing the D43 switch (D76).
+- [x] Settings: fullscreen/window behaviour, readability options; no sensitivity (D74, TBD). Browser Quit returns to the menu.
 
 **Checks:** round-trip preserves values; finalizing twice adds nothing; an invalid primary save falls back to a valid
 backup; Web progress survives a refresh; menus never resume combat by accident.

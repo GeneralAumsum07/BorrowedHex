@@ -1,5 +1,8 @@
 using System.Collections;
+using BorrowedHex.Core;
 using BorrowedHex.Presentation;
+using BorrowedHex.Progression;
+using BorrowedHex.Runs;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,6 +22,16 @@ namespace BorrowedHex.Tests
         GameObject camGo, rootGo;
         GameRoot root;
         Mouse mouse;
+        MemoryProfileStorage storage;
+
+        /// <summary>Launch lands on the main menu; most tests want a live short run.</summary>
+        IEnumerator StartShortRun()
+        {
+            root.PlayShort();
+            root.SetFocus(true);
+            root.SetMenuOpen(false);
+            yield return null;
+        }
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -28,12 +41,13 @@ namespace BorrowedHex.Tests
             cam.transform.position = new Vector3(0, 17, -17.5f);
             cam.transform.LookAt(new Vector3(0, 0, -2.2f));
             mouse = InputSystem.AddDevice<Mouse>();
+            // Never the real save (section 8): an in-memory profile per test.
+            storage = new MemoryProfileStorage();
+            GameRoot.StorageOverride = storage;
             rootGo = new GameObject("GameRoot");
             root = rootGo.AddComponent<GameRoot>();
             yield return null;
-            // The editor may report itself unfocused while tests run; start from a live run.
             root.SetFocus(true);
-            root.SetMenuOpen(false);
             yield return null;
         }
 
@@ -47,13 +61,14 @@ namespace BorrowedHex.Tests
             foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
                 Object.Destroy(c.gameObject);
             if (mouse != null) InputSystem.RemoveDevice(mouse);
+            GameRoot.StorageOverride = null;
             yield return null;
         }
 
         [UnityTest]
         public IEnumerator FocusLoss_PausesCombat_AndRegainingFocusKeepsMenuOpen()
         {
-            yield return null;
+            yield return StartShortRun();
             double before = root.Sim.Clock.Now;
             root.SetFocus(false);
             for (int i = 0; i < 10; i++) yield return null;
@@ -74,6 +89,7 @@ namespace BorrowedHex.Tests
         [UnityTest]
         public IEnumerator ClickOnHudButton_DoesNotCatch_ButClickOnArenaDoes()
         {
+            yield return StartShortRun();
             // 1) Hover the HUD pause button for a frame so the UI knows the pointer is on it.
             var rt = (RectTransform)root.Hud.PauseButton.transform;
             var corners = new Vector3[4];
@@ -88,6 +104,57 @@ namespace BorrowedHex.Tests
             root.SetMenuOpen(false);
             yield return Click(new Vector2(Screen.width * 0.5f, Screen.height * 0.35f));
             Assert.AreEqual(1, root.Input.AcceptedCatchPresses);
+        }
+
+        [UnityTest]
+        public IEnumerator Launch_ShowsTheMainMenu_AndNothingResumesCombatByAccident()
+        {
+            Assert.IsTrue(root.InMainMenu);
+            Assert.IsTrue(root.Main.IsOpen);
+            Assert.IsTrue(root.Sim.Clock.IsPaused, "the backdrop arena is frozen");
+            Assert.IsFalse(root.Input.Gameplay.enabled);
+            // Focus churn and the pause key must not start or resume anything.
+            root.SetFocus(false);
+            yield return null;
+            root.SetFocus(true);
+            root.SetMenuOpen(false);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.IsTrue(root.InMainMenu);
+            Assert.IsTrue(root.Sim.Clock.IsPaused);
+            Assert.IsFalse(root.Menu.IsOpen, "no pause menu over the main menu");
+            // A click on empty space behind the menu is not a catch.
+            yield return Click(new Vector2(Screen.width * 0.1f, Screen.height * 0.1f));
+            Assert.AreEqual(0, root.Input.AcceptedCatchPresses);
+        }
+
+        [UnityTest]
+        public IEnumerator Play_StartsAShortRun_AndMainMenuAbandonsItWithoutRecording()
+        {
+            yield return StartShortRun();
+            Assert.IsFalse(root.InMainMenu);
+            Assert.AreEqual(GameMode.Short, root.Sim.Setup.Mode);
+            Assert.IsFalse(root.Sim.Setup.Sandbox);
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.Greater(root.Sim.Clock.Now, 0.05, "combat is live");
+            root.ShowMainMenu();
+            yield return null;
+            Assert.IsTrue(root.InMainMenu);
+            Assert.AreEqual(0, root.Profile.Profile.stats.runs, "an abandoned run records nothing");
+            Assert.AreEqual(0, storage.Writes);
+        }
+
+        [UnityTest]
+        public IEnumerator AFinishedRun_IsSavedOnce_AndTheResultsOfferTheMainMenu()
+        {
+            yield return StartShortRun();
+            root.Sim.DamagePlayer(100000, 0);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.AreEqual(RunState.Results, root.Sim.State);
+            Assert.AreEqual(1, root.Profile.Profile.stats.runs);
+            Assert.AreEqual(1, storage.Writes, "one explicit save at finalization");
+            Assert.IsTrue(root.LastFinalize.Applied);
+            // Reloading from the same storage sees the run.
+            Assert.AreEqual(1, ProfileService.Load(storage).Profile.stats.runs);
         }
 
         IEnumerator Click(Vector2 pos)

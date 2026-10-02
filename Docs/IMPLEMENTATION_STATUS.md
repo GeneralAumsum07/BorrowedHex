@@ -13,6 +13,18 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 8 — Menus and the player profile — implemented (owner check pending, 3 Oct 2026)
+
+- Versioned JSON profile (`Scripts/Progression/`): settings, mastery, statistics, nodes, style,
+  achievements, records, recent run IDs. Strict validation and generation-based recovery (D73);
+  file storage on Windows, two PlayerPrefs keys on Web (D77); in-memory with a warning if saving fails.
+- One idempotent `FinalizeRun` per run ID; sandbox, debug and abandoned runs never count (D75).
+- Main menu over a frozen backdrop, later modes greyed out; Settings (display, UI scale, reduce
+  flashes, hints) from the main menu and the pause menu; Web Quit returns to the menu (D74, D76).
+- 233/233 EditMode (23 new in `ProfileTests`), 5/5 PlayMode (3 new menu/profile checks).
+- Not checked by eye: the menu and settings layout; a real Web refresh (the PlayerPrefs test
+  stands in for it in the editor); the save file on disk in a Windows player.
+
 ### Phase 7 — Encounter upgrades — implemented (owner playtest pending, 3 Oct 2026)
 
 - Built overnight at the owner's request ("build the next remaining phases one by one"),

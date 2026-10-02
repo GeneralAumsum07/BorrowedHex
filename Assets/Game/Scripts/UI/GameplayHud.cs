@@ -150,11 +150,12 @@ namespace BorrowedHex.UI
             lifeBarFill.color = Color.HSVToRGB(frac * 0.33f, 0.85f, 0.95f);
             // Hits and backfires flash the bar background red (gains do not, D66), replacing
             // the old clock-text flash so the feedback stays on the life display.
-            bool flashing = Time.unscaledTime < clockFlashUntil;
+            // Reduce flashes (Phase 8 readability setting) keeps the bar steady.
+            bool flashing = !DisplayOptions.ReduceFlashes && Time.unscaledTime < clockFlashUntil;
             lifeBarBg.color = flashing ? clockFlashColor * new Color(1, 1, 1, 0.8f) : new Color(0, 0, 0, 0.6f);
             // Low life: the heart beats (unscaled time, so it keeps beating while paused; it is
             // a reminder, not gameplay). Below 1/6 of the cap = 30 s at 180, the old red-text threshold.
-            float beat = frac < 1f / 6f ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
+            float beat = frac < 1f / 6f && !DisplayOptions.ReduceFlashes ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
             lifeHeart.rectTransform.localScale = new Vector3(beat, beat, 1);
             int n = sim.Config.shortMode.encounterCount;
             objectiveLabel.text = !sim.IsShortRun ? "SANDBOX"

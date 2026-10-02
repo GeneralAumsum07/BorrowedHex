@@ -37,20 +37,21 @@ namespace BorrowedHex.UI
         Text resultsBody;
         Button againButton;
         RunSummary shownSummary;
+        Text progressBody;
 
         /// <summary>Seconds the boss banner holds the frozen frame before the fight starts.</summary>
         public const float BannerHold = 2.4f;
         const float BannerFade = 0.6f;
 
-        public static RunFlowPanels Create(Canvas canvas, Action<int> onChoose, Action onPlayAgain, Action onSwitchMode, Func<string> switchLabel)
+        public static RunFlowPanels Create(Canvas canvas, Action<int> onChoose, Action onPlayAgain, Action onMainMenu)
         {
             var root = Ui.Stretch(Ui.Rect("RunFlow", canvas.transform));
             var p = root.gameObject.AddComponent<RunFlowPanels>();
-            p.Build(root, onChoose, onPlayAgain, onSwitchMode, switchLabel);
+            p.Build(root, onChoose, onPlayAgain, onMainMenu);
             return p;
         }
 
-        void Build(RectTransform root, Action<int> onChoose, Action onPlayAgain, Action onSwitchMode, Func<string> switchLabel)
+        void Build(RectTransform root, Action<int> onChoose, Action onPlayAgain, Action onMainMenu)
         {
             // --- Upgrade choice: three cards, each a button. Section 5 offers no skip: a
             // pick is free and only lasts one encounter, so there is nothing to decline.
@@ -113,14 +114,13 @@ namespace BorrowedHex.UI
             rcol.padding = new RectOffset(44, 44, 32, 36);
             resultsTitle = Ui.Sized(Ui.Label("Title", rp.transform, "", 58), 76);
             resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 28, TextAnchor.UpperCenter), 270);
+            // Profile outcome (saved / XP / achievements / records), filled by the finalization.
+            progressBody = Ui.Sized(Ui.Label("Progress", rp.transform, "", 24, TextAnchor.UpperCenter), 0);
+            progressBody.color = new Color(0.75f, 0.95f, 1f);
+            progressBody.supportRichText = true;
             resultsBody.lineSpacing = 1.15f;
             againButton = Ui.Sized(Ui.Button("PlayAgain", rp.transform, "Play again", onPlayAgain), 72);
-            Button sw = null;
-            sw = Ui.Sized(Ui.Button("SwitchMode", rp.transform, switchLabel(), () =>
-            {
-                onSwitchMode();
-                sw.GetComponentInChildren<Text>().text = switchLabel();
-            }), 64);
+            Ui.Sized(Ui.Button("MainMenu", rp.transform, "Main menu", onMainMenu), 64);
             resultsDim.SetActive(false);
         }
 
@@ -133,6 +133,18 @@ namespace BorrowedHex.UI
             banner.gameObject.SetActive(false);
             upgradeDim.SetActive(false);
             resultsDim.SetActive(false);
+            SetProgress(null);
+        }
+
+        /// <summary>
+        /// The profile outcome under the run statistics. Set by GameRoot when the run is
+        /// finalized, which happens inside the sim tick, before this panel first shows.
+        /// </summary>
+        public void SetProgress(string text)
+        {
+            progressBody.text = text ?? "";
+            int lines = string.IsNullOrEmpty(text) ? 0 : text.Split('\n').Length;
+            progressBody.GetComponent<LayoutElement>().preferredHeight = lines * 30;
         }
 
         /// <summary>True while the boss banner has held long enough to start the fight.</summary>

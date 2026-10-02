@@ -458,3 +458,24 @@ Test report: EditMode 165/165, PlayMode 2/2.
   clock 68.2 s, 22 released, 17 hit, 0 taken.
 - Not verified: the choice cards and orbit ring in a running game (no visual pass yet), and
   whether any upgrade is worth picking over another (human playtest).
+
+## Phase 8 — Menus and the player profile (3 Oct 2026)
+
+- Files: new `Scripts/Progression/{PlayerProfile,ProfileStorage,ProfileService}.cs`,
+  `Scripts/UI/{MainMenu,SettingsPanel}.cs`, `Scripts/Presentation/GameRoot.Menus.cs`; changed
+  `GameRoot.cs`, `RunFlowPanels.cs`, `GameplayHud.cs`, `PacketIndicator.cs`, PlayMode tests.
+- Live editor, EditMode: 233/233 pass, 23 new in `ProfileTests`: JSON round trip; an old file
+  missing fields gets defaults; eight invalid profiles rejected (version, ranges, points vs levels,
+  victories vs runs, four equipped, equipped not owned, duplicates, negative stats); load prefers
+  the higher valid generation and preserves damaged copies; nothing valid gives a default plus a
+  warning and writes nothing; finalizing the same run twice adds nothing, also after a reload;
+  sandbox and debug skipped; a failing save keeps the session in memory with a warning; the run-ID
+  list is capped; file storage rotates, a corrupt primary falls back to the backup, an interrupted
+  rotation recovers from the temp file; PlayerPrefs storage under a throwaway prefix survives a
+  reload (refresh stand-in), falls back past a damaged generation, and refuses a >64 KiB snapshot.
+- PlayMode: 5/5 pass. New: launch shows the main menu with the backdrop paused, and focus churn,
+  the pause toggle and a click do not start combat or catch; Play starts a short run and Main menu
+  abandons it with no record and no write; a finished run is saved exactly once and reloads.
+  All PlayMode tests use in-memory storage (never the real save).
+- Not verified: the menu layout by eye, a refresh in a served Web build, a Windows player writing
+  its file. These are owner checks.
