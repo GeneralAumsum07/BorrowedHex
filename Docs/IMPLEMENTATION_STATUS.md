@@ -13,6 +13,15 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 13 — Integration and build handoff — partly done (3 Oct 2026)
+
+- Integration soak (`IntegrationTests`): 18 whole runs across modes, styles and loadouts, invariants every tick.
+- Release builds for Windows and Web; the menu's plain build entries are release, dev variants added (D85).
+- `Docs/HANDOFF.md`: builds, save data, controls, tests, known issues.
+- 309/309 EditMode, 10/10 PlayMode.
+- Not done, needs people or hardware: tuning from real sessions, 60 FPS at 1080p on the target machine, a full
+  short run and an endless boss cycle played by hand in each build.
+
 ### Phase 12 — Endless mode — implemented (owner check pending, 3 Oct 2026)
 
 - Endless from the main menu: 30 s waves, choices after waves 2 and 4, the boss after wave 6, +30 s and

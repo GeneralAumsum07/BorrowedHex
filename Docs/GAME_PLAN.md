@@ -663,14 +663,14 @@ projectile caps hold; a late death produces a complete valid summary.
 
 **Depends on:** Phase 12.
 
-- [ ] Focused EditMode and PlayMode suites green; fresh and advanced profiles; every style, upgrade and mode; pause,
-      focus loss, death, retirement, restart, corrupted-save recovery.
+- [x] Focused EditMode and PlayMode suites green; fresh and advanced profiles; every style, upgrade and mode; pause,
+      focus loss, death, retirement, restart, corrupted-save recovery (309/309, 10/10; integration soak).
 - [ ] Tune the clock economy (start, gains, losses), power curve, backfire cost, overstay timer and pillar durability
       from real sessions and the bot.
 - [ ] 60 FPS at 1080p on the actual target machine in the placeholder build, recorded with its hardware.
 - [ ] Windows and HTTP-served Web builds, each played through a full short run and an endless boss cycle.
-- [ ] Debug reward tools disabled in player builds; the handoff lists build location, version, controls, tests and
-      known issues.
+- [x] Debug reward tools disabled in player builds; the handoff lists build location, version, controls, tests and
+      known issues (D85, `Docs/HANDOFF.md`).
 
 ### Checkpoints
 

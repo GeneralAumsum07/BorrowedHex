@@ -561,3 +561,21 @@ Test report: EditMode 165/165, PlayMode 2/2.
   and files an Endless record; a short-mode choice keeps Retire hidden (checked with activeInHierarchy: a path
   GameObject.Find also returns inactive children, which first made this test fail falsely).
 - Not verified: a full endless cycle played by hand; the HUD wave line, Retire layout and encore fan by eye.
+
+## Phase 13 — Integration and build handoff (3 Oct 2026)
+
+- Files: new `Tests/EditMode/IntegrationTests.cs`, `Docs/HANDOFF.md`; changed `Editor/BuildGame.cs` (D85).
+- Live editor, EditMode: 309/309 pass (18 new). PlayMode: 10/10 pass.
+- Soak: a seeded bot plays {Short, Endless} x {Snatcher, Collector, Daredevil} x {fresh, advanced, assisted},
+  with random menu/focus-loss pauses (30 ticks each) and rotating upgrade picks. Every tick: ordinary enemies <= cap
+  (12/18), 0 <= life <= start clock, endless hostile shots <= 80; while paused the clock and life hold and resume
+  returns to the same state. At the end: a summary with the right mode and style, no live hostile shots, a legal end
+  reason, finalized once (a second call is refused 'already finalized'), and the profile still validates.
+- Measured, unassisted (12 runs): 37-194 s, 0 bosses, at most 6 waves, 0-3 choices; Daredevil runs died fastest
+  (37-59 s, no choice reached). This is the bot's weakness, not a balance reading. Assisted runs assert a short-mode
+  Victory and an endless Retired with at least 2 bosses, so the boss, victory, repeated boss and retire paths ran.
+- Windows release build: Succeeded, 0 errors, 1 warning (Burst package attribute), 98.5 MB. Launched with
+  -batchmode -nographics for 20 s: both scenes loaded, no exception in the player log. Rendering not checked.
+- Web release build: Succeeded, 0 errors, 1 warning, 6.2 min. Served over HTTP; main menu shows no dev buttons;
+  Endless started, enemies spawned, wave clock counted down after the canvas was clicked; no console errors.
+- Not verified: 60 FPS at 1080p on the target machine; full human playthroughs in either build; tuning.
