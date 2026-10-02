@@ -69,5 +69,5 @@ MonoBehaviour:
     perfectWindow: 0.1
     perfectBonus: 0.15
     parryRingRadius: 1.15
-    parryRingWidth: 0.2
+    parryRingWidth: 0.12
     parryWindowScale: 0.5

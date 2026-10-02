@@ -15,12 +15,12 @@ namespace BorrowedHex.Tests
     // circle when the strike resolves. Then no damage and a riposte flies at the attacker.
     //
     // Fixture geometry: the pursuer sits at the origin, wound up and aim-locked to the right,
-    // so its strike circle is centred at C = (0.8, 0), radius 0.75, rim band centre line 0.675.
+    // so its strike circle is centred at C = (0.8, 0), radius 0.75, rim band (0.09 wide) centre line 0.705.
     // The player stands d to the right of C, aiming back at it. Along the aim the band (radius
-    // 1.15) is |d - 1.15| from C, so d = 0.475 puts it exactly on the rim's centre line.
+    // 1.15) is |d - 1.15| from C, so d = 0.445 puts it exactly on the rim's centre line.
     public class ParryTests
     {
-        const float OnTheRim = 0.475f;
+        const float OnTheRim = 0.445f;
         static readonly Vector2 C = new Vector2(0.8f, 0f);
 
         static ArenaSim SimWithPlayerAt(float d)
@@ -96,7 +96,7 @@ namespace BorrowedHex.Tests
         [Test]
         public void InsideTheStrike_BandsApart_TheStrikeLands()
         {
-            // Standing on the strike centre: the band (1.15 out) clears the rim (0.675) by far.
+            // Standing on the strike centre: the band (1.15 out) clears the rim (0.705) by far.
             // Facing it, in time, inside the circle — and still hit: the edges must meet.
             var sim = SimWithPlayerAt(0.05f);
             WoundUpPursuer(sim, 0.1);
@@ -208,11 +208,11 @@ namespace BorrowedHex.Tests
     }
 
     // The band-contact test on its own (D36), with the shipped widths: band radius 1.15 width
-    // 0.2, cone half-angle 45, strike radius 0.75 rim 0.15 → contact when some band point is
-    // 0.5..0.85 from the strike centre.
+    // 0.12, cone half-angle 45, strike radius 0.75 rim 0.09 → contact when some band point is
+    // 0.6..0.81 from the strike centre.
     public class ParryGeometryTests
     {
-        const float Half = 45f, Ring = 1.15f, RingW = 0.2f, Strike = 0.75f, Rim = 0.15f;
+        const float Half = 45f, Ring = 1.15f, RingW = 0.12f, Strike = 0.75f, Rim = 0.09f;
 
         static bool Meet(Vector2 player, Vector2 aim, Vector2 c)
             => ParryGeometry.BandsMeet(player, aim, Half, Ring, RingW, c, Strike, Rim);
@@ -220,11 +220,12 @@ namespace BorrowedHex.Tests
         [Test]
         public void OnAxis_TheBandMeetsTheRim_OnlyInTheTwoDepthRanges()
         {
-            // Along the aim the band is |d - 1.15| from C: contact iff that is in [0.5, 0.85],
-            // i.e. d in [0.3, 0.65] (far rim) or [1.65, 2.0] (near rim). Off-axis band points
+            // Along the aim the band is |d - 1.15| from C: contact iff that is in [0.6, 0.81],
+            // i.e. d in [0.34, 0.55] (far rim) or [1.75, 1.96] (near rim). Off-axis band points
             // only reach further from C here, so the on-axis numbers are the lower bounds.
-            Assert.IsTrue(Meet(new Vector2(0.475f, 0f), Vector2.left, Vector2.zero));
-            Assert.IsTrue(Meet(new Vector2(0.31f, 0f), Vector2.left, Vector2.zero));
+            Assert.IsTrue(Meet(new Vector2(0.445f, 0f), Vector2.left, Vector2.zero));
+            Assert.IsTrue(Meet(new Vector2(0.36f, 0f), Vector2.left, Vector2.zero));
+            Assert.IsFalse(Meet(new Vector2(0.31f, 0f), Vector2.left, Vector2.zero), "inside the old 0.2/0.15 widths, outside the new");
             Assert.IsTrue(Meet(new Vector2(1.8f, 0f), Vector2.left, Vector2.zero));
             Assert.IsFalse(Meet(new Vector2(0.05f, 0f), Vector2.left, Vector2.zero), "on the centre: band clears the rim");
             Assert.IsFalse(Meet(new Vector2(2.6f, 0f), Vector2.left, Vector2.zero), "too far out");
@@ -234,7 +235,7 @@ namespace BorrowedHex.Tests
         public void TheBandExistsOnlyInsideTheCone()
         {
             // Same spot as the on-rim case, but facing away or square sideways.
-            var p = new Vector2(0.475f, 0f);
+            var p = new Vector2(0.445f, 0f);
             Assert.IsFalse(Meet(p, Vector2.right, Vector2.zero));
             Assert.IsFalse(Meet(p, Vector2.up, Vector2.zero));
         }
@@ -242,7 +243,7 @@ namespace BorrowedHex.Tests
         [Test]
         public void ZeroAim_NeverMeets()
         {
-            Assert.IsFalse(Meet(new Vector2(0.475f, 0f), Vector2.zero, Vector2.zero));
+            Assert.IsFalse(Meet(new Vector2(0.445f, 0f), Vector2.zero, Vector2.zero));
         }
 
         [Test]
