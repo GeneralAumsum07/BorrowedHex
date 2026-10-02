@@ -1,686 +1,670 @@
 # Borrowed Hex — Game Design and Implementation Plan
 
-> Confirmed game title: Borrowed Hex. This document is the shared implementation brief for Codex and Claude. Use the `superpowers:executing-plans` workflow when implementation is authorized, and implement the phases in order. Checkboxes describe work to perform; they do not claim that work is complete. Unity CLI is the primary Unity workflow. Do not automatically commit, push, publish, or contact other agents or services.
+> The shared design and implementation brief for Borrowed Hex. Checkboxes describe work to perform; they do not claim
+> that work is complete. Rulings made during implementation live in `Docs/DECISIONS.md` (D1–D56 so far), measured
+> results in `Docs/TEST_EVIDENCE.md`, and phase-by-phase progress in `Docs/IMPLEMENTATION_STATUS.md`. Where this
+> document and a later decision disagree, the later decision wins until this document is updated.
 
-**Date:** 2 October 2026  
-**Status:** Planning document; implementation has not started.  
-**Goal:** Build a short, replayable action game about a rogue magician who temporarily steals enemy attacks and returns them when their borrowed lifetime expires.  
-**Architecture:** A 2.5D game: camera-facing 2D pixel-art characters inside a 3D Unity arena, viewed through a fixed elevated camera, with movement and combat constrained to one flat gameplay plane. Use placeholder character views until artist assets are supplied. Separate combat simulation, run state, progression, and presentation. Author configurable definitions as ScriptableObjects; keep mutable run state and persistent player data separate.  
-**Tech stack:** Recommended project editor: Unity 6.3 LTS `6000.3.25f1`; currently installed editor: `6000.3.5f1`. Use a 3D URP project, C#, Unity Input System, uGUI, Unity Test Framework, and Unity CLI. Verify editor/template/package availability before creation and pin the selected version for both agents and both targets.  
-**Spec:** Sections 1–8 of this document; phased implementation is in section 9. Read both before implementing a phase.
+**Date:** 2 October 2026 (rewritten for the "borrowed time" core rework)  
+**Status:** Phases 0–5 are implemented (short run, enemy roster, the Collector, score). The core rework in section 3
+and Phase 6 is specified here and not started. Values marked *proposal* are starting points that have not been
+playtested; the owner's open questions are in section 13.  
+**Goal:** A fast, short, replayable action game about a rogue magician who steals enemy attacks. Every stolen hex is
+decaying in the magician's hands, the run clock is the magician's life, and nothing in the arena lasts.  
+**Architecture:** 2.5D: camera-facing 2D characters inside a 3D Unity arena under a fixed elevated camera, with all
+movement and combat on one flat plane. Combat is a deterministic plain-C# simulation (`ArenaSim`, D2) with analytic
+collision on the XZ plane (D3); MonoBehaviours read input and draw. Tuning lives in configuration (`GameConfig` and its
+tuning classes), not in scattered constants.  
+**Tech stack:** Unity 6.3 LTS `6000.3.25f1`, 3D URP, C#, Unity Input System, uGUI, Unity Test Framework, Unity CLI.
+Targets: Windows desktop and Web.
 
-## 1. Scope, decisions, and priorities
+## 1. Scope, theme, and priorities
+
+### The theme: "Everything is temporary"
+
+The jam theme is the design's spine, not a coat of paint. Each rule below exists to make something temporary and to
+make the player feel it:
+
+| What is temporary | How the player feels it | Section |
+|---|---|---|
+| The stolen hex | A held packet decays; if it runs out unfired it **backfires** on the magician | 3 |
+| The magician's attention | Only the **selected** packet decays; the other is frozen. Swapping (Q) chooses which hex is burning | 3 |
+| Power | A hex grows stronger the longer it decays, so the best shot is the latest one the player dares | 3 |
+| Life | The **run clock is health**: kills add seconds, hits and backfires take them away | 6 |
+| Cover | Pillars **crumble** after enough hits | 4 |
+| Upgrades | A chosen upgrade lasts **one encounter** only | 5 |
+| Enemies' patience | An enemy left alive too long **turns into something worse** | 4 |
 
 ### Agreed direction
 
-- Theme: **Everything is temporary**.
-- Player fantasy: a nimble rogue magician who borrows dangerous magic rather than owning a conventional weapon.
-- Core interaction: intercept an enemy attack, carry it briefly, reposition, and return it when its timer expires.
-- Two stored attack packets, each with an independent lifetime.
-- Temporary, interacting upgrades acquired during a run.
-- Permanent passive skills purchased with skill points and gated by mastery level.
-- Achievements, personal records, and meaningful progression even after unsuccessful runs.
-- A short main mode and an endless survival mode with scaling encounters and recurring bosses.
-- Customizable capture styles and, eventually, cosmetic presentation.
-- Confirmed 2.5D presentation: 2D pixel-art character sprites in a 3D environment, inspired by the supplied Octopath Traveler reference. Establish the camera, flat combat plane, and separate character-view/collider setup in the earliest phases; final art and lighting polish remain deferred.
-- **Enemy drafting is excluded.** Players do not choose which enemy factions enter the arena.
-- An artist and sound designer handle asset production. This implementation uses functional placeholders and does not prioritize final assets or polish.
+- Player fantasy: a nimble rogue magician who borrows dangerous magic rather than owning a weapon. There is no direct
+  gun and no free damaging spell; damage comes from borrowed attacks (caught projectiles and parried strikes).
+- Core interaction: catch an enemy attack, carry it while it decays and gains power, and fire it before it backfires.
+- Two packet slots. Swapping between them is a core decision, not a convenience (section 3).
+- Encounter-length temporary upgrades; permanent passive skills bought with mastery points.
+- Achievements, personal records, and progression that still advances after a lost run.
+- A short main mode and an endless mode with recurring bosses.
+- Capture styles and, later, cosmetics.
+- 2.5D presentation inspired by Octopath Traveler. An artist and a sound designer produce the assets; this plan uses
+  functional placeholders and does not wait for them.
+- Enemy drafting is excluded: players do not choose which enemies appear.
 
-### Implementation defaults
+### Out of scope
 
-The conversation established the design direction but did not fix every parameter. Values in this document are explicit starting defaults, not claims that they have been playtested. Put them in configuration rather than scattering constants through scripts. Record any later tuning changes with their reason.
-
-- Confirmed delivery targets: Windows desktop and browser Web builds. Initial controls remain keyboard and mouse; mobile browser/touch support is not implied by the Web target.
-- The user will create the repository. Do not create a competing repository or assume its URL/path; use the supplied checkout when available.
-- Deadline scheduling is deferred at the user's request. Do not repeatedly ask for the deadline; the user will provide it later.
-- Confirmed game title: **Borrowed Hex**. Proposed new Unity project folder name: `BorrowedHex`. Preserve any repository path the user supplies instead of renaming it automatically.
-- One arena and one boss are sufficient for the first complete gameplay version.
-- No multiplayer, online accounts, online leaderboards, monetization, cloud saves, procedural level generation, or additional platforms in the baseline scope.
-- No direct player gun or unlimited basic damaging spell. Damage comes from borrowed attacks and upgrades derived from them.
-- Health and timers must remain understandable without relying on final art or sound.
+Multiplayer, online accounts or leaderboards, monetization, cloud saves, procedural levels, controller and touch
+support, extra arenas, and platforms beyond Windows and Web.
 
 ### Priority rule
 
-Make **movement → incoming attacks → capture → timed return → enemy defeat** enjoyable before building progression. A skill tree cannot compensate for awkward interception or weak counterattacks. Preserve a playable build after each phase.
+Make **movement → incoming attacks → catch → decay, swap and fire → enemy defeat** fast and readable before building
+progression. A skill tree cannot rescue an unclear core. Keep a playable build after every phase.
 
 ## 2. Player experience and controls
 
 ### Core loop
 
-1. Read an incoming enemy attack.
-2. Move into a useful interception position.
-3. Activate a short directional catch window.
-4. Carry the captured attack packet for three seconds.
-5. Reposition and aim while its timer shrinks.
-6. Automatically return the attack toward the current aim when it expires.
-7. Use the result to defeat enemies, maintain a scoring chain, and set up another interception.
+1. Read an incoming enemy attack, a melee wind-up, or a crumbling pillar.
+2. Move to a useful interception position.
+3. Open a short directional catch window (or parry a melee strike).
+4. The caught hex lands in a slot. If that slot is selected it starts **decaying and gaining power**; otherwise it
+   waits, frozen.
+5. Swap (Q) to choose which hex burns, reposition, and aim.
+6. Fire (right mouse) as late as you dare: power peaks just before expiry, and expiry backfires.
+7. Kills buy back seconds of life; use them to keep the chain going.
 
-The player should make decisions about interception, ammunition selection, positioning, and timing. Captured attacks retain recognizable identities: bullets return as bullets; rockets return as rockets.
+The decisions the player makes every few seconds: what to catch, which hex to burn now, which to bank, where to stand,
+and how long to hold.
 
-### Initial controls
+### Controls
 
 | Action | Binding | Rule |
 |---|---|---|
-| Move | WASD | Camera-relative directions on the arena plane; normalize diagonal input |
-| Aim | Mouse | Project cursor onto the gameplay plane; preserve last valid aim if projection fails |
-| Catch | Left mouse button | A press opens one catch window; holding does not repeatedly activate it |
-| Dash | Space | Dash toward movement input, or aim when no movement input exists |
-| Release early | Right mouse button | Fire the selected packet now along the current aim (owner direction, D32) |
-| Switch slot | Q | Cycle the packet-slot selection; wraps (owner direction, D33) |
-| Pause | Escape | Pause gameplay; resume through the same menu |
-| Confirm UI choice | Mouse/keyboard navigation | UI input never activates combat actions |
-| Restart | Results button | Clear run state and create a new run identifier |
+| Move | WASD | Camera-relative on the arena plane; diagonals normalized |
+| Aim | Mouse | Cursor projected onto the gameplay plane; the last valid aim is kept if projection fails |
+| Catch / parry | Left mouse | A press opens one catch window; holding does not re-open it |
+| Fire | Right mouse | Fire the **selected** packet now, along the current aim, at its current power. An empty selected slot does nothing (D33) |
+| Swap | Q | Toggle the selected slot. Freezes the packet you leave and resumes the one you select |
+| Dash | Space | Toward movement input, or toward the aim with no input |
+| Pause | Escape, or P (browser-safe fallback) | Pauses gameplay; resume from the same menu |
+| UI | Mouse / keyboard navigation | UI input never triggers combat actions |
+| Restart | Results button | Clears run state and creates a new run ID |
 
-### Initial player tuning
+Firing is now the main verb. Packets no longer fire themselves on expiry (section 3).
+
+### Player tuning
 
 | Parameter | Default |
 |---|---:|
-| Movement speed | 6 arena units/second |
-| Maximum health | 3 hit points |
-| Damage from a normal enemy hit | 1 hit point |
-| Post-hit invulnerability | 0.65 seconds |
-| Dash distance / duration | 2.9 units / 0.18 seconds |
-| Dash cooldown | 1.2 seconds |
-| Dash invulnerability | First 0.12 seconds |
-| Stored packet slots | 2 |
-| Lifetime of each packet | 3.0 gameplay seconds |
-| Catch range / total cone angle | 2.8 units / 90 degrees |
-| Catch window | 0.25 seconds |
-| Catch recovery after window closes | 0.65 seconds |
-| Capacity per packet | 12 energy units |
+| Movement speed | 6 units/s |
+| Life | The run clock, section 6 (replaces the 5-heart bar of D51; see section 13, Q1) |
+| Post-hit invulnerability | 0.65 s (0.5 s after body contact, D51) |
+| Dash distance / duration / cooldown | 2.9 units / 0.18 s / 1.2 s |
+| Dash invulnerability | First 0.12 s; hostile shots pass through an invulnerable player (D12) |
+| Packet slots | 2 |
+| Packet lifetime | 3.0 s of **decaying** time (frozen time does not count) |
+| Catch range / cone | 2.8 units / 90 degrees |
+| Catch window / recovery | 0.25 s / 0.65 s |
+| Packet capacity | 12 energy units |
 
-Dash movement must respect walls. Visual recoil, sprite animation, and camera effects must not displace collision geometry. Zero input, cursor outside the window, and focus loss must not produce invalid movement or direction values.
+Dash respects walls and standing pillars. Visual recoil, sprite animation and camera effects never move collision
+geometry. Zero input, a cursor outside the window, and focus loss never produce invalid movement or aim.
 
-## 3. Capture, storage, and return rules
+## 3. Capture, decay, swapping, and firing
 
-### Packet lifecycle
+This section is the heart of the rework. Items marked *new* change the implemented Phase 3–5 behaviour.
 
-- A catch attempt consumes recovery even if it catches nothing, but an empty attempt occupies no storage slot.
-- The first successful interception creates a packet. Its three-second lifetime begins at that interception.
-- Additional eligible projectiles intercepted during the same catch window join that packet without resetting its timer.
-- Each packet contains immutable attack snapshots: payload type, base damage, speed, size, relative spread, energy cost, original enemy identifier, and whether that shot was a perfect catch.
-- Store data, not references to the original projectile GameObjects. The enemy or projectile can disappear without invalidating a packet.
-- A packet moves with the player visually. Its countdown is independent of its orbit animation.
-- At expiry, release all stored payloads from the player's current position toward the last valid current aim. Preserve their relative spread rather than reversing their historic trajectories.
-- Release exactly once. Free the slot immediately; an echo upgrade must not keep the slot occupied.
-- Two packets never merge automatically. Show their types, fullness, and remaining lifetime separately.
+### Catching
 
-### Eligibility and capacity
+- A catch attempt costs recovery even if it catches nothing; an empty attempt uses no slot.
+- The first successful interception in a window creates a packet. Further eligible projectiles caught in the same
+  window join it, within capacity, without resetting anything.
+- A packet stores immutable attack snapshots (payload type, base damage, speed, size, relative spread, energy cost,
+  original source ID, perfect-catch flag), never references to live projectile objects.
+- Only hostile, capturable attacks can be caught. Returned attacks, echoes, explosions and upgrade effects cannot.
+- A projectile must be inside the active cone and range and approaching the player. A shot moving away cannot be
+  collected from behind; side and rear impacts during an open window still hurt (D16).
+- Energy costs: bolt 1, heavy shot 3, rocket 4. A projectile that does not fit is not consumed; it keeps flying and
+  can hurt the player. A full packet stops collecting and shows it.
+- If a capture and a player impact coincide, the capture wins. One authoritative resolution path prevents double
+  consumption (D15).
 
-- Only hostile, explicitly capturable attacks can be intercepted.
-- Player-returned attacks, echoes, friendly explosions, and the player's own upgrade effects cannot be recaptured.
-- A projectile must be inside the active cone/range and approaching the player-facing capture region. A shot moving away cannot be collected from behind.
-- Bullet cost: 1 energy unit. Heavy shot cost: 3. Rocket cost: 4.
-- A projectile that does not fit completely is not consumed. It continues travelling and can hurt the player.
-- A full packet stops collecting; fullness must be visibly indicated.
-- With both slots occupied, a new catch cannot create a packet unless the Overflow upgrade is active. Existing packets continue their timers normally.
-- If an eligible capture and player impact coincide, successful interception wins. Otherwise ordinary collision and damage apply. Use one authoritative projectile-resolution path to prevent double consumption.
-- Resolve already-expired packets before processing new catches on the same simulation tick, so a freed slot is usable immediately.
+### Which slot a catch fills — *new*
 
-### Perfect catch
+1. If the **selected** slot is empty, the new packet goes there and starts decaying at once.
+2. Otherwise, if the other slot is empty, the new packet goes there and arrives **frozen**.
+3. If both slots are full, the catch catches nothing (the projectile is not consumed), unless an upgrade says
+   otherwise (Overflow, Fusion; section 5).
 
-A shot is perfect when, at interception, its projected path would reach the player's hitbox within 0.10 seconds. Use its current velocity and the player's collision shape, not screen-space distance. A projectile whose path misses the player cannot qualify.
+Selection never moves by itself, including when the selected packet fires or backfires (D33 kept). This means a player
+can deliberately bank a frozen hex in the other slot. That is intended: banking is safe, but a banked hex gains no power
+and earns no seconds until the player commits to it.
 
-Perfect shots receive a baseline 15% return-damage bonus. Keep this flag per payload, not for the whole packet. The Final Second upgrade adds to this bonus. This system is added after basic capture works; it is not a prerequisite for the first counterattack prototype.
+### Decay — *new*
 
-### Clock, pause, and lifecycle
+- **Only the selected packet decays.** Its lifetime (3.0 s) counts down and its power rises only while it is selected
+  and the gameplay clock is running.
+- Swapping away freezes the packet exactly where it is: remaining lifetime and accumulated power both stop. Swapping
+  back resumes both from the same point.
+- Pause, upgrade choices, the boss intro and focus loss freeze every packet, as before.
 
-One gameplay clock governs movement cooldowns, projectile lifetime, packet expiry, enemy telegraphs, upgrades, and run duration. Pause, upgrade selection, results, and application focus loss stop that clock. UI animations may use an unscaled clock.
+### Power — *new*
 
-Death cancels every pending packet, echo, explosion, enemy action, and delayed spawn. None may execute in the results screen or the next run. Restart clears event subscriptions and returns pooled objects to a neutral state.
+A packet's power multiplier rises with its decaying time `d` (seconds, 0 to 3.0):
 
-### Ammunition starvation
+`power = 1.0 + 0.35 * d` → 1.0 when caught, 1.7 at 2.0 s, 2.05 just before expiry. *Proposal* (section 13, Q3).
 
-Enemy compositions must normally keep ranged ammunition available. Also implement a visible arcane lantern as a safety source: if enemies remain but there are no ranged enemies, hostile projectiles, or stored packets for two seconds, it emits a pair of slow capturable bolts every two seconds until the condition ends. Lantern attacks are hostile but generate no capture XP or score by themselves. This prevents a melee-only remainder from making the game unwinnable without giving the player a direct gun.
+- Power multiplies the damage of every payload in the packet, including explosion damage. It does not change speed,
+  size, spread, explosion radius or pierce count.
+- The HUD shows power continuously for both slots, and marks the last 0.5 s of lifetime as a danger zone.
+- The perfect-catch bonus (15% per perfect payload) multiplies on top of power.
 
-> **Superseded after the Phase 4 playtest (owner direction, D26).** The arcane lantern is removed: it read as random
-> and out of place. A melee-only remainder is answered by the **parry** instead: a catch window open while facing a
-> Pursuer when its strike resolves intercepts the strike and redirects it at the attacker as a riposte (2 damage,
-> pierce 1). It stays a borrowed attack, not a direct gun: a riposte exists only when an enemy commits a strike.
->
-> **Made harder after the second playtest (owner direction, D36).** The parry is no longer the whole cone. A thin gold
-> parry band (1.15 from the player, 0.12 wide, spanning the cone's angle) is shown only during the first half of the
-> catch window (0.125 s of 0.25 s); the Pursuer's strike circle shows a thin gold rim (0.09 wide) during its wind-up.
-> The strike is parried only if the band touches that rim while the parry window is open; otherwise standing anywhere
-> inside the strike circle is a hit. All three numbers are tuning (`capture.parryRingRadius`, `parryRingWidth`,
-> `parryWindowScale`; `pursuer.strikeEdgeWidth`).
+### Backfire — *new*
 
-## 4. Enemies and borrowed attack types
+A packet that reaches the end of its lifetime unfired **backfires**:
 
-### Initial roster
+- The packet is destroyed; no projectiles are fired.
+- The player loses **10 seconds** of run clock (*proposal*, Q2) and takes the normal post-hit invulnerability. The
+  loss resets the combo multiplier like any hit.
+- A burst at the player's position shows it; backfires do not damage enemies.
+- A backfire is a hit for statistics (`damage taken`) and for the Untouchable achievement.
+- Dash invulnerability does not prevent a backfire: the hex is in the player's hands.
 
-| Enemy | Behaviour | Attack supply | Purpose |
-|---|---|---|---|
-| Bolt Acolyte | Keeps distance, telegraphs, aims, then fires | Three ordinary bolts | Teaches capture and return |
-| Pursuer | Approaches the player and performs a telegraphed close strike | None in the baseline | Pressures positioning and gives crowd targets |
-| Scatter Caster | Repositions between attacks | Five-shot fan | Supplies fuller packets and tests interception angles |
-| Siege Familiar | Slow, clearly telegraphed attacks | One explosive rocket | Supplies crowd-clearing ammunition |
-| Elite variant | Uses its base enemy's behaviour with one explicit modifier | Same payload identity | Increases difficulty without an entirely new enemy |
+A frozen packet can never backfire, because only a decaying packet's lifetime runs.
 
-Start with three health for an acolyte, two for a pursuer, five for a scatter caster, and eight for a siege familiar. Ordinary returned bolts deal one damage; rockets deal five within a 1.6-unit explosion radius. Incoming versions still deal one player hit. Treat these as tuning defaults.
+### Firing
 
-Enemy movement uses the flat arena and simple steering. Avoid introducing navigation complexity before the chosen arena requires it. Enemies cannot spawn on the player; show a spawn warning before they become dangerous. Clearly telegraph melee wind-up, firing direction, and rocket launch.
+- Right mouse fires the selected packet from the player's current position along the current aim, keeping the
+  payloads' relative spread. The slot frees immediately.
+- A release fires exactly once. Echo effects never keep a slot occupied.
+- Fired payloads carry their original source ID, so a hex can kill the enemy that cast it (Return Policy).
 
-### Weapon implementation
+### Per-enemy hexes — *new*
 
-The player has a **payload system**, not a conventional weapon inventory. Share attack definitions between enemy emission and player return, with faction and modifier context determining who can be hurt. Returning an attack does not create a different unrelated weapon.
+Each source gives a borrowed hex its own character when fired, so what the player caught matters as much as when they
+fire it. Values are *proposals* (Q4).
 
-Build ordinary bolts first, then fan volleys, then rockets and explosions. Heavy shots, fireballs, laser recordings, shockwaves, and stealing charge momentum are expansion candidates, not first-version requirements. Never mark a boss attack capturable until a return behaviour exists for it.
-
-### First boss: the Collector
-
-The Collector alternates three readable patterns: a bolt stream, a fan volley, and a rocket attack.
-
-> **Changed by the owner for Phase 5 (D38):** no rocket attack. The Collector cycles a bolt stream, a sweeping melee attack, a fan volley and an area ground slam, and starts with 50 health instead of 120. Its name is announced by a pop-up banner when the boss window opens. Include short repositioning gaps but no extended period with neither targets nor ammunition. The boss remains damageable in the baseline version.
-
-> **Changed again by the owner after the Phase 5 playtest (D47-D49):** no fixed cycle; the Collector picks its attack from the player's position and distance (behind a pillar → the slam, which ignores line of sight). The slam cannot be parried; the sweep can, through a short-lived gold arc. It moves slightly faster, all four attacks are slightly faster, and when the player is far away it may teleport behind them.
-
-Start with 120 health, then tune so a new character with no permanent skills can win within the short-mode boss window. Test this assumption before adding mastery progression. A repeated endless boss gains one predefined pattern variation, such as a second fan angle, rather than only more health. Charges and melee attacks are avoidable hazards, not automatically stealable abilities.
-
-## 5. Temporary run upgrades
-
-All upgrades below expire when the run ends. Short mode gives three choices, one at each encounter transition. Offer three distinct eligible upgrades and let the player pick one. Randomness is seeded for reproducible debugging. Short mode does not offer a previously selected upgrade again.
-
-| ID / upgrade | Rank-one behaviour | Endless rank scaling |
+| Caught from | Returns as | Rule |
 |---|---|---|
-| `piercing_return` — Piercing Return | Returned non-explosive projectiles pass through one extra enemy | One extra unique target per rank; maximum rank 3 |
-| `echo_volley` — Echo Volley | Repeat the release after 0.20 seconds at 25% damage | Echo damage 25%, 40%, 55%; one echo, not recursive copies |
-| `heavy_orbit` — Heavy Orbit | Stored packets damage nearby enemies for 1 every 0.35 seconds | Radius 1.0, 1.2, 1.4 units; each enemy has its own hit interval |
-| `parting_gift` — Parting Gift | Release creates a 1-damage blast around the player | Damage 1, 2, 3; radius 1.5, 1.75, 2.0 units |
-| `final_second` — Final Second | Add 20 percentage points to perfect-shot damage bonus | Additional bonus 20%, 40%, 60%, added to baseline 15% |
-| `overflow` — Overflow | A catch with both slots full releases the oldest packet at 65% power | Immediate release power 65%, 80%, 95% |
+| Bolt Acolyte | Piercing bolt | Each returned bolt passes through one extra enemy (two targets) |
+| Scatter Caster | Shotgun | The fan fires with its spread compressed to ±12 degrees; each pellet deals 1.5 and travels at most 6 units |
+| Siege Familiar | Rocket | Unchanged: a 1.6-unit burst for 5, hitting each actor once (D22, D23) |
+| The Collector | Heavy bolt | Each returned boss bolt deals 2 instead of 1 |
+| Pursuer (parry) | Riposte | Unchanged: flies at the attacker, 2 damage, pierce 1 (D26, D27). A riposte is not a packet: it never decays, swaps or backfires |
 
-Overflow triggers at most once per catch activation and only upon a successful interception that needs a new slot. It does not eject a packet on an empty click or repeatedly release while appending shots. Natural expiry always uses normal power. Apply the overflow multiplier to release-derived damage, including its echo and parting blast.
+A packet that mixes payloads (from one catch window crossing two sources) fires each payload with its own rule.
 
-Projectiles with piercing keep a set of already-hit actor IDs. Explosions damage an actor once per explosion. Echoes inherit provenance and cannot produce their own echoes. Orbit damage does not count as a returned-volley hit for combo building. Compute modifiers in a documented order; do not mutate the original attack-definition asset.
+### Parry (replaces the arcane lantern)
 
-Intended build examples: Walking Arsenal combines orbit damage and parting blasts; Return Specialist combines perfect catches and piercing; Overflow Engine combines forced releases and echoes. These are playtest hypotheses, not balance guarantees.
+The arcane lantern is removed (D26). A melee-only remainder is answered by the parry: during the first half of the
+catch window a thin gold parry band (1.15 from the player, 0.12 wide, spanning the cone) is shown. If it touches the
+gold rim of a Pursuer's strike circle while that rim is shown (0.1–0.35 s into the wind-up, D46), the strike is
+cancelled, the Pursuer staggers, and a riposte fires at it. The Collector's sweep can be parried the same way through
+its gold arc (D47); its slam never can. Parries ignore packet slots and capacity (D28).
 
-## 6. Run modes, score, and replayability
+### Clock and lifecycle
+
+One gameplay clock governs cooldowns, projectiles, packet decay, telegraphs, upgrades, enemy overstay timers and the
+run clock. Pause, upgrade choices, the boss intro, results and focus loss stop it. UI animation may use real time.
+
+Death (the run clock reaching zero) cancels every pending packet, echo, explosion, enemy action and spawn. Nothing
+executes in the results screen or the next run. Restart clears subscriptions and resets pooled objects.
+
+### Ordering inside one tick
+
+Aim updates first, then packet decay and backfires, then catches (so a slot freed by a backfire is usable the same
+tick, D17), then projectile resolution, then terminal checks in the order death, victory, time expiry (D45).
+
+## 4. Enemies, pillars, and overstaying
+
+### Roster
+
+| Enemy | Behaviour | Supplies | Health |
+|---|---|---|---:|
+| Bolt Acolyte | Keeps distance, telegraphs, fires three bolts | Piercing bolts | 3 |
+| Pursuer | Routes around pillars (D37) to the player; telegraphed strike with a parry rim | Ripostes (parry) | 2 |
+| Scatter Caster | Repositions between attacks; five-shot fan | Shotgun | 5 |
+| Siege Familiar | Slow; telegraphed rocket | Rocket | 8 |
+| Overstayed (elite) | Any of the above after overstaying, see below | Same hex | 1.5× |
+
+Incoming attacks cost the player run-clock seconds (section 6). Enemies cannot spawn on the player and show a spawn
+warning before they become dangerous; only bodies past their warning hurt. Melee wind-ups, firing directions and rocket
+launches are clearly telegraphed. Pursuer speed is 4.2 (D56), still under the player's 6.
+
+### Overstaying — *new*
+
+An ordinary enemy that stays alive too long turns into something worse. *Proposal* (Q5):
+
+- Each ordinary enemy has an **overstay timer** of 25 active seconds, starting when its spawn warning ends.
+- During its last 5 seconds a shrinking ring around the enemy warns the player.
+- When it runs out, the enemy becomes **overstayed**, once only: health is restored to 1.5× its base maximum, its
+  attack interval drops to 0.75×, it moves 15% faster, and it is tinted and outlined so it reads differently.
+- An overstayed enemy is worth 1.5× score and counts as an elite for XP. Letting enemies ripen is a deliberate
+  risk-for-reward option, not an exploit: it costs time and safety.
+- The Collector does not overstay; the run clock is its pressure.
+
+### Pillars crumble — *new*
+
+The arena keeps its four pillars, but they are temporary cover. *Proposal* (Q6):
+
+- Each pillar has **12 durability**. Any projectile that hits it (hostile or returned) removes 1; a rocket burst
+  touching it removes 3; a Collector slam whose circle touches it removes 3.
+- The pillar shows its damage in stages (cracks at 8 and 4).
+- At 0 it crumbles: it stops blocking movement, projectiles and line of sight, and leaves visible rubble with no
+  collision. Enemy routing (`EnemySteering.Waypoint`, recomputed each tick) and the Collector's line-of-sight check
+  simply stop seeing it.
+- All pillars are restored at the start of each encounter and at the boss transition, so every encounter starts with
+  the same arena.
+
+### The Collector (boss)
+
+50 health. Four patterns: bolt stream (12 shots), fan volley (9 bolts), sweep (parryable through its gold arc) and
+ground slam (never parryable). Announced by a name banner that pauses the clock (D41).
+
+Pattern choice by position (D48, revised by D52–D55), in priority order: after 2 melee patterns in a row, ranged (fan
+within 7.5, else stream); no line of sight → slam; within 2.4 → slam; within 5.0 → sweep (a seeded 35% chance it slams
+instead); within 7.5 → fan; else stream. It never starts the same pattern more than twice in a row (a third pick
+becomes its partner: fan↔stream, slam↔sweep). Ranged patterns walk to a firing spot swung 25–55 degrees around the
+player; the reposition gap is up to 1.5 s.
+
+Teleport: when the player is at least 6 units away and 5 s have passed since the last one, each pattern start rolls a
+seeded 48% chance to blink 2.6 units behind the player (0.6 s wind-up). The attack after a teleport is always melee, a
+seeded 50/50 slam or sweep, and its wind-up starts on arrival. No teleport at the melee cap. Move speed 3.6; wind-ups
+sweep 0.77 s, slam 0.8 s.
+
+Returned boss bolts are heavy bolts (section 3). Crumbling pillars change the fight: a hidden player draws slams, and
+slams wear the pillar down. A repeated endless boss gains one predefined pattern variation rather than only health.
+
+## 5. Encounter upgrades
+
+### Rules — *new*
+
+- After each encounter is cleared, the game pauses and offers **three distinct upgrades**; the player picks one.
+- The chosen upgrade lasts **for the next encounter only** (the one picked after encounter 3 lasts for the boss
+  fight). It expires when that encounter is cleared, and the next choice replaces it.
+- The player therefore holds at most one encounter upgrade at a time. Permanent passives (section 7) are what combine.
+- Offers are seeded for reproducible debugging. The same upgrade may be offered again in later encounters.
+- An upgrade's effect applies to packets fired while it is active. A packet caught under one upgrade and fired after
+  it expired does not keep the effect.
+
+### Upgrade pool
+
+| ID / name | Effect for one encounter |
+|---|---|
+| `piercing_return` — Piercing Return | Returned non-explosive payloads pass through one extra enemy (stacks with the acolyte's own pierce) |
+| `echo_volley` — Echo Volley | Each release repeats after 0.20 s at 25% damage; one echo, never recursive |
+| `heavy_orbit` — Heavy Orbit | Held packets (selected or frozen) damage enemies within 1.0 units for 1 every 0.35 s, per enemy |
+| `parting_gift` — Parting Gift | Each release also creates a 1-damage blast of radius 1.5 around the player |
+| `final_second` — Final Second | Adds 20 percentage points to the perfect-catch bonus |
+| `overflow` — Overflow | A catch with both slots full fires the **selected** packet at once at its current power and puts the new packet in its place |
+| `quick_draw` — Quick Draw *(new; idea 5)* | Firing within 0.3 s after a swap deals +30% damage |
+| `fusion` — Fusion *(new; idea 6)* | A catch with both slots full merges the new catch and the frozen packet into the selected packet (capacity ignored, +25% power); the other slot stays locked until the merged packet fires |
+
+Quick Draw and Fusion are the owner's swap-fire and merge ideas. They start in this pool because Phase 7 (upgrades)
+comes before the skill tree; whether either moves to the permanent tree is section 13, Q7.
+
+Modifier order for a release: copied base payload → per-enemy hex rule → perfect-catch bonus → power multiplier
+(including Overflow's current power and Fusion's +25%) → Quick Draw → echo fraction. Explosions and orbit damage state
+their own rules. Never mutate the attack-definition asset. Echoes inherit provenance and cannot echo. Orbit damage is
+not a returned hit for combo purposes. Piercing payloads keep a set of hit actor IDs; an explosion hits each actor once.
+
+## 6. Run modes, the life clock, and score
+
+### The run clock is life — *new*
+
+The clock that limits the run is also the magician's health (owner idea 7; replaces the hearts of D51, Q1).
+
+- A short run starts with **300 s** (D56). The clock counts down in active gameplay time and is capped at 300 s.
+- **Kills add seconds** (*proposal*, Q8): acolyte and pursuer +3 s, scatter caster +5 s, siege familiar +6 s,
+  overstayed enemies 1.5× their base. Despawned enemies give nothing.
+- **Hits take seconds**, at 5 s per former half heart: an ordinary enemy hit −10 s, a boss attack (including its
+  bolts) −20 s, body contact −5 s (ordinary) or −10 s (boss), a backfire −10 s.
+- Damage numbers float up from the player ("−10") and the clock flashes; kill gains float up from the kill ("+3").
+- When the clock reaches zero the run ends. If the last change was damage or a backfire the end reason is `Death`;
+  if it ran out by ticking it is `TimeExpired`. Both are losses; the distinction is for statistics.
+- The clock is the largest element of the HUD.
 
 ### Short mode
 
-- Three 40-second encounters followed by a boss window of at most 60 seconds: maximum 180 active gameplay seconds.
-
-> **Changed by the owner (D50):** each encounter ends when all of its enemies are killed (slightly fewer enemies than before), and one shared 180-second clock covers the three encounters and the boss. Player health is 5 hearts, counted in halves (D51).
-- Upgrade choices at 40, 80, and 120 seconds pause gameplay. Existing packets and enemies are preserved through the choice; all timers remain frozen.
-- Stop ordinary spawn scheduling at the boss transition. Despawn remaining ordinary enemies and their unclaimed projectiles without score or XP; preserve already captured packets. Introduce the boss with a visible warning.
-- Encounter-one roster: acolytes and a few pursuers. Encounter two adds scatter casters. Encounter three adds siege familiars and mixed formations.
-- Defeating the boss wins immediately. Death loses immediately. A living boss at 180 seconds produces a `TimeExpired` loss. Present the objective clearly from the start.
-- Maximum simultaneously active ordinary enemies: 12. Queued spawns wait when the limit is reached rather than silently increasing pressure.
-- Use authored formations with seeded variation, not random placements that can surround the player without warning.
+- Three encounters, then the Collector, under the one shared clock (D50).
+- Each encounter draws a fixed, seeded list of authored formations up front (4, 5 and 5 formations) and ends when every
+  member is dead. Encounter one: acolytes and a few pursuers; two adds scatter casters; three adds siege familiars.
+- After each encounter, the upgrade choice pauses everything; packets and pillars are kept through the choice, then
+  pillars are restored as the next encounter starts.
+- At the boss transition, ordinary spawning stops; there are no leftover enemies because encounters are kill-all.
+  Captured packets are preserved. The banner announces the boss.
+- Defeating the boss wins immediately; the clock reaching zero loses.
+- At most 12 ordinary enemies at once; queued spawns wait rather than stacking pressure (D44).
 
 ### Score and records
 
-Initial kill values: pursuer/acolyte 10, scatter caster 20, siege familiar 25, elite 1.5 times its base value, boss 250. Add two points per unused active second on a short-mode victory.
+Kill values: pursuer and acolyte 10, scatter caster 20, siege familiar 25, overstayed 1.5× base, boss 250. A victory
+adds 2 points per second left on the clock.
 
-A packet's first successful returned hit increases the combo multiplier by 0.25, from 1.0 to a cap of 3.0, and refreshes a five-second combo timer. Further hits from that packet or its echo do not increase it again. Score kills using the current multiplier. Taking damage resets the multiplier. Combo time freezes during menus. Catching alone gives no score.
+A packet's first returned hit (or a riposte, D40) raises the combo multiplier by 0.25, from 1.0 to a cap of 3.0, and
+refreshes a 5 s combo timer. Further hits from the same release or its echo do not raise it again. Taking damage or
+backfiring resets it. Catching alone gives no score.
 
-Track total score, duration, bosses defeated, kills by attack type, packets released/hit, perfect shots, damage taken, and best release's distinct kills. A release and its echo share one root release identifier. Use that identifier to count a best volley without double-counting enemies.
+Tracked: score, duration, bosses defeated, kills by hex type, packets fired, backfires, swaps, average fire power,
+perfect shots, damage taken in seconds, seconds gained from kills, pillars crumbled, enemies that overstayed, and the
+best single release's distinct kills (a release and its echo share one root release ID).
 
-Personal records are separated by mode and capture style, with build version, seed, mastery level, and equipped passive IDs attached. Permanent stats affect comparisons; do not present unlike loadouts as a fair global competitive leaderboard. Provisional rank thresholds live in configuration and must be tuned from actual sessions.
+Personal records are kept per mode and capture style, with build version, seed, mastery level and equipped passives.
+They are not presented as a fair global leaderboard.
 
 ### Endless mode
 
-Endless uses the same combat, upgrades, enemies, boss, score events, and profile. It adds a different encounter scheduler rather than duplicating the game.
+Same combat, enemies, boss, score and profile, under a different scheduler.
 
-- Normal waves last 30 active seconds. Provide an upgrade after every two waves.
-- After six normal waves, stop regular spawns, clean up ordinary enemies/projectiles without rewards, and start a boss encounter. The boss encounter ends on boss defeat or player death, not on a fixed timer.
-- Defer the wave-six upgrade until that boss is defeated. Repeat the six-wave/boss cycle; restore one health after each defeated boss, clamped to maximum health.
-- Endless upgrades may increase owned upgrades to rank 3. Once all six upgrades reach their caps, stop offering choices; do not create an unbounded damage multiplier.
-- Permit retiring between waves; keep earned progression and record the result as `Retired`, distinct from death or victory. This is not save-and-resume of an unfinished run.
-- Escalate combinations and elite frequency first, then bounded movement/attack frequency. Keep active ordinary enemies capped at 18, bullets at a defined pool limit, and telegraphs above a readable minimum.
-- Initial scaling per completed six-wave cycle: health +15%, movement +5% up to +25%, attack interval -5% down to 70% of baseline. Boss health +20% per cycle. Revisit these values after baseline combat tests.
-- If the projectile budget is full, delay an emission with a visible/readable continuation; never drop dangerous bullets invisibly or recycle live shots beneath the player.
-
-Replayability comes from build experimentation, different capture styles, mixed formations, increasing mastery, personal records, and surviving harder encounters. Achievements and the tree provide finite milestones; they are not the only reason to replay.
+- The clock starts at 300 s, capped at 300 s, and is life exactly as in short mode (Q9).
+- Normal waves last 30 active seconds. An upgrade choice comes every two waves and lasts until the next choice.
+- After six waves, regular spawns stop, ordinary enemies and their projectiles are cleaned up without rewards, and the
+  boss appears. The wave-six choice is deferred until the boss falls. Defeating a boss restores 30 s of clock.
+- Offered upgrades have a rank equal to the cycle number, capped at 3 (rank scaling: Piercing +1 target per rank; Echo
+  25/40/55%; Orbit radius 1.0/1.2/1.4; Parting Gift damage 1/2/3 and radius 1.5/1.75/2.0; Final Second +20/40/60;
+  Overflow and Fusion unchanged; Quick Draw +30/40/50%).
+- Retiring between waves keeps earned progression and ends the run as `Retired`.
+- Per completed cycle: enemy health +15%, movement +5% (to +25%), attack interval −5% (to 70%), boss health +20%,
+  overstay timer −2 s (to a minimum of 15 s). At most 18 ordinary enemies. A full projectile budget delays an emission
+  visibly; live shots are never dropped or recycled under the player.
 
 ## 7. Permanent progression, achievements, and customization
 
 ### Mastery and points
 
-Mastery is account-wide and capped at level 10 for the first version. Start at level 1 with zero points. Each level gained awards one skill point, for nine total points. Unlock all nine passive nodes through play; equip at most three at once so completed progression still permits different loadouts.
+Account-wide mastery, capped at level 10. Level 1 starts with no points; each level gained gives one point (nine
+total). Advancing from level `L` costs `100 + 50 * (L - 1)` XP; excess carries over. At level 10, statistics keep
+counting without new points.
 
-XP required to advance from level `L` to `L+1` is `100 + 50 * (L - 1)`. Carry excess XP through multiple level gains. At level 10, preserve lifetime statistics without issuing further spendable points.
-
-Initial run XP:
+Run XP:
 
 ```text
 2 * normal enemy kills
-+ 5 * elite enemy kills
++ 5 * overstayed enemy kills
 + 35 * boss kills
-+ 5 * completed normal encounters
-+ min(20, perfect shots that subsequently damage an enemy)
++ 5 * cleared encounters (short) or completed waves (endless)
++ min(20, perfect shots that damage an enemy)
 ```
 
-Count each perfect shot once for XP, even if it pierces several targets. An elite kill uses the elite value instead of also receiving the normal value. Short-mode timed encounters count when the player survives their transition; endless normal waves count at their transition. Despawning an enemy never counts as a kill. Capture quantity, idle time, and lantern emissions give no XP on their own.
-
-Award this earned XP on death, victory, time expiry, or retirement. Finalize each run exactly once using a unique run ID. No achievement awards additional skill points in the baseline, so the tree's economy remains consistent. Points and mastery belong to the profile; run upgrades belong only to the current run.
+XP is awarded on every ending (victory, death, time expiry, retirement) and finalized exactly once per run ID. No
+achievement awards points. Riposte capture XP remains an open question from D29.
 
 ### Nine-node skill tree
 
-Each node costs one point. Tier-one requires mastery level 2; tier-two level 4 and its branch's tier-one node; tier-three level 7 and its branch's tier-two node. Prerequisites must be owned, not necessarily equipped.
+Each node costs one point. Tier one needs mastery 2; tier two needs mastery 4 and its branch's tier-one node; tier
+three needs mastery 7 and its branch's tier-two node. Owned (not equipped) prerequisites suffice. At most three nodes
+are equipped at once. Buying, equipping and free respec happen between runs; validation lives in domain logic.
 
-| Branch / tier | Stable ID | Permanent passive when equipped |
+| Branch / tier | ID | Passive when equipped |
 |---|---|---|
-| Precision 1 | `precision_angle` | Add 15 degrees to total catch angle |
-| Precision 2 | `precision_capacity` | Add 2 energy units to each packet's capacity |
-| Precision 3 | `precision_recovery` | Reduce post-catch recovery by 0.10 seconds |
-| Mobility 1 | `mobility_speed` | Increase movement speed by 5% |
-| Mobility 2 | `mobility_dash_recovery` | Reduce dash cooldown by 0.10 seconds |
-| Mobility 3 | `mobility_dash_distance` | Add 0.30 units to dash distance; keep dash duration unchanged |
-| Resilience 1 | `resilience_grace` | Add 0.15 seconds of post-hit invulnerability |
-| Resilience 2 | `resilience_health` | Add one maximum health; start runs at that maximum |
-| Resilience 3 | `resilience_dash_grace` | Add 0.04 seconds of dash invulnerability, capped at dash duration |
+| Precision 1 | `precision_angle` | +15 degrees catch cone |
+| Precision 2 | `precision_capacity` | +2 energy per packet |
+| Precision 3 | `precision_recovery` | −0.10 s catch recovery |
+| Mobility 1 | `mobility_speed` | +5% movement speed |
+| Mobility 2 | `mobility_dash_recovery` | −0.10 s dash cooldown |
+| Mobility 3 | `mobility_dash_distance` | +0.30 dash distance, same duration |
+| Resilience 1 | `resilience_grace` | +0.15 s post-hit invulnerability |
+| Resilience 2 | `resilience_time` | +20 s starting clock and cap (*replaces* `resilience_health`) |
+| Resilience 3 | `resilience_dash_grace` | +0.04 s dash invulnerability, capped at dash duration |
 
-Buying, equipping, and respeccing occur between runs. Free respec refunds all purchased nodes and unequips them, preserving mastery, achievements, records, and lifetime statistics. Validate point balance, mastery gate, prerequisite ownership, duplicate purchase, and the three-equipped-node limit in domain logic, not only disabled UI buttons.
+If the owner moves Quick Draw or Fusion into the tree (Q7), they replace nodes here rather than growing the tree.
 
 ### Achievements
 
-Implement achievements from gameplay events with stable IDs. Persist cumulative counters and completion once; do not repeatedly grant rewards when a completed condition occurs again. Functional badges suffice until cosmetics are supplied.
-
-| ID / name | Exact first-version condition |
+| ID / name | Condition |
 |---|---|
-| `return_policy` — Return Policy | A returned payload kills the same actor identified as its original source |
-| `first_borrow` — First Borrow | A captured payload damages any enemy |
-| `crowd_control` — Crowd Control | One root release, including its echo, kills five distinct enemies |
+| `return_policy` — Return Policy | A returned payload kills the actor that originally cast it |
+| `first_borrow` — First Borrow | A returned payload damages any enemy |
+| `crowd_control` — Crowd Control | One root release, with its echo, kills five distinct enemies |
 | `perfect_timing` — Perfect Timing | Five perfect shots damage enemies in one run |
-| `untouchable` — Untouchable | Finish a normal short-mode encounter without losing health during it |
-| `mixed_bag` — Mixed Bag | Defeat enemies using both returned ordinary bolts and returned rockets in one run |
+| `untouchable` — Untouchable | Clear a short-mode encounter without a hit or a backfire |
+| `mixed_bag` — Mixed Bag | Kill enemies with returned bolts and returned rockets in one run |
 | `final_notice` — Final Notice | Win short mode |
 | `second_encore` — Second Encore | Defeat two bosses in one endless run |
-| `persistent_student` — Persistent Student | Reach mastery level 5 |
-| `fully_trained` — Fully Trained | Reach mastery level 10 |
+| `persistent_student` — Persistent Student | Reach mastery 5 |
+| `fully_trained` — Fully Trained | Reach mastery 10 |
 
-Death must not erase an achievement already earned during a run. Rewards are badges initially and cosmetic IDs when assets are available; core functionality does not depend on receiving those assets.
+Completion persists once; death never erases an achievement earned during the run. Rewards are badges now and
+cosmetic IDs once assets exist.
 
 ### Capture styles
 
-Build Snatcher first. Add the other two only after the basic loop, modifiers, and progression work. All styles are available when their implementation phase is complete; no extra unlock grind is required.
-
-| Style | Catch behaviour | Trade-off |
+| Style | Catch | Trade-off |
 |---|---|---|
-| Snatcher | Baseline cone, range, window, and recovery | Balanced and precise |
-| Collector | 140-degree cone, 0.40-second window, 1.00-second post-window recovery | Broad interception with more commitment |
-| Daredevil | Catch action performs a dash and captures along its forward swept path during that dash | Aggressive interception tied to dash availability |
+| Snatcher | Baseline cone, range, window, recovery | Balanced, precise |
+| Collector | 140-degree cone, 0.40 s window, 1.00 s recovery | Broad, more commitment |
+| Daredevil | The catch is a dash that captures along its swept path | Aggressive, tied to dash availability |
 
-For Daredevil, Catch and Dash share the dash cooldown. Space performs the same capturing dash; pressing both on the same tick produces one action. Its packet lifetime and capacity remain unchanged. Permanent dash skills apply; catch-recovery reductions do not shorten its shared dash cooldown. Precision angle affects the swept capture cone.
+Daredevil's catch and dash share the dash cooldown; pressing both on one tick produces one action. All styles keep two
+slots, the 3.0 s decay lifetime, the frozen-unselected rule and the backfire. The selected style and cosmetic IDs are
+saved; unknown IDs fall back to Snatcher and the default look. Cosmetics never change hitboxes or hide timers.
 
-Store selected style and cosmetic IDs in the profile. Invalid or removed IDs fall back to Snatcher/default appearance. Cosmetic selections must never affect hitboxes or hide expiration indicators.
+## 8. Unity architecture and conventions
 
-## 8. Unity architecture and execution conventions
+### Environment
 
-### Verified environment
+The project is at `C:/Users/Rachit/BorrowedHex` on Unity `6000.3.25f1` (3D URP), in a Git repository with LFS. Work
+happens on `main`, committed and pushed as work proceeds (owner instruction, D1). Exact package versions are recorded
+in `Docs/IMPLEMENTATION_STATUS.md`.
 
-Read-only checks on 2 October 2026 established:
-
-- Unity CLI executable: `C:/Users/Rachit/AppData/Local/Unity/bin/unity.exe`.
-- CLI version: `1.0.0-beta.8`.
-- Installed editor: `6000.3.5f1`, under `C:/Program Files/Unity/Hub/Editor/6000.3.5f1/Editor/Unity.exe`.
-- Installed 3D URP template ID: `com.unity.template.urp-blank`.
-- The CLI reported no connected Pipeline-enabled editor. This does not prove that no other editor process is open.
-- This chat's directory contains no existing Unity project to modify. The project and every file path below are proposed, not existing implementation.
-
-An additional read-only check on 2 October 2026 found `6000.3.25f1` as the latest 6.3 LTS patch in the CLI release catalog. Its official release page records 24 September 2026. This is the recommended project version; it has not been installed during planning. Unity 6.3 LTS is supported until December 2027. There is no identified game requirement that needs a newer Update-release branch.
-
-Recheck availability at execution time. Install/choose the recommended editor and its Web Build Support module before project creation, using the user's actual installation authorization. Rediscover templates for that exact version: the template ID above was verified against the currently installed older patch. Inspect template-installed packages before adding dependencies. Keep Windows and Web build profiles on the same pinned editor.
-
-### Proposed project layout
-
-Paths below are relative to the future Unity project root.
+### Layout
 
 ```text
 Assets/Game/
-  Scenes/                 Bootstrap.unity, Arena.unity
+  Scenes/          Bootstrap.unity, Arena.unity (built by ProjectBootstrap, D7)
   Scripts/
-    Core/                 clock, run context, IDs, event records
-    Player/               input, movement, aim, health, dash
-    Combat/               projectiles, payloads, capture, packets, release, pooling
-    Enemies/              steering, telegraphs, attack emitters, boss
-    Runs/                 encounter director, mode rules, statistics, score
-    Upgrades/             definitions, eligibility, modifier application
-    Progression/          profile, mastery, skill tree, achievements, records
-    UI/                   HUD, menus, choices, results, progression screens
-    Presentation/         sprite view and replaceable feedback adapters
-  Data/                   immutable definitions and tuning assets
-  Prefabs/                functional player, enemy, projectile, and UI prefabs
-  Editor/                 repeatable scene/content bootstrap and build entry point
-  Tests/EditMode/         domain rules, clocks, modifiers, profile validation
-  Tests/PlayMode/         collision, capture, restart, scene and mode integration
-Docs/
-  IMPLEMENTATION_STATUS.md
-  DECISIONS.md
-  TEST_EVIDENCE.md
+    Core/          clock, run context, IDs, events
+    Player/        input reader, motor, aim
+    Combat/        projectiles, capture, packets, release, parry geometry
+    Enemies/       steering, ranged casters (one parameterised brain, D20), pursuer, Collector
+    Runs/          ArenaSim partials for the run, encounters, score
+    Data/          GameConfig and tuning classes
+    UI/            HUD, menus, choices, results
+    Presentation/  views and feedback adapters
+  Editor/          bootstrap and build entry points
+  Tests/EditMode/  rules, timing, boss behaviour, tuning
+  Tests/PlayMode/  integration and the scripted catch-and-return bot
+Docs/              GAME_PLAN, DECISIONS, IMPLEMENTATION_STATUS, TEST_EVIDENCE
 ```
 
-Use a small runtime assembly, editor-only assembly, and separate test assemblies. Do not build a generic dependency-injection framework, networking layer, or ECS conversion for this jam.
+### Simulation model
 
-### Coordinate and physics model
+- `ArenaSim` is plain C# at a fixed 60 Hz with frame time clamped to 0.1 s (D11); views interpolate and poll state
+  (D14). Everything that decides an outcome is testable in EditMode and deterministic from a seed.
+- Collision is analytic on XZ: swept circles against circles and boxes, including initial overlap (D3). Factions are
+  logical, not Unity physics layers (D4).
+- Health and damage are floats (D13), so power multipliers and bonuses never round away.
 
-Gameplay uses world XZ with Y fixed at the ground plane. Visual sprite children can face the camera independently. Mouse aim is a camera ray projected onto the gameplay plane. Use one 3D collision model consistently; do not mix Physics2D with 3D actor collision.
+### Contracts the rework touches
 
-Sweep fast projectiles and dash movement across their travelled segment rather than relying only on final-frame overlaps. Include initial-overlap handling: a sphere cast alone does not cover every already-overlapping case. Resolve obstacles, capture, and actor impacts in travel order, with the capture-versus-player-hit rule from section 3.
+These change in Phase 6 and must be updated together with their tests:
 
-Use explicit layers/factions for player body, enemy body, obstacles, capture region, hostile attacks, and returned attacks. Separate visual height from logical hit position so angled camera art cannot create misleading collisions.
-
-### Shared contracts to establish before parallel implementation
-
-These are proposed contracts. Define them centrally and update this document if an implementation changes them.
-
-```csharp
-public enum GameMode { Short, Endless }
-public enum RunEndReason { Victory, Death, TimeExpired, Retired }
-public enum AttackKind { Bolt, HeavyShot, Rocket }
-public enum AttackFaction { Hostile, Returned }
-
-public interface IGameplayClock
-{
-    double Now { get; }
-    bool IsPaused { get; }
-    void Advance(float deltaSeconds);
-    void SetPaused(bool paused);
-}
-```
-
-Domain data responsibilities:
-
-- `AttackDefinition`: immutable ID, kind, movement/collision parameters, base damage, energy cost, explosion parameters, and capturability.
-- `AttackSnapshot`: copied definition values plus source actor ID, shot ID, spread offset, and perfect-catch flag; no live GameObject dependency.
-- `CapturedPacket`: packet ID, capture timestamp, expiry timestamp, capacity usage, payload snapshots, and lifecycle status.
-- `RunContext`: run ID, mode, seed, build version, style ID, passive IDs, effective starting stats, and gameplay clock.
-- `DamageEvent`: unique damage ID, target actor ID, original source actor ID, shot ID, root release ID, attack kind, amount, and effect category.
-- `KillEvent`: unique victim ID, damage provenance, reward eligibility, and actor category.
-- `RunSummary`: end reason, frozen statistics, XP earned, achievements earned, and loadout metadata.
-- `PlayerProfile`: schema version, mastery XP/level, available points, purchased/equipped node IDs, achievement counters/completions, records, selected style, and last finalized run IDs.
-
-Central APIs:
-
-```text
-CaptureController.TryActivate(aimDirection) -> bool
-CaptureController.TryCapture(projectileSnapshot, impactContext) -> capture result
-PacketStore.Advance(gameplayTime) -> packets that expired this tick
-ReleaseService.Release(packet, origin, aim, powerMultiplier) -> root release ID
-RunController.Begin(mode, seed, loadout) -> run ID
-RunController.End(reason) -> immutable RunSummary, once only
-ProfileRepository.Load() -> validated profile and recovery status
-ProfileRepository.Save(profile) -> success or explicit failure
-ProgressionService.FinalizeRun(summary, profile) -> updated profile, idempotently
-SkillTreeService.TryPurchase(nodeId, profile) -> result with rejection reason
-```
-
-Use typed events for score, achievements, and presentation. Combat must continue working if a sound or animation listener is absent. Avoid scene-wide searches each frame and uncontrolled static event subscriptions.
-
-### Unity CLI workflow
-
-During this drafting task, no project was created and no installation or editor settings were changed. At build time, start with read-only discovery:
-
-```powershell
-unity --version
-unity editors --installed --format json
-unity templates list --editor 6000.3.25f1 --installed --format json
-unity auth status --format json
-unity license status --format json
-unity status --format json
-```
-
-After the user supplies the repository checkout and the recommended editor is installed, verify its 3D URP template and create the project inside the agreed repository layout. The example parent below is only illustrative; replace it with the actual repository's chosen project parent. Run the creation command only if template discovery confirms the specified ID for that editor:
-
-```powershell
-$gameParent = 'C:/Users/Rachit/Documents/Codex/2026-10-01/i-x20'
-unity projects create BorrowedHex --path $gameParent --editor-version 6000.3.25f1 --template com.unity.template.urp-blank --no-cloud --no-initial-commit
-```
-
-Do not pass a VCS provider, create a remote, accept license terms, sign in, or install a different editor as an incidental planning step. Use existing authorization during execution and report real blockers clearly.
-
-Before scene/prefab/asset mutations, run `unity status`, then discover `unity command` or `unity list`. Use the commands actually exposed by that editor. Install the Pipeline package through the documented CLI workflow if needed; inspect local help for its exact arguments. If connectivity fails while an editor is running, inspect `unity pipeline list` and compile logs for Safe Mode before treating the editor as absent.
-
-Create scenes, prefabs, ScriptableObjects, and Input Action assets through Unity editor APIs or discovered live commands. C# source files can use normal file editing. Never hand-author GUID/fileID YAML for scenes or prefabs while a live editor is reachable. Scene bootstrap code must be repeatable without duplicating objects or overwriting unrelated content.
+- **Packet**: adds `DecayedTime` (seconds decayed so far), derived `Power`, and a frozen/decaying state that follows
+  selection. Expiry is measured in decayed time, not capture time.
+- **Packet store**: slot assignment by the selected-first rule (section 3); `Advance` decays only the selected packet
+  and reports backfires instead of releases.
+- **Release**: takes the packet's power; applies the per-enemy hex rule per payload.
+- **Run clock**: becomes life; damage and backfires subtract, kills add, capped at the starting value; the end reason
+  depends on the last change.
+- **Obstacles**: pillars gain durability and a crumbled state; collision, line of sight and enemy routing read only
+  standing pillars.
+- **Enemies**: an overstay timer and an overstayed flag that applies the modifiers once.
+- **Events**: backfire, swap, pillar damaged/crumbled, enemy overstayed, clock gained/lost — for the HUD, sound and
+  statistics. Combat must keep working with no listeners.
 
 ### Persistence
 
-Use one validated, versioned JSON profile schema with platform-specific storage adapters. ScriptableObject definition assets are not player save files.
+One versioned, validated JSON profile. Windows: under `Application.persistentDataPath` with temporary file plus
+backup and replace; a corrupt file is preserved and a valid backup tried. Web: the compact JSON in PlayerPrefs
+(IndexedDB, 1 MB limit), each snapshot under 64 KiB, two generation-numbered keys, `PlayerPrefs.Save()` at explicit
+save points. Unavailable storage is reported and play continues in memory with a warning. XP, achievements and records
+are applied in one idempotent finalization per run ID. Focus loss pauses; a browser close is not a reliable save point.
+Resuming an unfinished run is out of scope. Tests never touch the real save.
 
-- Windows: JSON under `Application.persistentDataPath`, using temporary files and backup/replace. Preserve corrupt files for diagnosis, try a valid backup, and report recovery.
-- Web: browser-backed PlayerPrefs stores the compact JSON profile; Unity uses IndexedDB for Web PlayerPrefs with a 1 MB limit. Keep each serialized snapshot under 64 KiB, retain two generation-numbered snapshot keys, and load the newest valid snapshot. Bound record/run-receipt history. Call `PlayerPrefs.Save()` at explicit save points and test persistence by refreshing/reopening the browser. Do not use desktop filesystem rename assumptions for this adapter.
-- Report unavailable/full browser storage and offer in-memory play with a visible progress-saving warning. Browser saves are local to that browser/site; no cross-device or Windows/Web save synchronization is promised.
+### Windows and Web
 
-At run end, apply XP, achievements, and records together in one finalized profile transaction. Duplicate result callbacks cannot award them twice. Save after skill purchases, respec, loadout changes, and finalization. Show save failures with a retry option and retain the in-memory summary.
-
-Application suspension or quitting during combat on Windows should attempt to finalize earned progress as a retired run. Browser focus loss pauses; do not bank rewards merely for switching tabs. A browser-close/unload callback is not a reliable save mechanism: save completed results and progression changes while the page is active. A hard crash or closing an unfinished browser run is not promised to recover every unsaved second. Resuming a live run is outside scope. Tests use isolated storage and never the player's real save.
-
-### Windows and Web compatibility
-
-Keep all combat/progression code platform-neutral. Use the WebGL 2 compatibility path initially and a basic 3D URP renderer; no required WebGPU, compute-only effects, or native plugin dependencies. Use platform adapters only for storage, application exit, and browser interaction. Browser Quit returns to the game's menu rather than attempting to close the tab.
-
-Build a browser prototype in Phase 0 and repeat browser smoke checks after major combat phases. Serve the build over HTTP using Unity's build/run server or a configured local static server, not a `file://` URL. Match compression settings to server support; begin with uncompressed development builds when hosting headers are unknown. Test resizing, canvas focus, tab switching, input-map separation, and storage reload on desktop Chrome/Edge and Firefox. Explicitly verify a browser-safe pause action because Escape can also exit fullscreen; provide a visible Pause button and `P` as a fallback binding on both platforms. Publishing/uploading remains a separately requested action.
+Platform-neutral combat and progression; adapters only for storage, quitting and browser interaction. WebGL 2, basic
+URP, no compute-only effects or native plugins (lit materials do not receive shadows on WebGL, D6). Serve Web builds
+over HTTP. Check resizing, canvas focus, tab switching, the Escape/fullscreen interaction, and save reload.
 
 ### Review focus
 
-1. Capture and damage on the same tick: one outcome, never both consumed and damaging.
-2. Expiry during pause/death/restart: timers freeze appropriately and effects never leak across runs.
-3. Upgrade combinations: provenance remains correct; echoes and overflow cannot recurse indefinitely.
-4. Progress finalization and damaged saves: rewards are idempotent and recoverable data is preserved.
-5. Endless saturation: enemy/projectile limits preserve readable combat and do not steal live objects from pools.
+1. Catch and damage on the same tick: one outcome, never both.
+2. Decay, freeze and backfire across swaps, pause, choices, death and restart: a frozen packet never decays, never
+   backfires, and never leaks into the next run.
+3. Power and the per-enemy hex rules: damage is computed once per payload in the documented order.
+4. The life clock: no double subtraction from one hit, correct end reason, cap respected.
+5. Pillar crumbling: routing and line of sight never see a crumbled pillar; restoration never traps an actor inside.
+6. Overstay: applied exactly once; never to the boss.
+7. Profile finalization is idempotent; damaged saves are recoverable.
 
 ## 9. Phased implementation checklist
 
-Complete the phases in ascending order. Each phase includes a playable deliverable and an acceptance gate. Add only tests that exercise meaningful rules or integration failures; do not test decorative placeholder details. For combat/progression domain rules, write the failing test first, implement the rule, and run it again. Record actual outcomes rather than marking planned checks as passed.
+Complete phases in order; each ends with a playable build and an acceptance gate. Write the failing test first for
+every rule, then implement it. Record real outcomes in `TEST_EVIDENCE.md`, not planned ones. Phases 6–12 of the
+previous revision of this plan are now Phases 7–13.
 
-### Phase 0 — Project and repeatable CLI foundation
+### Phases 0–5 — done
 
-**Depends on:** This brief.  
-**Deliverable:** A local Unity project that opens, compiles, runs an empty arena, and produces Windows and Web prototypes.
+Recorded in `Docs/IMPLEMENTATION_STATUS.md` and `DECISIONS.md` D1–D56: project and CLI foundation; player movement,
+aim, dash, health; projectiles and the acolyte; catch, carry and return; the enemy roster, rockets, pursuers with
+parry and routing; the complete short run with kill-all encounters, the Collector and its position-driven patterns,
+statistics, score, results and restart. At the start of Phase 6: 166/166 EditMode and 2/2 PlayMode tests pass.
 
-**Proposed files:** `Assets/Game/Editor/ProjectBootstrap.cs`, `Assets/Game/Editor/BuildGame.cs`, runtime/editor/test `.asmdef` files, `Assets/Game/Scenes/Bootstrap.unity`, `Arena.unity`, and `Docs/IMPLEMENTATION_STATUS.md`.
+### Phase 6 — Borrowed time (the core rework)
 
-- [ ] Recheck editor, CLI, template, auth/license availability, destination, and project-specific instructions. If an existing project is supplied, read its `CLAUDE.md`/`AGENTS.md` and preserve its established layout.
-- [ ] Create/open the project through Unity CLI using the pinned 3D URP template. Record the actual package versions and editor version in the status document.
-- [ ] Establish the 2.5D foundation: a fixed elevated camera looking onto a flat 3D floor, arena boundaries, basic lighting, and gameplay collision layers through editor APIs. Keep all gameplay positions on XZ; no vertical combat or platforming.
-- [ ] Establish the gameplay clock and run ID generator. Ensure UI can pause the clock independently of presentation.
-- [ ] Create repeatable editor bootstrap/build methods; put Bootstrap then Arena in the build scene list. A second bootstrap invocation must not duplicate scene objects.
-- [ ] Confirm/install Web Build Support for the selected editor. Add Windows and Web build profiles with the same scenes; make early builds for both targets and launch the Web build through HTTP.
-- [ ] Resolve compilation, scene references, input-package setup, and browser canvas focus before gameplay work.
+**Depends on:** Phase 5 and the owner's answers to section 13 (or acceptance of the proposals).  
+**Deliverable:** The short run plays under the new core: frozen unselected packets, decay with power, backfire,
+per-enemy hexes, the life clock, crumbling pillars and overstaying enemies.
 
-**Checks:** Bootstrap twice yields one arena/camera; compile succeeds; Windows and HTTP-served Web builds launch; browser resize/focus works; a paused clock remains unchanged after advancement requests; run IDs differ on restart. Record license or CLI failures as infrastructure failures rather than game-test failures.
+Order matters: the packet rules first (they change every fight), then the clock, then the arena.
 
-### Phase 1 — Player movement, aiming, dash, health
+- [ ] Packets decay only while selected; swapping freezes and resumes. Slot assignment by the selected-first rule.
+- [ ] Remove automatic release on expiry; add the backfire (clock loss, invulnerability, combo reset, burst, event).
+- [ ] Power from decayed time, applied at release to every payload's damage; HUD power and danger-zone display for both
+      slots, with a clear frozen state.
+- [ ] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
+- [ ] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
+      last change; floating gain/loss numbers; the clock as the main HUD element.
+- [ ] Pillar durability, damage stages, crumbling (collision, line of sight and routing ignore it), restoration at
+      each encounter start and at the boss transition.
+- [ ] Overstay timer, warning ring, one-time overstayed modifiers and visuals; elite score/XP values.
+- [ ] Update the scripted catch-and-return bot to swap, fire before expiry, and never backfire on purpose. It must
+      still beat the boss.
+- [ ] Record each rule change in `DECISIONS.md` and the measured bot result in `TEST_EVIDENCE.md`.
 
-**Depends on:** Phase 0.  
-**Deliverable:** A controllable placeholder magician in a bounded arena.
+**Required boundary vectors:**
 
-**Proposed files:** `PlayerInputReader.cs`, `PlayerMotor.cs`, `AimResolver.cs`, `DashController.cs`, `PlayerHealth.cs` under `Scripts/Player/`; `PlayerTuning.cs` under `Data/`; `PlayerMovementTests.cs`, `PlayerHealthTests.cs`.
+- Selected packet caught at `t=1.0`, swapped away at `t=2.0`, swapped back at `t=5.0`: it backfires once at `t=7.0`,
+  not at `t=4.0`, and never while frozen.
+- Power at fire: 0 s decayed → 1.0; 2.0 s → 1.7; a frozen packet's power does not change while frozen.
+- A packet fired at 2.99 s decayed does not backfire; one at 3.0 s backfires once and fires nothing.
+- Both slots full, a catch catches nothing and the projectile keeps flying (no upgrade).
+- Clock at 8 s and a 10 s hit → run ends `Death`; clock at 0.01 s ticking → `TimeExpired`.
+- Clock at 298 s and a +3 s kill → 300 s, not 301.
+- A pillar at 1 durability hit by a returned bolt crumbles that tick; the bolt is stopped by it; the next shot passes.
+- An enemy alive 25 s past its warning becomes overstayed once; at 50 s it is still overstayed once.
 
-- [ ] Create Gameplay and UI Input Action maps with the bindings from section 2.
-- [ ] Implement normalized camera-relative movement and mouse-to-plane aim. Keep visual facing independent from movement.
-- [ ] Create `Scripts/Presentation/CharacterView.cs` with a camera-facing 2D stand-in as a child of the player's 3D collision root. Final sprites are not required; verify screen-space appearance and ground anchoring now so 2.5D is built in from the start.
-- [ ] Implement collision-respecting dash distance, duration, cooldown, and invulnerability. Capture is not attached to dash yet.
-- [ ] Implement health loss and post-hit invulnerability through one damage entry point. Death raises one event.
-- [ ] Add functional health/dash displays, pause/resume, and an arena reset button for development.
+**Checks:** swapping changes which packet decays; pause freezes everything; a death or restart leaves no pending
+backfire; acolyte bolts hit two enemies in a line; shotgun pellets vanish at 6 units; the boss never overstays.
+Human gate: the owner plays a short run and judges whether swapping now matters and the pace is fast.
 
-**Checks:** Diagonal speed equals straight speed; dash stops at a wall; no aim projection preserves the last valid direction; repeated hits during invulnerability cost one health; two lethal callbacks emit one death; UI clicks do not dash or catch; focus loss pauses combat.
-
-### Phase 2 — Incoming projectiles and one enemy source
-
-**Depends on:** Phase 1.  
-**Deliverable:** An acolyte telegraphs and shoots at the player; hits and avoidance work.
-
-**Proposed files:** `AttackDefinition.cs`, `AttackSnapshot.cs`, `ProjectileActor.cs`, `ProjectileResolver.cs`, `ProjectilePool.cs` under `Combat/`; `AttackEmitter.cs`, `BoltAcolyte.cs` under `Enemies/`; `ProjectileCollisionTests.cs`.
-
-- [ ] Define immutable attack data and copied snapshot data. Assign unique actor/shot IDs within a run.
-- [ ] Build a projectile lifecycle: spawn, swept movement, obstacle/player impact, expiry, and return to pool.
-- [ ] Reset every mutable field on reuse, including faction, lifetime, hit history, and provenance.
-- [ ] Create one stationary or simple-steering acolyte with a readable aiming telegraph and three-bolt volley.
-- [ ] Add the test/lantern emitter using the same projectile code. Keep capture disabled until the next phase.
-
-**Checks:** A fast shot crossing the player during one timestep still hits; wall collision blocks a later actor impact; a projectile cannot damage twice after despawning; hostile and returned factions obey their own collision rules; reused objects contain no old IDs or piercing targets.
-
-### Phase 3 — Catch, carry, and three-second return
-
-**Depends on:** Phase 2.  
-**Deliverable:** The complete signature mechanic against one enemy.
-
-**Proposed files:** `CaptureController.cs`, `CaptureGeometry.cs`, `CapturedPacket.cs`, `PacketStore.cs`, `ReleaseService.cs`, `PacketIndicator.cs`; `CaptureRuleTests.cs`, `PacketLifetimeTests.cs`, `CaptureIntegrationTests.cs`.
-
-- [ ] Implement one short directional catch window with recovery and atomic projectile interception.
-- [ ] Create a packet only on first success; append eligible shots during that window within capacity.
-- [ ] Add a second independent packet slot. Draw orbit placeholders and separate shrinking countdown indicators.
-- [ ] Release expired payloads at the current player position/aim with retained spread and original-source attribution.
-- [ ] Implement full-packet rejection, full-slot rejection, friendly-shot rejection, and expiry-before-capture tick ordering.
-- [ ] Cancel pending work on death/restart and freeze packet timers during pause.
-- [ ] Playtest repeated catches and returns with no progression or upgrades. Tune interception readability before continuing.
-
-**Required boundary vectors:** A packet first captured at `t=1.0` does not release at `t=3.99` and releases once at `t=4.0`; appending at `t=1.20` keeps expiry at `4.0`; a rocket of cost 4 cannot fit in a packet with 10 of 12 units occupied; deleting the original shooter does not break release.
-
-**Checks:** Successful same-tick capture prevents that shot's player damage; uncaptured shots still hurt; two slots expire independently; pause does not consume lifetime; returned shots cannot be recaptured; restarting cancels old releases. Human gate: a player can intentionally catch and return multiple consecutive volleys, and the result feels worth repeating.
-
-### Phase 4 — Enemy roster and distinct borrowed weapons
-
-**Depends on:** Phase 3.  
-**Deliverable:** A mixed encounter with positioning pressure and multiple useful ammunition types.
-
-**Proposed files:** `EnemyHealth.cs`, `EnemySteering.cs`, `Pursuer.cs`, `ScatterCaster.cs`, `SiegeFamiliar.cs`, `ExplosionResolver.cs`, `EnemySpawnService.cs`, enemy/payload definitions and prefabs; `AttackPayloadTests.cs`, `EnemyEncounterTests.cs`.
-
-- [ ] Add enemy health, unique kills, reward eligibility, steering, and telegraphed contact strikes.
-- [ ] Add five-shot fans that preserve their spread on return.
-- [ ] Add rockets with a single-impact explosion and per-target deduplication.
-- [ ] Add spawn warning markers and a safe minimum distance from the player.
-- [ ] ~~Enable the lantern's ammunition-starvation condition from section 3.~~ Replaced by the parry (D26).
-- [ ] Author small mixed formations instead of adding more enemy types.
-
-**Checks:** A returned rocket damages enemies but not the player; its explosion hits an actor once; killing a shooter with its own snapshot preserves source attribution; a melee-only remainder remains solvable; an enemy cannot spawn on the player; a returned fan remains recognizable. Verify each enemy's attack provides a distinct tactical opportunity.
-
-### Phase 5 — Complete short run, boss, statistics, score
-
-**Depends on:** Phase 4.  
-**Deliverable:** A beginning-to-end short game with death, victory, time expiry, results, and restart. Upgrade transitions may initially present a Continue button.
-
-**Proposed files:** `RunController.cs`, `RunContext.cs`, `ShortModeRules.cs`, `EncounterDirector.cs`, `CollectorBoss.cs`, `RunStatistics.cs`, `ScoreService.cs`, `RunSummary.cs`, `GameplayHud.cs`, `ResultsPanel.cs`; `RunLifecycleTests.cs`, `ScoreTests.cs`, `ShortRunTests.cs`.
-
-- [ ] Implement explicit states: Ready, Combat, UpgradeChoice, BossIntro, BossCombat, Paused, Results. Returning from pause restores the prior state.
-- [ ] Schedule the three encounters and boss transition using active gameplay time, with capped spawning and authored formations.
-- [ ] Implement the boss's three attacks through existing payload definitions.
-- [ ] Introduce typed hit/kill/release events, score/combo rules, and root release grouping.
-- [ ] Freeze a summary once at end; display score, best volley, hit rate, damage, duration, and reason.
-- [ ] Reset the entire run and support immediate replay. Profile-related summary fields are calculated in memory until saving is added.
-
-**Checks:** Transitions occur at 40/80/120 seconds with timers paused during choices; a surviving boss at 180 ends the run; death and simultaneous boss defeat follow one documented terminal ordering (player death takes precedence if both are resolved in one tick); boss death otherwise wins; cleanup despawns give no rewards; restarting repeatedly never duplicates event listeners. A zero-passive character must be able to defeat the boss.
-
-### Phase 6 — Temporary interacting upgrades and build identity
-
-**Depends on:** Phase 5.  
-**Deliverable:** Three choices per short run that noticeably change combat.
-
-**Proposed files:** `RunUpgradeDefinition.cs`, `RunUpgradeState.cs`, `UpgradeOfferService.cs`, `CombatModifierPipeline.cs`, `UpgradeChoicePanel.cs`; `UpgradeEligibilityTests.cs`, `ModifierCombinationTests.cs`.
-
-- [ ] Implement the six upgrades and rank-one behaviour from section 5.
-- [ ] Offer three distinct eligible choices; show exact effects. Exclude already-owned short-mode upgrades.
-- [ ] Introduce perfect-catch geometry and bonus before enabling Final Second offers.
-- [ ] Implement release modifier ordering: copied base payload → perfect-shot bonus → overflow power → echo power, where applicable. Explosion/orbit effects have their own stated damage rules.
-- [ ] Prevent recursive echoes, repeated piercing hits, and more than one overflow eviction per catch activation.
-- [ ] Ensure all upgrade state disappears on the next run.
-
-**Checks:** Seeded offers reproduce under the same content version; natural expiry does not receive the overflow penalty; an empty full-slot catch does not evict anything; Echo plus Overflow yields one primary and one weaker echo; pause freezes echo delay; Heavy Orbit respects per-enemy intervals. Playtest at least the three intended build families from section 5.
-
-### Phase 7 — Functional menus and reliable player profile
+### Phase 7 — Encounter upgrades
 
 **Depends on:** Phase 6.  
-**Deliverable:** Launch, play, finish, close, and reopen with valid persistent records. No final UI art is required.
+**Deliverable:** A choice of three after each encounter, lasting one encounter.
 
-**Proposed files:** `PlayerProfile.cs`, `ProfileRepository.cs`, `ProfileValidator.cs`, `ProgressionService.cs`, `MainMenu.cs`, `SettingsPanel.cs`, `ProfileRecoveryPanel.cs`; `ProfilePersistenceTests.cs`, `RunFinalizationTests.cs`.
+- [ ] Upgrade definitions and the one-encounter lifetime; the choice panel shows exact effects and what is expiring.
+- [ ] The eight upgrades of section 5, including Overflow and Fusion under the frozen-slot rules, and Quick Draw.
+- [ ] Perfect-catch geometry and bonus before Final Second can be offered.
+- [ ] Modifier order as section 5; no recursive echoes, no repeated pierce hits, at most one Overflow or Fusion per
+      catch activation.
+- [ ] Upgrade state is cleared when its encounter ends and on every new run.
 
-- [ ] Implement versioned profile JSON, a default new-player profile, and Windows-file/Web-PlayerPrefs storage adapters.
-- [ ] Validate numeric ranges, known IDs, point balance, and finalized run receipts; save through temporary/backup files.
-- [ ] Route terminal run summaries through a single idempotent finalization service.
-- [ ] Save records/loadout metadata now; connect mastery and achievement fields in the following phases.
-- [ ] Add menu actions for Play Short, Settings, Quit, and future mode/style panels. Keep unavailable functionality visibly disabled rather than pretending it exists.
-- [ ] Add sensitivity, platform-appropriate fullscreen/window behaviour, and functional readability options. Browser Quit returns to the menu. Do not build a cosmetic menu before assets arrive.
+**Checks:** seeded offers reproduce; an upgrade picked after encounter 3 applies to the boss and nothing after it; a
+packet caught under Echo and fired after the encounter ends gets no echo; Fusion's locked slot unlocks when the merged
+packet fires or backfires; a merged packet backfires once.
 
-**Checks:** Load/save round-trip preserves values; finalizing the same run twice adds no duplicate rewards; invalid primary save uses valid backup and reports recovery; invalid Windows files are preserved and fresh-profile recovery is explicit; failed save retains the summary for retry. Verify Web progress survives refresh on the same origin and unavailable browser storage is reported. Switching menu screens does not resume combat accidentally.
-
-### Phase 8 — Mastery, permanent passive tree, and loadouts
+### Phase 8 — Menus and the player profile
 
 **Depends on:** Phase 7.  
-**Deliverable:** Players earn progression after success or failure, spend points on gated nodes, and select passive loadouts.
+**Deliverable:** Launch, play, finish, close and reopen with valid saved records.
 
-**Proposed files:** `MasteryService.cs`, `SkillNodeDefinition.cs`, `SkillTreeService.cs`, `PlayerStatResolver.cs`, `SkillTreePanel.cs`, `MasteryPanel.cs`; `MasteryTests.cs`, `SkillPurchaseTests.cs`, `LoadoutStatTests.cs`.
+- [ ] Versioned profile JSON, default profile, Windows file and Web PlayerPrefs adapters, validation and recovery.
+- [ ] One idempotent finalization path for run summaries.
+- [ ] Main menu (Play Short, Settings, Quit; unavailable modes visibly disabled), replacing the D43 switch.
+- [ ] Settings: sensitivity, fullscreen/window behaviour, readability options. Browser Quit returns to the menu.
 
-- [ ] Implement the level thresholds and XP formula from section 7, including excess XP and the level-10 cap.
-- [ ] Grant one point per gained level, including multiple gains from one summary.
-- [ ] Implement all nine node definitions and validate every purchase in the service.
-- [ ] Add three active passive slots, prerequisite ownership rules, and free respec.
-- [ ] Resolve base style stats plus equipped permanent passives once at run start. Run upgrades remain separate modifiers.
-- [ ] Display XP progress, locked-tier requirements, point cost, rejection reasons, and equipped skills with placeholder UI.
+**Checks:** round-trip preserves values; finalizing twice adds nothing; an invalid primary save falls back to a valid
+backup; Web progress survives a refresh; menus never resume combat by accident.
 
-**Checks:** Level 1 at 99 XP stays level 1; reaching 100 grants level 2 and one point; multiple thresholds grant the correct total; duplicate finalization grants nothing further; a locked or unaffordable node is rejected; owned-but-unequipped prerequisites suffice; a fourth equipped node is rejected; respec preserves mastery/records and refunds the correct points. A death with earned XP still advances the profile.
+### Phase 9 — Mastery, skill tree, loadouts
 
-### Phase 9 — Achievements and personal achievement feedback
+**Depends on:** Phase 8.
 
-**Depends on:** Phase 8.  
-**Deliverable:** Ten real achievements with accurate counters and results feedback.
+- [ ] XP formula and thresholds from section 7, excess carry, level-10 cap, one point per level gained.
+- [ ] Nine nodes (with `resilience_time`), purchase validation, three equipped, free respec.
+- [ ] Resolve style plus equipped passives once at run start; encounter upgrades stay separate.
 
-**Proposed files:** `AchievementDefinition.cs`, `AchievementService.cs`, `PersonalRecordService.cs`, `AchievementPanel.cs`, achievement badge/toast placeholder; `AchievementConditionTests.cs`, `RecordGroupingTests.cs`.
+**Checks:** 99 XP stays level 1, 100 reaches level 2 with one point; multiple levels from one run; locked or
+unaffordable nodes rejected; a fourth equipped node rejected; respec refunds correctly; a lost run still grants XP.
 
-- [ ] Implement section 7's exact conditions from existing combat/run events.
-- [ ] Distinguish per-run, per-encounter, cumulative, and profile-level conditions.
-- [ ] Persist completion once and present earned badges on results; avoid covering active combat with large pop-ups.
-- [ ] Record best runs by mode/style with mastery/loadout/build-version metadata.
-- [ ] Add a concise result comparison: previous best, current result, and one accurate near-completed achievement.
+### Phase 10 — Achievements and records
 
-**Checks:** Piercing/echoes cannot count the same victim twice; a returned attack killing a different actor does not earn Return Policy; no-hit encounter tracking resets at the correct boundary; death preserves completed achievements; repeat completion has no duplicate reward. Second Encore remains inactive until the endless implementation provides real boss events.
+**Depends on:** Phase 9.
 
-### Phase 10 — Capture-style customization
+- [ ] Section 7's ten achievements from combat and run events; per-run, per-encounter, cumulative and profile scopes.
+- [ ] Records per mode and style with metadata; a short comparison with the previous best on the results screen.
 
-**Depends on:** Phase 9.  
-**Deliverable:** Three selectable capture styles with genuine differences and saved passive loadouts.
+**Checks:** piercing and echoes never count a victim twice; Return Policy needs the original caster; Untouchable fails
+on a backfire; repeat completion gives nothing more.
 
-**Proposed files:** `CaptureStyleDefinition.cs`, `CaptureStyleResolver.cs`, `DaredevilCapture.cs`, `LoadoutPanel.cs`, `CharacterView.cs`; `CaptureStyleTests.cs`, `DaredevilIntegrationTests.cs`.
+### Phase 11 — Capture styles
 
-- [ ] Move baseline capture parameters into Snatcher's definition without changing its behaviour.
-- [ ] Implement Collector's wider, longer, slower-recovering catch.
-- [ ] Implement Daredevil's swept capturing dash and shared action cooldown.
-- [ ] Apply equipped permanent passives consistently and show effective stats before starting.
-- [ ] Save selection and provide a basic view adapter so supplied sprites can replace shapes later.
+**Depends on:** Phase 10.
 
-**Checks:** Same-frame Catch and Dash trigger one Daredevil action; its sweep catches attacks along the travelled route but not through a wall; all styles retain two slots and three-second lifetime; Collector's recovery is not accidentally Snatcher's; switching styles occurs only outside a run. A missing cosmetic produces a visible default, not an invisible player.
+- [ ] Move baseline catch values into Snatcher's definition unchanged; add Collector and Daredevil.
+- [ ] Show effective stats before a run; save the selection.
 
-### Phase 11 — Endless scheduler, recurring bosses, and scaling
+**Checks:** a same-tick catch and dash is one Daredevil action; its sweep never catches through a wall or a standing
+pillar; all styles keep the frozen-slot and backfire rules.
 
-**Depends on:** Phase 10.  
-**Deliverable:** Endless mode reuses the finished game and produces survival records and progression.
+### Phase 12 — Endless mode
 
-**Proposed files:** `EndlessModeRules.cs`, `EndlessEncounterDirector.cs`, `DifficultyScaling.cs`, repeat boss-pattern data; `EndlessScheduleTests.cs`, `UpgradeRankTests.cs`, `EndlessStressTests.cs`.
+**Depends on:** Phase 11.
 
-- [ ] Implement 30-second waves, choices every two waves, and a boss after every six normal waves.
-- [ ] Defer a wave-six choice until boss defeat; restore one health and resume the next cycle.
-- [ ] Add upgrade ranks up to three and an eligible-offer fallback when fewer than three choices remain.
-- [ ] Skip exhausted choices when the build is complete. Keep scaling enemies within the stated readability limits.
-- [ ] Add elites and one repeat-boss pattern variation. Reuse attack definitions and enemy code.
-- [ ] Enable retiring between waves, earned-progress finalization, and survival records.
-- [ ] Run a scripted/debug-assisted long session to verify object budgets, timers, integer ranges, and restart after many cycles. Debug sessions cannot submit profile rewards or records.
+- [ ] 30 s waves, a choice every two waves lasting until the next, a boss after six waves, deferred wave-six choice,
+      +30 s on a boss kill.
+- [ ] Ranked offers by cycle; cycle scaling including the shorter overstay timer; elites from overstaying only.
+- [ ] Retirement, finalization, survival records; a long debug-assisted session that cannot submit rewards.
 
-**Checks:** Boss cadence is correct over at least two cycles; boss time does not accidentally advance normal-wave scheduling; capped upgrades are never offered; pause freezes scaling timers; enemy/projectile limits are respected; retirement banks earned progress once. A late death creates a complete valid summary without overflow or duplicate boss rewards.
+**Checks:** boss cadence over two cycles; boss time does not advance wave scheduling; pause freezes scaling; enemy and
+projectile caps hold; a late death produces a complete valid summary.
 
-### Phase 12 — Gameplay integration, tuning, and build handoff
+### Phase 13 — Integration, tuning, and build handoff
 
-**Depends on:** Phase 11.  
-**Deliverable:** A stable, fully playable placeholder build ready for team testing and later asset integration.
+**Depends on:** Phase 12.
 
-**Proposed files:** existing tuning definitions, `BuildGame.cs`, regression tests, `Docs/TEST_EVIDENCE.md`, `Docs/DECISIONS.md`, and final functional controls/readme.
+- [ ] Focused EditMode and PlayMode suites green; fresh and advanced profiles; every style, upgrade and mode; pause,
+      focus loss, death, retirement, restart, corrupted-save recovery.
+- [ ] Tune the clock economy (start, gains, losses), power curve, backfire cost, overstay timer and pillar durability
+      from real sessions and the bot.
+- [ ] 60 FPS at 1080p on the actual target machine in the placeholder build, recorded with its hardware.
+- [ ] Windows and HTTP-served Web builds, each played through a full short run and an endless boss cycle.
+- [ ] Debug reward tools disabled in player builds; the handoff lists build location, version, controls, tests and
+      known issues.
 
-- [ ] Run focused domain and PlayMode suites; fix unresolved failures rather than repeatedly running unrelated suites.
-- [ ] Test fresh profile and advanced profile, all styles, each upgrade, intended combinations, both modes, pause, focus loss, death, retirement, restart, and corrupted-save recovery.
-- [ ] Verify a new character can enjoy the core loop and clear short mode without grinding. Tune XP and permanent passives after combat difficulty is stable.
-- [ ] Tune fairness/readability of spawn warnings, catch geometry, projectile speed, boss telegraphs, and saturation limits.
-- [ ] Inspect sustained endless performance on the actual target machine. Initial target: 60 FPS at 1080p in the placeholder build; record hardware and measured conditions instead of claiming universal performance.
-- [ ] Produce Windows and Web development builds. Launch Windows outside the editor and Web through HTTP; exercise a full short attempt and an endless boss cycle in each. Check browser resize, pause/fullscreen interactions, tab focus, save/reload, and measured performance.
-- [ ] Remove/disable reward-bearing debug tools in the player build. Verify saves use the intended application/company identity and persist after relaunch.
-- [ ] Write actual build location, version, controls, tests passed/failed, known issues, and next work into the handoff.
+### Checkpoints
 
-**Checks:** Clean compilation; working standalone input/UI; correct scene list; no fatal console errors during the exercised runs; independent new runs; valid progression after relaunch. Placeholder visuals and absent sound are acceptable; unreadable attacks or broken feedback indicators are not.
+- **After Phase 6:** stop and playtest the new core before building upgrades on it. If swapping still does not matter,
+  or backfires feel unfair rather than tense, revise section 3 first.
+- **After Phase 7:** the short game is complete and is the fallback jam build.
+- **After Phase 13:** the full design works: both modes, three styles, eight encounter upgrades, the tree, mastery,
+  achievements and records.
 
-## 10. Verification commands and evidence
+## 10. Verification
 
-Run commands from the Unity project root once it exists. Create report/output directories before running them. Avoid launching a second editor on a locked project; use the discovered live test runner or coordinate an editor close before batch tests/builds.
+Run from the project root. Do not launch a second editor on a locked project; use the live editor's test runner or
+close it before batch runs.
 
 ```powershell
 unity projects verify . --format json
@@ -690,108 +674,92 @@ unity build . --editor-version 6000.3.25f1 --target StandaloneWindows64 --output
 unity build . --editor-version 6000.3.25f1 --target WebGL --output-path ./Builds/Web --allow-dirty-build --timeout 600
 ```
 
-The installed CLI help confirms these command shapes. Recheck help if the CLI changes. `--allow-dirty-build` is appropriate for authorized local builds because commits are not automatic; it is not permission to publish. Test exit 8 means tests ran and failed; other nonzero infrastructure failures must not be described as a completed test verdict. Read JSON `success` and error fields rather than assuming an empty editor-instance list is success.
+Test exit code 8 means tests ran and failed; other non-zero codes are infrastructure failures, not a verdict. A locked
+PC stops the editor processing CLI commands; a hung run is checked for that before anything else. Passing tests do
+not prove a mechanic is fun; the human gates do.
 
-Keep evidence with each phase:
+Evidence per change in `TEST_EVIDENCE.md`: files changed, commands run, test results, behaviour observed, tuning
+changed and why, known issues, next task.
 
-```text
-Phase/task:
-Agent holding edit ownership:
-Files changed:
-Actual CLI commands:
-Test report paths and outcomes:
-Manual behaviour observed:
-Balance values changed and reason:
-Known issues:
-Next uncompleted task:
-```
+## 11. Coordination
 
-For rule tests, use the concrete boundary vectors and conditions in section 9. For integration, verify collisions and state transitions in PlayMode. Do not claim a mechanic is fun solely because automated tests pass; observe whether a human can predict and deliberately execute it.
+- One agent owns a phase or task at a time; never edit the same scene, prefab, definition asset or project settings
+  concurrently. A shared editor session has one mutation owner.
+- Read completed evidence before starting a task, and confirm the interfaces it needs exist. Do not assume this plan
+  describes implemented code; check the code.
+- Changes to packet timing, provenance, the clock or the profile schema update this document and their tests together.
+- Comment code to explain timing, ordering, provenance and other non-obvious decisions.
+- Commits are in the owner's name only, with no tool attribution of any kind.
+- One review workflow per change; CodeRabbit only when the owner asks for it by name.
+- The sprite sheet and its `.meta` files under `Assets/Sprites/` belong to a teammate; do not commit or edit them
+  unless asked.
 
-## 11. Claude/Codex coordination and handoff
+## 12. Art and sound handoff — deferred
 
-Both agents follow this document and the actual project's original instructions. Do not rename Claude configuration paths, model IDs, binaries, or project files. Durable project decisions belong in the project documentation, not unverified imported memory.
+Direction: a rogue magician in an Octopath-inspired 2.5D world. Fixed elevated camera, flat combat plane,
+camera-facing characters with ground anchors, unobstructed projectile paths, no blur or heavy bloom over combat.
+Placeholders now; adapters listen to events and missing adapters never break gameplay.
 
-- One agent owns a phase/task at a time unless explicit parallel work is assigned. Do not simultaneously edit the same scene, prefab, definition asset, or project settings.
-- Record ownership before edits and release it with a written handoff. A shared Unity editor session also has a single mutation owner.
-- Prefer separate checkouts for overlapping source work when an actual repository exists. Keep editor-generated `.meta` files with their assets; preserve GUIDs.
-- Before implementing a task, read completed phase evidence and confirm its required interfaces exist. Do not invent earlier implementation from this plan.
-- Establish shared contracts before dividing source files. Changes to packet provenance, timing, or profile schema require updating dependent tests and this brief.
-- Use descriptive code comments to explain timing, provenance, ordering, and other non-obvious decisions.
-- Use one appropriate review workflow for a completed change; do not run CodeRabbit unless requested by name.
-- No automatic commits, pushes, remote creation, publishing, external messages, or self-attribution in Git/GitHub content.
+The theme should be visible everywhere:
 
-### First playable checkpoint
+- **Decaying hex:** the selected packet grows brighter, faster and more unstable as power rises, with a distinct
+  danger state in its last 0.5 s. **Frozen hex:** stilled, desaturated, crystallised.
+- **Backfire:** an unmistakable burst on the magician.
+- **The life clock:** the dominant HUD element; it visibly drains on hits and swells on kills.
+- **Pillars:** crack in stages, then crumble to rubble.
+- **Overstaying enemies:** a warning ring, then a clearly different, more dangerous look.
+- **Encounter upgrades:** shown as fading or burning out, distinct from permanent techniques (a journal or diagram).
 
-After Phase 3, stop adding systems long enough to test interception and release. If that interaction is unclear or unsatisfying, revise movement, capture geometry, and feedback before spending time on the skill tree.
+Colour cues are always backed by shape, motion or timers. The artist receives sprite facing and scale, animation
+state names, projectile identity rules and these state conventions; the sound designer receives event names and
+timing. Assets are not generated, purchased or commissioned as part of these phases.
 
-### First complete checkpoint
+## 13. Open questions for the owner
 
-After Phase 6, the short game must already be playable end to end. This is the fallback jam build if later progression work runs into deadline pressure. Permanent progression remains required for the expanded design, but must not delay having a complete core game.
+The rework is specified with the defaults below so Phase 6 can be planned. Each is a working default, not an owner
+decision; please confirm or change.
 
-### Expanded gameplay checkpoint
-
-After Phase 12, the agreed expanded design is functional: short/endless modes, three capture styles, six temporary upgrades, nine permanent nodes, mastery, achievements, and personal records. Cosmetics are presentation hooks, not missing gameplay dependencies.
-
-## 12. Art and sound handoff — deferred, not a current workstream
-
-The accepted direction is a rogue magician in an Octopath-inspired 2.5D world. Preserve an elevated fixed camera, flat logical combat plane, camera-facing character view, clear shadows/ground anchors, and unobstructed projectile paths. Detailed scenery belongs around the playable centre. Avoid blur or excessive bloom over combat.
-
-Use primitive shapes, plain materials, simple rings/bars, and default UI now. Keep visual/audio adapters listening to capture, packet-full, expiry, return, perfect catch, hit, kill, dash, boss transition, upgrade, and achievement events. Missing adapters cannot break gameplay.
-
-When the user requests asset integration, provide the artist with sprite facing/scale, animation state names, projectile identity requirements, and countdown conventions. Provide the sound designer with event names and timing. Do not generate, purchase, or commission assets as part of this plan's implementation phases.
-
-The eventual presentation should show unstable borrowed power becoming more intense as it approaches expiration. Keep permanent techniques visually grounded in a journal/diagram and run upgrades visibly transient. Shape, motion, and timer indicators must support colour cues rather than relying on colour alone.
-
-## 13. Decisions to confirm before they become blockers
-
-Updated with the user's answers on 2 October 2026. Remaining questions are production choices, not unfinished mechanics. Do not invent user preferences or repeatedly ask about explicitly deferred scheduling.
-
-| Question | Current working default | When an answer is needed |
+| # | Question | Working default |
 |---|---|---|
-| Deadline? | Explicitly deferred; user will inform later | Only revisit when the user supplies scheduling information |
-| Repository/project location? | User is creating the repository; no existing Unity project reported | Obtain checkout path/URL before Phase 0 creates anything |
-| Delivery platforms? | Confirmed Windows and Web; keyboard/mouse baseline | Already resolved; test both from Phase 0 |
-| Editor/tool restrictions? | Recommend 6.3 LTS 6000.3.25f1; no special restrictions reported | Verify/install the selected editor before project creation |
-| Final title? | Confirmed: Borrowed Hex; new project folder BorrowedHex | Resolved; use for application identity before save files/builds are distributed |
-| Controller, mobile touch, or extra arenas? | Outside baseline scope | Only if requested |
+| Q1 | Does the life clock **replace** the 5 hearts (D51), or do both exist (hearts for hits, clock for time)? | Replace: the clock is the only life bar, as in idea 7 |
+| Q2 | How much does a backfire cost? | −10 s, the same as an ordinary hit |
+| Q3 | Power curve: how strong is a hex fired at the last moment compared with one fired at once? | Linear, 1.0 → 2.05 over the 3 s |
+| Q4 | Per-enemy hexes: are piercing acolyte bolts, a shotgun from scatter casters (±12°, 1.5 per pellet, 6-unit range), rockets as now, and 2-damage boss bolts the right identities? | As stated |
+| Q5 | What does "turn into something worse" mean, and after how long? | After 25 s: 1.5× health (refilled), faster attacks and movement, 1.5× score, once only, not the boss |
+| Q6 | Pillar durability, and do pillars come back? | 12 hits; restored at each encounter start and the boss transition |
+| Q7 | Quick Draw (swap-fire) and Fusion (merge): encounter upgrades, skill-tree nodes, or both? | Encounter upgrades, because Phase 7 comes before the tree |
+| Q8 | With kills adding time, is 300 s still the right starting clock, and what should kills give? | 300 s start and cap; +3 / +5 / +6 s per kill |
+| Q9 | Endless: same 300 s life clock? | Yes, +30 s per boss kill |
+| — | Deadline | Deferred by the owner; not to be asked again until supplied |
 
-### Confirmed title
+Confirmed earlier: title **Borrowed Hex**; Windows and Web with keyboard and mouse; project folder `BorrowedHex`.
 
-The user selected **Borrowed Hex**. Use this display title in menus and build metadata, and `BorrowedHex` for a new Unity project folder and executable. Do not rename an existing user-created repository or checkout automatically. The Markdown filename is retained so existing document links continue to work.
+## 14. References
 
-## 14. Reference material
-
-The design rules above are project decisions. Technical references support the Unity workflow, not a claim that any implementation already exists.
-
-- Local Unity CLI skill: `C:/Users/Rachit/.agents/skills/unity-cli/SKILL.md`; command references under its `references/` directory. Installed CLI help and read-only discovery were checked during drafting.
-- [Unity 6.3 ScriptableObject documentation](https://docs.unity3d.com/6000.3/Documentation/Manual/class-ScriptableObject.html) — definition assets and shared immutable authoring data.
-- [Unity Input System actions](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Actions.html) — action-map approach; use the installed package's matching docs during implementation.
-- [Unity 6.3 Physics.SphereCast](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.SphereCast.html) — swept collision and initial-overlap caveat.
-- [Unity 6.3 persistentDataPath](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html) — player-save location.
-- [Unity 6.3 URP introduction](https://docs.unity3d.com/6000.3/Documentation/Manual/urp/urp-introduction.html) — selected rendering pipeline.
-- [Unity 6000.3.25f1 release notes](https://unity.com/releases/editor/whats-new/6000.3.25f1) and [Unity release support](https://unity.com/releases/unity-6/support) — recommended patch and support window, checked 2 October 2026.
-- [Unity Web build folder](https://docs.unity3d.com/6000.3/Documentation/Manual/webgl-building.html) — output structure and local-file restrictions.
-- [Unity PlayerPrefs](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/PlayerPrefs.html) — Web IndexedDB-backed preferences and storage limit.
+- Local Unity CLI skill: `C:/Users/Rachit/.agents/skills/unity-cli/SKILL.md` and its `references/`.
+- [Unity 6.3 ScriptableObject](https://docs.unity3d.com/6000.3/Documentation/Manual/class-ScriptableObject.html)
+- [Unity Input System actions](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.11/manual/Actions.html)
+- [Unity 6.3 persistentDataPath](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html)
+- [Unity 6.3 URP introduction](https://docs.unity3d.com/6000.3/Documentation/Manual/urp/urp-introduction.html)
+- [Unity 6000.3.25f1 release notes](https://unity.com/releases/editor/whats-new/6000.3.25f1) and [Unity release support](https://unity.com/releases/unity-6/support)
+- [Unity Web build folder](https://docs.unity3d.com/6000.3/Documentation/Manual/webgl-building.html)
+- [Unity PlayerPrefs](https://docs.unity3d.com/6000.3/Documentation/ScriptReference/PlayerPrefs.html)
 
 ## 15. Completion checklist
 
-- [ ] Player movement, aiming, dash, and health are reliable.
-- [ ] The 2.5D foundation is present: camera-facing character views in a 3D arena, fixed elevated camera, flat XZ gameplay, and separate visuals/colliders.
-- [ ] Enemy attacks can be caught and returned after exactly three gameplay seconds.
-- [ ] Attack identity, spread, faction, and original-source attribution survive capture.
-- [ ] Multiple enemy types create useful ammunition and positioning pressure.
-- [ ] Short mode has a complete boss-ending loop with results and restart.
-- [ ] Temporary upgrades interact safely and reset between runs.
-- [ ] Mastery, gated permanent nodes, free respec, and passive loadouts work.
+- [x] Movement, aim and dash are reliable; the 2.5D foundation is in place.
+- [x] Enemy attacks can be caught and fired with identity, spread, faction and source intact.
+- [x] Four enemy types, the parry, and the Collector make a complete short run with results and restart.
+- [ ] Only the selected packet decays; swapping freezes and resumes; power rises with decay; expiry backfires.
+- [ ] Each enemy's hex behaves distinctly when fired.
+- [ ] The run clock is life: kills add, hits and backfires subtract.
+- [ ] Pillars crumble and are restored each encounter; overstaying enemies turn worse once.
+- [ ] Encounter upgrades last one encounter and interact safely.
+- [ ] Mastery, the gated tree, respec and loadouts work.
 - [ ] Achievements and records are accurate and saved.
-- [ ] Three capture styles are functional and selectable.
-- [ ] Endless mode scales, schedules recurring bosses, and supports retirement.
-- [ ] Death earns valid progression; repeated finalization never duplicates it.
-- [ ] Pause, focus loss, menus, and restart preserve the intended timing rules.
-- [ ] Windows and HTTP-served Web builds, browser save/reload, and save recovery are verified with recorded evidence.
-- [ ] Art and sound can be integrated later without rewriting combat rules.
-
-
-
-
+- [ ] Three capture styles are selectable.
+- [ ] Endless mode scales, repeats the boss and supports retirement.
+- [ ] Losing still earns valid progression, never twice.
+- [ ] Pause, focus loss, menus and restart respect every timing rule.
+- [ ] Windows and HTTP-served Web builds, browser save reload and save recovery are verified with evidence.
+- [ ] Art and sound can be integrated without rewriting combat rules.
