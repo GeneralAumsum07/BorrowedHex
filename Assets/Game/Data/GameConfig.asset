@@ -278,7 +278,7 @@ MonoBehaviour:
     slamTelegraph: 0.8
     slamRadius: 3.2
   shortMode:
-    runLength: 300
+    runLength: 180
     encounterCount: 3
     formationsPerEncounter: 040000000500000005000000
     maxOrdinaryEnemies: 12

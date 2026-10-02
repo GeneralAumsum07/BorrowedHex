@@ -96,20 +96,21 @@ namespace BorrowedHex.Tests
             var sim = P5.Short();
             sim.Tick(Still, 2);
             Assert.IsTrue(sim.DamagePlayer(10, 123));
-            Assert.AreEqual(288f, sim.SecondsLeftInRun(), 1e-5f);
+            // Derived from the cap so retuning the life budget (D65) does not break the test.
+            Assert.AreEqual(sim.Stats.StartingSeconds - 12f, sim.SecondsLeftInRun(), 1e-5f);
             Assert.IsFalse(sim.DamagePlayer(10, 123));
             Assert.AreEqual(10, sim.Score.DamageTaken);
         }
 
         [Test]
-        public void KillAddsTimeButCapsAtThreeHundred()
+        public void KillAddsTimeButCapsAtTheLifeCap()
         {
             var sim = P5.Short();
             sim.Tick(Still, 2);
             var e = sim.SpawnEnemy(ActorCategory.Acolyte, new Vector2(8, 0));
             e.ActiveAt = 0;
             P5.Kill(sim, e);
-            Assert.AreEqual(300f, sim.SecondsLeftInRun(), 1e-5f);
+            Assert.AreEqual(180f, sim.SecondsLeftInRun(), 1e-5f);
         }
 
         [TestCase(true, RunEndReason.Death)]
@@ -118,7 +119,9 @@ namespace BorrowedHex.Tests
         {
             var sim = P5.Short();
             P5.Invulnerable(sim);
-            sim.Tick(Still, hit ? 292f : 299.99f);
+            // Stop 8 s short of the cap (a 10 s hit then kills) or 0.01 s short (time runs out).
+            float life = sim.Stats.StartingSeconds;
+            sim.Tick(Still, hit ? life - 8f : life - 0.01f);
             sim.ClearArena();
             sim.Player.ClearInvulnerability();
             if (hit) sim.DamagePlayer(10, 42);

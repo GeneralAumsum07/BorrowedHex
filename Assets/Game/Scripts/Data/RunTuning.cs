@@ -122,7 +122,8 @@ namespace BorrowedHex.Data
     {
         [Tooltip("The whole run's clock (active seconds). Running out ends the run TimeExpired.")]
         // 180 → 300 (owner, D56): the faster boss (D55) needs ~73 s even for an ideal bot.
-        public float runLength = 300f;
+        // 300 → 180 (owner, D65): shorter life budget; shown as a heart + bar, not a timer.
+        public float runLength = 180f;
         public int encounterCount = 3;
         [Tooltip("Formations per encounter; the encounter ends when every member is dead.")]
         public int[] formationsPerEncounter = { 4, 5, 5 };

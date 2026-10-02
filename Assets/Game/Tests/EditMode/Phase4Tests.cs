@@ -429,7 +429,7 @@ namespace BorrowedHex.Tests
         public void OrdinaryHitsAndBossContactsUseLifeSeconds()
         {
             var sim = P4.Sim();
-            Assert.AreEqual(300f, sim.LifeSeconds);
+            Assert.AreEqual(180f, sim.LifeSeconds);
             Assert.AreEqual(10, sim.Config.combat.enemyHitDamage);
             Assert.AreEqual(10, sim.Attacks.Get(AttackIds.Bolt).HostileDamage);
             Assert.AreEqual(5, sim.Config.combat.enemyContactDamage);
@@ -444,19 +444,19 @@ namespace BorrowedHex.Tests
             var cfg = UnityEditor.AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Game/Data/GameConfig.asset");
             Assert.NotNull(cfg);
             var sim = new ArenaSim(cfg, RunSetup.ForSandbox(0));
-            Assert.AreEqual(300f, sim.LifeSeconds);
+            Assert.AreEqual(180f, sim.LifeSeconds);
             Assert.AreEqual(10, sim.Attacks.Get(AttackIds.Bolt).HostileDamage);
         }
     }
 
-    // Owner direction (D56): a 5-minute run, and pursuers 1.4x as fast (3.0 → 4.2).
+    // Owner direction (D56): pursuers 1.4x as fast (3.0 → 4.2). Run length 300 → 180 later (D65).
     public class D56TuningTests
     {
         [Test]
-        public void FiveMinuteRun_AndFasterPursuers()
+        public void ThreeMinuteLife_AndFasterPursuers()
         {
             var cfg = GameConfig.CreateDefault();
-            Assert.AreEqual(300f, cfg.shortMode.runLength);
+            Assert.AreEqual(180f, cfg.shortMode.runLength);
             Assert.AreEqual(3.0f * 1.4f, cfg.combat.pursuer.moveSpeed, 1e-5f);
             Assert.Less(cfg.combat.pursuer.moveSpeed, cfg.player.moveSpeed, "the player can still outrun them");
         }

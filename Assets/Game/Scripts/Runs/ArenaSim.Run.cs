@@ -12,7 +12,7 @@ namespace BorrowedHex.Runs
     /// Short-mode flow (owner-revised, D50): encounter 1 → upgrade choice → encounter 2 →
     /// upgrade choice → encounter 3 → upgrade choice → boss intro → boss. Each encounter is a
     /// fixed, seeded list of formations and ends when every member has been KILLED. One shared
-    /// life budget of 300 seconds (D59) covers all of it: time and hits spend it, kills restore
+    /// life budget of 180 seconds (D59, D65) covers all of it: time and hits spend it, kills restore
     /// it up to the starting cap. Pauses cost nothing; elapsed gameplay time never rewinds.
     ///
     /// Terminal ordering (section 6 / Phase 5 check), resolved once at the END of each tick:

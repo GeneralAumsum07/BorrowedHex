@@ -327,15 +327,15 @@ not a returned hit for combo purposes. Piercing payloads keep a set of hit actor
 
 The clock that limits the run is also the magician's health (owner idea 7; replaces the hearts of D51, Q1).
 
-- A short run starts with **300 s** (D56). The clock counts down in active gameplay time and is capped at 300 s.
+- A short run starts with **180 s** (D65; was 300 s, D56). The clock counts down in active gameplay time and is capped at 180 s.
 - **Kills add seconds** (*proposal*, Q8): acolyte and pursuer +3 s, scatter caster +5 s, siege familiar +6 s,
   overstayed enemies 1.5× their base. Despawned enemies give nothing.
 - **Hits take seconds**, at 5 s per former half heart: an ordinary enemy hit −10 s, a boss attack (including its
   bolts) −20 s, body contact −5 s (ordinary) or −10 s (boss), a backfire −10 s.
-- Damage numbers float up from the player ("−10") and the clock flashes; kill gains float up from the kill ("+3").
+- Damage numbers float up from the player ("−10") and the life bar flashes; kill gains float up from the kill ("+3").
 - When the clock reaches zero the run ends. If the last change was damage or a backfire the end reason is `Death`;
   if it ran out by ticking it is `TimeExpired`. Both are losses; the distinction is for statistics.
-- The clock is the largest element of the HUD.
+- The HUD shows life as a **heart icon and a bar** that drains green → yellow → red; no numeric timer (D65).
 
 ### Short mode
 
@@ -370,7 +370,7 @@ They are not presented as a fair global leaderboard.
 
 Same combat, enemies, boss, score and profile, under a different scheduler.
 
-- The clock starts at 300 s, capped at 300 s, and is life exactly as in short mode (Q9).
+- The clock starts at 180 s, capped at 180 s (D65), and is life exactly as in short mode (Q9).
 - Normal waves last 30 active seconds. An upgrade choice comes every two waves and lasts until the next choice.
 - After six waves, regular spawns stop, ordinary enemies and their projectiles are cleaned up without rewards, and the
   boss appears. The wave-six choice is deferred until the boss falls. Defeating a boss restores 30 s of clock.
@@ -578,7 +578,7 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - A packet fired at 2.99 s decayed does not backfire; one at 3.0 s backfires once and fires nothing.
 - Both slots full, a catch catches nothing and the projectile keeps flying (no upgrade).
 - Clock at 8 s and a 10 s hit → run ends `Death`; clock at 0.01 s ticking → `TimeExpired`.
-- Clock at 298 s and a +3 s kill → 300 s, not 301.
+- Clock at 178 s and a +3 s kill → 180 s, not 181.
 - A pillar at 1 durability is hit by a returned bolt: the bolt stops and the pillar keeps its durability.
 - An untouched pillar with a 6 s interval crumbles at exactly 72 s of active time; pausing does not advance it.
 - An enemy alive 25 s past its warning becomes overstayed once; at 50 s it is still overstayed once.
@@ -724,7 +724,7 @@ The theme should be visible everywhere:
 - **Decaying hex:** the selected packet grows brighter, faster and more unstable as power rises, with a distinct
   danger state in its last 0.5 s. **Frozen hex:** stilled, desaturated, crystallised.
 - **Backfire:** an unmistakable burst on the magician.
-- **The life clock:** the dominant HUD element; it visibly drains on hits and swells on kills.
+- **The life clock:** a heart and a green-to-red bar (D65); it visibly drains on hits and swells on kills.
 - **Pillars:** crack in stages, then crumble to rubble.
 - **Overstaying enemies:** a warning ring, then the sprite evolves into a more horrifying form (one evolved sprite
   per enemy type).
@@ -750,8 +750,8 @@ working defaults. Values marked *proposal* in the text are still untested tuning
 | Q5 | What does "turn into something worse" mean? | Owner: yes to the default (25 s; 1.5× health, faster, 1.5× score, once, not the boss), and the sprite evolves into something more horrifying |
 | Q6 | Pillar durability, and do pillars come back? | Owner: pillars degrade and break with time only (never from hits), and come back each encounter. A constantly decaying world with per-encounter environments is deferred until assets exist |
 | Q7 | Quick Draw and Fusion: upgrades or tree nodes? | Owner: Quick Draw is a skill-tree node; Fusion is a temporary encounter upgrade |
-| Q8 | Starting clock and kill rewards? | Default accepted: 300 s start and cap; +3 / +5 / +6 s per kill |
-| Q9 | Endless: same 300 s life clock? | Default accepted: yes, +30 s per boss kill |
+| Q8 | Starting clock and kill rewards? | Default accepted: 300 s start and cap; +3 / +5 / +6 s per kill. Start and cap later 180 s (D65) |
+| Q9 | Endless: same 300 s life clock? | Default accepted: yes, +30 s per boss kill (life is 180 s since D65) |
 | — | Deadline | Deferred by the owner; not to be asked again until supplied |
 
 Confirmed earlier: title **Borrowed Hex**; Windows and Web with keyboard and mouse; project folder `BorrowedHex`.

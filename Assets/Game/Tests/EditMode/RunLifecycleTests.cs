@@ -22,7 +22,7 @@ namespace BorrowedHex.Tests
 
         /// <summary>
         /// Hostile hits pass through (section 3: invulnerable players let shots through), so a
-        /// schedule test can run the full 300 s without the player's survival being the subject.
+        /// schedule test can run the full 180 s without the player's survival being the subject.
         /// </summary>
         public static void Invulnerable(ArenaSim sim) => sim.Player.InvulnerableUntil = 1e9;
 
@@ -173,7 +173,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
             Assert.AreEqual(0, sim.Encounter);
-            Assert.AreEqual(300.0, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(180.0, sim.Clock.Now, 1e-4);
             Assert.AreEqual(0f, sim.SecondsLeftInRun());
         }
 
@@ -255,7 +255,7 @@ namespace BorrowedHex.Tests
             P5.TickWhile(sim, RunState.BossCombat);
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
-            Assert.GreaterOrEqual(sim.Clock.Now, 300.0, "encounter kills bought extra time");
+            Assert.GreaterOrEqual(sim.Clock.Now, 180.0, "encounter kills bought extra time");
             Assert.AreEqual(0f, sim.LifeSeconds);
             Assert.AreEqual(0, sim.Summary.VictoryBonus);
         }

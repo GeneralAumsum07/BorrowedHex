@@ -15,7 +15,7 @@ namespace BorrowedHex.UI
         ArenaSim sim;
         Image dashFill;
         Text dashLabel;
-        Text clockLabel;
+        Image lifeHeart, lifeBarBg, lifeBarFill;
         Text objectiveLabel;
         Text scoreLabel;
         Image bossBarBg, bossBarFill;
@@ -41,10 +41,21 @@ namespace BorrowedHex.UI
             dashLabel = Ui.Label("DashLabel", root, "DASH", 20, TextAnchor.MiddleLeft);
             Ui.Place(dashLabel.rectTransform, new Vector2(0, 1), new Vector2(262, -83), new Vector2(160, 24));
 
-            clockLabel = Ui.Label("Clock", root, "5:00", 48);
-            Ui.Place(clockLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -24), new Vector2(300, 62));
-            // Section 6: "present the objective clearly from the start" — what phase this is,
-            // and the clock above it counts down the time left in that phase.
+            // D65: life is shown as a heart plus a draining bar instead of a numeric timer.
+            // The life clock still drains with time underneath; the player reads "how full
+            // am I" at a glance rather than doing mm:ss arithmetic mid-fight.
+            lifeHeart = Ui.Image("LifeHeart", root, Color.white);
+            lifeHeart.sprite = Presentation.PixelSprites.Heart();
+            lifeHeart.preserveAspect = true;
+            Ui.Place(lifeHeart.rectTransform, new Vector2(0.5f, 1), new Vector2(-210, -24), new Vector2(52, 52));
+            // Bar sits to the right of the heart, vertically centred on it (heart centre is -50).
+            lifeBarBg = Ui.Image("LifeBar", root, new Color(0, 0, 0, 0.6f));
+            Ui.Place(lifeBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(26, -38), new Vector2(400, 24));
+            lifeBarFill = Ui.Image("Fill", lifeBarBg.transform, Color.green);
+            var lf = lifeBarFill.rectTransform;
+            lf.anchorMin = Vector2.zero; lf.anchorMax = Vector2.one; lf.pivot = new Vector2(0, 0.5f);
+            lf.offsetMin = lf.offsetMax = Vector2.zero;
+            // Section 6: "present the objective clearly from the start" — what phase this is.
             objectiveLabel = Ui.Label("Objective", root, "", 22);
             Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -90), new Vector2(800, 30));
             objectiveLabel.color = new Color(1, 1, 1, 0.8f);
@@ -122,10 +133,21 @@ namespace BorrowedHex.UI
             dashLabel.text = ready >= 1f ? "DASH" : "...";
 
             // Life and elapsed time are independent: gains must not rewind enemies.
-            int left = Mathf.Max(0, Mathf.CeilToInt(sim.LifeSeconds - 1e-4f));
-            clockLabel.text = $"{left / 60}:{left % 60:00}";
-            clockLabel.color = Time.unscaledTime < clockFlashUntil ? clockFlashColor
-                : left < 30 ? new Color(1f, 0.35f, 0.3f) : Ui.Ink;
+            // Fraction of the cap (StartingSeconds), the same cap kill rewards clamp to,
+            // so a full bar always means "cannot gain more".
+            float frac = Mathf.Clamp01(sim.LifeSeconds / Mathf.Max(0.0001f, sim.Stats.StartingSeconds));
+            lifeBarFill.rectTransform.anchorMax = new Vector2(frac, 1);
+            // Hue 0.33 (green) -> 0 (red) passes through yellow on the way, which reads as a
+            // traffic light without needing a three-stop gradient.
+            lifeBarFill.color = Color.HSVToRGB(frac * 0.33f, 0.85f, 0.95f);
+            // Hits and kill rewards flash the bar background (red on loss, accent on gain),
+            // replacing the old clock-text flash so the feedback stays on the life display.
+            bool flashing = Time.unscaledTime < clockFlashUntil;
+            lifeBarBg.color = flashing ? clockFlashColor * new Color(1, 1, 1, 0.8f) : new Color(0, 0, 0, 0.6f);
+            // Low life: the heart beats (unscaled time, so it keeps beating while paused; it is
+            // a reminder, not gameplay). Below 1/6 of the cap = 30 s at 180, the old red-text threshold.
+            float beat = frac < 1f / 6f ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
+            lifeHeart.rectTransform.localScale = new Vector3(beat, beat, 1);
             int n = sim.Config.shortMode.encounterCount;
             objectiveLabel.text = !sim.IsShortRun ? "SANDBOX"
                 : sim.Encounter < n ? $"ENCOUNTER {sim.Encounter + 1}/{n} — KILL ALL ENEMIES ({sim.EnemiesLeftInEncounter()} LEFT)"

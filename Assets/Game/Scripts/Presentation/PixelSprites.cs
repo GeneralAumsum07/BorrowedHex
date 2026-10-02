@@ -243,6 +243,49 @@ namespace BorrowedHex.Presentation
             return blob;
         }
 
+        // HUD life icon (D65). Kept as a char map like the characters so it reads as the
+        // same pixel-art family; 'O' is a dark outline so it stays legible over any arena colour.
+        static readonly string[] HeartMap =
+        {
+            ".OO...OO.",
+            "ORRO.ORRO",
+            "ORHRORRRO",
+            "ORRRRRRRO",
+            ".ORRRRRO.",
+            "..ORRRO..",
+            "...ORO...",
+            "....O....",
+        };
+
+        static Sprite heart;
+
+        /// <summary>Pixel heart for the life bar (cached, point filtered, centre pivot).</summary>
+        public static Sprite Heart()
+        {
+            if (heart != null) return heart;
+            var palette = new Dictionary<char, Color32>
+            {
+                ['O'] = new Color32(40, 8, 16, 255),
+                ['R'] = new Color32(225, 45, 65, 255),
+                ['H'] = new Color32(255, 190, 200, 255), // highlight pixel
+            };
+            int h = HeartMap.Length, w = HeartMap[0].Length;
+            var px = new Color32[w * h];
+            for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
+                {
+                    // Maps are written top row first; textures fill bottom row first.
+                    char c = HeartMap[h - 1 - y][x];
+                    px[y * w + x] = palette.TryGetValue(c, out var col) ? col : new Color32(0, 0, 0, 0);
+                }
+            var tex = new Texture2D(w, h, TextureFormat.RGBA32, false)
+                { name = "Heart", filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            heart = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), w);
+            return heart;
+        }
+
         static Sprite disc, ring, pixel;
 
         /// <summary>
