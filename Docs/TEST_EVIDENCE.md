@@ -242,3 +242,48 @@ Known issues: GameRoot.Update throws NullReferenceException every frame if scrip
 Human gate (not yet done): is the parry now hard but learnable? Do pursuers still get stuck?
 Next uncompleted task: Phase 5
 ```
+
+
+## Phase 5: short run, Collector boss, score
+
+```text
+Phase/task: Phase 5 (owner changes: Collector without rockets, sweep + slam, 50 hp, banner)
+Files changed: Scripts/Data/RunTuning.cs (new); Scripts/Enemies/{CollectorBoss (new),
+  EnemyActor,EnemySpawnService}.cs; Scripts/Runs/{ArenaSim,ArenaSim.Combat,
+  ArenaSim.Enemies}.cs, ArenaSim.Run.cs, RunScore.cs, SimEvents.Run.cs (new);
+  Scripts/UI/{GameplayHud,PauseMenu}.cs, RunFlowPanels.cs (new);
+  Scripts/Presentation/{ArenaView,GameRoot}.cs;
+  Tests/EditMode/{RunLifecycleTests,ScoreTests,ShortRunTests}.cs (new)
+Actual CLI commands: recompile; run_tests editor; run_tests playmode; eval (play mode);
+  capture_game_view (screen and --source camera)
+Test report: EditMode 129/129 (RunLifecycle 11, Score 10, ShortRun 9). PlayMode 2/2.
+  Honest ordering note: this phase's tests were written AFTER the sim code, not RED first.
+  To make up for that, mutation checks were run on the rules most likely to be wrong:
+  victory checked before death fails the same-tick terminal-order test; `<=` on the enemy
+  cap fails the cap test; removing the once-per-release combo rule fails the combo test.
+  Restored code passes.
+  Clock tests use a 1e-4 tolerance: 2400 steps of 1f/60f sum to 40.000002, so the tick
+  count is asserted exactly and the time only approximately.
+  Zero-passive boss check (ShortRunTests): a scripted bot that only catches and returns
+  (no dash, no parry) beats the boss with 45.9 s of the 60 s window used, taking 13 hits.
+  Health is set to 999 in that test so it measures offence only; the hits taken show the
+  boss is still dangerous. With the first tuning the bot ended with the boss on 15/50 (D39).
+Manual behaviour observed (play mode, scripted ticks, not a human):
+  - Boss banner "- BOSS - / THE COLLECTOR / Defeat it before the time runs out" over the
+    frozen arena; HUD shows 1:00, "DEFEAT THE COLLECTOR" and the boss bar (shots/p5-banner-ui.png)
+  - All four telegraphs (shots/p5-patterns.png): stream aim line with bolts in flight;
+    sweep wedge with the blade; nine fan aim lines; slam ring with the fill growing to it
+  - Results after a scripted boss kill: VICTORY, score 364 = 250 kill + 114 bonus (57 unused
+    seconds x 2), centred stats, Play again + Practice sandbox (shots/p5-results.png)
+  - First results capture found two defects, both fixed: the boss banner stayed behind the
+    results when the run ended inside its fade; the stats were left-aligned
+  - The player sprite is missing in the boss shots because the idle scripted player was hit
+    repeatedly and blinks while invulnerable; not a rendering fault
+Not verified by eye: the upgrade Continue panel, the mode-switch buttons, a death or
+  time-expiry results screen (all covered by sim tests, not screenshots)
+Known issues: the editor stops rendering frames while unfocused, so scripted captures need
+  EditorApplication.Step(); focus loss also opens the pause menu (D10) during scripted runs
+Human gate (not yet done): is the 3x40 s + 60 s run paced well; is the Collector readable
+  and beatable without upgrades; is the banner long enough?
+Next uncompleted task: Phase 6
+```

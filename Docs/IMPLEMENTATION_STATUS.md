@@ -150,3 +150,20 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   `parryWindowScale` 0.5; `pursuer.strikeEdgeWidth` 0.15.
 - Open owner question (D36): should a band touching the strike's NEAR rim from just outside
   the strike count as a parry? It currently does.
+
+### Phase 5 — Complete short run, boss, statistics, score — done (human gate pending)
+
+- Run states Ready, Combat, UpgradeChoice, BossIntro, BossCombat, Paused, Results, with
+  pause restoring the prior state (`ArenaSim.Run.cs`). Transitions at 40/80/120 s of active
+  time, boss window to 180 s, terminal order death > victory > time expiry (D45).
+- Encounter director: per-encounter formation pools, a signature formation first, seeded
+  picks, 12-enemy cap with a bounded queue (D44).
+- The Collector (`CollectorBoss.cs`, D38/D39): 50 health; bolt stream, sweeping melee, fan
+  volley, ground slam. Name banner on entry (D41); HUD boss health bar.
+- Score and combo (`RunScore.cs`): kill value x multiplier, +0.25 per release's first hit up
+  to 3.0, 5 s timer on gameplay time, damage resets it; riposte counts (D40). Victory bonus
+  +2 per unused second. Frozen `RunSummary` drives the results panel.
+- HUD: countdown clock, objective line, score with multiplier. Upgrade transitions show a
+  Continue panel until Phase 6 (D42). Short run is the default; sandbox switch in the pause
+  menu and on results (D43).
+- Not done here: upgrade cards (Phase 6), saving the summary (Phase 7).

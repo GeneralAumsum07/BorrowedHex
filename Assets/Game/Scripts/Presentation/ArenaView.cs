@@ -48,6 +48,9 @@ namespace BorrowedHex.Presentation
             // because touching THIS edge with THAT band is the parry (D36).
             public SpriteRenderer StrikeRim;
             public SpriteRenderer WarningRing;
+            // Collector only: the sweep's wedge and moving blade, and the slam's charge disc
+            // inside a ring drawn at the slam's true radius.
+            public SpriteRenderer SweepWedge, SweepBlade, SlamFill, SlamRing;
             public bool Seen;
         }
 
@@ -214,6 +217,11 @@ namespace BorrowedHex.Presentation
                     v.WarningRing.color = new Color(1f, 0.3f, 0.3f, 0.4f + 0.5f * k);
                 }
                 v.Body.SetTint(warning ? new Color(1f, 1f, 1f, 0.45f) : Color.white);
+                if (e.IsBoss)
+                {
+                    RenderBoss(e, v, pos, now);
+                    continue;
+                }
 
                 // Telegraph: aim lines that brighten as the attack approaches and turn solid
                 // once aim locks, the moment a sidestep starts to count. Pursuers show a
@@ -283,7 +291,8 @@ namespace BorrowedHex.Presentation
             var v = new EnemyView { Body = body };
             // Telegraph and warning ring live under the body root but must not inherit its
             // position offsets, so they are placed in world space each frame.
-            int lines = Mathf.Max(1, sim.Config.combat.For(e.Category).volleySpreadDeg.Length);
+            int lines = e.IsBoss ? sim.Config.collector.fanSpreadDeg.Length
+                : Mathf.Max(1, sim.Config.combat.For(e.Category).volleySpreadDeg.Length);
             v.Telegraph = new SpriteRenderer[lines];
             for (int i = 0; i < lines; i++)
                 v.Telegraph[i] = FlatSprite("Telegraph", body.transform, PixelSprites.Pixel(), TelegraphColor);
@@ -294,9 +303,87 @@ namespace BorrowedHex.Presentation
                 v.StrikeRim = FlatSprite("StrikeRim", body.transform,
                     PixelSprites.Annulus((pt.strikeRadius - pt.strikeEdgeWidth) / pt.strikeRadius), RiposteColor);
             }
+            if (e.IsBoss)
+            {
+                var bt = sim.Config.collector;
+                v.SweepWedge = FlatSprite("SweepWedge", body.transform, PixelSprites.Sector(bt.sweepHalfAngle), TelegraphColor);
+                v.SweepBlade = FlatSprite("SweepBlade", body.transform, PixelSprites.Pixel(), Color.white);
+                v.SlamFill = FlatSprite("SlamFill", body.transform, PixelSprites.Disc(false), TelegraphColor);
+                v.SlamRing = FlatSprite("SlamRing", body.transform, PixelSprites.Disc(true), TelegraphColor);
+            }
             v.WarningRing = FlatSprite("SpawnWarning", body.transform, PixelSprites.Disc(true), Color.red);
             v.WarningRing.transform.localPosition = new Vector3(0f, 0.04f, 0f);
             return v;
+        }
+
+        /// <summary>
+        /// The Collector's telegraphs. Every pattern shows WHERE it will land before it lands:
+        ///   - bolt stream / fan: aim lines (one per bolt for the fan), solid once aim locks;
+        ///   - sweep: the whole wedge it will cover, then the blade crossing it;
+        ///   - slam: a ring at the slam's true radius that fills as the slam charges.
+        /// Red = it hurts; the boss has no gold (parryable) markings, because its melee cannot
+        /// be parried (D38).
+        /// </summary>
+        void RenderBoss(EnemyActor e, EnemyView v, Vector2 pos, double now)
+        {
+            var t = sim.Config.collector;
+            var b = e.Boss;
+            bool tele = b.Stage == BossStage.Telegraph;
+            bool active = b.Stage == BossStage.Active;
+            float ramp = tele ? 1f - Mathf.Clamp01((float)(b.StageEndsAt - now) / Mathf.Max(0.01f, CollectorBoss.TelegraphOf(b.Pattern, t))) : 0f;
+            float yaw = -Mathf.Atan2(e.AimDirection.y, e.AimDirection.x) * Mathf.Rad2Deg;
+
+            // Aim lines: the stream shows one (it keeps tracking while firing), the fan all.
+            int shown = b.Pattern == BossPattern.FanVolley && tele ? t.fanSpreadDeg.Length
+                : b.Pattern == BossPattern.BoltStream && (tele || active) ? 1 : 0;
+            for (int i = 0; i < v.Telegraph.Length; i++)
+            {
+                var line = v.Telegraph[i];
+                line.enabled = i < shown;
+                if (!line.enabled) continue;
+                float off = b.Pattern == BossPattern.FanVolley ? t.fanSpreadDeg[i] : 0f;
+                var c = TelegraphColor;
+                c.a = active ? 0.5f : e.AimLocked ? 0.9f : Mathf.Lerp(0.15f, 0.6f, ramp);
+                line.color = c;
+                Vector2 dir = Geometry2D.Rotate(e.AimDirection, off);
+                PlaceGroundLine(line.transform, pos + dir * e.Radius, dir, 8f, e.AimLocked || active ? 0.12f : 0.06f);
+            }
+
+            bool sweep = b.Pattern == BossPattern.Sweep && (tele || active);
+            v.SweepWedge.enabled = sweep;
+            v.SweepBlade.enabled = sweep && active;
+            if (sweep)
+            {
+                v.SweepWedge.transform.position = Geometry2D.ToWorld(pos, 0.05f);
+                v.SweepWedge.transform.rotation = Quaternion.Euler(90f, yaw, 0f);
+                v.SweepWedge.transform.localScale = Vector3.one * t.sweepReach;
+                var c = TelegraphColor;
+                c.a = active ? 0.25f : e.AimLocked ? 0.6f : Mathf.Lerp(0.12f, 0.45f, ramp);
+                v.SweepWedge.color = c;
+                if (active)
+                {
+                    Vector2 bladeDir = Geometry2D.Rotate(e.AimDirection, b.BladeDeg);
+                    PlaceGroundLine(v.SweepBlade.transform, pos, bladeDir, t.sweepReach, 0.22f);
+                    v.SweepBlade.color = new Color(1f, 0.95f, 0.85f, 0.95f);
+                }
+            }
+
+            bool slam = b.Pattern == BossPattern.Slam && tele;
+            v.SlamFill.enabled = v.SlamRing.enabled = slam;
+            if (slam)
+            {
+                v.SlamRing.transform.position = Geometry2D.ToWorld(pos, 0.05f);
+                v.SlamRing.transform.localScale = Vector3.one * t.slamRadius;
+                var rc = TelegraphColor;
+                rc.a = Mathf.Lerp(0.35f, 0.9f, ramp);
+                v.SlamRing.color = rc;
+                // The fill grows to the ring: when it touches the edge, the slam lands.
+                v.SlamFill.transform.position = Geometry2D.ToWorld(pos, 0.045f);
+                v.SlamFill.transform.localScale = Vector3.one * (t.slamRadius * Mathf.Max(0.05f, ramp));
+                var fc = TelegraphColor;
+                fc.a = 0.3f;
+                v.SlamFill.color = fc;
+            }
         }
 
         /// <summary>Lay a pixel sprite on the ground from <paramref name="from"/> along <paramref name="dir"/>.</summary>

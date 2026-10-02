@@ -18,6 +18,9 @@ namespace BorrowedHex.UI
         Image dashFill;
         Text dashLabel;
         Text clockLabel;
+        Text objectiveLabel;
+        Text scoreLabel;
+        Image bossBarBg, bossBarFill;
         public Button PauseButton { get; private set; }
         public Button ResetButton { get; private set; }
 
@@ -53,6 +56,21 @@ namespace BorrowedHex.UI
 
             clockLabel = Ui.Label("Clock", root, "0:00", 34);
             Ui.Place(clockLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -24), new Vector2(300, 48));
+            // Section 6: "present the objective clearly from the start" — what phase this is,
+            // and the clock above it counts down the time left in that phase.
+            objectiveLabel = Ui.Label("Objective", root, "", 22);
+            Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -70), new Vector2(700, 30));
+            objectiveLabel.color = new Color(1, 1, 1, 0.8f);
+            scoreLabel = Ui.Label("Score", root, "", 26, TextAnchor.MiddleLeft);
+            Ui.Place(scoreLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -116), new Vector2(400, 34));
+
+            bossBarBg = Ui.Image("BossBar", root, new Color(0, 0, 0, 0.6f));
+            Ui.Place(bossBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -104), new Vector2(560, 20));
+            bossBarFill = Ui.Image("Fill", bossBarBg.transform, new Color(0.9f, 0.25f, 0.35f));
+            var bf = bossBarFill.rectTransform;
+            bf.anchorMin = Vector2.zero; bf.anchorMax = Vector2.one; bf.pivot = new Vector2(0, 0.5f);
+            bf.offsetMin = bf.offsetMax = Vector2.zero;
+            bossBarBg.gameObject.SetActive(false);
 
             PauseButton = Ui.Button("Pause", root, "II", onPause, 30);
             Ui.Place((RectTransform)PauseButton.transform, new Vector2(1, 1), new Vector2(-28, -28), new Vector2(64, 64));
@@ -118,8 +136,32 @@ namespace BorrowedHex.UI
             dashFill.color = ready >= 1f ? Ui.Accent : new Color(0.55f, 0.48f, 0.3f);
             dashLabel.text = ready >= 1f ? "DASH" : "...";
 
-            int secs = (int)now;
-            clockLabel.text = $"{secs / 60}:{secs % 60:00}";
+            if (sim.IsShortRun)
+            {
+                // Count DOWN in a scored run (time left in this encounter / the boss window),
+                // rounded up so "0:00" only shows at the boundary itself.
+                int left = Mathf.CeilToInt(sim.SecondsLeftInPhase() - 1e-4f);
+                clockLabel.text = $"{left / 60}:{left % 60:00}";
+                int n = sim.Config.shortMode.encounterCount;
+                objectiveLabel.text = sim.Encounter < n
+                    ? $"ENCOUNTER {sim.Encounter + 1}/{n} — SURVIVE"
+                    : $"DEFEAT {sim.Config.collector.displayName.ToUpperInvariant()}";
+            }
+            else
+            {
+                int secs = (int)now;
+                clockLabel.text = $"{secs / 60}:{secs % 60:00}";
+                objectiveLabel.text = "SANDBOX";
+            }
+
+            var score = sim.Score;
+            scoreLabel.text = score.Multiplier > 1f ? $"SCORE {score.Score}   x{score.Multiplier:0.00}" : $"SCORE {score.Score}";
+            scoreLabel.color = score.Multiplier > 1f ? Ui.Accent : Ui.Ink;
+
+            var boss = sim.LivingBoss();
+            bossBarBg.gameObject.SetActive(boss != null);
+            if (boss != null)
+                bossBarFill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(boss.Health / Mathf.Max(1f, boss.MaxHealth)), 1);
         }
     }
 }

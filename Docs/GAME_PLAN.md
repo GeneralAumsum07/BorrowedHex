@@ -169,7 +169,9 @@ Build ordinary bolts first, then fan volleys, then rockets and explosions. Heavy
 
 ### First boss: the Collector
 
-The Collector alternates three readable patterns: a bolt stream, a fan volley, and a rocket attack. Include short repositioning gaps but no extended period with neither targets nor ammunition. The boss remains damageable in the baseline version.
+The Collector alternates three readable patterns: a bolt stream, a fan volley, and a rocket attack.
+
+> **Changed by the owner for Phase 5 (D38):** no rocket attack. The Collector cycles a bolt stream, a sweeping melee attack, a fan volley and an area ground slam, and starts with 50 health instead of 120. Its name is announced by a pop-up banner when the boss window opens. Include short repositioning gaps but no extended period with neither targets nor ammunition. The boss remains damageable in the baseline version.
 
 Start with 120 health, then tune so a new character with no permanent skills can win within the short-mode boss window. Test this assumption before adding mastery progression. A repeated endless boss gains one predefined pattern variation, such as a second fan angle, rather than only more health. Charges and melee attacks are avoidable hazards, not automatically stealable abilities.
 

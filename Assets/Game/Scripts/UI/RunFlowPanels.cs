@@ -1,0 +1,216 @@
+using System;
+using BorrowedHex.Core;
+using BorrowedHex.Runs;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+namespace BorrowedHex.UI
+{
+    /// <summary>
+    /// Phase 5 run-flow screens: the upgrade-choice stand-in (Continue), the boss name banner,
+    /// and the results panel. Like the HUD, it only POLLS the bound sim's State each frame,
+    /// so a restart is one Bind call and no panel can be left showing a previous run.
+    /// All animation runs on unscaled real time: the gameplay clock is frozen while these show.
+    /// </summary>
+    public sealed class RunFlowPanels : MonoBehaviour
+    {
+        ArenaSim sim;
+
+        GameObject upgradeDim;
+        Text upgradeTitle;
+        Button continueButton;
+
+        RectTransform banner;
+        CanvasGroup bannerGroup;
+        Text bannerName;
+        Text bannerSub;
+        float bannerShownAt = -1f;
+        bool bannerWasIntro;
+
+        GameObject resultsDim;
+        Text resultsTitle;
+        Text resultsBody;
+        Button againButton;
+        RunSummary shownSummary;
+
+        /// <summary>Seconds the boss banner holds the frozen frame before the fight starts.</summary>
+        public const float BannerHold = 2.4f;
+        const float BannerFade = 0.6f;
+
+        public static RunFlowPanels Create(Canvas canvas, Action onContinue, Action onPlayAgain, Action onSwitchMode, Func<string> switchLabel)
+        {
+            var root = Ui.Stretch(Ui.Rect("RunFlow", canvas.transform));
+            var p = root.gameObject.AddComponent<RunFlowPanels>();
+            p.Build(root, onContinue, onPlayAgain, onSwitchMode, switchLabel);
+            return p;
+        }
+
+        void Build(RectTransform root, Action onContinue, Action onPlayAgain, Action onSwitchMode, Func<string> switchLabel)
+        {
+            // --- Upgrade choice (Phase 5: Continue only; the three upgrade cards are Phase 6).
+            var dim = Ui.Image("UpgradeChoice", root, new Color(0, 0, 0, 0.55f));
+            Ui.Stretch(dim.rectTransform);
+            upgradeDim = dim.gameObject;
+            var panel = Ui.Image("Panel", dim.transform, Ui.Panel);
+            Ui.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620, 0));
+            panel.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var col = Ui.Column(panel.rectTransform, 16);
+            col.padding = new RectOffset(40, 40, 32, 36);
+            upgradeTitle = Ui.Sized(Ui.Label("Title", panel.transform, "", 46), 64);
+            upgradeTitle.color = Ui.Accent;
+            var note = Ui.Sized(Ui.Label("Note", panel.transform, "Upgrade choices arrive in the next build.\nPackets and enemies are frozen where they are.", 24), 70);
+            note.color = new Color(1, 1, 1, 0.75f);
+            continueButton = Ui.Sized(Ui.Button("Continue", panel.transform, "Continue", onContinue), 72);
+            upgradeDim.SetActive(false);
+
+            // --- Boss banner: a full-width band across the upper third, name in gold.
+            var band = Ui.Image("BossBanner", root, new Color(0.05f, 0.02f, 0.08f, 0.88f));
+            banner = band.rectTransform;
+            banner.anchorMin = new Vector2(0f, 0.5f);
+            banner.anchorMax = new Vector2(1f, 0.5f);
+            banner.pivot = new Vector2(0.5f, 0.5f);
+            banner.anchoredPosition = new Vector2(0f, 150f);
+            banner.sizeDelta = new Vector2(0f, 190f);
+            band.raycastTarget = false;
+            bannerGroup = band.gameObject.AddComponent<CanvasGroup>();
+            bannerGroup.blocksRaycasts = false;
+            var warn = Ui.Label("Warning", band.transform, "— BOSS —", 26);
+            Ui.Place(warn.rectTransform, new Vector2(0.5f, 1f), new Vector2(0, -12), new Vector2(800, 34));
+            warn.color = new Color(1f, 0.4f, 0.32f);
+            bannerName = Ui.Label("Name", band.transform, "", 84);
+            Ui.Place(bannerName.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0, 4), new Vector2(1400, 100));
+            bannerName.color = Ui.Accent;
+            bannerName.fontStyle = FontStyle.Bold;
+            bannerSub = Ui.Label("Sub", band.transform, "Defeat it before the time runs out", 26);
+            Ui.Place(bannerSub.rectTransform, new Vector2(0.5f, 0f), new Vector2(0, 14), new Vector2(900, 34));
+            band.gameObject.SetActive(false);
+
+            // --- Results.
+            var rdim = Ui.Image("Results", root, new Color(0, 0, 0, 0.7f));
+            Ui.Stretch(rdim.rectTransform);
+            resultsDim = rdim.gameObject;
+            var rp = Ui.Image("Panel", rdim.transform, Ui.Panel);
+            Ui.Place(rp.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620, 0));
+            rp.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var rcol = Ui.Column(rp.rectTransform, 14);
+            rcol.padding = new RectOffset(44, 44, 32, 36);
+            resultsTitle = Ui.Sized(Ui.Label("Title", rp.transform, "", 58), 76);
+            resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 28, TextAnchor.UpperCenter), 270);
+            resultsBody.lineSpacing = 1.15f;
+            againButton = Ui.Sized(Ui.Button("PlayAgain", rp.transform, "Play again", onPlayAgain), 72);
+            Button sw = null;
+            sw = Ui.Sized(Ui.Button("SwitchMode", rp.transform, switchLabel(), () =>
+            {
+                onSwitchMode();
+                sw.GetComponentInChildren<Text>().text = switchLabel();
+            }), 64);
+            resultsDim.SetActive(false);
+        }
+
+        public void Bind(ArenaSim s)
+        {
+            sim = s;
+            shownSummary = null;
+            bannerShownAt = -1f;
+            bannerWasIntro = false;
+            banner.gameObject.SetActive(false);
+            upgradeDim.SetActive(false);
+            resultsDim.SetActive(false);
+        }
+
+        /// <summary>True while the boss banner has held long enough to start the fight.</summary>
+        public bool BannerDone => bannerShownAt >= 0f && Time.unscaledTime - bannerShownAt >= BannerHold;
+
+        void LateUpdate()
+        {
+            if (sim == null) return;
+            var state = sim.State;
+
+            bool upgrade = state == RunState.UpgradeChoice;
+            if (upgrade && !upgradeDim.activeSelf)
+            {
+                upgradeTitle.text = $"ENCOUNTER {sim.TransitionsReached} SURVIVED";
+                Select(continueButton);
+            }
+            upgradeDim.SetActive(upgrade);
+
+            UpdateBanner(state);
+
+            if (state == RunState.Results && sim.Summary != null && shownSummary != sim.Summary)
+            {
+                shownSummary = sim.Summary;
+                FillResults(shownSummary);
+                resultsDim.SetActive(true);
+                Select(againButton);
+            }
+            else if (state != RunState.Results && resultsDim.activeSelf) resultsDim.SetActive(false);
+        }
+
+        void UpdateBanner(RunState state)
+        {
+            if (state == RunState.BossIntro && !bannerWasIntro)
+            {
+                bannerWasIntro = true;
+                bannerShownAt = Time.unscaledTime;
+                bannerName.text = sim.Config.collector.displayName.ToUpperInvariant();
+                banner.gameObject.SetActive(true);
+            }
+            if (!banner.gameObject.activeSelf) return;
+            // The run can end inside the fade (a fast kill, a death): the results must never
+            // sit on top of a half-faded boss name.
+            if (state == RunState.Results)
+            {
+                banner.gameObject.SetActive(false);
+                return;
+            }
+
+            float age = Time.unscaledTime - bannerShownAt;
+            // Pop in: overshoot from 1.35x down to 1x in a quarter second, then hold, then fade
+            // once the fight has started (the banner never covers live combat for long).
+            float pop = Mathf.Clamp01(age / 0.25f);
+            float scale = Mathf.Lerp(1.35f, 1f, 1f - (1f - pop) * (1f - pop));
+            bannerName.rectTransform.localScale = Vector3.one * scale;
+            float fade = state == RunState.BossIntro || state == RunState.Paused ? 1f
+                : 1f - Mathf.Clamp01((age - BannerHold) / BannerFade);
+            bannerGroup.alpha = Mathf.Min(pop * 2f, fade);
+            if (fade <= 0f) banner.gameObject.SetActive(false);
+        }
+
+        void FillResults(RunSummary s)
+        {
+            switch (s.Reason)
+            {
+                case RunEndReason.Victory: resultsTitle.text = "VICTORY"; resultsTitle.color = Ui.Accent; break;
+                case RunEndReason.Death: resultsTitle.text = "DEFEATED"; resultsTitle.color = new Color(1f, 0.4f, 0.45f); break;
+                case RunEndReason.TimeExpired: resultsTitle.text = "TIME EXPIRED"; resultsTitle.color = new Color(1f, 0.6f, 0.3f); break;
+                default: resultsTitle.text = s.Reason.ToString().ToUpperInvariant(); resultsTitle.color = Ui.Ink; break;
+            }
+            int secs = Mathf.FloorToInt(s.Duration);
+            string bonus = s.VictoryBonus > 0 ? $"   (time bonus +{s.VictoryBonus})" : "";
+            // Centred "label: value" lines: the built-in font is proportional, so space-padded
+            // columns would not line up.
+            resultsBody.text =
+                $"{ReasonText(s.Reason)}\n" +
+                $"Score: {s.Score}{bonus}\n" +
+                $"Best volley: {s.BestVolleyKills} kill{(s.BestVolleyKills == 1 ? "" : "s")}\n" +
+                $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased} packets)\n" +
+                $"Damage taken: {s.DamageTaken}\n" +
+                $"Duration: {secs / 60}:{secs % 60:00}   Kills: {s.Kills}";
+        }
+
+        static string ReasonText(RunEndReason r) => r switch
+        {
+            RunEndReason.Victory => "The Collector fell",
+            RunEndReason.Death => "You fell",
+            RunEndReason.TimeExpired => "The Collector outlasted the clock",
+            _ => r.ToString(),
+        };
+
+        static void Select(Button b)
+        {
+            var es = EventSystem.current;
+            if (es != null) es.SetSelectedGameObject(b.gameObject);
+        }
+    }
+}

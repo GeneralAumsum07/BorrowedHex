@@ -33,6 +33,7 @@ namespace BorrowedHex.Presentation
         public PlayerInputReader Input { get; private set; }
         public GameplayHud Hud { get; private set; }
         public PauseMenu Menu { get; private set; }
+        public RunFlowPanels Flow { get; private set; }
         public ArenaView View { get; private set; }
 
         Camera cam;
@@ -51,6 +52,11 @@ namespace BorrowedHex.Presentation
             // Desktop gets a Quit button; in a browser tab, quitting is the browser's job.
             System.Action quit = Application.platform == RuntimePlatform.WebGLPlayer ? null : Application.Quit;
             Menu = PauseMenu.Create(canvas, () => SetMenuOpen(false), Restart, quit);
+            Menu.AddButton(() => ModeSwitchLabel, SwitchMode);
+            // uGUI draws later siblings on top: the pause menu is raised above the flow panels
+            // so pausing during an upgrade choice shows the menu, not the panel behind it.
+            Flow = RunFlowPanels.Create(canvas, () => Sim.ContinueFromUpgrade(), Restart, SwitchMode, () => ModeSwitchLabel);
+            Menu.transform.SetAsLastSibling();
             BuildDevPanel();
 
             BeginRun();
@@ -74,6 +80,7 @@ namespace BorrowedHex.Presentation
                 Sim.AutoSpawn = autoSpawn;
                 autoSpawnButton.GetComponentInChildren<UnityEngine.UI.Text>().text = AutoSpawnLabel;
             });
+            Hud.AddDevButton("+ Collector", () => { if (Sim.LivingBoss() == null) Sim.SpawnBoss(); });
             Hud.AddDevButton("Clear arena", () => Sim.ClearArena());
         }
 
@@ -83,19 +90,42 @@ namespace BorrowedHex.Presentation
         UnityEngine.UI.Button autoSpawnButton;
         string AutoSpawnLabel => autoSpawn ? "Auto-spawn: ON" : "Auto-spawn: OFF";
 
+        // Phase 5: the default run is a scored short run. The sandbox (dev panel, free
+        // practice) stays one click away in the pause menu and on the results screen. Held
+        // here so it survives restarts, like the auto-spawn switch.
+        bool sandboxMode;
+        string ModeSwitchLabel => sandboxMode ? "Play short run" : "Practice sandbox";
+
+        void SwitchMode()
+        {
+            sandboxMode = !sandboxMode;
+            BeginRun();
+        }
+
         /// <summary>Start a fresh run: a new sim and a new view; the old ones are discarded whole.</summary>
         public void BeginRun()
         {
             if (View != null) Destroy(View.gameObject);
             runCounter++;
-            // Phase 1 has no menus yet, so every run is a sandbox; Phase 5/7 pass a real setup.
-            var setup = RunSetup.ForSandbox(runCounter);
-            setup.SandboxAutoSpawn = autoSpawn; // practice: formations cycle while the arena is clear (toggleable)
+            RunSetup setup;
+            if (sandboxMode)
+            {
+                setup = RunSetup.ForSandbox(runCounter);
+                setup.SandboxAutoSpawn = autoSpawn; // practice: formations cycle while the arena is clear (toggleable)
+            }
+            else
+            {
+                // A fresh seed per run, so formation picks and spawn points vary between runs
+                // (section 6: seeded variation); the seed is kept in the summary for debugging.
+                setup = new RunSetup { Mode = GameMode.Short, Seed = System.Environment.TickCount ^ (runCounter * 7919) };
+            }
             Sim = new ArenaSim(config, setup);
             View = ArenaView.Create(Sim);
             Hud.Bind(Sim);
+            Flow.Bind(Sim);
             Hud.SetResetVisible(Sim.Setup.Sandbox || Sim.Setup.Debug);
             accumulator = 0f;
+            gameplayInput = null;
             SetMenuOpen(false);
         }
 
@@ -107,15 +137,37 @@ namespace BorrowedHex.Presentation
         /// </summary>
         public void SetMenuOpen(bool open)
         {
-            Sim.Clock.SetPauseReason(PauseReason.Menu, open);
+            // The results screen is its own menu; Esc there does nothing rather than stacking
+            // a pause menu over it.
+            if (open && Sim.State == RunState.Results) open = false;
+            Sim.SetPause(PauseReason.Menu, open);
             Menu.Show(open);
-            Input.SetGameplayEnabled(!open);
+            SyncGameplayInput();
+        }
+
+        bool? gameplayInput;
+
+        /// <summary>
+        /// Gameplay input is live only in actual combat with no menu up: never during an
+        /// upgrade choice, the boss banner or the results, so a click on Continue can never also
+        /// arrive as a catch.
+        /// </summary>
+        void SyncGameplayInput()
+        {
+            var s = Sim.State;
+            bool on = !Menu.IsOpen && (s == RunState.Ready || s == RunState.Combat || s == RunState.BossCombat);
+            if (gameplayInput == on) return;
+            gameplayInput = on;
+            Input.SetGameplayEnabled(on);
         }
 
         void Update()
         {
             if (Input.ConsumePause()) SetMenuOpen(!Menu.IsOpen);
             if (cam == null) cam = Camera.main;
+            SyncGameplayInput();
+            // The boss banner holds the frozen frame for a beat, then the fight starts.
+            if (Sim.State == RunState.BossIntro && Flow.BannerDone) Sim.CompleteBossIntro();
 
             if (Sim.Clock.IsPaused)
             {
@@ -146,7 +198,7 @@ namespace BorrowedHex.Presentation
         public void SetFocus(bool hasFocus)
         {
             if (Sim == null) return;
-            Sim.Clock.SetPauseReason(PauseReason.FocusLost, !hasFocus);
+            Sim.SetPause(PauseReason.FocusLost, !hasFocus);
             if (!hasFocus) SetMenuOpen(true);
         }
 

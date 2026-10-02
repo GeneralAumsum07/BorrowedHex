@@ -42,9 +42,26 @@ namespace BorrowedHex.UI
             return menu;
         }
 
+        /// <summary>
+        /// Extra button inserted above the hint line (e.g. the sandbox / short-run switch). The
+        /// label is re-read every time the menu opens, so it can name the current choice.
+        /// </summary>
+        public Button AddButton(Func<string> label, Action onClick)
+        {
+            var panel = resume.transform.parent;
+            var b = Ui.Sized(Ui.Button("Extra", panel, label(), onClick), 72);
+            b.transform.SetSiblingIndex(panel.childCount - 2); // above the hint
+            labelled.Add((b.GetComponentInChildren<Text>(), label));
+            return b;
+        }
+
+        readonly System.Collections.Generic.List<(Text text, Func<string> label)> labelled =
+            new System.Collections.Generic.List<(Text, Func<string>)>();
+
         public void Show(bool on)
         {
             gameObject.SetActive(on);
+            foreach (var (text, label) in labelled) text.text = label();
             // Keyboard users land on Resume; clearing on close stops Enter re-triggering it.
             var es = EventSystem.current;
             if (es != null) es.SetSelectedGameObject(on ? resume.gameObject : null);
