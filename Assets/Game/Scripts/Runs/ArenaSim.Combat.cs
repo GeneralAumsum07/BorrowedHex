@@ -16,6 +16,7 @@ namespace BorrowedHex.Runs
         {
             Attacks = new AttackCatalog(Config.combat);
             InitCapture();
+            InitRun();
             Events.PlayerDied += OnPlayerDied;
             AutoSpawn = Setup.SandboxAutoSpawn;
             if (AutoSpawn)
@@ -31,8 +32,9 @@ namespace BorrowedHex.Runs
             TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6
             Capture.Tick(now);                            //   close the window's packet
-            TickSandboxDirector(now);                     // 7 (director)
+            TickSandboxDirector(now);                     // 7 (sandbox director)
             RemoveDeadEnemies();
+            TickRunFlow(now);                             // 8 (terminal, schedule, short-mode director)
         }
 
         /// <summary>

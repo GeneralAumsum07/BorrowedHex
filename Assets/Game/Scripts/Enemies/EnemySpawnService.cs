@@ -55,6 +55,21 @@ namespace BorrowedHex.Enemies
             new Formation("Bombardment", F, S, P),
         };
 
+        // Short-mode rosters (section 6). Index 0 of each pool is the encounter's SIGNATURE,
+        // spawned first so the new enemy kind is on screen the moment the encounter starts:
+        //   1: acolytes and a few pursuers
+        //   2: adds scatter casters
+        //   3: adds siege familiars and mixed formations
+        // A new two-member group, "Picket", keeps encounter one from leaning on pairs only.
+        static readonly Formation Picket = new Formation("Picket", A, P);
+
+        public static readonly Formation[][] EncounterPools =
+        {
+            new[] { Formations[1], Formations[0], Picket },
+            new[] { Formations[2], Formations[4], Formations[1], Formations[0] },
+            new[] { Formations[3], Formations[6], Formations[5], Formations[4], Formations[1] },
+        };
+
         public static void Spawn(ArenaSim sim, Formation f)
         {
             // Spawn points are drawn one at a time so each member avoids the ones already

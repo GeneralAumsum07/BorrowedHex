@@ -20,7 +20,8 @@ namespace BorrowedHex.Runs
     ///   5. enemies think/move/emit (a Pursuer strike may be parried here)
     ///   6. projectiles sweep: walls → capture → actor impact, in travel order
     ///   7. upgrade auras, director
-    ///   8. terminal resolution (death beats boss defeat beats time expiry)
+    ///   8. score timers, terminal resolution (death beats boss defeat beats time expiry),
+    ///      then the short-mode schedule and encounter director (ArenaSim.Run.cs)
     /// Later phases fill steps 3 and 5–8 in other partial files.
     /// </summary>
     public sealed partial class ArenaSim
@@ -63,6 +64,7 @@ namespace BorrowedHex.Runs
         public void Tick(in PlayerCommand cmd, float dt)
         {
             if (Clock.IsPaused) return;
+            BeginIfReady();
             double tickStart = Clock.Now;
             Clock.Advance(dt);
             double now = Clock.Now;

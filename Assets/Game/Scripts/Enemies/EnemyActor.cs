@@ -48,6 +48,10 @@ namespace BorrowedHex.Enemies
         /// </summary>
         public bool Killed;
 
+        /// <summary>Boss-only pattern state (null for ordinary enemies).</summary>
+        public BossState Boss;
+        public bool IsBoss => Category == ActorCategory.Boss;
+
         public bool IsActive(double now) => Alive && now >= ActiveAt;
     }
 }

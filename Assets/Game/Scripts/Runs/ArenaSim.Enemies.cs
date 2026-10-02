@@ -49,12 +49,58 @@ namespace BorrowedHex.Runs
             return e;
         }
 
+        /// <summary>
+        /// Bring in the Collector (Phase 5). It gets its own tuning (BossTuning) because its
+        /// patterns share nothing with the ordinary-enemy roster beyond the body and damage
+        /// rules. Placed on the far side of the arena from the player, on the centre line,
+        /// which is clear of all four pillars.
+        /// </summary>
+        public EnemyActor SpawnBoss()
+        {
+            var t = Config.collector;
+            var b = Config.arena.bounds;
+            float y = Player.Position.y > b.center.y ? b.yMin + 3.5f : b.yMax - 3.5f;
+            var pos = new Vector2(b.center.x, y);
+            var e = new EnemyActor
+            {
+                ActorId = Ids.Next(),
+                Category = ActorCategory.Boss,
+                Position = pos,
+                PrevPosition = pos,
+                SpawnedAt = Clock.Now,
+                ActiveAt = Clock.Now + t.spawnWarning,
+                Phase = EnemyPhase.Warning,
+                AimDirection = (Player.Position - pos).normalized,
+                StrafeSign = Random.NextFloat() < 0.5f ? -1f : 1f,
+                Radius = t.bodyRadius,
+                MaxHealth = t.health,
+                Health = t.health,
+                KillValue = t.killValue,
+                Boss = new BossState(),
+            };
+            Enemies.Add(e);
+            Events.RaiseEnemySpawned(e);
+            return e;
+        }
+
+        /// <summary>True while any boss is alive (ordinary-enemy counts and caps exclude it).</summary>
+        public EnemyActor LivingBoss()
+        {
+            foreach (var e in Enemies) if (e.Alive && e.IsBoss) return e;
+            return null;
+        }
+
         void TickEnemies(double now, float dt)
         {
             foreach (var e in Enemies)
             {
                 if (!e.Alive) continue;
                 e.PrevPosition = e.Position;
+                if (e.IsBoss)
+                {
+                    CollectorBoss.Tick(this, e, Config.collector, now, dt);
+                    continue;
+                }
                 var t = Config.combat.For(e.Category);
                 if (e.Phase == EnemyPhase.Warning)
                 {
@@ -147,6 +193,14 @@ namespace BorrowedHex.Runs
         {
             int n = 0;
             foreach (var e in Enemies) if (e.Alive) n++;
+            return n;
+        }
+
+        /// <summary>Living non-boss enemies: what the section 6 cap of 12 counts.</summary>
+        public int AliveOrdinaryCount()
+        {
+            int n = 0;
+            foreach (var e in Enemies) if (e.Alive && !e.IsBoss) n++;
             return n;
         }
 
