@@ -1,3 +1,4 @@
+using static BorrowedHex.Tests.ClockFixtures;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
 using BorrowedHex.Player;
@@ -96,12 +97,12 @@ namespace BorrowedHex.Tests
         public void RepeatedHitsDuringInvulnerability_CostOneHealth()
         {
             var sim = NewSim();
-            int before = sim.Player.Health;
+            float before = sim.LifeSeconds;
             Assert.IsTrue(sim.DamagePlayer(1, sourceActorId: 0));
             Assert.IsFalse(sim.DamagePlayer(1, 0));
             sim.Tick(PlayerCommand.Moving(Vector2.zero), 0.3f);
             Assert.IsFalse(sim.DamagePlayer(1, 0));
-            Assert.AreEqual(before - 1, sim.Player.Health);
+            Assert.AreEqual(before - 1.3f, sim.LifeSeconds, 1e-4f);
             for (int i = 0; i < 30; i++) sim.Tick(PlayerCommand.Moving(Vector2.zero), Dt);
             Assert.IsTrue(sim.DamagePlayer(1, 0), "invulnerability should have expired after 0.65 s");
         }
@@ -112,7 +113,7 @@ namespace BorrowedHex.Tests
             var sim = NewSim();
             int deaths = 0;
             sim.Events.PlayerDied += () => deaths++;
-            sim.Player.Health = 1;
+            LeaveOneSecond(sim);
             sim.DamagePlayer(1, 0);
             sim.DamagePlayer(1, 0);
             sim.Player.ClearInvulnerability();

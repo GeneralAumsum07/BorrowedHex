@@ -1,3 +1,4 @@
+using static BorrowedHex.Tests.ClockFixtures;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
@@ -46,7 +47,7 @@ namespace BorrowedHex.Tests
             // 240 u/s = 4 units per step; it starts 1.5 units away and would end 2.5 units past.
             sim.SpawnProjectile(Bolt(sim, 240f), AttackFaction.Hostile, new Vector2(-1.5f, 0f), Vector2.right);
             sim.Tick(Idle, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.AreEqual(0, sim.Projectiles.Count, "the projectile ends on impact");
         }
 
@@ -59,7 +60,7 @@ namespace BorrowedHex.Tests
             sim.Events.ProjectileEnded += (p, r) => { ended++; reason = r; };
             sim.SpawnProjectile(Bolt(sim, 300f), AttackFaction.Hostile, new Vector2(-6f, 1.5f), Vector2.up);
             sim.Tick(Idle, Dt); // one step covers 5 units: pillar AND player are both on the segment
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.AreEqual(1, ended);
             Assert.AreEqual(ProjectileEndReason.HitWall, reason);
         }
@@ -70,13 +71,13 @@ namespace BorrowedHex.Tests
             var sim = SimWithPlayerAt(Vector2.zero);
             var p = sim.SpawnProjectile(Bolt(sim), AttackFaction.Hostile, new Vector2(0f, -1f), Vector2.up);
             for (int i = 0; i < 20; i++) sim.Tick(Idle, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.IsFalse(p.Active);
 
             // Even with invulnerability gone and time passing, the dead shot does nothing more.
             sim.Player.ClearInvulnerability();
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace BorrowedHex.Tests
             sim.SpawnProjectile(Bolt(sim), AttackFaction.Hostile, new Vector2(0f, 0f), Vector2.down);
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
             Assert.AreEqual(enemy.MaxHealth, enemy.Health, "hostile fire passes through enemies");
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
         }
 
         [Test]
@@ -99,7 +100,7 @@ namespace BorrowedHex.Tests
             DamageEvent seen = default;
             sim.Events.EnemyDamaged += (e, d) => seen = d;
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health, "returned fire passes through the player");
+            Assert.AreEqual(0, sim.Score.DamageTaken, "returned fire passes through the player");
             Assert.AreEqual(enemy.MaxHealth - 1f, enemy.Health, 1e-4f);
             Assert.AreEqual(999, seen.SourceActorId, "provenance: original shooter survives the return");
             Assert.AreEqual(77, seen.RootReleaseId);
@@ -181,7 +182,7 @@ namespace BorrowedHex.Tests
             bool ran = false;
             sim.Scheduler.Schedule(sim.Clock.Now + 0.5, () => ran = true);
             sim.SpawnProjectile(Bolt(sim), AttackFaction.Hostile, new Vector2(8f, 6f), Vector2.left);
-            sim.Player.Health = 1;
+            LeaveOneSecond(sim);
             sim.DamagePlayer(1, 0);
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
             Assert.IsFalse(ran);

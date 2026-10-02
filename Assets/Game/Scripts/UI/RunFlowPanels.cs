@@ -196,8 +196,8 @@ namespace BorrowedHex.UI
                 $"Score: {s.Score}{bonus}\n" +
                 $"Best volley: {s.BestVolleyKills} kill{(s.BestVolleyKills == 1 ? "" : "s")}\n" +
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased} packets)\n" +
-                // Stored in half hearts (D51); shown in hearts, the unit the HUD draws.
-                $"Damage taken: {s.DamageTaken * 0.5f:0.#} heart{(s.DamageTaken == 2 ? "" : "s")}\n" +
+                $"Time lost to hits: {s.DamageTaken}s   Time gained: {s.SecondsGained:0.#}s\n" +
+                $"Backfires: {s.Backfires}   Swaps: {s.Swaps}   Average power: x{s.AverageFirePower:0.00}\n" +
                 $"Duration: {secs / 60}:{secs % 60:00}   Kills: {s.Kills}";
         }
 

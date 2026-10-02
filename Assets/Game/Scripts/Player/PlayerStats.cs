@@ -11,7 +11,7 @@ namespace BorrowedHex.Player
     public sealed class PlayerStats
     {
         public float MoveSpeed;
-        public int MaxHealth;
+        public float StartingSeconds;
         public float HitInvulnerability;
         public float ContactInvulnerability;
         public float DashDistance;
@@ -27,6 +27,8 @@ namespace BorrowedHex.Player
         public int PacketCapacity;
         public float PacketLifetime;
         public int PacketSlots;
+        public float PowerPerSecond;
+        public int BackfireSeconds;
         public float PerfectWindow;
         public float PerfectBonus;
         public float ParryRingRadius;
@@ -48,7 +50,7 @@ namespace BorrowedHex.Player
             return new PlayerStats
             {
                 MoveSpeed = p.moveSpeed,
-                MaxHealth = p.maxHealth,
+                StartingSeconds = config.shortMode.runLength,
                 HitInvulnerability = p.hitInvulnerability,
                 ContactInvulnerability = p.contactInvulnerability,
                 DashDistance = p.dashDistance,
@@ -63,6 +65,8 @@ namespace BorrowedHex.Player
                 PacketCapacity = c.packetCapacity,
                 PacketLifetime = c.packetLifetime,
                 PacketSlots = c.packetSlots,
+                PowerPerSecond = c.powerPerSecond,
+                BackfireSeconds = c.backfireSeconds,
                 PerfectWindow = c.perfectWindow,
                 PerfectBonus = c.perfectBonus,
                 ParryRingRadius = c.parryRingRadius,

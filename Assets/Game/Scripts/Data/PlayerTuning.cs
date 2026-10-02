@@ -8,10 +8,6 @@ namespace BorrowedHex.Data
     public class PlayerTuning
     {
         public float moveSpeed = 6f;
-        // Health is counted in HALF HEARTS (owner direction: 5 hearts, half-heart contact
-        // damage). Integers keep damage exact and deterministic; the HUD divides by two.
-        [Tooltip("In half hearts: 10 = 5 hearts.")]
-        public int maxHealth = 10;
         public float hitInvulnerability = 0.65f;
         [Tooltip("Invulnerability after a CONTACT hit (bumping an enemy body). Shorter than a "
                  + "hit's, so contact is a brief shove of danger rather than a free dash-through.")]
@@ -36,6 +32,10 @@ namespace BorrowedHex.Data
         public int packetCapacity = 12;
         public float packetLifetime = 3f;
         public int packetSlots = 2;
+        [Tooltip("Damage power gained per selected second; frozen packets gain nothing.")]
+        public float powerPerSecond = 0.35f;
+        [Tooltip("Life-clock seconds lost when a selected packet expires unfired.")]
+        public int backfireSeconds = 10;
         [Tooltip("A shot is perfect if its path would reach the player's hitbox within this many seconds.")]
         public float perfectWindow = 0.10f;
         public float perfectBonus = 0.15f;

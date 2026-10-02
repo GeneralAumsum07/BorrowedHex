@@ -176,7 +176,7 @@ namespace BorrowedHex.Runs
         /// </summary>
         public bool DamageEnemy(EnemyActor e, float amount, DamageCategory category, in AttackSnapshot shot, int rootReleaseId)
         {
-            if (e == null || !e.IsActive(Clock.Now) || amount <= 0f) return false;
+            if (Summary != null || e == null || !e.IsActive(Clock.Now) || amount <= 0f) return false;
             var ev = new DamageEvent
             {
                 DamageId = Ids.Next(),

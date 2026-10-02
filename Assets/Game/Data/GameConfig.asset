@@ -12,6 +12,139 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6858b614fecd786438820c3c237c19e7, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: BorrowedHex::BorrowedHex.Data.GameConfig
+  combat:
+    spawnWarning: 0.8
+    minSpawnDistance: 5
+    enemyHitDamage: 10
+    enemyContactDamage: 5
+    attacks:
+    - id: bolt
+      kind: 0
+      speed: 9
+      radius: 0.18
+      returnedDamage: 1
+      hostileDamage: 10
+      energyCost: 1
+      lifetime: 4
+      capturable: 1
+      explosionRadius: 0
+      explosionDamage: 0
+    - id: riposte
+      kind: 3
+      speed: 18
+      radius: 0.3
+      returnedDamage: 2
+      hostileDamage: 0
+      energyCost: 0
+      lifetime: 0.5
+      capturable: 0
+      explosionRadius: 0
+      explosionDamage: 0
+    - id: rocket
+      kind: 2
+      speed: 6
+      radius: 0.28
+      returnedDamage: 0
+      hostileDamage: 10
+      energyCost: 4
+      lifetime: 5
+      capturable: 1
+      explosionRadius: 1.6
+      explosionDamage: 5
+    acolyte:
+      health: 3
+      bodyRadius: 0.45
+      moveSpeed: 2.2
+      preferredMin: 5
+      preferredMax: 9
+      telegraph: 0.75
+      aimLock: 0.25
+      cooldown: 1.8
+      firstShotDelay: 0.6
+      attackId: bolt
+      volleySpreadDeg:
+      - -8
+      - 0
+      - 8
+      repositions: 0
+      strikeTrigger: 1.6
+      strikeReach: 0.8
+      strikeRadius: 0.75
+      strikeEdgeWidth: 0.09
+      parryRimDelay: 0.1
+      parryRimDuration: 0.25
+      killValue: 10
+      killSeconds: 3
+    pursuer:
+      health: 2
+      bodyRadius: 0.4
+      moveSpeed: 4.2
+      preferredMin: 5
+      preferredMax: 9
+      telegraph: 0.55
+      aimLock: 0.2
+      cooldown: 1.1
+      firstShotDelay: 0.2
+      attackId: 
+      volleySpreadDeg: []
+      repositions: 0
+      strikeTrigger: 1.6
+      strikeReach: 0.8
+      strikeRadius: 0.75
+      strikeEdgeWidth: 0.09
+      parryRimDelay: 0.1
+      parryRimDuration: 0.25
+      killValue: 10
+      killSeconds: 3
+    scatter:
+      health: 5
+      bodyRadius: 0.5
+      moveSpeed: 2.6
+      preferredMin: 5.5
+      preferredMax: 8.5
+      telegraph: 0.85
+      aimLock: 0.3
+      cooldown: 2.4
+      firstShotDelay: 0.7
+      attackId: bolt
+      volleySpreadDeg:
+      - -24
+      - -12
+      - 0
+      - 12
+      - 24
+      repositions: 1
+      strikeTrigger: 1.6
+      strikeReach: 0.8
+      strikeRadius: 0.75
+      strikeEdgeWidth: 0.09
+      parryRimDelay: 0.1
+      parryRimDuration: 0.25
+      killValue: 20
+      killSeconds: 5
+    siege:
+      health: 8
+      bodyRadius: 0.6
+      moveSpeed: 1.1
+      preferredMin: 6
+      preferredMax: 10
+      telegraph: 1.3
+      aimLock: 0.35
+      cooldown: 3.4
+      firstShotDelay: 0.8
+      attackId: rocket
+      volleySpreadDeg:
+      - 0
+      repositions: 0
+      strikeTrigger: 1.6
+      strikeReach: 0.8
+      strikeRadius: 0.75
+      strikeEdgeWidth: 0.09
+      parryRimDelay: 0.1
+      parryRimDuration: 0.25
+      killValue: 25
+      killSeconds: 6
+    ripostePierce: 1
   arena:
     bounds:
       serializedVersion: 2
@@ -51,8 +184,8 @@ MonoBehaviour:
   litMaterial: {fileID: 2100000, guid: b95710eda2863a94da4e6ee4dbd64c37, type: 2}
   player:
     moveSpeed: 6
-    maxHealth: 10
     hitInvulnerability: 0.65
+    contactInvulnerability: 0.5
     dashDistance: 2.9
     dashDuration: 0.18
     dashCooldown: 1.2
@@ -66,8 +199,79 @@ MonoBehaviour:
     packetCapacity: 12
     packetLifetime: 3
     packetSlots: 2
+    powerPerSecond: 0.35
+    backfireSeconds: 10
     perfectWindow: 0.1
     perfectBonus: 0.15
     parryRingRadius: 1.15
     parryRingWidth: 0.12
     parryWindowScale: 0.5
+  collector:
+    displayName: The Collector
+    health: 50
+    bodyRadius: 0.9
+    moveSpeed: 3.6
+    hitDamage: 20
+    contactDamage: 10
+    killValue: 250
+    spawnWarning: 1
+    repositionMax: 1.5
+    recover: 0.5
+    rangedDistance: 6
+    strafeMinDeg: 25
+    strafeMaxDeg: 55
+    slamChooseDistance: 2.4
+    sweepChooseDistance: 5
+    fanMaxDistance: 7.5
+    maxMeleeInARow: 2
+    maxSameInARow: 2
+    slamInsteadOfSweepChance: 0.35
+    teleportMinDistance: 6
+    teleportChance: 0.48
+    teleportTelegraph: 0.6
+    teleportCooldown: 5
+    teleportBehindDistance: 2.6
+    streamTelegraph: 0.6
+    streamAimLock: 0.17
+    streamShots: 12
+    streamInterval: 0.105
+    streamTurnRate: 70
+    fanTelegraph: 0.72
+    fanAimLock: 0.25
+    fanSpreadDeg:
+    - -48
+    - -36
+    - -24
+    - -12
+    - 0
+    - 12
+    - 24
+    - 36
+    - 48
+    sweepTelegraph: 0.77
+    sweepAimLock: 0.25
+    sweepReach: 3
+    sweepHalfAngle: 70
+    sweepDuration: 0.26
+    sweepParryArcRadius: 1.95
+    sweepParryArcWidth: 0.09
+    sweepParryDelay: 0.15
+    sweepParryDuration: 0.3
+    parriedRecover: 1.2
+    slamTelegraph: 0.8
+    slamRadius: 3.2
+  shortMode:
+    runLength: 300
+    encounterCount: 3
+    formationsPerEncounter: 040000000500000005000000
+    maxOrdinaryEnemies: 12
+    firstSpawnDelay: 1
+    spawnInterval:
+    - 7
+    - 6
+    - 5
+    emptyArenaBreather: 1.5
+    comboStep: 0.25
+    comboMax: 3
+    comboTimer: 5
+    victoryBonusPerSecond: 2

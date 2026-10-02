@@ -15,7 +15,7 @@ namespace BorrowedHex.Runs
     /// Tick order (documented because several rules depend on it):
     ///   1. advance the gameplay clock (nothing happens while paused)
     ///   2. run due scheduled actions (echoes, delayed spawns)
-    ///   3. expire packets and release them   ← before captures, so a freed slot is usable
+    ///   3. update aim, drain life and selected-packet time, backfire expired packets
     ///   4. player aim, slot cycle, early release, catch activation, dash, movement
     ///   5. enemies think/move/emit (a Pursuer strike may be parried here)
     ///   6. projectiles sweep: walls → capture → actor impact, in travel order
@@ -52,8 +52,6 @@ namespace BorrowedHex.Runs
                 ActorId = Ids.Next(),
                 Position = config.arena.playerSpawn,
                 Radius = Stats.BodyRadius,
-                MaxHealth = Stats.MaxHealth,
-                Health = Stats.MaxHealth,
             };
             InitCombat();
         }
@@ -81,7 +79,11 @@ namespace BorrowedHex.Runs
             PlayerMotor.UpdateAim(Player, cmd);
             // Cycle, then release, then catch: a slot emptied by an early release this tick is
             // usable by a catch pressed on the same tick (same rule as expiry, D17).
-            if (cmd.CycleSlot) Packets.CycleSelection();
+            if (cmd.CycleSlot)
+            {
+                Packets.CycleSelection();
+                Events.RaiseSlotSwapped(Packets.SelectedSlot);
+            }
             if (cmd.Release) TryReleaseEarly();
             if (cmd.Catch) TryCatch(now);
             if (cmd.Dash) TryDash(cmd.Move, tickStart);
@@ -95,19 +97,25 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>
-        /// The single entry point for player damage, in HALF HEARTS. Invulnerability (post-hit
+        /// The single entry point for player damage, in life-clock seconds. Invulnerability (post-hit
         /// or dash) makes later hits no-ops, and death is raised exactly once.
         /// <paramref name="invulnerability"/> overrides the post-hit window (contact hits use a
         /// shorter one); negative means the normal hit window.
         /// </summary>
         public bool DamagePlayer(int amount, int sourceActorId, float invulnerability = -1f)
+            => ApplyPlayerDamage(amount, sourceActorId, invulnerability, false);
+
+        bool ApplyPlayerDamage(int amount, int sourceActorId, float invulnerability, bool bypassInvulnerability)
         {
             double now = Clock.Now;
-            if (!Player.Alive || amount <= 0 || Player.IsInvulnerable(now)) return false;
-            Player.Health = Math.Max(0, Player.Health - amount);
+            if (Summary != null || !Player.Alive || lifeSeconds <= 0 || amount <= 0
+                || (!bypassInvulnerability && Player.IsInvulnerable(now))) return false;
+            double before = lifeSeconds;
+            lifeSeconds = Math.Max(0, lifeSeconds - amount);
             Player.InvulnerableUntil = now + (invulnerability >= 0f ? invulnerability : Stats.HitInvulnerability);
             Events.RaisePlayerHit(amount, sourceActorId);
-            if (Player.Health == 0)
+            Events.RaiseLifeClockChanged((float)(lifeSeconds - before), Player.Position);
+            if (lifeSeconds == 0)
             {
                 Player.Alive = false;
                 Player.Dashing = false;

@@ -1,3 +1,4 @@
+using static BorrowedHex.Tests.ClockFixtures;
 using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
@@ -254,7 +255,8 @@ namespace BorrowedHex.Tests
             P5.TickWhile(sim, RunState.BossCombat);
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
-            Assert.AreEqual(300.0, sim.Clock.Now, 1e-4);
+            Assert.GreaterOrEqual(sim.Clock.Now, 300.0, "encounter kills bought extra time");
+            Assert.AreEqual(0f, sim.LifeSeconds);
             Assert.AreEqual(0, sim.Summary.VictoryBonus);
         }
 
@@ -270,7 +272,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.Victory, sim.Summary.Reason);
             // Whole unused seconds of the shared clock, two points each.
-            int unused = (int)System.Math.Floor(300.0 - sim.Clock.Now + 1e-6);
+            int unused = (int)System.Math.Floor(sim.LifeSeconds + 1e-6);
             Assert.Greater(unused, 0);
             Assert.AreEqual(unused * 2, sim.Summary.VictoryBonus);
             Assert.AreEqual(before + 250 + unused * 2, sim.Summary.Score);
@@ -286,7 +288,7 @@ namespace BorrowedHex.Tests
             var boss = sim.Boss;
             boss.Health = 1f;
             sim.Player.InvulnerableUntil = 0;
-            sim.Player.Health = 1;
+            LeaveOneSecond(sim);
             // Both shots connect inside the next tick's projectile sweep.
             var mine = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 900, sim.Ids.Next(), 0f);
             sim.SpawnProjectile(mine, AttackFaction.Returned, boss.Position + Vector2.right * (boss.Radius + 0.2f), Vector2.left, rootReleaseId: 77);
@@ -306,7 +308,7 @@ namespace BorrowedHex.Tests
             int ended = 0;
             sim.Events.RunEnded += _ => ended++;
             sim.Player.InvulnerableUntil = 0;
-            sim.Player.Health = 1;
+            LeaveOneSecond(sim);
             sim.DamagePlayer(1, 0);
             sim.Tick(P5.Still, P5.Dt);
             Assert.AreEqual(RunState.Results, sim.State);
@@ -332,7 +334,7 @@ namespace BorrowedHex.Tests
             for (int i = 0; i < 2500; i++) sim.Tick(P5.Still, P5.Dt);
             Assert.AreEqual(RunState.Combat, sim.State, "no upgrade pause at 40 s in the sandbox");
             sim.Player.InvulnerableUntil = 0;
-            sim.DamagePlayer(sim.Player.Health, 0);
+            sim.DamagePlayer(Mathf.CeilToInt(sim.LifeSeconds), 0);
             sim.Tick(P5.Still, P5.Dt);
             Assert.IsNull(sim.Summary);
             Assert.AreEqual(RunState.Combat, sim.State);

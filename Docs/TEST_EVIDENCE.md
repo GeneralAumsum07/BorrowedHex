@@ -384,3 +384,18 @@ Test report: EditMode 165/165, PlayMode 2/2.
   Zero-passive bot: 73.0 s into the boss fight (run clock 102.0 s), was 37.8 s. Not investigated
   (inference: more teleports and instant melee give the offence-only bot fewer free windows).
 ```
+
+## Phase 6, first chunk: packet decay and the life clock (2 Oct 2026)
+
+- Live Unity CLI recompile completed without compiler errors.
+- New packet/clock tests: 11 cases; initial RED 8 failures/3 already-passing boundaries,
+  then GREEN 11/11. Required selected-time boundary (catch 1, freeze 2-5, expiry 7),
+  selected-first assignment, power 1.0/1.7, frozen power, fire at 2.99 versus backfire
+  at 3.0 through immunity, 10-second damage, 298 + 3 capped at 300, Death versus TimeExpired.
+- Full EditMode run: 182 cases, 177 passed. All five failures are the new, uncommitted
+  TemporaryArenaTests for the next chunk (acolyte pierce, shotgun, heavy boss return,
+  crumbling pillars, overstay); the 166 migrated baseline plus 11 packet/clock cases pass.
+- Shipped GameConfig updated through live Editor eval and SaveAssets, preserving its
+  existing arena, presentation and tuning. Unity serialized formerly implicit defaults.
+- Human playtest and final build validation remain pending until the rest of Phase 6.
+- PlayMode: 2/2 passed (focus-loss pause and UI click isolation).

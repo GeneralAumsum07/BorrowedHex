@@ -183,7 +183,7 @@ namespace BorrowedHex.Tests
             CatchVolley(sim, 1);
             Shot(sim, new Vector2(1.2f, 0f));
             sim.Tick(Hold.WithRelease().WithCatch(), Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.AreEqual(2, sim.Packets.Packets.Count);
             Assert.IsNotNull(sim.Packets.InSlot(0));
         }
@@ -206,7 +206,7 @@ namespace BorrowedHex.Tests
             int releases = 0;
             sim.Events.PacketReleased += (_, __) => releases++;
             sim.Player.InvulnerableUntil = double.NegativeInfinity;
-            for (int i = 0; i < sim.Stats.MaxHealth; i++)
+            for (int i = 0; i < 300; i++)
             {
                 sim.Player.InvulnerableUntil = double.NegativeInfinity;
                 sim.DamagePlayer(1, 0);

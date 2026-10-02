@@ -20,9 +20,9 @@ namespace BorrowedHex.Data
         // 2.6 → 3.0 (D49) → 3.3 (D54) → 3.6 (owner, D55).
         public float moveSpeed = 3.6f;
         [Tooltip("Half hearts lost to ANY boss attack, its bolts included (4 = two hearts).")]
-        public int hitDamage = 4;
+        public int hitDamage = 20;
         [Tooltip("Half hearts lost on touching the boss's body (2 = one heart).")]
-        public int contactDamage = 2;
+        public int contactDamage = 10;
         [Tooltip("Score for the kill (section 6).")]
         public int killValue = 250;
 

@@ -3,7 +3,7 @@ using BorrowedHex.Core;
 
 namespace BorrowedHex.Combat
 {
-    public enum PacketStatus { Collecting, Stored, Released, Cancelled }
+    public enum PacketStatus { Collecting, Stored, Released, Backfired, Cancelled }
 
     /// <summary>
     /// One stored packet (section 3). Holds snapshot DATA only — never references to the
@@ -20,8 +20,10 @@ namespace BorrowedHex.Combat
         /// <summary>The catch activation that created it; only that activation may append.</summary>
         public int ActivationId;
         public double CapturedAt;
-        /// <summary>Fixed at creation: appending more shots never extends the lifetime.</summary>
-        public double ExpiresAt;
+        /// <summary>Only time spent selected counts. Appending never renews this budget.</summary>
+        public float Lifetime;
+        public double DecayedTime;
+        internal double AdvancedAt;
         public int Capacity;
         public int CapacityUsed;
         public PacketStatus Status = PacketStatus.Collecting;
@@ -29,8 +31,8 @@ namespace BorrowedHex.Combat
 
         public bool IsFull => CapacityUsed >= Capacity;
         public bool Fits(int cost) => CapacityUsed + cost <= Capacity;
-        public float Remaining(double now) => (float)System.Math.Max(0.0, ExpiresAt - now);
-        public float Lifetime => (float)(ExpiresAt - CapturedAt);
+        public float Remaining(double now) => (float)System.Math.Max(0.0, Lifetime - DecayedTime);
+        public float Power(float gainPerSecond) => 1f + gainPerSecond * (float)DecayedTime;
 
         /// <summary>The dominant kind for HUD icons: the most expensive payload carried.</summary>
         public AttackKind DominantKind
@@ -48,7 +50,7 @@ namespace BorrowedHex.Combat
 
     /// <summary>
     /// The packet slots (D31): each packet owns one fixed slot index from capture until it is
-    /// released, and a new packet takes the LOWEST free index. A held slot is locked: nothing
+    /// released, and a new packet takes the selected slot first, then another free slot. A held slot is locked: nothing
     /// is ever appended to it after its catch window, so a later catch of any kind always lands
     /// in another slot. <see cref="SelectedSlot"/> is the player's Q selection for early release.
     ///
@@ -94,15 +96,20 @@ namespace BorrowedHex.Combat
         public CapturedPacket Create(int packetId, int activationId, double now, float lifetime, int capacity)
         {
             if (FreeSlots <= 0) return null;
-            int slot = 0;
-            while (InSlot(slot) != null) slot++;
+            int slot = SelectedSlot;
+            if (InSlot(slot) != null)
+            {
+                slot = 0;
+                while (InSlot(slot) != null) slot++;
+            }
             var p = new CapturedPacket
             {
                 PacketId = packetId,
                 Slot = slot,
                 ActivationId = activationId,
                 CapturedAt = now,
-                ExpiresAt = now + lifetime,
+                Lifetime = lifetime,
+                AdvancedAt = now,
                 Capacity = capacity,
             };
             packets.Add(p);
@@ -118,7 +125,14 @@ namespace BorrowedHex.Combat
             expired.Clear();
             for (int i = 0; i < packets.Count; i++)
             {
-                if (now >= packets[i].ExpiresAt - ExpiryEpsilon)
+                var packet = packets[i];
+                // Advance the timestamp even on frozen packets: selecting one later must not
+                // charge it for the time it spent banked. New catches start at their own time.
+                double elapsed = System.Math.Max(0.0, now - packet.AdvancedAt);
+                packet.AdvancedAt = System.Math.Max(now, packet.AdvancedAt);
+                if (packet.Slot == SelectedSlot)
+                    packet.DecayedTime = System.Math.Min(packet.Lifetime, packet.DecayedTime + elapsed);
+                if (packet.DecayedTime >= packet.Lifetime - ExpiryEpsilon)
                 {
                     expired.Add(packets[i]);
                     packets.RemoveAt(i--);

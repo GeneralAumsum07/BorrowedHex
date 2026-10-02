@@ -107,7 +107,7 @@ namespace BorrowedHex.Tests
             Assert.IsTrue(allCapturable);
             // Owner direction (D51): bosses do two hearts — its bolts included.
             CollectionAssert.AreEquivalent(new[] { sim.Config.collector.hitDamage }, damages);
-            Assert.AreEqual(4, sim.Config.collector.hitDamage);
+            Assert.AreEqual(20, sim.Config.collector.hitDamage);
         }
 
         // ---- Pattern choice by position (D48) -------------------------------------------
@@ -448,7 +448,7 @@ namespace BorrowedHex.Tests
             MeleeHitsAt(float chooseAt, float standAt)
         {
             var (sim, boss) = BossFight();
-            sim.Player.MaxHealth = sim.Player.Health = 999;
+            sim.Player.InvulnerableUntil = 1e9;
             var hits = new Dictionary<BossPattern, int> { [BossPattern.Sweep] = 0, [BossPattern.Slam] = 0 };
             var swings = new Dictionary<BossPattern, int> { [BossPattern.Sweep] = 0, [BossPattern.Slam] = 0 };
             var amounts = new List<int>();
@@ -485,7 +485,7 @@ namespace BorrowedHex.Tests
             var (hits, swings, amounts) = MeleeHitsAt(1.6f, 1.6f);
             Assert.Greater(swings[BossPattern.Slam], 0, "fixture: point-blank draws slams");
             Assert.AreEqual(swings[BossPattern.Slam], hits[BossPattern.Slam], "every slam lands");
-            CollectionAssert.AreEquivalent(new[] { 4 }, new HashSet<int>(amounts), "2 hearts = 4 half hearts");
+            CollectionAssert.AreEquivalent(new[] { 20 }, new HashSet<int>(amounts), "boss attacks cost twenty seconds");
         }
 
         [Test]
@@ -576,8 +576,8 @@ namespace BorrowedHex.Tests
             // Mash catch, aimed at the boss, from every range a slam can be chosen at.
             foreach (float d in new[] { 1.0f, 1.6f })
             {
-                var (sim, boss) = BossFight();
-                sim.Player.MaxHealth = sim.Player.Health = 999;
+                var (sim, boss) = BossFight(c => c.shortMode.runLength = 30000);
+                sim.Player.InvulnerableUntil = 1e9;
                 int parries = 0, slams = 0, slamHits = 0;
                 sim.Events.StrikeParried += (a, _) => { if (a == boss) parries++; };
                 sim.Events.EnemyFired += f => { if (f == boss && boss.Boss.Pattern == BossPattern.Slam) slams++; };
@@ -674,6 +674,12 @@ namespace BorrowedHex.Tests
             Vector2 move = d < want ? -toBoss.normalized : d > want + 1.5f ? toBoss.normalized : Vector2.zero;
             var cmd = PlayerCommand.Moving(move);
 
+            // Banked packets are safe. A burning packet near expiry must fire even if a
+            // catch window is still open, otherwise this bot would intentionally backfire.
+            var selected = sim.Packets.ReleaseCandidate();
+            if (selected != null && selected.Remaining(now) < 0.3f)
+                return cmd.WithAim(boss.Position).WithRelease();
+
             ProjectileActor incoming = null;
             float best = 3.2f;
             foreach (var pr in sim.Projectiles)
@@ -695,7 +701,7 @@ namespace BorrowedHex.Tests
             // Health raised so this measures OFFENCE only: can baseline catching and returning
             // deal 50 damage inside 60 s? Dodging is a skill question the human playtest answers.
             sim.Player.InvulnerableUntil = 0;
-            sim.Player.MaxHealth = sim.Player.Health = 999;
+            sim.Player.InvulnerableUntil = 1e9;
             double bossFrom = sim.Clock.Now;
             while (sim.State == RunState.BossCombat) sim.Tick(Bot(sim), P5.Dt);
             TestContext.WriteLine($"end {sim.Summary.Reason} at {sim.Summary.Duration:F1}s, boss hp {boss.Health}, " +
@@ -703,6 +709,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunEndReason.Victory, sim.Summary.Reason,
                 $"boss hp {boss.Health}, released {sim.Score.PacketsReleased}, hit {sim.Score.PacketsHit}, " +
                 $"kills {sim.Score.Kills}, taken {sim.Score.DamageTaken}");
+            Assert.AreEqual(0, sim.Score.Backfires, "the bot must fire before expiry");
             // The shared clock (D50) gives the boss whatever the encounters left over; this
             // bot clears them instantly, so the Victory above only proves the boss CAN fall
             // inside 180 s. How long it took is reported, and is the number to weigh against

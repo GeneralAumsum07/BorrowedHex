@@ -38,8 +38,6 @@ namespace BorrowedHex.Player
         public float Radius;
         public Vector2 AimDirection = Vector2.up; // +Z: toward the far wall, away from camera
         public Vector2 FacingMove;                 // last non-zero move, for presentation only
-        public int Health;
-        public int MaxHealth;
         public bool Alive = true;
 
         public double InvulnerableUntil = double.NegativeInfinity;

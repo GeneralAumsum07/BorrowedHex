@@ -38,7 +38,7 @@ namespace BorrowedHex.UI
         Text catchLabel, hint;
         static readonly Color SelectedColor = new Color(1f, 0.85f, 0.35f);
 
-        const float PanelW = 210f, PanelH = 54f, Gap = 14f;
+        const float PanelW = 270f, PanelH = 70f, Gap = 14f;
 
         public static PacketIndicator Create(RectTransform parent)
         {
@@ -61,7 +61,7 @@ namespace BorrowedHex.UI
             fr.offsetMin = fr.offsetMax = Vector2.zero;
             catchLabel = Ui.Label("CatchLabel", root, "CATCH", 18);
             Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(240, 22));
-            hint = Ui.Label("Hint", root, "LMB catch   RMB fire selected   Q switch slot", 16);
+            hint = Ui.Label("Hint", root, "LMB catch   RMB fire   Q freeze / swap   Expiry backfires!", 16);
             hint.color = new Color(1f, 1f, 1f, 0.55f);
             Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 116), new Vector2(600, 20));
         }
@@ -113,8 +113,8 @@ namespace BorrowedHex.UI
                     p.Back.color = UsedBack;
                     p.Fill.enabled = true;
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
-                    p.Fill.color = left < 0.5f ? UrgentColor : FillColor;
-                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}  {left:0.0}s";
+                    p.Fill.color = selected && left < 0.5f ? UrgentColor : FillColor;
+                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.Power(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{(selected ? "DECAYING" : "FROZEN")}";
                 }
                 else
                 {

@@ -71,7 +71,7 @@ namespace BorrowedHex.Tests
             var parries = new List<EnemyActor>();
             sim.Events.StrikeParried += (attacker, _) => parries.Add(attacker);
             CatchAndResolve(sim, AtStrike);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health, "parried strike deals no damage");
+            Assert.AreEqual(0, sim.Score.DamageTaken, "parried strike deals no damage");
             CollectionAssert.AreEqual(new[] { e }, parries, "exactly one parry");
             Assert.IsTrue(e.Killed, "riposte (2 dmg) kills a 2-health pursuer");
         }
@@ -96,7 +96,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.IsFalse(e.Killed);
         }
 
@@ -110,7 +110,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(1, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.IsTrue(e.Killed);
         }
 
@@ -127,7 +127,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.IsFalse(e.Killed);
         }
 
@@ -166,7 +166,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AwayFromStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.IsFalse(e.Killed);
         }
 
@@ -188,7 +188,7 @@ namespace BorrowedHex.Tests
             var sim = SimWithPlayerAt(OnTheRim);
             WoundUpPursuer(sim, 0.1);
             P4.Run(sim, 40, AtStrike);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
         }
 
         [Test]
@@ -240,7 +240,7 @@ namespace BorrowedHex.Tests
                 sim.Packets.Create(sim.Ids.Next(), 100 + i, 0, 99f, sim.Stats.PacketCapacity).Payloads.Add(bolt);
             var e = WoundUpPursuer(sim, 0.1);
             CatchAndResolve(sim, AtStrike);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.IsTrue(e.Killed);
         }
 

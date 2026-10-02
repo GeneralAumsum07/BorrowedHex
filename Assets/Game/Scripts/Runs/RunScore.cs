@@ -38,6 +38,11 @@ namespace BorrowedHex.Runs
         public int PacketsHit { get; private set; }
         public int PerfectShots { get; private set; }
         public int DamageTaken { get; private set; }
+        public int Backfires { get; private set; }
+        public int Swaps { get; private set; }
+        public float SecondsGained { get; private set; }
+        float totalFirePower;
+        public float AverageFirePower => PacketsReleased == 0 ? 0f : totalFirePower / PacketsReleased;
         /// <summary>Most distinct enemies killed by one root release (a release and its echo count together).</summary>
         public int BestVolleyKills { get; private set; }
         public readonly Dictionary<AttackKind, int> KillsByKind = new Dictionary<AttackKind, int>();
@@ -55,6 +60,8 @@ namespace BorrowedHex.Runs
             ev.EnemyKilled += OnEnemyKilled;
             ev.PlayerHit += OnPlayerHit;
             ev.PacketReleased += OnPacketReleased;
+            ev.PacketBackfired += _ => Backfires++;
+            ev.SlotSwapped += _ => Swaps++;
         }
 
         public float HitRate => PacketsReleased == 0 ? 0f : (float)PacketsHit / PacketsReleased;
@@ -109,9 +116,12 @@ namespace BorrowedHex.Runs
         void OnPacketReleased(CapturedPacket p, int root)
         {
             PacketsReleased++;
+            totalFirePower += p.Power(sim.Stats.PowerPerSecond);
             releasedRoots.Add(root);
             foreach (var s in p.Payloads) if (s.Perfect) PerfectShots++;
         }
+
+        internal void RecordTimeGained(float seconds) => SecondsGained += seconds;
 
         /// <summary>Section 6: +2 per unused active second on a short-mode victory (whole seconds).</summary>
         internal void AddVictoryBonus(double unusedSeconds)
@@ -144,6 +154,10 @@ namespace BorrowedHex.Runs
         public readonly float HitRate;
         public readonly int PerfectShots;
         public readonly int DamageTaken;
+        public readonly int Backfires;
+        public readonly int Swaps;
+        public readonly float AverageFirePower;
+        public readonly float SecondsGained;
         public readonly int BestVolleyKills;
         public readonly IReadOnlyDictionary<AttackKind, int> KillsByKind;
         public readonly int EncountersCompleted;
@@ -166,6 +180,10 @@ namespace BorrowedHex.Runs
             HitRate = s.HitRate;
             PerfectShots = s.PerfectShots;
             DamageTaken = s.DamageTaken;
+            Backfires = s.Backfires;
+            Swaps = s.Swaps;
+            AverageFirePower = s.AverageFirePower;
+            SecondsGained = s.SecondsGained;
             BestVolleyKills = s.BestVolleyKills;
             KillsByKind = new Dictionary<AttackKind, int>(s.KillsByKind);
             // Section 7: an encounter counts at its transition, which since D50 means it was

@@ -22,7 +22,7 @@ namespace BorrowedHex.Data
         public int returnedDamage = 1;
         [Tooltip("Half hearts lost when it hits the player as a hostile shot (2 = one heart). "
                  + "A boss's shots use the boss's own damage instead (BossTuning.hitDamage).")]
-        public int hostileDamage = 2;
+        public int hostileDamage = 10;
         [Tooltip("Packet capacity units (section 3: bullet 1, heavy 3, rocket 4).")]
         public int energyCost = 1;
         public float lifetime = 4f;
@@ -71,6 +71,8 @@ namespace BorrowedHex.Data
         public float parryRimDuration = 0.25f;
         [Tooltip("Score for a kill (section 6). Elite = 1.5x.")]
         public int killValue = 10;
+        [Tooltip("Seconds restored by a kill, capped by the run's starting life. Elite = 1.5x.")]
+        public float killSeconds = 3f;
     }
 
     [Serializable]
@@ -83,9 +85,9 @@ namespace BorrowedHex.Data
 
         // Player damage from ordinary enemies, in half hearts (owner direction).
         [Tooltip("Half hearts lost to an ordinary enemy's melee strike (2 = one heart).")]
-        public int enemyHitDamage = 2;
+        public int enemyHitDamage = 10;
         [Tooltip("Half hearts lost on touching an ordinary enemy's body.")]
-        public int enemyContactDamage = 1;
+        public int enemyContactDamage = 5;
 
         public List<AttackTuning> attacks = new List<AttackTuning>
         {
@@ -122,7 +124,7 @@ namespace BorrowedHex.Data
         {
             health = 5, bodyRadius = 0.5f, moveSpeed = 2.6f, preferredMin = 5.5f, preferredMax = 8.5f,
             telegraph = 0.85f, aimLock = 0.3f, cooldown = 2.4f, firstShotDelay = 0.7f,
-            volleySpreadDeg = new[] { -24f, -12f, 0f, 12f, 24f }, repositions = true, killValue = 20,
+            volleySpreadDeg = new[] { -24f, -12f, 0f, 12f, 24f }, repositions = true, killValue = 20, killSeconds = 5f,
         };
 
         // Slow, long, clearly telegraphed single rocket: the crowd-clearing ammunition source.
@@ -130,7 +132,7 @@ namespace BorrowedHex.Data
         {
             health = 8, bodyRadius = 0.6f, moveSpeed = 1.1f, preferredMin = 6f, preferredMax = 10f,
             telegraph = 1.3f, aimLock = 0.35f, cooldown = 3.4f, firstShotDelay = 0.8f,
-            attackId = AttackIds.Rocket, volleySpreadDeg = new[] { 0f }, killValue = 25,
+            attackId = AttackIds.Rocket, volleySpreadDeg = new[] { 0f }, killValue = 25, killSeconds = 6f,
         };
 
         public EnemyTuning For(ActorCategory c)

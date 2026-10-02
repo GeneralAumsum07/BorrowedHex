@@ -43,6 +43,9 @@ namespace BorrowedHex.Runs
         public RunSummary Summary { get; private set; }
         /// <summary>The boss of this run (stays set after it dies, for the results screen).</summary>
         public EnemyActor Boss { get; private set; }
+        // Kept separate from elapsed gameplay time: kills can buy life, never rewind AI timers.
+        double lifeSeconds;
+        public float LifeSeconds => (float)lifeSeconds;
 
         // Tolerance for schedule boundaries: 60 Hz steps accumulate double rounding, and a
         // transition must fire ON the 2400th tick, not one tick late.
@@ -50,7 +53,9 @@ namespace BorrowedHex.Runs
 
         void InitRun()
         {
+            lifeSeconds = Stats.StartingSeconds;
             Score = new RunScore(this);
+            Events.EnemyKilled += RewardKillTime;
             nextFormationAt = Config.shortMode.firstSpawnDelay;
         }
 
@@ -93,13 +98,23 @@ namespace BorrowedHex.Runs
         void TickRunFlow(double now)
         {
             Score.Tick(now);
-            if (!IsShortRun || State == RunState.Results) return;
+            if (State == RunState.Results) return;
+            if (!IsShortRun)
+            {
+                if (lifeSeconds <= Eps && Player.Alive)
+                {
+                    Player.Alive = false;
+                    Player.Dashing = false;
+                    Events.RaisePlayerDied();
+                }
+                return;
+            }
 
             if (!Player.Alive) { EndRun(RunEndReason.Death); return; }
             if (Boss != null && Boss.Killed) { EndRun(RunEndReason.Victory); return; }
 
             var sm = Config.shortMode;
-            if (now >= sm.TotalLength - Eps) { EndRun(RunEndReason.TimeExpired); return; }
+            if (lifeSeconds <= Eps) { lifeSeconds = 0; EndRun(RunEndReason.TimeExpired); return; }
 
             TickEncounterDirector(now);
 
@@ -176,18 +191,35 @@ namespace BorrowedHex.Runs
         {
             if (Summary != null) return;
             double now = Clock.Now;
-            if (reason == RunEndReason.Victory) Score.AddVictoryBonus(Config.shortMode.TotalLength - now);
+            if (reason == RunEndReason.Victory) Score.AddVictoryBonus(lifeSeconds);
             Summary = RunSummary.Freeze(this, reason, now);
             // Nothing scheduled may fire into the results screen (section 3).
             Scheduler.CancelAll();
             CancelCapture();
+            ClearProjectiles();
+            Player.Alive = false;
+            Player.Dashing = false;
             Clock.SetPauseReason(PauseReason.Results, true);
             SetState(RunState.Results);
             Events.RaiseRunEnded(Summary);
         }
 
         /// <summary>Active seconds left on the shared run clock.</summary>
-        public float SecondsLeftInRun() => (float)System.Math.Max(0.0, Config.shortMode.TotalLength - Clock.Now);
+        public float SecondsLeftInRun() => LifeSeconds;
+
+        void TickLifeClock(float dt) => lifeSeconds = System.Math.Max(0, lifeSeconds - dt);
+
+        void RewardKillTime(EnemyActor enemy, Combat.DamageEvent damage)
+        {
+            // A kill cannot revive a clock already depleted by this tick's hit or ticking.
+            if (Summary != null || !Player.Alive || lifeSeconds <= 0 || enemy.IsBoss) return;
+            float reward = Config.combat.For(enemy.Category).killSeconds * (enemy.Elite ? 1.5f : 1f);
+            double before = lifeSeconds;
+            lifeSeconds = System.Math.Min(Stats.StartingSeconds, lifeSeconds + reward);
+            float gained = (float)(lifeSeconds - before);
+            Score.RecordTimeGained(gained);
+            if (gained > 0) Events.RaiseLifeClockChanged(gained, enemy.Position);
+        }
 
         // ---- Encounter director -----------------------------------------------------------
 

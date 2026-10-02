@@ -19,8 +19,8 @@ namespace BorrowedHex.Runs
             Packets = new PacketStore(Stats.PacketSlots);
         }
 
-        /// <summary>Step 3: release expired packets BEFORE this tick's captures (freed slot usable now).</summary>
-        void ReleaseExpiredPackets(double now)
+        /// <summary>Expiry precedes input: at exactly 3 s the hex backfires, even if fire was pressed.</summary>
+        void BackfireExpiredPackets(double now)
         {
             var expired = Packets.Advance(now);
             if (expired.Count == 0) return;
@@ -28,14 +28,16 @@ namespace BorrowedHex.Runs
             {
                 // If the window that created it is somehow still open, stop appending to it.
                 if (Capture.ActivePacket == packet) Capture.Cancel();
-                ReleaseService.Release(this, packet, Player.Position, Player.AimDirection, 1f);
+                packet.Status = PacketStatus.Backfired;
+                Events.RaisePacketBackfired(packet);
+                // It is in the player's hands, so dash and post-hit immunity cannot save it.
+                ApplyPlayerDamage(Stats.BackfireSeconds, 0, Stats.HitInvulnerability, bypassInvulnerability: true);
             }
         }
 
         /// <summary>
         /// Right mouse (D32): fire the selected packet now, from the current position along the
-        /// current aim, exactly as an expiry would. No damage penalty: holding to the timer
-        /// buys nothing but positioning, so firing early is the fast-paced default.
+        /// current aim at its accumulated power. Selection stays put when the slot empties.
         /// </summary>
         bool TryReleaseEarly()
         {
@@ -43,7 +45,7 @@ namespace BorrowedHex.Runs
             if (packet == null) return false;
             Packets.Remove(packet);
             Capture.Detach(packet);
-            ReleaseService.Release(this, packet, Player.Position, Player.AimDirection, 1f);
+            ReleaseService.Release(this, packet, Player.Position, Player.AimDirection, packet.Power(Stats.PowerPerSecond));
             return true;
         }
 
@@ -92,7 +94,8 @@ namespace BorrowedHex.Runs
         /// <returns>The root release ID shared by every shot (and later echo) of this release.</returns>
         public static int Release(ArenaSim sim, CapturedPacket packet, Vector2 origin, Vector2 aim, float power)
         {
-            if (packet.Status == PacketStatus.Released || packet.Status == PacketStatus.Cancelled) return 0;
+            if (!sim.Player.Alive || packet.Status == PacketStatus.Released || packet.Status == PacketStatus.Backfired
+                || packet.Status == PacketStatus.Cancelled) return 0;
             int root = sim.Ids.Next();
             if (aim.sqrMagnitude < 1e-8f) aim = Vector2.up;
             aim.Normalize();

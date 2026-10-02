@@ -553,12 +553,12 @@ per-enemy hexes, the life clock, crumbling pillars and overstaying enemies.
 
 Order matters: the packet rules first (they change every fight), then the clock, then the arena.
 
-- [ ] Packets decay only while selected; swapping freezes and resumes. Slot assignment by the selected-first rule.
-- [ ] Remove automatic release on expiry; add the backfire (clock loss, invulnerability, combo reset, burst, event).
-- [ ] Power from decayed time, applied at release to every payload's damage; HUD power and danger-zone display for both
+- [x] Packets decay only while selected; swapping freezes and resumes. Slot assignment by the selected-first rule.
+- [x] Remove automatic release on expiry; add the backfire (clock loss, invulnerability, combo reset, burst, event).
+- [x] Power from decayed time, applied at release to every payload's damage; HUD power and danger-zone display for both
       slots, with a clear frozen state.
 - [ ] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
-- [ ] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
+- [x] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
       last change; floating gain/loss numbers; the clock as the main HUD element.
 - [ ] Pillar durability that decays over time only (seeded per-pillar rate), damage stages, crumbling
       (collision, line of sight and routing ignore it), restoration at each encounter start and at the boss transition.

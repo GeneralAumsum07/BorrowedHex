@@ -13,6 +13,17 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 6 — Borrowed time — in progress (2 Oct 2026)
+
+- First chunk implemented: selected-first catches, frozen unselected packets, power from
+  selected time, expiry backfire, clock as health, capped kill-time rewards, seconds-based
+  damage, clock/packet HUD and floating time feedback; summary statistics (D57–D60).
+- Regression tests migrated from hearts/automatic return to seconds/manual fire. The
+  177 existing and new packet/clock EditMode checks pass. Five separately authored next-chunk
+  tests currently fail for missing per-enemy returns, pillar decay and overstay, as expected.
+- Remaining: per-enemy hexes, temporary arena, evolved views, complete bot/build validation,
+  and the owner's short-run playtest gate. Do not start Phase 7 before that gate.
+
 ### Phase 0 — Project and repeatable CLI foundation — done
 
 - Assemblies: `BorrowedHex` (runtime), `BorrowedHex.Editor`, `BorrowedHex.Tests.EditMode`,

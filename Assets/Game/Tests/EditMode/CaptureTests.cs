@@ -1,3 +1,4 @@
+using static BorrowedHex.Tests.ClockFixtures;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
@@ -49,7 +50,8 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(CaptureResult.CreatedPacket, c.TryCapture(Shot(AttackIds.Bolt), AttackFaction.Hostile, false, 1.0, store, Stats, ids));
             Assert.AreEqual(CaptureResult.Appended, c.TryCapture(Shot(AttackIds.Bolt, 2), AttackFaction.Hostile, false, 1.20, store, Stats, ids));
             var p = store.Packets[0];
-            Assert.AreEqual(4.0, p.ExpiresAt, 1e-9);
+            store.Advance(1.20);
+            Assert.AreEqual(2.8f, p.Remaining(1.20), 1e-6f);
             Assert.AreEqual(2, p.Payloads.Count);
         }
 
@@ -148,7 +150,7 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(1.2f, 0f), speed: 240f); // reaches and passes the player this tick
             sim.Tick(Catch, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
             Assert.AreEqual(1, sim.Packets.Packets[0].Payloads.Count);
         }
@@ -162,7 +164,7 @@ namespace BorrowedHex.Tests
             float touch = sim.Player.Radius + sim.Attacks.Get(AttackIds.Bolt).Radius;
             ShotFrom(sim, new Vector2(touch, 0f));
             sim.Tick(Catch, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
         }
 
@@ -175,7 +177,7 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(0f, 1.5f));
             sim.Tick(Catch, Dt);
             Run(sim, 30);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
             Assert.AreEqual(0, sim.Packets.Packets.Count);
         }
 
@@ -185,14 +187,14 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
             Run(sim, 30);
-            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.AreEqual(10, sim.Score.DamageTaken);
 
             // Window open but the shot comes from behind the aim cone.
             var sim2 = Sim();
             ShotFrom(sim2, new Vector2(-2f, 0f));
             sim2.Tick(Catch, Dt);
             Run(sim2, 30);
-            Assert.AreEqual(sim2.Stats.MaxHealth - 2, sim2.Player.Health);
+            Assert.AreEqual(10, sim2.Score.DamageTaken);
             Assert.AreEqual(0, sim2.Packets.Packets.Count);
         }
 
@@ -206,11 +208,11 @@ namespace BorrowedHex.Tests
             Run(sim, 10);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
             Assert.AreEqual(2, sim.Packets.Packets[0].Payloads.Count, "second shot appended in the same window");
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.AreEqual(0, sim.Score.DamageTaken);
 
             int releases = 0, root = 0;
             sim.Events.PacketReleased += (_, r) => { releases++; root = r; };
-            Run(sim, Mathf.CeilToInt(sim.Stats.PacketLifetime / Dt) + 5);
+            sim.Tick(Hold.WithRelease(), Dt);
             Assert.AreEqual(1, releases);
             Assert.AreEqual(0, sim.Packets.Packets.Count);
             int returned = 0;
@@ -227,14 +229,14 @@ namespace BorrowedHex.Tests
             sim.Tick(Catch, Dt);
             // Turn to face north before expiry: the volley goes north, not back east.
             var north = PlayerCommand.Moving(Vector2.zero).WithAim(new Vector2(0f, 5f));
-            Run(sim, Mathf.CeilToInt(sim.Stats.PacketLifetime / Dt) + 2, north);
+            sim.Tick(north.WithRelease(), Dt);
             Assert.AreEqual(1, sim.Projectiles.Count);
             Assert.Greater(sim.Projectiles[0].Velocity.y, 0f);
             Assert.AreEqual(0f, sim.Projectiles[0].Velocity.x, 1e-3f);
         }
 
         [Test]
-        public void TwoSlots_ExpireIndependently()
+        public void SelectedSlotBackfires_OtherSlotStaysFrozen()
         {
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
@@ -248,10 +250,13 @@ namespace BorrowedHex.Tests
             int releases = 0;
             sim.Events.PacketReleased += (_, __) => releases++;
             Run(sim, 120); // ~3.05 s after the first capture
-            Assert.AreEqual(1, releases);
+            Assert.AreEqual(0, releases);
+            Assert.AreEqual(1, sim.Score.Backfires);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
             Run(sim, 60);
-            Assert.AreEqual(2, releases);
+            Assert.AreEqual(0, releases);
+            Assert.AreEqual(1, sim.Packets.Packets.Count);
+            Assert.AreEqual(3f, sim.Packets.Packets[0].Remaining(sim.Clock.Now), 1e-6f);
         }
 
         [Test]
@@ -260,12 +265,12 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
             sim.Tick(Catch, Dt);
-            double expires = sim.Packets.Packets[0].ExpiresAt;
+            float remaining = sim.Packets.Packets[0].Remaining(sim.Clock.Now);
             sim.Clock.SetPauseReason(PauseReason.Menu, true);
             Run(sim, 600); // ten paused seconds
             sim.Clock.SetPauseReason(PauseReason.Menu, false);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
-            Assert.AreEqual(expires, sim.Packets.Packets[0].ExpiresAt);
+            Assert.AreEqual(remaining, sim.Packets.Packets[0].Remaining(sim.Clock.Now));
             Assert.Greater(sim.Packets.Packets[0].Remaining(sim.Clock.Now), 2.9f);
         }
 
@@ -289,7 +294,7 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(2f, 0f), source: e.ActorId);
             sim.Tick(Catch, Dt);
             sim.Enemies.Clear(); // the shooter is gone entirely
-            Assert.DoesNotThrow(() => Run(sim, Mathf.CeilToInt(sim.Stats.PacketLifetime / Dt) + 2));
+            Assert.DoesNotThrow(() => sim.Tick(Hold.WithRelease(), Dt));
             Assert.AreEqual(1, sim.CountProjectiles(AttackFaction.Returned));
             Assert.AreEqual(e.ActorId, sim.Projectiles[0].Shot.SourceActorId);
         }
@@ -303,13 +308,13 @@ namespace BorrowedHex.Tests
             sim.Tick(Catch, Dt);
             Run(sim, 5);
             Assert.IsTrue(sim.Packets.Packets[0].IsFull);
-            int hpBefore = sim.Player.Health;
+            int damageBefore = sim.Score.DamageTaken;
             int rejected = 0;
             sim.Events.CaptureRejected += (_, r) => { if (r == CaptureResult.PacketFull) rejected++; };
             ShotFrom(sim, new Vector2(1.5f, 0f));
             Run(sim, 20);
             Assert.AreEqual(1, rejected);
-            Assert.AreEqual(hpBefore - 2, sim.Player.Health);
+            Assert.AreEqual(damageBefore + 10, sim.Score.DamageTaken);
         }
 
         [Test]
@@ -318,7 +323,7 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
             sim.Tick(Catch, Dt);
-            sim.Player.Health = 1;
+            LeaveOneSecond(sim);
             sim.Player.ClearInvulnerability();
             sim.DamagePlayer(1, 0);
             Assert.AreEqual(0, sim.Packets.Packets.Count);
@@ -335,11 +340,11 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(2f, 0f)); sim.Tick(Catch, Dt); Run(sim, 2);
             Assert.AreEqual(2, sim.Packets.Packets.Count);
             // Advance to the tick on which the first packet expires, and catch on that tick.
-            double firstExpiry = sim.Packets.Packets[0].ExpiresAt;
+            double firstExpiry = sim.Clock.Now + sim.Packets.Packets[0].Remaining(sim.Clock.Now);
             while (sim.Clock.Now + Dt < firstExpiry - 1e-6) sim.Tick(Hold, Dt);
             ShotFrom(sim, new Vector2(0.9f, 0f), speed: 60f);
             sim.Tick(Catch, Dt);
-            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health, "freed slot accepted the catch");
+            Assert.AreEqual(10, sim.Score.DamageTaken, "only the backfire cost time; the freed slot accepted the catch");
             Assert.AreEqual(2, sim.Packets.Packets.Count);
         }
     }

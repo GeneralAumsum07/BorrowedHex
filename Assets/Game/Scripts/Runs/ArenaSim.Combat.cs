@@ -27,7 +27,9 @@ namespace BorrowedHex.Runs
         {
             // Aim first (no side effects) so a release this tick uses the freshest valid aim.
             if (Player.Alive) PlayerMotor.UpdateAim(Player, cmd);
-            ReleaseExpiredPackets(now);                   // 3
+            TickLifeClock(dt);
+            BackfireExpiredPackets(now);                  // 3
+            if (!Player.Alive) { TickRunFlow(now); return; }
             TickPlayer(cmd, tickStart, now, dt);          // 4 (catch, dash, move)
             TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6

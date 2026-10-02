@@ -92,6 +92,13 @@ namespace BorrowedHex.Presentation
         }
 
         readonly List<Pop> pops = new List<Pop>();
+        sealed class TimeNumber
+        {
+            public TextMesh Text;
+            public Vector3 Origin;
+            public float Age;
+        }
+        readonly List<TimeNumber> timeNumbers = new List<TimeNumber>();
         Camera cam;
 
         public CharacterView PlayerView => player;
@@ -119,6 +126,8 @@ namespace BorrowedHex.Presentation
             shotRoot.SetParent(transform, false);
 
             sim.Events.PlayerHit += (_, __) => player.Flash(0.12f);
+            sim.Events.LifeClockChanged += SpawnTimeNumber;
+            sim.Events.PacketBackfired += _ => SpawnPop(sim.Player.Position, RejectColor, 0.1f, 2f, 0.35f);
             sim.Events.EnemyDamaged += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.1f); };
 
             cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(sim.Stats.CaptureConeAngle * 0.5f), ConeColor);
@@ -176,6 +185,7 @@ namespace BorrowedHex.Presentation
             RenderProjectiles(alpha);
             RenderCapture(alpha);
             RenderPops();
+            RenderTimeNumbers();
         }
 
         void RenderPlayer(float alpha)
@@ -514,7 +524,7 @@ namespace BorrowedHex.Presentation
                 int slot = pk.Slot;
                 bool selected = slot == sim.Packets.SelectedSlot;
                 float radius = 0.75f + 0.3f * slot;
-                float spin = (float)now * (1.5f + 5f * urgency) * (slot % 2 == 0 ? 1f : -1f);
+                float spin = (float)pk.DecayedTime * (1.5f + 5f * urgency) * (slot % 2 == 0 ? 1f : -1f);
                 int count = pk.Payloads.Count;
                 for (int i = 0; i < count; i++)
                 {
@@ -526,8 +536,8 @@ namespace BorrowedHex.Presentation
                     dot.transform.localScale = Vector3.one * (selected ? 0.17f : 0.12f);
                     dot.transform.position = Geometry2D.ToWorld(pos + off, 0.7f);
                     // Blink during the final half second: the release is about to happen.
-                    bool blink = left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;
-                    dot.color = blink ? Color.white : ReturnedColor;
+                    bool blink = selected && left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;
+                    dot.color = blink ? RejectColor : selected ? ReturnedColor : new Color(0.4f, 0.55f, 0.7f);
                     if (cam != null) dot.transform.rotation = cam.transform.rotation;
                 }
             }
@@ -544,6 +554,43 @@ namespace BorrowedHex.Presentation
             sr.sortingOrder = 6;
             orbitDots.Add(sr);
             return sr;
+        }
+
+        void SpawnTimeNumber(float delta, Vector2 at)
+        {
+            var go = new GameObject("TimeChange");
+            go.transform.SetParent(transform, false);
+            var text = go.AddComponent<TextMesh>();
+            text.font = UI.Ui.Font;
+            text.GetComponent<MeshRenderer>().sharedMaterial = text.font.material;
+            text.fontSize = 48;
+            text.characterSize = 0.055f;
+            text.anchor = TextAnchor.MiddleCenter;
+            text.color = delta < 0 ? RejectColor : ReturnedColor;
+            text.text = $"{(delta > 0 ? "+" : "")}{delta:0.#}s";
+            timeNumbers.Add(new TimeNumber { Text = text, Origin = Geometry2D.ToWorld(at, 1.5f) });
+        }
+
+        void RenderTimeNumbers()
+        {
+            // Feedback uses real time while gameplay pauses, but belongs to this disposable
+            // view: restarting can never leave a previous run's loss hovering over the player.
+            for (int i = timeNumbers.Count - 1; i >= 0; i--)
+            {
+                var number = timeNumbers[i];
+                number.Age += Time.unscaledDeltaTime;
+                if (number.Age >= 0.8f)
+                {
+                    Destroy(number.Text.gameObject);
+                    timeNumbers.RemoveAt(i);
+                    continue;
+                }
+                number.Text.transform.position = number.Origin + Vector3.up * number.Age;
+                if (cam != null) number.Text.transform.rotation = cam.transform.rotation;
+                var color = number.Text.color;
+                color.a = 1f - number.Age / 0.8f;
+                number.Text.color = color;
+            }
         }
 
         void SpawnPop(Vector2 at, Color color, float from, float to, float life)
