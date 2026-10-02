@@ -196,6 +196,28 @@ namespace BorrowedHex.Tests
             Assert.IsFalse(root.RecordsView.IsOpen);
         }
 
+        [UnityTest]
+        public IEnumerator TheStylePanel_SavesTheChoice_AndTheNextRunUsesIt()
+        {
+            root.Main.Press("style");
+            yield return null;
+            Assert.IsTrue(root.Styles.IsOpen);
+            Assert.IsFalse(root.Main.IsOpen);
+            root.Styles.Click(BorrowedHex.Progression.CaptureStyles.Collector);
+            Assert.AreEqual(1, storage.Writes, "a style change is a save point");
+            Assert.AreEqual("collector", root.Profile.Profile.styleId);
+            root.Styles.Click(BorrowedHex.Progression.CaptureStyles.Collector);
+            Assert.AreEqual(1, storage.Writes, "re-selecting the same style saves nothing");
+            root.ShowMainMenu();
+            Assert.IsFalse(root.Styles.IsOpen);
+            yield return StartShortRun();
+            Assert.AreEqual("collector", root.Sim.Setup.StyleId);
+            Assert.AreEqual(root.Config.styles.collectorConeAngle, root.Sim.Stats.CaptureConeAngle, 1e-4f);
+            root.Sim.DamagePlayer(100000, 0);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.AreEqual("collector", root.Profile.Profile.records[0].styleId, "records are kept per style");
+        }
+
         string RecordsPanelText() => BorrowedHex.UI.RecordsPanel.RecordsBody(root.Profile.Profile);
 
         IEnumerator Click(Vector2 pos)

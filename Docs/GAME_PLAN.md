@@ -641,8 +641,8 @@ on a backfire; repeat completion gives nothing more.
 
 **Depends on:** Phase 10.
 
-- [ ] Move baseline catch values into Snatcher's definition unchanged; add Collector and Daredevil.
-- [ ] Show effective stats before a run; save the selection.
+- [x] Move baseline catch values into Snatcher's definition unchanged; add Collector and Daredevil (D83).
+- [x] Show effective stats before a run; save the selection (D83).
 
 **Checks:** a same-tick catch and dash is one Daredevil action; its sweep never catches through a wall or a standing
 pillar; all styles keep the frozen-slot and backfire rules.

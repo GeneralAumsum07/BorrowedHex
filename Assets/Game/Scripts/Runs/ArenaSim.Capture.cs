@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
+using BorrowedHex.Player;
 using UnityEngine;
 
 namespace BorrowedHex.Runs
@@ -69,8 +70,73 @@ namespace BorrowedHex.Runs
 
         void TryCatch(double now)
         {
-            if (Stats.CatchIsDash) return;   // Daredevil style routes catch through the dash (Phase 10)
+            if (Stats.CatchIsDash) return;   // Daredevil routes the catch through the dash (TryDashCatch)
             if (Capture.TryActivate(now, Stats)) Events.RaiseCatchActivated(Capture.ActivationId);
+        }
+
+        /// <summary>Daredevil: whether the body was dashing during this tick's move, and where it went.</summary>
+        internal bool DashSweepActive;
+        internal Vector2 DashSweepFrom, DashSweepTo;
+
+        /// <summary>
+        /// Daredevil's catch (section 7): a dash whose whole path is the capture region. Both
+        /// gates must be open, so a catch press never produces half an action (a dash with no
+        /// window, or a window that stays put). The window opens at the tick's START, the same
+        /// instant the dash starts, and lasts exactly the dash.
+        /// </summary>
+        void TryDashCatch(Vector2 move, double tickStart)
+        {
+            if (!Capture.IsReady(tickStart)) return;
+            if (!PlayerMotor.TryStartDash(Player, move, Stats, tickStart)) return;
+            Events.RaiseDash(Player.Position, Player.DashDirection);
+            if (Capture.TryActivate(tickStart, Stats)) Events.RaiseCatchActivated(Capture.ActivationId);
+        }
+
+        /// <summary>
+        /// Earliest fraction of a shot's travel this tick at which it meets the dash path. Both
+        /// move during the tick, so each sample pairs the shot with the body at the same moment.
+        /// A wall or standing pillar between the body and the shot blocks the catch: a dash past
+        /// a pillar does not reach round it (Phase 11 check). A crumbled pillar has already left
+        /// Walls, so it no longer blocks. There is no "approaching" rule here, unlike the cone:
+        /// running a shot down from behind is what this style is for (D83).
+        /// </summary>
+        bool DashSweepEntry(Vector2 start, Vector2 end, float shotRadius, float extraSample, out float t)
+        {
+            t = 0f;
+            if (!DashSweepActive) return false;
+            float reach = Stats.DashCatchRadius + shotRadius;
+            Vector2 from = DashSweepFrom, to = DashSweepTo;
+            float len = Mathf.Max((end - start).magnitude, (to - from).magnitude);
+            int n = Mathf.Clamp(Mathf.CeilToInt(len / 0.1f), 1, 64);
+            bool extraPending = extraSample >= 0f && extraSample <= 1f;
+            for (int i = 0; i <= n; i++)
+            {
+                float s = (float)i / n;
+                // The exact impact time is tested in order, so capture can win that tie (as the cone does).
+                if (extraPending && extraSample < s)
+                {
+                    extraPending = false;
+                    if (Sample(extraSample)) { t = extraSample; return true; }
+                }
+                if (Sample(s)) { t = s; return true; }
+            }
+            if (extraPending && Sample(extraSample)) { t = extraSample; return true; }
+            return false;
+
+            bool Sample(float f)
+            {
+                Vector2 body = Vector2.Lerp(from, to, f);
+                Vector2 shot = Vector2.Lerp(start, end, f);
+                return (shot - body).sqrMagnitude <= reach * reach && ClearLine(body, shot);
+            }
+        }
+
+        /// <summary>True when no solid box (border wall or standing pillar) lies between two points.</summary>
+        bool ClearLine(Vector2 a, Vector2 b)
+        {
+            foreach (var w in Walls)
+                if (Geometry2D.SweepCircleVsRect(a, b, 0f, w, out _)) return false;
+            return true;
         }
 
         /// <summary>Called by the projectile resolver when capture is the earliest contact.</summary>

@@ -13,6 +13,15 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 11 — Capture styles — implemented (owner check pending, 3 Oct 2026)
+
+- Snatcher (baseline), Collector (140 degrees, 0.40 s, 1.00 s) and Daredevil (capturing dash) (D83).
+- Capture style panel from the main menu: one card per style with the effective numbers for the
+  next run, passives included; selection saved at once; shown on the main-menu profile line.
+- Daredevil's capture region is drawn as a disc around the dashing body.
+- 278/278 EditMode (13 new in `StyleTests`), 8/8 PlayMode (1 new).
+- Not checked by eye or by hand: the panel layout, the disc visual, and whether Daredevil feels good.
+
 ### Phase 10 — Achievements and records — implemented (owner check pending, 3 Oct 2026)
 
 - Ten achievements evaluated once per run in finalization from facts RunScore gathers (D81);

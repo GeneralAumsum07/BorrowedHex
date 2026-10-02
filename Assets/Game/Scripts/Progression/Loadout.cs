@@ -13,8 +13,16 @@ namespace BorrowedHex.Progression
     public static class Loadout
     {
         public static PlayerStats Resolve(GameConfig config, IEnumerable<string> passives)
+            => Resolve(config, passives, CaptureStyles.Snatcher);
+
+        /// <summary>
+        /// Style first, then passives: a style sets the base catch, a passive adjusts whatever
+        /// base it finds (Precision widens Collector's cone too, D83).
+        /// </summary>
+        public static PlayerStats Resolve(GameConfig config, IEnumerable<string> passives, string styleId)
         {
             var s = PlayerStats.FromConfig(config);
+            CaptureStyles.Apply(s, styleId, config.styles);
             var t = config.progression ?? new ProgressionTuning();
             if (passives == null) return s;
             // A set, so a duplicated id (which validation already refuses) still applies once.

@@ -516,3 +516,21 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - PlayMode: 7/7 pass. New: a finished run reports a first record, and the records panel opens from
   the main menu, lists it, and closes on returning to the menu.
 - Not verified: the panel by eye.
+
+## Phase 11 — Capture styles (3 Oct 2026)
+
+- Files: new `Data/StyleTuning.cs`, `Progression/{CaptureStyles,ProfileService.Styles}.cs`, `UI/StylePanel.cs`,
+  `Presentation/GameRoot.Styles.cs`, `Tests/EditMode/StyleTests.cs`; changed `Loadout` (style before passives),
+  `PlayerStats` (DashCatchRadius), `ArenaSim` (Daredevil input, dash path, sweep region with line of sight),
+  `ArenaView` (disc region), `GameRoot.Progression` (style on the profile line).
+- Live editor, EditMode: 278/278 pass. New: Snatcher equals the baseline; Collector numbers and same range;
+  Precision stacks on Collector and dash recovery on Daredevil; all styles keep 2 slots, 3 s, backfire and
+  power rate; unknown ids resolve to Snatcher and are repaired in a valid profile; cards show passives;
+  a 65-degree shot is caught by Collector and not by Snatcher; a same-tick catch + dash gives one dash and
+  one window, and neither input works again until the shared cooldown; a plain dash opens no window;
+  Daredevil takes a shot beside its path that is moving away; it does not take the same shot behind a
+  solid box, nor after the dash ends; for every style the selected slot backfires and the other stays frozen.
+- Mutation check: with the line-of-sight test disabled, the wall test fails (caught 1, expected 0).
+- PlayMode: 8/8 pass. New: the style panel opens from the menu, a selection saves once (re-selecting does
+  not save), the next run uses Collector's cone, and the run's record is filed under Collector.
+- Not verified: the panel and the disc visual by eye; Daredevil's feel (radius 1.0 is a placeholder).

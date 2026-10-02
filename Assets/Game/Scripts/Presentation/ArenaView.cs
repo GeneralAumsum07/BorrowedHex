@@ -132,7 +132,10 @@ namespace BorrowedHex.Presentation
             sim.Events.PacketBackfired += _ => SpawnPop(sim.Player.Position, RejectColor, 0.1f, 2f, 0.35f);
             sim.Events.EnemyDamaged += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.1f); };
 
-            cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(sim.Stats.CaptureConeAngle * 0.5f), ConeColor);
+            // Daredevil's region is a disc around the dashing body (D83): a full 360-degree
+            // sector, so it shares the cone's sprite path, colour and sorting.
+            float coneHalf = sim.Stats.CatchIsDash ? 180f : sim.Stats.CaptureConeAngle * 0.5f;
+            cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(coneHalf), ConeColor);
             cone.sortingOrder = -4;
             var st = sim.Stats;
             parryBandOuter = st.ParryRingRadius + st.ParryRingWidth * 0.5f;
@@ -537,7 +540,7 @@ namespace BorrowedHex.Presentation
                 cone.transform.position = Geometry2D.ToWorld(pos, 0.04f);
                 float yaw = -Mathf.Atan2(p.AimDirection.y, p.AimDirection.x) * Mathf.Rad2Deg;
                 cone.transform.rotation = Quaternion.Euler(90f, yaw, 0f);
-                cone.transform.localScale = Vector3.one * sim.Stats.CaptureRange;
+                cone.transform.localScale = Vector3.one * (sim.Stats.CatchIsDash ? sim.Stats.DashCatchRadius : sim.Stats.CaptureRange);
             }
             bool parry = open && sim.Capture.IsParryOpen(now);
             parryBand.enabled = parry;

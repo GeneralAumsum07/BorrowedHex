@@ -86,9 +86,25 @@ namespace BorrowedHex.Runs
                 Events.RaiseSlotSwapped(Packets.SelectedSlot);
             }
             if (cmd.Release) TryReleaseEarly();
-            if (cmd.Catch) TryCatch(now);
-            if (cmd.Dash) TryDash(cmd.Move, tickStart);
+            if (Stats.CatchIsDash)
+            {
+                // Daredevil (section 7): catch and dash share one cooldown, and pressing both on
+                // one tick is ONE action. The capturing dash wins because it is the superset:
+                // it is a dash that also catches (D83).
+                if (cmd.Catch) TryDashCatch(cmd.Move, tickStart);
+                else if (cmd.Dash) TryDash(cmd.Move, tickStart);
+            }
+            else
+            {
+                if (cmd.Catch) TryCatch(now);
+                if (cmd.Dash) TryDash(cmd.Move, tickStart);
+            }
+            // Record this tick's dash path: the projectile step that follows tests Daredevil's
+            // capture against it (the body has already moved by then).
+            DashSweepActive = Player.Dashing;
+            DashSweepFrom = Player.Position;
             PlayerMotor.Move(Player, cmd.Move, Stats, now, dt, Walls);
+            DashSweepTo = Player.Position;
         }
 
         void TryDash(Vector2 move, double tickStart)

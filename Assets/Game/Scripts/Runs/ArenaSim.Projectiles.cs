@@ -108,9 +108,14 @@ namespace BorrowedHex.Runs
 
                     // Capture is tested along the same segment, including the exact impact
                     // time, so an interception that coincides with a hit wins (section 3).
+                    // Daredevil swaps the cone for its dash path (D83); everything after the
+                    // region test (packets, slots, Overflow/Fusion, rejection) is shared.
+                    float tc = 0f;
                     if (CanAttemptCapture(p)
-                        && CaptureGeometry.EarliestEntry(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
-                            Stats.CaptureRange, start, end, p.Velocity, p.Radius, tp, out float tc))
+                        && (Stats.CatchIsDash
+                            ? DashSweepEntry(start, end, p.Radius, tp, out tc)
+                            : CaptureGeometry.EarliestEntry(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
+                                Stats.CaptureRange, start, end, p.Velocity, p.Radius, tp, out tc)))
                         Consider(tc, HitKind.Capture, null);
                 }
                 else

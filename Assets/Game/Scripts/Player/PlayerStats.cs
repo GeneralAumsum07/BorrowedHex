@@ -49,6 +49,8 @@ namespace BorrowedHex.Player
 
         /// <summary>Daredevil: catch performs a capturing dash sharing the dash cooldown.</summary>
         public bool CatchIsDash;
+        /// <summary>Daredevil: capture reach around the player's centre along the dash path (D83).</summary>
+        public float DashCatchRadius;
 
         public static PlayerStats FromConfig(GameConfig config)
         {

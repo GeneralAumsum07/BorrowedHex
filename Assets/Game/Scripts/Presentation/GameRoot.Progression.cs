@@ -60,7 +60,8 @@ namespace BorrowedHex.Presentation
             var m = Profile.Profile.mastery;
             string xp = m.level >= Mastery.MaxLevel ? "max level" : $"{m.xp}/{Mastery.CostToAdvance(m.level)} XP";
             string pts = m.points > 0 ? $"   ·   {m.points} unspent point{(m.points == 1 ? "" : "s")}" : "";
-            line = $"Mastery {m.level}   ·   {xp}{pts}";
+            // The style is shown here too, so the choice is visible right next to Play.
+            line = $"Mastery {m.level}   ·   {xp}{pts}   ·   {CaptureStyles.Resolve(Profile.Profile.styleId).Name}";
         }
 
         partial void FinalizeTextExtra(FinalizeResult r, System.Text.StringBuilder sb)
