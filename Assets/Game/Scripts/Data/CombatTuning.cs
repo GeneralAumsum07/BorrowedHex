@@ -20,8 +20,9 @@ namespace BorrowedHex.Data
         public float radius = 0.18f;
         [Tooltip("Damage when returned by the player against enemies.")]
         public int returnedDamage = 1;
-        [Tooltip("Damage when it hits the player as a hostile shot (section 4: one player hit).")]
-        public int hostileDamage = 1;
+        [Tooltip("Half hearts lost when it hits the player as a hostile shot (2 = one heart). "
+                 + "A boss's shots use the boss's own damage instead (BossTuning.hitDamage).")]
+        public int hostileDamage = 2;
         [Tooltip("Packet capacity units (section 3: bullet 1, heavy 3, rocket 4).")]
         public int energyCost = 1;
         public float lifetime = 4f;
@@ -64,6 +65,10 @@ namespace BorrowedHex.Data
         public float strikeRadius = 0.75f;
         [Tooltip("Melee: width of the strike circle's outer rim band, the part a parry band must touch (D36).")]
         public float strikeEdgeWidth = 0.09f;
+        [Tooltip("Melee: the rim (and with it the chance to parry) appears this long after the wind-up starts.")]
+        public float parryRimDelay = 0.1f;
+        [Tooltip("Melee: the rim stays up this long, then vanishes BEFORE the strike lands (owner direction).")]
+        public float parryRimDuration = 0.25f;
         [Tooltip("Score for a kill (section 6). Elite = 1.5x.")]
         public int killValue = 10;
     }
@@ -75,6 +80,12 @@ namespace BorrowedHex.Data
         public float spawnWarning = 0.8f;
         [Tooltip("Enemies never spawn closer than this to the player.")]
         public float minSpawnDistance = 5f;
+
+        // Player damage from ordinary enemies, in half hearts (owner direction).
+        [Tooltip("Half hearts lost to an ordinary enemy's melee strike (2 = one heart).")]
+        public int enemyHitDamage = 2;
+        [Tooltip("Half hearts lost on touching an ordinary enemy's body.")]
+        public int enemyContactDamage = 1;
 
         public List<AttackTuning> attacks = new List<AttackTuning>
         {

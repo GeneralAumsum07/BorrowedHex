@@ -35,6 +35,15 @@ namespace BorrowedHex.Enemies
         /// <summary>+1/-1 strafe preference so a group does not all orbit the same way.</summary>
         public float StrafeSign = 1f;
 
+        /// <summary>
+        /// Parry rim window for the current wind-up (Pursuer strike, Collector sweep). The gold
+        /// rim is drawn, and a parry can land, only inside [opens, closes]; it closes before the
+        /// attack resolves, so a parry is a read of the wind-up, not a reaction to the hit.
+        /// </summary>
+        public double ParryRimOpensAt = double.PositiveInfinity, ParryRimClosesAt = double.NegativeInfinity;
+        public bool ParryRimOpen(double now) => now >= ParryRimOpensAt - 1e-9 && now <= ParryRimClosesAt + 1e-9;
+        public void ClearParryRim() { ParryRimOpensAt = double.PositiveInfinity; ParryRimClosesAt = double.NegativeInfinity; }
+
         /// <summary>Scatter Caster's chosen firing spot for the current reposition.</summary>
         public Vector2 MoveTarget;
         public bool HasMoveTarget;

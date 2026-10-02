@@ -51,7 +51,7 @@ MonoBehaviour:
   litMaterial: {fileID: 2100000, guid: b95710eda2863a94da4e6ee4dbd64c37, type: 2}
   player:
     moveSpeed: 6
-    maxHealth: 3
+    maxHealth: 10
     hitInvulnerability: 0.65
     dashDistance: 2.9
     dashDuration: 0.18

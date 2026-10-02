@@ -10,9 +10,11 @@ using UnityEngine;
 
 namespace BorrowedHex.Tests
 {
-    // Parry (D26, made harder in D36): early in a catch (the parry window, half the catch
-    // window), the player's thin parry band must touch the thin rim of the Pursuer's strike
-    // circle when the strike resolves. Then no damage and a riposte flies at the attacker.
+    // Parry (D26, made harder in D36, timed by the rim in D46): early in a catch (the parry
+    // window, half the catch window), the player's thin parry band must touch the thin rim of
+    // the Pursuer's strike circle on a tick while that rim is SHOWN. The rim appears just after
+    // the wind-up starts and is gone before the strike lands, so the strike instant itself can
+    // never be parried. A parry cancels the strike and a riposte flies at the attacker.
     //
     // Fixture geometry: the pursuer sits at the origin, wound up and aim-locked to the right,
     // so its strike circle is centred at C = (0.8, 0), radius 0.75, rim band (0.09 wide) centre line 0.705.
@@ -30,15 +32,23 @@ namespace BorrowedHex.Tests
             return sim;
         }
 
-        /// <summary>A pursuer at the origin, mid wind-up, aim locked right, striking in <paramref name="strikeIn"/> s.</summary>
-        static EnemyActor WoundUpPursuer(ArenaSim sim, double strikeIn)
+        /// <summary>
+        /// A pursuer at the origin, mid wind-up, aim locked right, striking in
+        /// <paramref name="strikeIn"/> s. Its rim shows from <paramref name="rimOpensIn"/> s
+        /// for <paramref name="rimFor"/> s; by default from now until 0.05 s before the strike,
+        /// the same gap the real brain leaves.
+        /// </summary>
+        static EnemyActor WoundUpPursuer(ArenaSim sim, double strikeIn, double rimOpensIn = 0, double rimFor = -1)
         {
             var e = sim.SpawnEnemy(ActorCategory.Pursuer, Vector2.zero);
             e.ActiveAt = 0;
             e.Phase = EnemyPhase.Telegraph;
             e.AimDirection = Vector2.right;
             e.AimLocked = true;
-            e.PhaseEndsAt = sim.Clock.Now + strikeIn;
+            double now = sim.Clock.Now;
+            e.PhaseEndsAt = now + strikeIn;
+            e.ParryRimOpensAt = now + rimOpensIn;
+            e.ParryRimClosesAt = rimFor >= 0 ? e.ParryRimOpensAt + rimFor : e.PhaseEndsAt - 0.05;
             return e;
         }
 
@@ -76,21 +86,73 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void PressedTooLateForTheParry_ButInsideTheCatchWindow_StillHurts()
+        public void PressedBeforeTheRimShows_ParryWindowSpent_StillHurts()
         {
-            // The strike lands ~0.18-0.2 s after the press: past the 0.125 s parry window but
-            // inside the 0.25 s catch window. A catch-window-only rule would have parried.
+            // The rim appears 0.2 s after the press: the 0.125 s parry window is over by then,
+            // even though the catch window (0.25 s) is still open. Too early is a miss.
             var sim = SimWithPlayerAt(OnTheRim);
-            var e = WoundUpPursuer(sim, 0.2);
+            var e = WoundUpPursuer(sim, 0.4, rimOpensIn: 0.2, rimFor: 0.15);
             int parries = 0;
             sim.Events.StrikeParried += (_, __) => parries++;
-            bool catchWindowOpenAtStrike = false;
-            sim.Events.EnemyFired += f => { if (f == e) catchWindowOpenAtStrike = sim.Capture.IsWindowOpen(sim.Clock.Now); };
             CatchAndResolve(sim, AtStrike);
-            Assert.IsTrue(catchWindowOpenAtStrike, "fixture: the strike must land inside the catch window");
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
             Assert.IsFalse(e.Killed);
+        }
+
+        [Test]
+        public void PressedJustBeforeTheRimShows_WindowsOverlap_Parries()
+        {
+            // The parry window (0.125 s) is still open when the rim appears 0.08 s later.
+            var sim = SimWithPlayerAt(OnTheRim);
+            var e = WoundUpPursuer(sim, 0.4, rimOpensIn: 0.08, rimFor: 0.15);
+            int parries = 0;
+            sim.Events.StrikeParried += (_, __) => parries++;
+            CatchAndResolve(sim, AtStrike);
+            Assert.AreEqual(1, parries);
+            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+            Assert.IsTrue(e.Killed);
+        }
+
+        [Test]
+        public void PressedAfterTheRimIsGone_StillHurts()
+        {
+            // The rim showed and closed before the press; the strike is still to come. A press
+            // inside the parry window but after the rim cannot parry: the rim IS the window.
+            var sim = SimWithPlayerAt(OnTheRim);
+            var e = WoundUpPursuer(sim, 0.3, rimOpensIn: 0, rimFor: 0.05);
+            P4.Run(sim, 6, AtStrike); // 0.1 s: the rim is gone
+            Assert.IsFalse(e.ParryRimOpen(sim.Clock.Now));
+            int parries = 0;
+            sim.Events.StrikeParried += (_, __) => parries++;
+            CatchAndResolve(sim, AtStrike);
+            Assert.AreEqual(0, parries);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
+            Assert.IsFalse(e.Killed);
+        }
+
+        [Test]
+        public void RealPursuer_RimShowsJustAfterTheWindUpStarts_AndIsGoneBeforeTheStrike()
+        {
+            var sim = P4.Sim();
+            var t = sim.Config.combat.pursuer;
+            var e = sim.SpawnEnemy(ActorCategory.Pursuer, new Vector2(1.3f, 0f));
+            e.ActiveAt = 0; e.Phase = EnemyPhase.Idle; e.PhaseEndsAt = 0;
+            sim.Player.InvulnerableUntil = double.MaxValue; // only the timing is under test
+            double telegraphAt = -1, firstOpen = -1, lastOpen = -1, strikeAt = -1;
+            sim.Events.EnemyTelegraph += _ => telegraphAt = sim.Clock.Now;
+            sim.Events.EnemyFired += _ => strikeAt = sim.Clock.Now;
+            for (int i = 0; i < 90 && strikeAt < 0; i++)
+            {
+                sim.Tick(P4.Still, P4.Dt);
+                if (e.ParryRimOpen(sim.Clock.Now)) { if (firstOpen < 0) firstOpen = sim.Clock.Now; lastOpen = sim.Clock.Now; }
+            }
+            Assert.Greater(telegraphAt, -1, "fixture: the wind-up started");
+            Assert.Greater(strikeAt, -1, "fixture: the strike landed");
+            Assert.AreEqual(telegraphAt + t.parryRimDelay, firstOpen, P4.Dt + 1e-6, "appears just after the wind-up starts");
+            Assert.AreEqual(t.parryRimDuration, lastOpen - firstOpen, P4.Dt + 1e-6, "short-lived");
+            Assert.LessOrEqual(lastOpen, strikeAt - 0.05 + 1e-6, "gone before the strike lands");
+            Assert.IsFalse(e.ParryRimOpen(strikeAt));
         }
 
         [Test]
@@ -104,7 +166,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
         }
 
         [Test]
@@ -116,7 +178,7 @@ namespace BorrowedHex.Tests
             sim.Events.StrikeParried += (_, __) => parries++;
             CatchAndResolve(sim, AwayFromStrike);
             Assert.AreEqual(0, parries);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
             Assert.IsFalse(e.Killed);
         }
 
@@ -126,7 +188,7 @@ namespace BorrowedHex.Tests
             var sim = SimWithPlayerAt(OnTheRim);
             WoundUpPursuer(sim, 0.1);
             P4.Run(sim, 40, AtStrike);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
         }
 
         [Test]

@@ -8,8 +8,14 @@ namespace BorrowedHex.Data
     public class PlayerTuning
     {
         public float moveSpeed = 6f;
-        public int maxHealth = 3;
+        // Health is counted in HALF HEARTS (owner direction: 5 hearts, half-heart contact
+        // damage). Integers keep damage exact and deterministic; the HUD divides by two.
+        [Tooltip("In half hearts: 10 = 5 hearts.")]
+        public int maxHealth = 10;
         public float hitInvulnerability = 0.65f;
+        [Tooltip("Invulnerability after a CONTACT hit (bumping an enemy body). Shorter than a "
+                 + "hit's, so contact is a brief shove of danger rather than a free dash-through.")]
+        public float contactInvulnerability = 0.5f;
         public float dashDistance = 2.9f;
         public float dashDuration = 0.18f;
         public float dashCooldown = 1.2f;

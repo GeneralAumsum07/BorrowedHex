@@ -16,8 +16,11 @@ namespace BorrowedHex.Enemies
         /// Fire one shot per spread angle around <paramref name="aim"/>. The muzzle sits just
         /// outside the shooter's body so a shot never starts inside its own source.
         /// </summary>
+        /// <param name="hostileDamage">Overrides the attack's damage to the player (half hearts);
+        /// the boss uses it so its bolts hit harder than an acolyte's while staying ordinary,
+        /// capturable bolts. Negative keeps the attack's own value. Returned damage is untouched.</param>
         public static int FireVolley(ArenaSim sim, string attackId, int sourceActorId, Vector2 origin,
-            float sourceRadius, Vector2 aim, float[] spreadDeg)
+            float sourceRadius, Vector2 aim, float[] spreadDeg, int hostileDamage = -1)
         {
             var def = sim.Attacks.Get(attackId);
             if (aim.sqrMagnitude < 1e-8f) aim = Vector2.down;
@@ -28,6 +31,7 @@ namespace BorrowedHex.Enemies
                 Vector2 dir = Geometry2D.Rotate(aim, offset);
                 Vector2 muzzle = origin + dir * (sourceRadius + def.Radius + 0.05f);
                 var shot = AttackSnapshot.From(def, sourceActorId, sim.Ids.Next(), offset);
+                if (hostileDamage >= 0) shot.HostileDamage = hostileDamage;
                 sim.SpawnProjectile(shot, AttackFaction.Hostile, muzzle, dir);
                 fired++;
             }

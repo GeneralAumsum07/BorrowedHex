@@ -9,15 +9,16 @@ namespace BorrowedHex.Runs
     /// terminal resolution. Lives in the sim, not in a MonoBehaviour, so the whole beginning-
     /// to-end run is testable headless and a restart (new sim) resets all of it at once.
     ///
-    /// Short-mode timeline, all in ACTIVE gameplay seconds (the clock does not move while
-    /// paused, so "40 s" means 40 s of play however long a menu stayed open):
-    ///   0–40 encounter 1 → upgrade choice → 40–80 encounter 2 → upgrade choice →
-    ///   80–120 encounter 3 → upgrade choice → boss intro → 120–180 boss window.
+    /// Short-mode flow (owner-revised, D50): encounter 1 → upgrade choice → encounter 2 →
+    /// upgrade choice → encounter 3 → upgrade choice → boss intro → boss. Each encounter is a
+    /// fixed, seeded list of formations and ends when every member has been KILLED. One shared
+    /// clock of 180 ACTIVE seconds covers all of it (the clock does not move while paused, so
+    /// menus and choices cost nothing): slow clears leave less time for the boss.
     ///
     /// Terminal ordering (section 6 / Phase 5 check), resolved once at the END of each tick:
     ///   1. player dead            → Death        (wins over a boss killed on the same tick)
     ///   2. boss killed            → Victory
-    ///   3. 180 s with boss alive  → TimeExpired
+    ///   3. the 180 s run clock out → TimeExpired (in any phase, encounters included)
     /// Checking at the end of the tick, rather than inside the damage calls, is what makes the
     /// ordering independent of which of the two hits happened to resolve first in the tick.
     ///
@@ -34,7 +35,7 @@ namespace BorrowedHex.Runs
 
         /// <summary>0-based encounter in progress; equals encounterCount once the boss phase starts.</summary>
         public int Encounter { get; private set; }
-        /// <summary>Upgrade transitions reached so far (40/80/120 s).</summary>
+        /// <summary>Upgrade transitions reached so far (one per cleared encounter).</summary>
         public int TransitionsReached { get; private set; }
 
         public RunScore Score { get; private set; }
@@ -100,17 +101,32 @@ namespace BorrowedHex.Runs
             var sm = Config.shortMode;
             if (now >= sm.TotalLength - Eps) { EndRun(RunEndReason.TimeExpired); return; }
 
-            if (TransitionsReached < sm.encounterCount && now >= (TransitionsReached + 1) * sm.encounterLength - Eps)
+            TickEncounterDirector(now);
+
+            if (State == RunState.Combat && EncounterCleared())
             {
-                // Section 6: the choice pauses gameplay; packets and enemies are untouched and
-                // every timer (packet expiry, telegraphs, combo) is frozen with the clock.
+                // Section 6: the choice pauses gameplay; packets are untouched and every timer
+                // (packet expiry, combo) is frozen with the clock.
                 TransitionsReached++;
                 Clock.SetPauseReason(PauseReason.UpgradeChoice, true);
                 SetState(RunState.UpgradeChoice);
-                return;
             }
+        }
 
-            TickEncounterDirector(now);
+        /// <summary>Every formation of this encounter has arrived and every member is dead.</summary>
+        bool EncounterCleared() =>
+            encounterPlan.Count > 0 && planIndex >= encounterPlan.Count && spawnQueue.Count == 0 && AliveOrdinaryCount() == 0;
+
+        /// <summary>
+        /// Ordinary enemies still to kill in this encounter: alive, waiting under the cap, and
+        /// in formations not yet arrived. Known exactly because the plan is drawn up front.
+        /// </summary>
+        public int EnemiesLeftInEncounter()
+        {
+            if (State == RunState.BossIntro || State == RunState.BossCombat || Encounter >= Config.shortMode.encounterCount) return 0;
+            int n = AliveOrdinaryCount() + spawnQueue.Count;
+            for (int i = planIndex; i < encounterPlan.Count; i++) n += encounterPlan[i].Members.Length;
+            return n;
         }
 
         /// <summary>
@@ -170,13 +186,8 @@ namespace BorrowedHex.Runs
             Events.RaiseRunEnded(Summary);
         }
 
-        /// <summary>Active seconds left in the current encounter or the boss window.</summary>
-        public float SecondsLeftInPhase()
-        {
-            var sm = Config.shortMode;
-            double end = Encounter < sm.encounterCount ? (Encounter + 1) * sm.encounterLength : sm.TotalLength;
-            return (float)System.Math.Max(0.0, end - Clock.Now);
-        }
+        /// <summary>Active seconds left on the shared run clock.</summary>
+        public float SecondsLeftInRun() => (float)System.Math.Max(0.0, Config.shortMode.TotalLength - Clock.Now);
 
         // ---- Encounter director -----------------------------------------------------------
 
@@ -185,16 +196,21 @@ namespace BorrowedHex.Runs
         int formationsThisEncounter = -1;
         int formationEncounter = -1;
         Formation lastFormation;
+        // The encounter's formations, drawn when it starts (so "enemies left" is exact and a
+        // seed fixes the whole encounter), and how many of them have been queued.
+        readonly List<Formation> encounterPlan = new List<Formation>();
+        int planIndex;
 
         /// <summary>Members waiting for room under the cap (section 6: queued spawns wait).</summary>
         public int QueuedSpawns => spawnQueue.Count;
 
         /// <summary>
-        /// Short-mode spawns. A formation is due every <c>spawnInterval</c> seconds, or after a
-        /// short breather when the arena is empty. Its members enter the arena while fewer than
-        /// 12 ordinary enemies are alive; the rest wait in the queue, and while anything is
-        /// waiting no NEW formation is queued — so a cap hit delays pressure instead of
-        /// stockpiling it into a burst the moment a slot frees.
+        /// Short-mode spawns. The encounter's planned formations arrive one at a time: the next
+        /// is due every <c>spawnInterval</c> seconds, or after a short breather when the arena
+        /// is empty (so fast killing is rewarded with a faster encounter). Members enter while
+        /// fewer than 12 ordinary enemies are alive; the rest wait in the queue, and while
+        /// anything is waiting no NEW formation is queued. Once the plan is used up nothing
+        /// more spawns: the encounter ends when the last member dies.
         /// </summary>
         void TickEncounterDirector(double now)
         {
@@ -207,15 +223,19 @@ namespace BorrowedHex.Runs
                 formationEncounter = Encounter;
                 formationsThisEncounter = 0;
                 if (Encounter > 0) nextFormationAt = now;
+                encounterPlan.Clear();
+                planIndex = 0;
+                int count = sm.FormationsIn(Encounter);
+                for (int k = 0; k < count; k++) encounterPlan.Add(NextFormation());
             }
 
-            if (spawnQueue.Count == 0)
+            if (spawnQueue.Count == 0 && planIndex < encounterPlan.Count)
             {
                 bool empty = AliveOrdinaryCount() == 0;
                 if (empty && nextFormationAt - now > sm.emptyArenaBreather) nextFormationAt = now + sm.emptyArenaBreather;
                 if (now >= nextFormationAt - Eps)
                 {
-                    var f = NextFormation();
+                    var f = encounterPlan[planIndex++];
                     foreach (var m in f.Members) spawnQueue.Enqueue(m);
                     int i = UnityEngine.Mathf.Clamp(Encounter, 0, sm.spawnInterval.Length - 1);
                     nextFormationAt = now + sm.spawnInterval[i];

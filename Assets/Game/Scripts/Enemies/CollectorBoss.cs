@@ -1,3 +1,4 @@
+using BorrowedHex.Core;
 using BorrowedHex.Data;
 using BorrowedHex.Runs;
 using UnityEngine;
@@ -8,9 +9,10 @@ namespace BorrowedHex.Enemies
 
     /// <summary>
     /// Where the boss is inside one pattern. Every pattern runs the same four steps, so every
-    /// attack has the same readable shape: move, wind up (visible), strike, breathe.
+    /// attack has the same readable shape: move, wind up (visible), strike, breathe. Teleport
+    /// is a fifth, optional step before a pattern: a visible blink to behind the player.
     /// </summary>
-    public enum BossStage { Reposition, Telegraph, Active, Recover }
+    public enum BossStage { Reposition, Telegraph, Active, Recover, Teleport }
 
     /// <summary>Boss-only state, hung off the shared EnemyActor so damage, kill events and the
     /// view's body handling stay one code path for every enemy.</summary>
@@ -19,8 +21,10 @@ namespace BorrowedHex.Enemies
         public BossPattern Pattern;
         public BossStage Stage;
         public double StageEndsAt;
-        /// <summary>Patterns started so far; the cycle position is this modulo the cycle length.</summary>
+        /// <summary>Patterns started so far.</summary>
         public int PatternsStarted;
+        /// <summary>Melee patterns in a row; capped so ammunition keeps arriving (see Choose).</summary>
+        public int MeleeStreak;
 
         public Vector2 MoveTarget;
 
@@ -32,29 +36,38 @@ namespace BorrowedHex.Enemies
         public float BladeDeg;
         public float BladeEndDeg;
         public bool SweepLanded;
-        /// <summary>True once the slam/sweep has resolved (for views and tests).</summary>
+        /// <summary>Count of resolved slams/sweeps (for views and tests).</summary>
         public int StrikesResolved;
+        /// <summary>Count of parried sweeps (for views and tests).</summary>
+        public int SweepsParried;
+
+        // Teleport: where it will reappear, and when it may teleport again.
+        public Vector2 TeleportTo;
+        public double NextTeleportAt;
+        public int Teleports;
     }
 
     /// <summary>
-    /// The Collector (section 4, owner-revised for Phase 5, D38). A fixed cycle:
-    ///   bolt stream → sweeping melee → fan volley → ground slam → (repeat)
+    /// The Collector (section 4, owner-revised in Phase 5 and again after its first playtest,
+    /// D38, D48). Four patterns, chosen from where the player IS rather than in a fixed order:
+    ///   - player hidden behind a pillar (no line of sight) → ground slam: it ignores line of
+    ///     sight, so hiding is answered by the one attack a pillar cannot block;
+    ///   - point-blank → slam; close → sweeping melee; mid range → fan volley; far → bolt stream.
     /// Ranged patterns fire ordinary bolts through <see cref="AttackEmitter"/> — the same
     /// payload definition acolytes use — so they are capturable and returnable exactly like any
-    /// other bolt (section 4: "through existing payload definitions"). The melee patterns are
-    /// avoidable hazards only and cannot be parried (D38 ruling: section 4 says melee attacks
-    /// are "not automatically stealable"; the Pursuer parry is the owner's explicit exception).
+    /// other bolt. The slam cannot be parried; the sweep can, through a gold arc band (D47).
     ///
-    /// Why a fixed cycle rather than random picks: a player learning a boss in a 60-second
-    /// window needs to predict it, and alternating ranged/melee guarantees ammunition never
-    /// goes more than one pattern without arriving (plan: no extended period with neither
-    /// targets nor ammunition).
+    /// Why choice by position needs a cap on melee: a player who hugs the boss (or hides) would
+    /// otherwise only ever see melee, and the plan forbids "an extended period with neither
+    /// targets nor ammunition". After <c>maxMeleeInARow</c> melee patterns the next one is
+    /// ranged whatever the distance, so bolts always come back within a couple of patterns.
+    ///
+    /// When the player is far away it may also TELEPORT behind them (owner direction): seeded
+    /// chance, a cooldown so it cannot chain, and a visible wind-up at both ends, so it is a
+    /// surprise in position but never an unreadable hit.
     /// </summary>
     public static class CollectorBoss
     {
-        public static readonly BossPattern[] Cycle =
-            { BossPattern.BoltStream, BossPattern.Sweep, BossPattern.FanVolley, BossPattern.Slam };
-
         public static bool IsMelee(BossPattern p) => p == BossPattern.Sweep || p == BossPattern.Slam;
 
         public static void Tick(ArenaSim sim, EnemyActor e, BossTuning t, double now, float dt)
@@ -68,6 +81,8 @@ namespace BorrowedHex.Enemies
             if (e.Phase == EnemyPhase.Warning)
             {
                 e.Phase = EnemyPhase.Idle;
+                // No teleport on the very first pattern: the intro shows it where it stands.
+                b.NextTeleportAt = now + t.teleportCooldown;
                 BeginPattern(sim, e, t, now);
             }
 
@@ -77,6 +92,17 @@ namespace BorrowedHex.Enemies
 
             switch (b.Stage)
             {
+                case BossStage.Teleport:
+                    e.AimDirection = dirToPlayer;
+                    if (now >= b.StageEndsAt)
+                    {
+                        // Snap both positions so the view does not draw a streak across the arena.
+                        e.Position = e.PrevPosition = b.TeleportTo;
+                        b.Teleports++;
+                        BeginPattern(sim, e, t, now, allowTeleport: false);
+                    }
+                    break;
+
                 case BossStage.Reposition:
                     e.AimDirection = dirToPlayer;
                     if (ReachedPosition(e, b, t, dist) || now >= b.StageEndsAt)
@@ -84,7 +110,8 @@ namespace BorrowedHex.Enemies
                         StartTelegraph(sim, e, t, now);
                         break;
                     }
-                    // Melee patterns chase the player; ranged ones walk to a firing spot.
+                    // Melee patterns chase the player (routing round pillars); ranged ones walk
+                    // to a firing spot.
                     Vector2 target = IsMelee(b.Pattern) ? player.Position : b.MoveTarget;
                     EnemySteering.MoveToward(sim, e, target, t.moveSpeed, dt);
                     break;
@@ -95,6 +122,14 @@ namespace BorrowedHex.Enemies
                     {
                         e.AimDirection = dirToPlayer;
                         if (now >= b.StageEndsAt - AimLockOf(b.Pattern, t)) e.AimLocked = true;
+                    }
+                    // Sweep parry (D47): any tick while the gold arc is up; it cancels the swing.
+                    if (b.Pattern == BossPattern.Sweep && e.ParryRimOpen(now)
+                        && sim.TryParrySweep(e, t.sweepHalfAngle, t.sweepParryArcRadius, t.sweepParryArcWidth))
+                    {
+                        b.SweepsParried++;
+                        Recover(e, t, now, t.parriedRecover);
+                        break;
                     }
                     if (now >= b.StageEndsAt) StartActive(sim, e, t, now);
                     break;
@@ -109,17 +144,90 @@ namespace BorrowedHex.Enemies
             }
         }
 
-        static void BeginPattern(ArenaSim sim, EnemyActor e, BossTuning t, double now)
+        static void BeginPattern(ArenaSim sim, EnemyActor e, BossTuning t, double now, bool allowTeleport = true)
         {
             var b = e.Boss;
-            b.Pattern = Cycle[b.PatternsStarted % Cycle.Length];
+            var player = sim.Player;
+            float dist = (player.Position - e.Position).magnitude;
+            e.Phase = EnemyPhase.Idle;
+            e.AimLocked = false;
+            e.ClearParryRim();
+
+            // Far away: a seeded chance to blink behind the player instead of walking over.
+            // The roll happens only when every other condition holds, so the random stream
+            // (and with it a seed's replay) does not depend on rolls that could never matter.
+            if (allowTeleport && dist >= t.teleportMinDistance && now >= b.NextTeleportAt
+                && TryFindTeleportSpot(sim, e, t, out var spot) && sim.Random.NextFloat() < t.teleportChance)
+            {
+                b.Stage = BossStage.Teleport;
+                b.TeleportTo = spot;
+                b.StageEndsAt = now + t.teleportTelegraph;
+                b.NextTeleportAt = now + t.teleportTelegraph + t.teleportCooldown;
+                e.Phase = EnemyPhase.Telegraph;
+                e.PhaseEndsAt = b.StageEndsAt;
+                sim.Events.RaiseEnemyTelegraph(e);
+                return;
+            }
+
+            b.Pattern = Choose(sim, e, t, b.MeleeStreak);
+            b.MeleeStreak = IsMelee(b.Pattern) ? b.MeleeStreak + 1 : 0;
             b.PatternsStarted++;
             b.Stage = BossStage.Reposition;
             b.StageEndsAt = now + t.repositionMax;
-            e.Phase = EnemyPhase.Idle;
-            e.AimLocked = false;
             if (!IsMelee(b.Pattern)) b.MoveTarget = FiringSpot(sim, e, t);
         }
+
+        /// <summary>
+        /// Pattern from the player's position (owner direction, D48), public for tests:
+        /// the melee cap first (ammunition guarantee), then line of sight, then distance.
+        /// </summary>
+        public static BossPattern Choose(ArenaSim sim, EnemyActor e, BossTuning t, int meleeStreak)
+        {
+            float dist = (sim.Player.Position - e.Position).magnitude;
+            if (meleeStreak >= t.maxMeleeInARow)
+                return dist <= t.fanMaxDistance ? BossPattern.FanVolley : BossPattern.BoltStream;
+            if (!HasLineOfSight(sim, e.Position, sim.Player.Position)) return BossPattern.Slam;
+            if (dist <= t.slamChooseDistance) return BossPattern.Slam;
+            if (dist <= t.sweepChooseDistance) return BossPattern.Sweep;
+            if (dist <= t.fanMaxDistance) return BossPattern.FanVolley;
+            return BossPattern.BoltStream;
+        }
+
+        /// <summary>True when no wall or pillar crosses the straight line between the two points.</summary>
+        public static bool HasLineOfSight(ArenaSim sim, Vector2 from, Vector2 to)
+        {
+            foreach (var w in sim.Walls)
+                if (Geometry2D.SweepCircleVsRect(from, to, 0f, w, out _)) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// "Behind you" = opposite the player's aim, the way they are not looking. If that spot
+        /// is blocked (pillar, wall, arena edge) nearby angles are tried, widening both ways;
+        /// if none is clear the boss simply walks this time.
+        /// </summary>
+        static bool TryFindTeleportSpot(ArenaSim sim, EnemyActor e, BossTuning t, out Vector2 spot)
+        {
+            var p = sim.Player;
+            Vector2 behind = p.AimDirection.sqrMagnitude > 1e-6f ? -p.AimDirection.normalized : Vector2.down;
+            var bounds = sim.Config.arena.bounds;
+            float m = e.Radius + 0.4f;
+            foreach (float off in TeleportAngles)
+            {
+                Vector2 c = p.Position + Geometry2D.Rotate(behind, off) * t.teleportBehindDistance;
+                if (c.x < bounds.xMin + m || c.x > bounds.xMax - m || c.y < bounds.yMin + m || c.y > bounds.yMax - m) continue;
+                bool blocked = false;
+                foreach (var w in sim.Walls)
+                    if (Geometry2D.CircleOverlapsRect(c, e.Radius + 0.2f, w)) { blocked = true; break; }
+                if (blocked) continue;
+                spot = c;
+                return true;
+            }
+            spot = default;
+            return false;
+        }
+
+        static readonly float[] TeleportAngles = { 0f, 30f, -30f, 60f, -60f, 90f, -90f };
 
         /// <summary>
         /// A spot about <c>rangedDistance</c> from the player on the boss's side, pulled inside
@@ -179,6 +287,13 @@ namespace BorrowedHex.Enemies
             e.Phase = EnemyPhase.Telegraph;
             e.PhaseEndsAt = b.StageEndsAt;
             e.AimLocked = false;
+            if (b.Pattern == BossPattern.Sweep)
+            {
+                // Same shape as the Pursuer's rim (D46): up shortly after the wind-up starts,
+                // gone before the blade moves.
+                e.ParryRimOpensAt = now + t.sweepParryDelay;
+                e.ParryRimClosesAt = System.Math.Min(e.ParryRimOpensAt + t.sweepParryDuration, b.StageEndsAt - 0.05);
+            }
             sim.Events.RaiseEnemyTelegraph(e);
         }
 
@@ -187,6 +302,7 @@ namespace BorrowedHex.Enemies
             var b = e.Boss;
             b.Stage = BossStage.Active;
             e.Phase = EnemyPhase.Idle;
+            e.ClearParryRim();
             switch (b.Pattern)
             {
                 case BossPattern.BoltStream:
@@ -195,9 +311,10 @@ namespace BorrowedHex.Enemies
                     break;
 
                 case BossPattern.FanVolley:
-                    AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection, t.fanSpreadDeg);
+                    AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
+                        t.fanSpreadDeg, t.hitDamage);
                     sim.Events.RaiseEnemyFired(e);
-                    Recover(e, t, now);
+                    Recover(e, t, now, t.recover);
                     return;
 
                 case BossPattern.Sweep:
@@ -211,16 +328,18 @@ namespace BorrowedHex.Enemies
                     break;
 
                 case BossPattern.Slam:
-                    // One overlap test at one instant, like the Pursuer strike: no lingering zone.
+                    // One overlap test at one instant, like the Pursuer strike: no lingering
+                    // zone. No line-of-sight test: a pillar does not shelter you from the ground
+                    // shaking — that is the slam's whole job (D48). It cannot be parried.
                     var p = sim.Player;
                     float r = t.slamRadius + p.Radius;
-                    if ((p.Position - e.Position).sqrMagnitude <= r * r) sim.DamagePlayer(1, e.ActorId);
+                    if ((p.Position - e.Position).sqrMagnitude <= r * r) sim.DamagePlayer(t.hitDamage, e.ActorId);
                     b.StrikesResolved++;
                     // Hostile burst event: the view draws it at its true radius (visual only;
                     // hostile explosions never damage enemies).
-                    sim.Events.RaiseExplosion(e.Position, t.slamRadius, Core.AttackFaction.Hostile);
+                    sim.Events.RaiseExplosion(e.Position, t.slamRadius, AttackFaction.Hostile);
                     sim.Events.RaiseEnemyFired(e);
-                    Recover(e, t, now);
+                    Recover(e, t, now, t.recover);
                     return;
             }
         }
@@ -234,15 +353,16 @@ namespace BorrowedHex.Enemies
                 // standing still does not. That is the dodge it teaches.
                 float maxTurn = t.streamTurnRate * dt;
                 float want = Vector2.SignedAngle(e.AimDirection, dirToPlayer);
-                e.AimDirection = Core.Geometry2D.Rotate(e.AimDirection, Mathf.Clamp(want, -maxTurn, maxTurn)).normalized;
+                e.AimDirection = Geometry2D.Rotate(e.AimDirection, Mathf.Clamp(want, -maxTurn, maxTurn)).normalized;
                 while (b.ShotsLeft > 0 && now >= b.NextShotAt - 1e-9)
                 {
-                    AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection, ZeroSpread);
+                    AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
+                        ZeroSpread, t.hitDamage);
                     sim.Events.RaiseEnemyFired(e);
                     b.ShotsLeft--;
                     b.NextShotAt += t.streamInterval;
                 }
-                if (b.ShotsLeft <= 0) Recover(e, t, now);
+                if (b.ShotsLeft <= 0) Recover(e, t, now, t.recover);
                 return;
             }
 
@@ -257,7 +377,7 @@ namespace BorrowedHex.Enemies
                 {
                     b.StrikesResolved++;
                     sim.Events.RaiseEnemyFired(e);
-                    Recover(e, t, now);
+                    Recover(e, t, now, t.recover);
                 }
             }
         }
@@ -277,7 +397,7 @@ namespace BorrowedHex.Enemies
             var p = sim.Player;
             if (b.SweepLanded || !p.Alive) return;
             if (BladeTouches(e.Position, e.AimDirection, fromDeg, toDeg, t.sweepReach, p.Position, p.Radius))
-                b.SweepLanded = sim.DamagePlayer(1, e.ActorId);
+                b.SweepLanded = sim.DamagePlayer(t.hitDamage, e.ActorId);
         }
 
         /// <summary>Pure geometry for the sweep, public for tests.</summary>
@@ -294,13 +414,14 @@ namespace BorrowedHex.Enemies
             return a >= lo && a <= hi;
         }
 
-        static void Recover(EnemyActor e, BossTuning t, double now)
+        static void Recover(EnemyActor e, BossTuning t, double now, float seconds)
         {
             var b = e.Boss;
             b.Stage = BossStage.Recover;
-            b.StageEndsAt = now + t.recover;
+            b.StageEndsAt = now + seconds;
             e.Phase = EnemyPhase.Recover;
             e.AimLocked = false;
+            e.ClearParryRim();
         }
     }
 }

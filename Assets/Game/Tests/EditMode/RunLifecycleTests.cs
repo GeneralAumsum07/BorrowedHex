@@ -33,14 +33,38 @@ namespace BorrowedHex.Tests
             return n;
         }
 
-        /// <summary>Drive a run through its three upgrade choices to the start of the boss window.</summary>
+        /// <summary>
+        /// A player who kills everything the moment it can be hurt (past its spawn warning).
+        /// Encounters end only on a full clear (D50), so schedule tests need this player.
+        /// </summary>
+        public static void KillActiveOrdinaries(ArenaSim sim)
+        {
+            double now = sim.Clock.Now;
+            foreach (var e in sim.Enemies)
+                if (e.Alive && !e.IsBoss && now >= e.ActiveAt) Kill(sim, e);
+        }
+
+        /// <summary>Tick, clearing as enemies arrive, until the current encounter is cleared.</summary>
+        public static int ClearEncounter(ArenaSim sim, int maxTicks = 20000)
+        {
+            int n = 0;
+            if (sim.State == RunState.Ready) { sim.Tick(Still, Dt); n++; }
+            while (sim.State == RunState.Combat && n < maxTicks)
+            {
+                sim.Tick(Still, Dt);
+                n++;
+                KillActiveOrdinaries(sim);
+            }
+            return n;
+        }
+
+        /// <summary>Drive a run through its three cleared encounters to the start of the boss fight.</summary>
         public static void ToBossCombat(ArenaSim sim)
         {
             Invulnerable(sim);
             for (int i = 0; i < 3; i++)
             {
-                TickWhile(sim, sim.State == RunState.Ready ? RunState.Ready : RunState.Combat);
-                if (sim.State == RunState.Combat) TickWhile(sim, RunState.Combat);
+                ClearEncounter(sim);
                 Assert.AreEqual(RunState.UpgradeChoice, sim.State, $"transition {i + 1}");
                 Assert.IsTrue(sim.ContinueFromUpgrade());
             }
@@ -78,32 +102,78 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void At40ActiveSeconds_TheUpgradeChoicePausesEveryTimer()
+        public void ClearingTheEncounter_OpensTheUpgradeChoice_AndPausesEveryTimer()
         {
             var sim = P5.Short();
             P5.Invulnerable(sim);
-            int ticks = P5.TickWhile(sim, RunState.Ready) + P5.TickWhile(sim, RunState.Combat);
+            P5.ClearEncounter(sim);
             Assert.AreEqual(RunState.UpgradeChoice, sim.State);
-            Assert.AreEqual(2400, ticks, "exactly on the 40 s tick, not one late");
-            // 1e-4: the 60 Hz step is the float 1/60 (0.016666668), so 2400 of them sum to
-            // 40.000002 — the tick COUNT above is the exact check.
-            Assert.AreEqual(40.0, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(1, sim.TransitionsReached);
+            Assert.AreEqual(0, sim.EnemiesLeftInEncounter());
+            Assert.Less(sim.Clock.Now, sim.Config.shortMode.TotalLength, "cleared well inside the run clock");
             Assert.IsTrue(sim.Clock.HasPauseReason(PauseReason.UpgradeChoice));
 
-            // Frozen: more ticks move neither the clock nor any enemy.
-            var before = new List<Vector2>();
-            foreach (var e in sim.Enemies) before.Add(e.Position);
-            int alive = sim.AliveOrdinaryCount();
-            Assert.Greater(alive, 0, "enemies are preserved through the choice");
+            // Frozen: more ticks move neither the clock nor a packet's expiry.
+            double at = sim.Clock.Now;
+            var packet = sim.Packets.Create(sim.Ids.Next(), 0, at, 0.5f, 12);
             for (int i = 0; i < 120; i++) sim.Tick(P5.Still, P5.Dt);
-            Assert.AreEqual(40.0, sim.Clock.Now, 1e-4);
-            for (int i = 0; i < before.Count; i++) Assert.AreEqual(before[i], sim.Enemies[i].Position);
+            Assert.AreEqual(at, sim.Clock.Now);
+            CollectionAssert.Contains(sim.Packets.Packets, packet, "a 0.5 s packet survives 2 s of choice");
 
             Assert.IsTrue(sim.ContinueFromUpgrade());
             Assert.AreEqual(RunState.Combat, sim.State);
             Assert.AreEqual(1, sim.Encounter);
             sim.Tick(P5.Still, P5.Dt);
-            Assert.Greater(sim.Clock.Now, 40.0);
+            Assert.Greater(sim.Clock.Now, at);
+            Assert.Greater(sim.EnemiesLeftInEncounter(), 0, "encounter 2 has its own plan");
+        }
+
+        [Test]
+        public void AnEncounter_NeverEndsWhileAnyEnemyLives()
+        {
+            // Owner direction (D50): the objective is "kill all enemies", not "survive".
+            var sim = P5.Short();
+            P5.Invulnerable(sim);
+            P5.Run(sim, 60 * 90);
+            Assert.AreEqual(RunState.Combat, sim.State);
+            Assert.AreEqual(0, sim.TransitionsReached);
+            Assert.Greater(sim.EnemiesLeftInEncounter(), 0);
+        }
+
+        [Test]
+        public void EnemiesLeft_IsTheWholePlan_AndCountsDownOnlyOnKills()
+        {
+            var sim = P5.Short(4);
+            P5.Invulnerable(sim);
+            sim.Tick(P5.Still, P5.Dt);
+            int planned = sim.EnemiesLeftInEncounter();
+            // Four formations of two or three members each (encounter 1, D50).
+            Assert.GreaterOrEqual(planned, 8);
+            Assert.LessOrEqual(planned, 12);
+            // Spawning moves members from "planned" to "alive" without changing the total.
+            P5.Run(sim, 60 * 20);
+            Assert.AreEqual(planned, sim.EnemiesLeftInEncounter());
+            EnemyActor victim = null;
+            foreach (var e in sim.Enemies) if (e.Alive && !e.IsBoss) { victim = e; break; }
+            Assert.NotNull(victim);
+            P5.Kill(sim, victim);
+            Assert.AreEqual(planned - 1, sim.EnemiesLeftInEncounter());
+        }
+
+        [Test]
+        public void TheSharedRunClock_EndsTheRun_EvenMidEncounter()
+        {
+            // One 3:00 clock for the whole run (owner ruling): a player who never clears
+            // encounter 1 still runs out of time.
+            var sim = P5.Short();
+            P5.Invulnerable(sim);
+            P5.TickWhile(sim, RunState.Ready);
+            P5.TickWhile(sim, RunState.Combat);
+            Assert.AreEqual(RunState.Results, sim.State);
+            Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
+            Assert.AreEqual(0, sim.Encounter);
+            Assert.AreEqual(180.0, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(0f, sim.SecondsLeftInRun());
         }
 
         [Test]
@@ -111,8 +181,7 @@ namespace BorrowedHex.Tests
         {
             var sim = P5.Short();
             P5.Invulnerable(sim);
-            P5.TickWhile(sim, RunState.Ready);
-            P5.TickWhile(sim, RunState.Combat);
+            P5.ClearEncounter(sim);
             sim.SetPause(PauseReason.Menu, true);
             Assert.AreEqual(RunState.Paused, sim.State);
             Assert.IsFalse(sim.ContinueFromUpgrade(), "the menu covers the choice; Continue is not live");
@@ -143,11 +212,16 @@ namespace BorrowedHex.Tests
             P5.Invulnerable(sim);
             for (int i = 0; i < 3; i++)
             {
-                if (sim.State == RunState.Ready) P5.TickWhile(sim, RunState.Ready);
-                P5.TickWhile(sim, RunState.Combat);
+                P5.ClearEncounter(sim);
                 if (i < 2) sim.ContinueFromUpgrade();
             }
             Assert.AreEqual(3, sim.TransitionsReached);
+            // Encounters end cleared, so plant leftovers to prove the cleanup: an ordinary
+            // enemy and one of its shots in flight.
+            var leftover = sim.SpawnEnemy(ActorCategory.Acolyte, new Vector2(6f, 0f));
+            leftover.ActiveAt = 0;
+            var bolt = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), leftover.ActorId, sim.Ids.Next(), 0f);
+            sim.SpawnProjectile(bolt, AttackFaction.Hostile, new Vector2(5f, 0f), Vector2.left);
             Assert.Greater(sim.AliveOrdinaryCount(), 0);
             var packet = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
             Assert.NotNull(packet);
@@ -189,15 +263,17 @@ namespace BorrowedHex.Tests
         {
             var sim = P5.Short();
             P5.ToBossCombat(sim);
-            for (int i = 0; i < 90; i++) sim.Tick(P5.Still, P5.Dt); // past its spawn warning: 121.5 s
+            for (int i = 0; i < 90; i++) sim.Tick(P5.Still, P5.Dt); // past its spawn warning
             int before = sim.Score.Score;
             P5.Kill(sim, sim.Boss);
             sim.Tick(P5.Still, P5.Dt);
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.Victory, sim.Summary.Reason);
-            // 180 - 121.5167 = 58.48 → 58 whole unused seconds.
-            Assert.AreEqual(116, sim.Summary.VictoryBonus);
-            Assert.AreEqual(before + 250 + 116, sim.Summary.Score);
+            // Whole unused seconds of the shared clock, two points each.
+            int unused = (int)System.Math.Floor(180.0 - sim.Clock.Now + 1e-6);
+            Assert.Greater(unused, 0);
+            Assert.AreEqual(unused * 2, sim.Summary.VictoryBonus);
+            Assert.AreEqual(before + 250 + unused * 2, sim.Summary.Score);
             Assert.AreEqual(1, sim.Summary.BossesDefeated);
         }
 

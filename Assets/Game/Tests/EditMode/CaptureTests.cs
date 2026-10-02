@@ -175,7 +175,7 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(0f, 1.5f));
             sim.Tick(Catch, Dt);
             Run(sim, 30);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
             Assert.AreEqual(0, sim.Packets.Packets.Count);
         }
 
@@ -185,14 +185,14 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
             Run(sim, 30);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
 
             // Window open but the shot comes from behind the aim cone.
             var sim2 = Sim();
             ShotFrom(sim2, new Vector2(-2f, 0f));
             sim2.Tick(Catch, Dt);
             Run(sim2, 30);
-            Assert.AreEqual(sim2.Stats.MaxHealth - 1, sim2.Player.Health);
+            Assert.AreEqual(sim2.Stats.MaxHealth - 2, sim2.Player.Health);
             Assert.AreEqual(0, sim2.Packets.Packets.Count);
         }
 
@@ -309,7 +309,7 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(1.5f, 0f));
             Run(sim, 20);
             Assert.AreEqual(1, rejected);
-            Assert.AreEqual(hpBefore - 1, sim.Player.Health);
+            Assert.AreEqual(hpBefore - 2, sim.Player.Health);
         }
 
         [Test]

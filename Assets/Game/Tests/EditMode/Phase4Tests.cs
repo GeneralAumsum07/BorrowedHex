@@ -102,7 +102,7 @@ namespace BorrowedHex.Tests
             var siege = P4.Parked(sim, ActorCategory.SiegeFamiliar, new Vector2(6f, 0f));
             AttackEmitter.FireVolley(sim, AttackIds.Rocket, siege.ActorId, siege.Position, siege.Radius, Vector2.left, new[] { 0f });
             P4.Run(sim, 120);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
             Assert.AreEqual(bystander.MaxHealth, bystander.Health);
         }
 
@@ -200,7 +200,7 @@ namespace BorrowedHex.Tests
             sim.Events.EnemyTelegraph += _ => telegraphs++;
             P4.Run(sim, Mathf.CeilToInt(sim.Config.combat.pursuer.telegraph / P4.Dt) + 3);
             Assert.AreEqual(1, telegraphs);
-            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+            Assert.AreEqual(sim.Stats.MaxHealth - 2, sim.Player.Health);
         }
 
         [Test]
@@ -335,6 +335,115 @@ namespace BorrowedHex.Tests
             var sim = P4.Sim();
             Assert.AreEqual(30, sim.SpawnEnemy(ActorCategory.ScatterCaster, new Vector2(6, 0), elite: true).KillValue);
             Assert.AreEqual(38, sim.SpawnEnemy(ActorCategory.SiegeFamiliar, new Vector2(-6, 0), elite: true).KillValue);
+        }
+    }
+
+    // Body contact (owner direction, D51): touching an enemy costs half a heart (the boss: one
+    // heart) and grants a SHORTER invulnerability than a real hit, so contact is a nudge to
+    // move, not a free shield to stand inside a crowd with.
+    public class ContactDamageTests
+    {
+        [Test]
+        public void TouchingAnEnemy_CostsHalfAHeart_ThenABriefInvulnerability()
+        {
+            var sim = P4.Sim();
+            var e = P4.Parked(sim, ActorCategory.Pursuer, new Vector2(0.5f, 0f));
+            int max = sim.Stats.MaxHealth;
+            sim.Tick(P4.Still, P4.Dt);
+            Assert.AreEqual(max - 1, sim.Player.Health, "half a heart");
+            Assert.AreEqual(sim.Stats.ContactInvulnerability, sim.Player.InvulnerableUntil - sim.Clock.Now, P4.Dt + 1e-4,
+                "the contact blink, not the longer hit blink");
+            Assert.Less(sim.Stats.ContactInvulnerability, sim.Stats.HitInvulnerability);
+            // Still touching: nothing more until the blink ends...
+            P4.Run(sim, Mathf.FloorToInt(sim.Stats.ContactInvulnerability / P4.Dt) - 2);
+            Assert.AreEqual(max - 1, sim.Player.Health);
+            // ...then the next half heart.
+            P4.Run(sim, 4);
+            Assert.AreEqual(max - 2, sim.Player.Health);
+            Assert.IsTrue(e.Alive);
+        }
+
+        [Test]
+        public void TwoBodiesOnOneTick_CostOneContactHit()
+        {
+            var sim = P4.Sim();
+            P4.Parked(sim, ActorCategory.Pursuer, new Vector2(0.5f, 0f));
+            P4.Parked(sim, ActorCategory.Pursuer, new Vector2(-0.5f, 0f));
+            sim.Tick(P4.Still, P4.Dt);
+            Assert.AreEqual(sim.Stats.MaxHealth - 1, sim.Player.Health);
+        }
+
+        [Test]
+        public void AnEnemyInItsSpawnWarning_DoesNotHurtByContact()
+        {
+            var sim = P4.Sim();
+            var e = sim.SpawnEnemy(ActorCategory.Pursuer, new Vector2(0.5f, 0f));
+            e.ActiveAt = double.MaxValue;
+            P4.Run(sim, 30);
+            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+        }
+
+        [Test]
+        public void NoContact_OneHairApart()
+        {
+            var sim = P4.Sim();
+            var e = P4.Parked(sim, ActorCategory.Pursuer, Vector2.zero);
+            e.Position = e.PrevPosition = new Vector2(e.Radius + sim.Player.Radius + 0.01f, 0f);
+            P4.Run(sim, 30);
+            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+        }
+
+        [Test]
+        public void ADuringDashOrHitBlink_ContactDoesNothing()
+        {
+            var sim = P4.Sim();
+            sim.Player.InvulnerableUntil = 1.0;
+            P4.Parked(sim, ActorCategory.Pursuer, new Vector2(0.5f, 0f));
+            P4.Run(sim, 30);
+            Assert.AreEqual(sim.Stats.MaxHealth, sim.Player.Health);
+        }
+
+        [Test]
+        public void TouchingTheBoss_CostsOneHeart()
+        {
+            var sim = P5.Short();
+            P5.ToBossCombat(sim);
+            var boss = sim.Boss;
+            int amount = -1;
+            sim.Events.PlayerHit += (a, src) => { if (src == boss.ActorId && amount < 0) amount = a; };
+            // Wait for a moment the boss is only walking (no attack resolving), then touch it.
+            for (int i = 0; i < 60 * 20 && !(boss.IsActive(sim.Clock.Now) && boss.Boss.Stage == BossStage.Reposition); i++)
+                sim.Tick(P5.Still, P5.Dt);
+            Assert.AreEqual(BossStage.Reposition, boss.Boss.Stage, "fixture");
+            sim.Player.InvulnerableUntil = 0;
+            sim.Player.Position = boss.Position + Vector2.right * (boss.Radius + sim.Player.Radius - 0.2f);
+            sim.Tick(P5.Still, P5.Dt);
+            Assert.AreEqual(2, amount, "1 heart = 2 half hearts");
+        }
+    }
+
+    // Damage amounts in half hearts (D51): five hearts, ordinary hits one heart.
+    public class HalfHeartTests
+    {
+        [Test]
+        public void FiveHearts_AndOrdinaryHitsCostOneHeart()
+        {
+            var sim = P4.Sim();
+            Assert.AreEqual(10, sim.Stats.MaxHealth, "5 hearts");
+            Assert.AreEqual(2, sim.Config.combat.enemyHitDamage);
+            Assert.AreEqual(2, sim.Attacks.Get(AttackIds.Bolt).HostileDamage);
+            Assert.AreEqual(1, sim.Config.combat.enemyContactDamage);
+            Assert.AreEqual(2, sim.Config.collector.contactDamage);
+        }
+
+        [Test]
+        public void TheShippedConfigAsset_AlsoHasFiveHearts()
+        {
+            // The asset serializes the player section, so a changed code default alone would
+            // not reach the game. Guard the asset itself.
+            var cfg = UnityEditor.AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Game/Data/GameConfig.asset");
+            Assert.NotNull(cfg);
+            Assert.AreEqual(10, cfg.player.maxHealth);
         }
     }
 }

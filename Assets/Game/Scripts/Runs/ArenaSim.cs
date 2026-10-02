@@ -95,15 +95,17 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>
-        /// The single entry point for player damage. Invulnerability (post-hit or dash) makes
-        /// later hits no-ops, and death is raised exactly once.
+        /// The single entry point for player damage, in HALF HEARTS. Invulnerability (post-hit
+        /// or dash) makes later hits no-ops, and death is raised exactly once.
+        /// <paramref name="invulnerability"/> overrides the post-hit window (contact hits use a
+        /// shorter one); negative means the normal hit window.
         /// </summary>
-        public bool DamagePlayer(int amount, int sourceActorId)
+        public bool DamagePlayer(int amount, int sourceActorId, float invulnerability = -1f)
         {
             double now = Clock.Now;
             if (!Player.Alive || amount <= 0 || Player.IsInvulnerable(now)) return false;
             Player.Health = Math.Max(0, Player.Health - amount);
-            Player.InvulnerableUntil = now + Stats.HitInvulnerability;
+            Player.InvulnerableUntil = now + (invulnerability >= 0f ? invulnerability : Stats.HitInvulnerability);
             Events.RaisePlayerHit(amount, sourceActorId);
             if (Player.Health == 0)
             {

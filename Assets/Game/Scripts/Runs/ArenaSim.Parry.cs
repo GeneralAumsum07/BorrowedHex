@@ -43,6 +43,29 @@ namespace BorrowedHex.Runs
             if (!ParryGeometry.BandsMeet(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
                     Stats.ParryRingRadius, Stats.ParryRingWidth, strikeCentre, strikeRadius, rimWidth))
                 return false;
+            FireRiposte(attacker, strikeCentre);
+            return true;
+        }
+
+        /// <summary>
+        /// The Collector's sweep parry (owner direction, D47): the parry band must touch the gold
+        /// arc drawn inside the sweep wedge while the player's parry window is open. Called by
+        /// the boss on each tick its rim is up; true means the sweep is cancelled.
+        /// </summary>
+        internal bool TryParrySweep(EnemyActor boss, float arcHalfDeg, float arcRadius, float arcWidth)
+        {
+            double now = Clock.Now;
+            if (!Player.Alive || !Capture.IsParryOpen(now)) return false;
+            if (!ParryGeometry.BandMeetsArc(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
+                    Stats.ParryRingRadius, Stats.ParryRingWidth, boss.Position, boss.AimDirection, arcHalfDeg, arcRadius, arcWidth))
+                return false;
+            FireRiposte(boss, boss.Position + boss.AimDirection * arcRadius);
+            return true;
+        }
+
+        void FireRiposte(EnemyActor attacker, Vector2 contactPoint)
+        {
+            Vector2 strikeCentre = contactPoint;
 
             // Redirect at the ATTACKER, not along the aim: the cone is 90° wide, so a strike
             // parried at the cone edge would otherwise sail past the enemy that made it. Pierce
@@ -56,7 +79,6 @@ namespace BorrowedHex.Runs
             SpawnProjectile(shot, AttackFaction.Returned, Player.Position, dir, rootReleaseId: Ids.Next(),
                 pierce: Config.combat.ripostePierce);
             Events.RaiseStrikeParried(attacker, strikeCentre);
-            return true;
         }
     }
 }

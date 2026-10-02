@@ -112,6 +112,31 @@ namespace BorrowedHex.Runs
                 else RangedCaster.Tick(this, e, t, now, dt);
             }
             SeparateEnemies();
+            ApplyContactDamage(now);
+        }
+
+        /// <summary>
+        /// Owner direction (supersedes D25's "body contact is harmless"): touching an enemy's
+        /// body costs half a heart (a boss's, a whole heart), followed by a SHORT invulnerability
+        /// window, so contact punishes walking into bodies without chaining hits every tick.
+        /// Checked after enemies have moved and been separated, so it tests where bodies
+        /// actually ended this tick. Spawn warnings are harmless (IsActive), and a dash's
+        /// i-frames pass through bodies freely (DamagePlayer respects them).
+        /// </summary>
+        void ApplyContactDamage(double now)
+        {
+            var p = Player;
+            if (!p.Alive || p.IsInvulnerable(now)) return;
+            foreach (var e in Enemies)
+            {
+                if (!e.IsActive(now)) continue;
+                float r = e.Radius + p.Radius;
+                if ((e.Position - p.Position).sqrMagnitude > r * r) continue;
+                int dmg = e.IsBoss ? Config.collector.contactDamage : Config.combat.enemyContactDamage;
+                // One contact hit per tick at most: the first body found wins, and the
+                // invulnerability it grants covers any other body touching on the same tick.
+                if (DamagePlayer(dmg, e.ActorId, Stats.ContactInvulnerability)) return;
+            }
         }
 
         /// <summary>True for kinds that fire capturable ammunition (formation authoring, director).</summary>

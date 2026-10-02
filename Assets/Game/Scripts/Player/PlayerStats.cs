@@ -13,6 +13,7 @@ namespace BorrowedHex.Player
         public float MoveSpeed;
         public int MaxHealth;
         public float HitInvulnerability;
+        public float ContactInvulnerability;
         public float DashDistance;
         public float DashDuration;
         public float DashCooldown;
@@ -49,6 +50,7 @@ namespace BorrowedHex.Player
                 MoveSpeed = p.moveSpeed,
                 MaxHealth = p.maxHealth,
                 HitInvulnerability = p.hitInvulnerability,
+                ContactInvulnerability = p.contactInvulnerability,
                 DashDistance = p.dashDistance,
                 DashDuration = p.dashDuration,
                 DashCooldown = p.dashCooldown,

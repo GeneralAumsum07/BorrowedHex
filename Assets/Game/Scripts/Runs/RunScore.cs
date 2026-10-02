@@ -168,7 +168,8 @@ namespace BorrowedHex.Runs
             DamageTaken = s.DamageTaken;
             BestVolleyKills = s.BestVolleyKills;
             KillsByKind = new Dictionary<AttackKind, int>(s.KillsByKind);
-            // Section 7: a timed encounter counts when the player survives its transition.
+            // Section 7: an encounter counts at its transition, which since D50 means it was
+            // cleared (every member killed).
             EncountersCompleted = sim.TransitionsReached;
         }
 
