@@ -465,8 +465,8 @@ Test report: EditMode 165/165, PlayMode 2/2.
   `Scripts/UI/{MainMenu,SettingsPanel}.cs`, `Scripts/Presentation/GameRoot.Menus.cs`; changed
   `GameRoot.cs`, `RunFlowPanels.cs`, `GameplayHud.cs`, `PacketIndicator.cs`, PlayMode tests.
 - Live editor, EditMode: 233/233 pass, 23 new in `ProfileTests`: JSON round trip; an old file
-  missing fields gets defaults; eight invalid profiles rejected (version, ranges, points vs levels,
-  victories vs runs, four equipped, equipped not owned, duplicates, negative stats); load prefers
+  missing fields gets defaults; eight invalid inputs rejected (empty, not JSON, unknown version,
+  level 11, points without levels, UI scale 9, victories over runs, equipped not owned); load prefers
   the higher valid generation and preserves damaged copies; nothing valid gives a default plus a
   warning and writes nothing; finalizing the same run twice adds nothing, also after a reload;
   sandbox and debug skipped; a failing save keeps the session in memory with a warning; the run-ID
