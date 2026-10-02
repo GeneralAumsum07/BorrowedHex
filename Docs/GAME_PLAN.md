@@ -8,7 +8,7 @@
 **Date:** 2 October 2026 (rewritten for the "borrowed time" core rework)  
 **Status:** Phases 0–5 are implemented (short run, enemy roster, the Collector, score). The core rework in section 3
 and Phase 6 is specified here and not started. Values marked *proposal* are starting points that have not been
-playtested; the owner's open questions are in section 13.  
+playtested; the owner's answers to the rework questions are in section 13.  
 **Goal:** A fast, short, replayable action game about a rogue magician who steals enemy attacks. Every stolen hex is
 decaying in the magician's hands, the run clock is the magician's life, and nothing in the arena lasts.  
 **Architecture:** 2.5D: camera-facing 2D characters inside a 3D Unity arena under a fixed elevated camera, with all
@@ -31,7 +31,7 @@ make the player feel it:
 | The magician's attention | Only the **selected** packet decays; the other is frozen. Swapping (Q) chooses which hex is burning | 3 |
 | Power | A hex grows stronger the longer it decays, so the best shot is the latest one the player dares | 3 |
 | Life | The **run clock is health**: kills add seconds, hits and backfires take them away | 6 |
-| Cover | Pillars **crumble** after enough hits | 4 |
+| Cover | Pillars **decay over time** and crumble; hits speed it up | 4 |
 | Upgrades | A chosen upgrade lasts **one encounter** only | 5 |
 | Enemies' patience | An enemy left alive too long **turns into something worse** | 4 |
 
@@ -232,28 +232,42 @@ launches are clearly telegraphed. Pursuer speed is 4.2 (D56), still under the pl
 
 ### Overstaying — *new*
 
-An ordinary enemy that stays alive too long turns into something worse. *Proposal* (Q5):
+An ordinary enemy that stays alive too long turns into something worse (owner-confirmed, Q5):
 
 - Each ordinary enemy has an **overstay timer** of 25 active seconds, starting when its spawn warning ends.
 - During its last 5 seconds a shrinking ring around the enemy warns the player.
 - When it runs out, the enemy becomes **overstayed**, once only: health is restored to 1.5× its base maximum, its
-  attack interval drops to 0.75×, it moves 15% faster, and it is tinted and outlined so it reads differently.
+  attack interval drops to 0.75×, and it moves 15% faster.
+- Its sprite **evolves into a more horrifying form** (owner direction). Until the artist supplies evolved sprites, the
+  placeholder view swaps to a larger, darker, spikier variant with an outline, so the change reads at a glance. The
+  view adapter takes one "overstayed" sprite per enemy type, so final art drops in without code changes.
 - An overstayed enemy is worth 1.5× score and counts as an elite for XP. Letting enemies ripen is a deliberate
   risk-for-reward option, not an exploit: it costs time and safety.
 - The Collector does not overstay; the run clock is its pressure.
 
 ### Pillars crumble — *new*
 
-The arena keeps its four pillars, but they are temporary cover. *Proposal* (Q6):
+The arena keeps its four pillars, but they are temporary cover. Owner direction (Q6): pillars **degrade and break
+with time on their own**, and come back each encounter.
 
-- Each pillar has **12 durability**. Any projectile that hits it (hostile or returned) removes 1; a rocket burst
-  touching it removes 3; a Collector slam whose circle touches it removes 3.
+- Each pillar has **12 durability** and loses 1 every few active seconds on its own. Each pillar's interval is seeded
+  between 5 and 8 s (*proposal*), so they fall at different times (roughly 60–95 s each) rather than all at once.
+- Hits speed it up (*working default, not owner-stated*): any projectile that hits a pillar (hostile or returned)
+  removes 1; a rocket burst touching it removes 3; a Collector slam whose circle touches it removes 3.
 - The pillar shows its damage in stages (cracks at 8 and 4).
 - At 0 it crumbles: it stops blocking movement, projectiles and line of sight, and leaves visible rubble with no
   collision. Enemy routing (`EnemySteering.Waypoint`, recomputed each tick) and the Collector's line-of-sight check
   simply stop seeing it.
 - All pillars are restored at the start of each encounter and at the boss transition, so every encounter starts with
-  the same arena.
+  the same arena. Their decay pauses with the gameplay clock.
+
+### Later: a constantly decaying world (deferred until assets exist)
+
+The owner's broader vision is a world that is visibly decaying all the time: the environment changes and degrades
+during a fight, and each encounter takes place in a different environment. It needs environment art, so it is **not
+part of Phases 6–13**. Pillars are the first, asset-free piece of it. When environment assets arrive, plan it as its
+own phase: per-encounter arenas, more decaying props, and floor and lighting changes over time. Keep the pillar
+durability code general (any obstacle can decay) so it extends to other props.
 
 ### The Collector (boss)
 
@@ -296,14 +310,13 @@ slams wear the pillar down. A repeated endless boss gains one predefined pattern
 | `parting_gift` — Parting Gift | Each release also creates a 1-damage blast of radius 1.5 around the player |
 | `final_second` — Final Second | Adds 20 percentage points to the perfect-catch bonus |
 | `overflow` — Overflow | A catch with both slots full fires the **selected** packet at once at its current power and puts the new packet in its place |
-| `quick_draw` — Quick Draw *(new; idea 5)* | Firing within 0.3 s after a swap deals +30% damage |
 | `fusion` — Fusion *(new; idea 6)* | A catch with both slots full merges the new catch and the frozen packet into the selected packet (capacity ignored, +25% power); the other slot stays locked until the merged packet fires |
 
-Quick Draw and Fusion are the owner's swap-fire and merge ideas. They start in this pool because Phase 7 (upgrades)
-comes before the skill tree; whether either moves to the permanent tree is section 13, Q7.
+Fusion is the owner's merge idea and stays a temporary encounter upgrade. The owner's swap-fire idea, Quick Draw,
+is a permanent skill-tree node instead (section 7).
 
 Modifier order for a release: copied base payload → per-enemy hex rule → perfect-catch bonus → power multiplier
-(including Overflow's current power and Fusion's +25%) → Quick Draw → echo fraction. Explosions and orbit damage state
+(including Overflow's current power and Fusion's +25%) → Quick Draw (permanent node) → echo fraction. Explosions and orbit damage state
 their own rules. Never mutate the attack-definition asset. Echoes inherit provenance and cannot echo. Orbit damage is
 not a returned hit for combo purposes. Piercing payloads keep a set of hit actor IDs; an explosion hits each actor once.
 
@@ -361,7 +374,7 @@ Same combat, enemies, boss, score and profile, under a different scheduler.
   boss appears. The wave-six choice is deferred until the boss falls. Defeating a boss restores 30 s of clock.
 - Offered upgrades have a rank equal to the cycle number, capped at 3 (rank scaling: Piercing +1 target per rank; Echo
   25/40/55%; Orbit radius 1.0/1.2/1.4; Parting Gift damage 1/2/3 and radius 1.5/1.75/2.0; Final Second +20/40/60;
-  Overflow and Fusion unchanged; Quick Draw +30/40/50%).
+  Overflow and Fusion unchanged).
 - Retiring between waves keeps earned progression and ends the run as `Retired`.
 - Per completed cycle: enemy health +15%, movement +5% (to +25%), attack interval −5% (to 70%), boss health +20%,
   overstay timer −2 s (to a minimum of 15 s). At most 18 ordinary enemies. A full projectile budget delays an emission
@@ -398,7 +411,7 @@ are equipped at once. Buying, equipping and free respec happen between runs; val
 |---|---|---|
 | Precision 1 | `precision_angle` | +15 degrees catch cone |
 | Precision 2 | `precision_capacity` | +2 energy per packet |
-| Precision 3 | `precision_recovery` | −0.10 s catch recovery |
+| Precision 3 | `quick_draw` — Quick Draw | Firing within 0.3 s after a swap deals +30% damage (*replaces* `precision_recovery`) |
 | Mobility 1 | `mobility_speed` | +5% movement speed |
 | Mobility 2 | `mobility_dash_recovery` | −0.10 s dash cooldown |
 | Mobility 3 | `mobility_dash_distance` | +0.30 dash distance, same duration |
@@ -406,7 +419,9 @@ are equipped at once. Buying, equipping and free respec happen between runs; val
 | Resilience 2 | `resilience_time` | +20 s starting clock and cap (*replaces* `resilience_health`) |
 | Resilience 3 | `resilience_dash_grace` | +0.04 s dash invulnerability, capped at dash duration |
 
-If the owner moves Quick Draw or Fusion into the tree (Q7), they replace nodes here rather than growing the tree.
+Quick Draw (owner's swap-fire idea, Q7) takes the Precision tier-three slot so the tree stays at nine nodes, matching
+the nine points mastery can give. Precision fits it: the branch is about catching well, and Quick Draw rewards
+handling the two slots well. The catch-recovery passive it replaces is the least theme-relevant node.
 
 ### Achievements
 
@@ -545,9 +560,10 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - [ ] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
 - [ ] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
       last change; floating gain/loss numbers; the clock as the main HUD element.
-- [ ] Pillar durability, damage stages, crumbling (collision, line of sight and routing ignore it), restoration at
-      each encounter start and at the boss transition.
-- [ ] Overstay timer, warning ring, one-time overstayed modifiers and visuals; elite score/XP values.
+- [ ] Pillar durability that decays over time (seeded per-pillar rate) and from hits, damage stages, crumbling
+      (collision, line of sight and routing ignore it), restoration at each encounter start and at the boss transition.
+- [ ] Overstay timer, warning ring, one-time overstayed modifiers, an "evolved" placeholder view per enemy type; elite
+      score/XP values.
 - [ ] Update the scripted catch-and-return bot to swap, fire before expiry, and never backfire on purpose. It must
       still beat the boss.
 - [ ] Record each rule change in `DECISIONS.md` and the measured bot result in `TEST_EVIDENCE.md`.
@@ -562,6 +578,7 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - Clock at 8 s and a 10 s hit → run ends `Death`; clock at 0.01 s ticking → `TimeExpired`.
 - Clock at 298 s and a +3 s kill → 300 s, not 301.
 - A pillar at 1 durability hit by a returned bolt crumbles that tick; the bolt is stopped by it; the next shot passes.
+- An untouched pillar with a 6 s interval crumbles at exactly 72 s of active time; pausing does not advance it.
 - An enemy alive 25 s past its warning becomes overstayed once; at 50 s it is still overstayed once.
 
 **Checks:** swapping changes which packet decays; pause freezes everything; a death or restart leaves no pending
@@ -574,7 +591,7 @@ Human gate: the owner plays a short run and judges whether swapping now matters 
 **Deliverable:** A choice of three after each encounter, lasting one encounter.
 
 - [ ] Upgrade definitions and the one-encounter lifetime; the choice panel shows exact effects and what is expiring.
-- [ ] The eight upgrades of section 5, including Overflow and Fusion under the frozen-slot rules, and Quick Draw.
+- [ ] The seven upgrades of section 5, including Overflow and Fusion under the frozen-slot rules.
 - [ ] Perfect-catch geometry and bonus before Final Second can be offered.
 - [ ] Modifier order as section 5; no recursive echoes, no repeated pierce hits, at most one Overflow or Fusion per
       catch activation.
@@ -602,7 +619,7 @@ backup; Web progress survives a refresh; menus never resume combat by accident.
 **Depends on:** Phase 8.
 
 - [ ] XP formula and thresholds from section 7, excess carry, level-10 cap, one point per level gained.
-- [ ] Nine nodes (with `resilience_time`), purchase validation, three equipped, free respec.
+- [ ] Nine nodes (with `resilience_time` and `quick_draw`), purchase validation, three equipped, free respec.
 - [ ] Resolve style plus equipped passives once at run start; encounter upgrades stay separate.
 
 **Checks:** 99 XP stays level 1, 100 reaches level 2 with one point; multiple levels from one run; locked or
@@ -658,7 +675,7 @@ projectile caps hold; a late death produces a complete valid summary.
 - **After Phase 6:** stop and playtest the new core before building upgrades on it. If swapping still does not matter,
   or backfires feel unfair rather than tense, revise section 3 first.
 - **After Phase 7:** the short game is complete and is the fallback jam build.
-- **After Phase 13:** the full design works: both modes, three styles, eight encounter upgrades, the tree, mastery,
+- **After Phase 13:** the full design works: both modes, three styles, seven encounter upgrades, the tree, mastery,
   achievements and records.
 
 ## 10. Verification
@@ -707,7 +724,10 @@ The theme should be visible everywhere:
 - **Backfire:** an unmistakable burst on the magician.
 - **The life clock:** the dominant HUD element; it visibly drains on hits and swells on kills.
 - **Pillars:** crack in stages, then crumble to rubble.
-- **Overstaying enemies:** a warning ring, then a clearly different, more dangerous look.
+- **Overstaying enemies:** a warning ring, then the sprite evolves into a more horrifying form (one evolved sprite
+  per enemy type).
+- **The world (later):** pillars crack and crumble now; later, environments that visibly degrade during a fight and
+  differ per encounter (section 4).
 - **Encounter upgrades:** shown as fading or burning out, distinct from permanent techniques (a journal or diagram).
 
 Colour cues are always backed by shape, motion or timers. The artist receives sprite facing and scale, animation
@@ -716,20 +736,20 @@ timing. Assets are not generated, purchased or commissioned as part of these pha
 
 ## 13. Open questions for the owner
 
-The rework is specified with the defaults below so Phase 6 can be planned. Each is a working default, not an owner
-decision; please confirm or change.
+Answered by the owner on 2 October 2026: Q5, Q6 and Q7 as stated in the table; for the rest the owner accepted the
+working defaults. Values marked *proposal* in the text are still untested tuning and are revisited in Phase 13.
 
-| # | Question | Working default |
+| # | Question | Resolution |
 |---|---|---|
-| Q1 | Does the life clock **replace** the 5 hearts (D51), or do both exist (hearts for hits, clock for time)? | Replace: the clock is the only life bar, as in idea 7 |
-| Q2 | How much does a backfire cost? | −10 s, the same as an ordinary hit |
-| Q3 | Power curve: how strong is a hex fired at the last moment compared with one fired at once? | Linear, 1.0 → 2.05 over the 3 s |
-| Q4 | Per-enemy hexes: are piercing acolyte bolts, a shotgun from scatter casters (±12°, 1.5 per pellet, 6-unit range), rockets as now, and 2-damage boss bolts the right identities? | As stated |
-| Q5 | What does "turn into something worse" mean, and after how long? | After 25 s: 1.5× health (refilled), faster attacks and movement, 1.5× score, once only, not the boss |
-| Q6 | Pillar durability, and do pillars come back? | 12 hits; restored at each encounter start and the boss transition |
-| Q7 | Quick Draw (swap-fire) and Fusion (merge): encounter upgrades, skill-tree nodes, or both? | Encounter upgrades, because Phase 7 comes before the tree |
-| Q8 | With kills adding time, is 300 s still the right starting clock, and what should kills give? | 300 s start and cap; +3 / +5 / +6 s per kill |
-| Q9 | Endless: same 300 s life clock? | Yes, +30 s per boss kill |
+| Q1 | Does the life clock **replace** the 5 hearts (D51)? | Default accepted: replace; the clock is the only life bar |
+| Q2 | How much does a backfire cost? | Default accepted: −10 s, the same as an ordinary hit |
+| Q3 | Power curve: how strong is a hex fired at the last moment compared with one fired at once? | Default accepted: linear, 1.0 → 2.05 over the 3 s |
+| Q4 | Per-enemy hexes: are piercing acolyte bolts, a shotgun from scatter casters (±12°, 1.5 per pellet, 6-unit range), rockets as now, and 2-damage boss bolts the right identities? | Default accepted |
+| Q5 | What does "turn into something worse" mean? | Owner: yes to the default (25 s; 1.5× health, faster, 1.5× score, once, not the boss), and the sprite evolves into something more horrifying |
+| Q6 | Pillar durability, and do pillars come back? | Owner: pillars degrade and break with time on their own, and come back each encounter. A constantly decaying world with per-encounter environments is deferred until assets exist |
+| Q7 | Quick Draw and Fusion: upgrades or tree nodes? | Owner: Quick Draw is a skill-tree node; Fusion is a temporary encounter upgrade |
+| Q8 | Starting clock and kill rewards? | Default accepted: 300 s start and cap; +3 / +5 / +6 s per kill |
+| Q9 | Endless: same 300 s life clock? | Default accepted: yes, +30 s per boss kill |
 | — | Deadline | Deferred by the owner; not to be asked again until supplied |
 
 Confirmed earlier: title **Borrowed Hex**; Windows and Web with keyboard and mouse; project folder `BorrowedHex`.
@@ -753,7 +773,7 @@ Confirmed earlier: title **Borrowed Hex**; Windows and Web with keyboard and mou
 - [ ] Only the selected packet decays; swapping freezes and resumes; power rises with decay; expiry backfires.
 - [ ] Each enemy's hex behaves distinctly when fired.
 - [ ] The run clock is life: kills add, hits and backfires subtract.
-- [ ] Pillars crumble and are restored each encounter; overstaying enemies turn worse once.
+- [ ] Pillars decay over time and crumble, and are restored each encounter; overstaying enemies evolve once.
 - [ ] Encounter upgrades last one encounter and interact safely.
 - [ ] Mastery, the gated tree, respec and loadouts work.
 - [ ] Achievements and records are accurate and saved.
