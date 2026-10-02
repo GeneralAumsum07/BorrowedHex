@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 namespace BorrowedHex.Player
 {
     /// <summary>
-    /// Owns the Input System actions: a "Gameplay" map (move/aim/catch/dash) and a "UI" map
+    /// Owns the Input System actions: a "Gameplay" map (move/aim/catch/dash/release/cycle) and a "UI" map
     /// (pointer, navigation, pause). The maps are separate so menus can disable gameplay
     /// input entirely; a click on a HUD button is additionally filtered so it never catches.
     ///
@@ -21,7 +21,7 @@ namespace BorrowedHex.Player
         public InputActionMap Gameplay { get; private set; }
         public InputActionMap Ui { get; private set; }
 
-        InputAction move, aim, catchAction, dash, pause;
+        InputAction move, aim, catchAction, dash, release, cycle, pause;
         public InputAction UiPoint { get; private set; }
         public InputAction UiClick { get; private set; }
         public InputAction UiNavigate { get; private set; }
@@ -29,7 +29,7 @@ namespace BorrowedHex.Player
         public InputAction UiCancel { get; private set; }
         public InputAction UiScroll { get; private set; }
 
-        bool catchLatched, dashLatched, pauseLatched;
+        bool catchLatched, dashLatched, releaseLatched, cycleLatched, pauseLatched;
 
         /// <summary>
         /// Count of catch presses accepted for gameplay (diagnostics/tests). Lets a test prove
@@ -56,6 +56,10 @@ namespace BorrowedHex.Player
             aim = Gameplay.AddAction("Aim", InputActionType.PassThrough, "<Pointer>/position");
             catchAction = Gameplay.AddAction("Catch", InputActionType.Button, "<Mouse>/leftButton");
             dash = Gameplay.AddAction("Dash", InputActionType.Button, "<Keyboard>/space");
+            // D32/D33: right mouse fires the selected packet early; Q cycles the selection.
+            // The Web loader already suppresses the browser context menu on the canvas.
+            release = Gameplay.AddAction("Release", InputActionType.Button, "<Mouse>/rightButton");
+            cycle = Gameplay.AddAction("CycleSlot", InputActionType.Button, "<Keyboard>/q");
 
             Ui = Asset.AddActionMap("UI");
             UiPoint = Ui.AddAction("Point", InputActionType.PassThrough, "<Pointer>/position");
@@ -95,6 +99,9 @@ namespace BorrowedHex.Player
                 AcceptedCatchPresses++;
             }
             if (dash.WasPressedThisFrame()) dashLatched = true;
+            // Same UI filter as catch: right-clicking a HUD element is not a release.
+            if (release.WasPressedThisFrame() && !PointerOverUi()) releaseLatched = true;
+            if (cycle.WasPressedThisFrame()) cycleLatched = true;
         }
 
         static bool PointerOverUi()
@@ -124,12 +131,14 @@ namespace BorrowedHex.Player
                 }
                 cmd.Catch = catchLatched;
                 cmd.Dash = dashLatched;
+                cmd.Release = releaseLatched;
+                cmd.CycleSlot = cycleLatched;
             }
-            catchLatched = dashLatched = false;
+            catchLatched = dashLatched = releaseLatched = cycleLatched = false;
             return cmd;
         }
 
-        public void ClearLatches() => catchLatched = dashLatched = false;
+        public void ClearLatches() => catchLatched = dashLatched = releaseLatched = cycleLatched = false;
 
         /// <summary>WASD relative to the camera's view, flattened onto the gameplay plane.</summary>
         static Vector2 CameraRelative(Camera cam, Vector2 raw)

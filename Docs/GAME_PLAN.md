@@ -65,6 +65,8 @@ The player should make decisions about interception, ammunition selection, posit
 | Aim | Mouse | Project cursor onto the gameplay plane; preserve last valid aim if projection fails |
 | Catch | Left mouse button | A press opens one catch window; holding does not repeatedly activate it |
 | Dash | Space | Dash toward movement input, or aim when no movement input exists |
+| Release early | Right mouse button | Fire the selected packet now along the current aim (owner direction, D32) |
+| Switch slot | Q | Cycle the packet-slot selection; wraps (owner direction, D33) |
 | Pause | Escape | Pause gameplay; resume through the same menu |
 | Confirm UI choice | Mouse/keyboard navigation | UI input never activates combat actions |
 | Restart | Results button | Clear run state and create a new run identifier |

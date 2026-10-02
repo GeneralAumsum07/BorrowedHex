@@ -12,6 +12,11 @@ namespace BorrowedHex.Combat
     public sealed class CapturedPacket
     {
         public int PacketId;
+        /// <summary>
+        /// The fixed slot this packet occupies until it is released (D31). A packet never moves
+        /// slot, so the HUD panel and the Q selection always point at the same bundle.
+        /// </summary>
+        public int Slot;
         /// <summary>The catch activation that created it; only that activation may append.</summary>
         public int ActivationId;
         public double CapturedAt;
@@ -42,7 +47,12 @@ namespace BorrowedHex.Combat
     }
 
     /// <summary>
-    /// The packet slots. Expiry is checked with a tiny tolerance so floating accumulation of
+    /// The packet slots (D31): each packet owns one fixed slot index from capture until it is
+    /// released, and a new packet takes the LOWEST free index. A held slot is locked: nothing
+    /// is ever appended to it after its catch window, so a later catch of any kind always lands
+    /// in another slot. <see cref="SelectedSlot"/> is the player's Q selection for early release.
+    ///
+    /// Expiry is checked with a tiny tolerance so floating accumulation of
     /// 60 Hz steps (e.g. 0.999999 + 3.0) still releases exactly on the 4.0 boundary tick
     /// rather than one tick late (Phase 3 boundary vector).
     /// </summary>
@@ -56,14 +66,45 @@ namespace BorrowedHex.Combat
         public IReadOnlyList<CapturedPacket> Packets => packets;
         public int FreeSlots => SlotCount - packets.Count;
 
+        /// <summary>Slot the right-mouse release fires first. Persists when that slot empties.</summary>
+        public int SelectedSlot { get; private set; }
+
         public PacketStore(int slots) => SlotCount = slots;
+
+        /// <summary>The packet in slot <paramref name="slot"/>, or null if that slot is free.</summary>
+        public CapturedPacket InSlot(int slot)
+        {
+            foreach (var p in packets) if (p.Slot == slot) return p;
+            return null;
+        }
+
+        public void CycleSelection() => SelectedSlot = SlotCount > 0 ? (SelectedSlot + 1) % SlotCount : 0;
+
+        /// <summary>
+        /// The packet an early release fires: the selected slot's, or — if that slot is empty —
+        /// the oldest stored packet, so the button is never dead while anything is held.
+        /// </summary>
+        public CapturedPacket ReleaseCandidate()
+        {
+            var p = InSlot(SelectedSlot);
+            if (p != null) return p;
+            CapturedPacket oldest = null;
+            foreach (var q in packets) if (oldest == null || q.CapturedAt < oldest.CapturedAt) oldest = q;
+            return oldest;
+        }
+
+        /// <summary>Take a packet out of its slot (early release). The slot is free immediately.</summary>
+        public bool Remove(CapturedPacket p) => packets.Remove(p);
 
         public CapturedPacket Create(int packetId, int activationId, double now, float lifetime, int capacity)
         {
             if (FreeSlots <= 0) return null;
+            int slot = 0;
+            while (InSlot(slot) != null) slot++;
             var p = new CapturedPacket
             {
                 PacketId = packetId,
+                Slot = slot,
                 ActivationId = activationId,
                 CapturedAt = now,
                 ExpiresAt = now + lifetime,

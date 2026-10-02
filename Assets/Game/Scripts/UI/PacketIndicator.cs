@@ -10,9 +10,10 @@ namespace BorrowedHex.UI
     /// shrinking countdown bar, so two stored packets are never merged into a single timer:
     /// the player has to read which bundle fires first.
     ///
-    /// Panels are filled oldest-first. Packets share one lifetime, so the oldest always
-    /// expires first and the leftmost bar is always "next to fire", which is easier to
-    /// read than panels pinned to a slot index that would leave a gap when one releases.
+    /// Panels are PINNED to slot indices (D34, superseding D18's oldest-first order): with
+    /// early release and Q selection, "slot 2" must stay the same bundle in the same place,
+    /// or the selection highlight would appear to jump when the other slot fires. The label
+    /// lists everything the slot holds (e.g. "Rocket x1  Bolt x2"), not one dominant type.
     ///
     /// Like the rest of the HUD it only polls the sim, so a restart needs just Bind().
     /// </summary>
@@ -22,6 +23,7 @@ namespace BorrowedHex.UI
         {
             public Image Back, Fill;
             public Text Label;
+            public Outline Highlight;
         }
 
         static readonly Color FillColor = new Color(0.45f, 0.95f, 1f);
@@ -33,7 +35,8 @@ namespace BorrowedHex.UI
         RectTransform root;
         readonly List<Panel> panels = new List<Panel>();
         Image catchFill;
-        Text catchLabel;
+        Text catchLabel, hint;
+        static readonly Color SelectedColor = new Color(1f, 0.85f, 0.35f);
 
         const float PanelW = 210f, PanelH = 54f, Gap = 14f;
 
@@ -58,6 +61,9 @@ namespace BorrowedHex.UI
             fr.offsetMin = fr.offsetMax = Vector2.zero;
             catchLabel = Ui.Label("CatchLabel", root, "CATCH", 18);
             Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(240, 22));
+            hint = Ui.Label("Hint", root, "LMB catch   RMB fire selected   Q switch slot", 16);
+            hint.color = new Color(1f, 1f, 1f, 0.55f);
+            Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 116), new Vector2(600, 20));
         }
 
         Panel AddPanel()
@@ -68,7 +74,10 @@ namespace BorrowedHex.UI
             // A thin bar along the panel's bottom edge; its width shrinks with time left.
             fr.anchorMin = Vector2.zero; fr.anchorMax = new Vector2(1, 0); fr.pivot = new Vector2(0, 0);
             fr.offsetMin = Vector2.zero; fr.offsetMax = new Vector2(0, 8);
-            p.Label = Ui.Label("Text", p.Back.transform, "", 20);
+            p.Highlight = p.Back.gameObject.AddComponent<Outline>();
+            p.Highlight.effectColor = SelectedColor;
+            p.Highlight.effectDistance = new Vector2(3, -3);
+            p.Label = Ui.Label("Text", p.Back.transform, "", 17);
             Ui.Stretch(p.Label.rectTransform);
             p.Label.rectTransform.offsetMin = new Vector2(0, 8);
             panels.Add(p);
@@ -83,7 +92,7 @@ namespace BorrowedHex.UI
             while (panels.Count < slots) AddPanel();
 
             float total = slots * PanelW + (slots - 1) * Gap;
-            var packets = sim.Packets.Packets;
+            var store = sim.Packets;
             for (int i = 0; i < panels.Count; i++)
             {
                 var p = panels[i];
@@ -93,22 +102,25 @@ namespace BorrowedHex.UI
                 Ui.Place(p.Back.rectTransform, new Vector2(0.5f, 0),
                     new Vector2(-total * 0.5f + PanelW * 0.5f + i * (PanelW + Gap), 50), new Vector2(PanelW, PanelH));
 
-                if (i < packets.Count)
+                bool selected = i == store.SelectedSlot;
+                p.Highlight.enabled = selected;
+                var pk = store.InSlot(i);
+                string tag = (selected ? "> " : "") + (i + 1);
+                if (pk != null)
                 {
-                    var pk = packets[i];
                     float left = pk.Remaining(now);
                     float frac = Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime));
                     p.Back.color = UsedBack;
                     p.Fill.enabled = true;
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
                     p.Fill.color = left < 0.5f ? UrgentColor : FillColor;
-                    p.Label.text = $"{pk.DominantKind}  {pk.CapacityUsed}/{pk.Capacity}  {left:0.0}s";
+                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}  {left:0.0}s";
                 }
                 else
                 {
                     p.Back.color = EmptyBack;
                     p.Fill.enabled = false;
-                    p.Label.text = "empty";
+                    p.Label.text = $"{tag}  empty";
                 }
             }
 
@@ -119,6 +131,26 @@ namespace BorrowedHex.UI
             catchFill.rectTransform.anchorMax = new Vector2(ready, 1);
             catchFill.color = ready >= 1f ? FillColor : new Color(0.3f, 0.5f, 0.55f);
             catchLabel.text = c.IsWindowOpen(now) ? "CATCHING" : ready >= 1f ? "CATCH" : "...";
+        }
+
+        static readonly System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        /// <summary>
+        /// Every kind the packet holds with its count, heaviest first ("Rocket x1  Bolt x2"),
+        /// so a mixed packet is never mislabelled as a single type.
+        /// </summary>
+        static string Contents(Combat.CapturedPacket pk)
+        {
+            sb.Clear();
+            for (int kind = (int)Core.AttackKind.Riposte; kind >= 0; kind--)
+            {
+                int n = 0;
+                foreach (var s in pk.Payloads) if ((int)s.Kind == kind) n++;
+                if (n == 0) continue;
+                if (sb.Length > 0) sb.Append("  ");
+                sb.Append((Core.AttackKind)kind).Append(" x").Append(n);
+            }
+            return sb.ToString();
         }
     }
 }

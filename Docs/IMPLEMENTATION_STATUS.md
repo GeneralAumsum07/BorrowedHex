@@ -122,3 +122,15 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   (`ArenaSim.SummonEnemy`), `Auto-spawn: ON/OFF` (`ArenaSim.AutoSpawn`, remembered across
   Reset), `Clear arena` (`ArenaSim.ClearArena`: despawn, never kills; hostile shots removed;
   stored packets kept).
+
+
+### Post-Phase 4 pace changes (owner direction) — done (human gate pending)
+
+- Fixed packet slots: each packet keeps one slot index from capture until release; a new
+  packet takes the lowest free slot; a held slot never receives later catches.
+- Right mouse fires the selected packet early (no penalty); Q cycles the selection; an empty
+  selected slot falls back to the oldest stored packet. Release precedes catch in the tick,
+  so the freed slot is usable on the same tick.
+- HUD: panels pinned to slots, full contents ("Rocket x1  Bolt x2"), gold outline and ">" on
+  the selected slot, control hint line. Orbit rings keyed by slot; selected dots larger.
+- `PlayerCommand.With*` builders no longer mutate the receiver.

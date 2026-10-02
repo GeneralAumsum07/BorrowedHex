@@ -14,11 +14,20 @@ namespace BorrowedHex.Player
         public Vector2 AimPoint;   // world XZ point under the cursor
         public bool Catch;
         public bool Dash;
+        /// <summary>Right mouse: fire the selected packet now instead of waiting out its timer.</summary>
+        public bool Release;
+        /// <summary>Q: move the slot selection to the next slot (wraps).</summary>
+        public bool CycleSlot;
 
         public static PlayerCommand Moving(Vector2 move) => new PlayerCommand { Move = move };
-        public PlayerCommand WithAim(Vector2 point) { HasAim = true; AimPoint = point; return this; }
-        public PlayerCommand WithDash() { Dash = true; return this; }
-        public PlayerCommand WithCatch() { Catch = true; return this; }
+        // Builders return a modified COPY and never touch the receiver: a mutating builder on
+        // a struct held in a local variable would leave e.g. Catch stuck on for every later
+        // tick that reuses it (found while scripting play mode, D35).
+        public PlayerCommand WithAim(Vector2 point) { var c = this; c.HasAim = true; c.AimPoint = point; return c; }
+        public PlayerCommand WithDash() { var c = this; c.Dash = true; return c; }
+        public PlayerCommand WithCatch() { var c = this; c.Catch = true; return c; }
+        public PlayerCommand WithRelease() { var c = this; c.Release = true; return c; }
+        public PlayerCommand WithCycle() { var c = this; c.CycleSlot = true; return c; }
     }
 
     /// <summary>Mutable player state for one run. Rules live in ArenaSim/PlayerMotor.</summary>

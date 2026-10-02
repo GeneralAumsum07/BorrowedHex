@@ -137,6 +137,15 @@ namespace BorrowedHex.Combat
             }
         }
 
+        /// <summary>
+        /// Stop appending to <paramref name="p"/> (it was released early) WITHOUT closing the
+        /// window: a later catch in the same window starts a fresh packet in a free slot.
+        /// </summary>
+        public void Detach(CapturedPacket p)
+        {
+            if (ActivePacket == p) ActivePacket = null;
+        }
+
         public void Cancel()
         {
             ActivePacket = null;

@@ -32,6 +32,21 @@ namespace BorrowedHex.Runs
             }
         }
 
+        /// <summary>
+        /// Right mouse (D32): fire the selected packet now, from the current position along the
+        /// current aim, exactly as an expiry would. No damage penalty: holding to the timer
+        /// buys nothing but positioning, so firing early is the fast-paced default.
+        /// </summary>
+        bool TryReleaseEarly()
+        {
+            var packet = Packets.ReleaseCandidate();
+            if (packet == null) return false;
+            Packets.Remove(packet);
+            Capture.Detach(packet);
+            ReleaseService.Release(this, packet, Player.Position, Player.AimDirection, 1f);
+            return true;
+        }
+
         void TryCatch(double now)
         {
             if (Stats.CatchIsDash) return;   // Daredevil style routes catch through the dash (Phase 10)

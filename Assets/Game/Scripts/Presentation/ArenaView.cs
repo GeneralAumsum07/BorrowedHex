@@ -343,8 +343,10 @@ namespace BorrowedHex.Presentation
                 cone.transform.localScale = Vector3.one * sim.Stats.CaptureRange;
             }
 
-            // Orbit placeholders: one dot per stored shot, each packet on its own ring radius
-            // and spin direction so two slots read as two separate bundles. Spin speeds up as
+            // Orbit placeholders: one dot per stored shot, each SLOT on its own ring radius and
+            // spin direction so two slots read as two separate bundles (keyed by the fixed slot
+            // index, so a bundle keeps its ring when the other one fires). The selected slot's
+            // dots are larger: that is what right mouse will throw. Spin speeds up as
             // expiry nears; the HUD carries the exact countdown, this only says "incoming".
             int used = 0;
             var packets = sim.Packets.Packets;
@@ -353,8 +355,10 @@ namespace BorrowedHex.Presentation
                 var pk = packets[k];
                 float left = pk.Remaining(now);
                 float urgency = 1f - Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime));
-                float radius = 0.75f + 0.3f * k;
-                float spin = (float)now * (1.5f + 5f * urgency) * (k % 2 == 0 ? 1f : -1f);
+                int slot = pk.Slot;
+                bool selected = slot == sim.Packets.SelectedSlot;
+                float radius = 0.75f + 0.3f * slot;
+                float spin = (float)now * (1.5f + 5f * urgency) * (slot % 2 == 0 ? 1f : -1f);
                 int count = pk.Payloads.Count;
                 for (int i = 0; i < count; i++)
                 {
@@ -363,6 +367,7 @@ namespace BorrowedHex.Presentation
                     float a = spin + i * Mathf.PI * 2f / count;
                     Vector2 off = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius;
                     dot.gameObject.SetActive(true);
+                    dot.transform.localScale = Vector3.one * (selected ? 0.17f : 0.12f);
                     dot.transform.position = Geometry2D.ToWorld(pos + off, 0.7f);
                     // Blink during the final half second: the release is about to happen.
                     bool blink = left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;

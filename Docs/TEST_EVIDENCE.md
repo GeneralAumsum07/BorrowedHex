@@ -179,3 +179,33 @@ Human gate (not yet done): does parry timing feel fair, and does the Pack format
   as "parry them" without being told?
 Next uncompleted task: Phase 5
 ```
+
+
+## Post-Phase 4: fixed slots, early release, slot cycling
+
+```text
+Phase/task: owner pace feedback before Phase 5
+Files changed: Scripts/Player/{PlayerActor,PlayerInputReader}.cs; Scripts/Combat/
+  {CapturedPacket,CaptureController}.cs; Scripts/Runs/{ArenaSim,ArenaSim.Capture}.cs;
+  Scripts/UI/PacketIndicator.cs; Scripts/Presentation/ArenaView.cs;
+  Tests/EditMode/SlotTests.cs (new); Docs/GAME_PLAN.md (controls table)
+Actual CLI commands: recompile; run_tests editor; run_tests playmode --async_tests; eval
+  (play mode); capture_game_view --source camera
+Test report: EditMode 89/89 (SlotTests 11). PlayMode 2/2.
+  Mutation checks: slot = packet count (old shifting) fails SlotsKeepTheirPosition; release
+  after catch fails ReleaseFreesASlotForACatchOnTheSameTick; closing the window on early
+  release fails ReleasingDuringItsOwnWindow; no empty-slot fallback fails
+  RightClick_OnAnEmptySelectedSlot. Mutating WithCatch fails
+  CommandBuilders_DoNotMutateTheReceiver. Restored code passes.
+Manual behaviour observed (play mode, scripted commands, not a human):
+  - Bound actions read back: Release=<Mouse>/rightButton, CycleSlot=<Keyboard>/q
+  - HUD after 2 bolts then a rocket and Q: "1  Bolt x2 | 2/12 1.5s", "> 2  Rocket x1 | 4/12 2.2s";
+    after right mouse: slot 2 "empty", slot 1 unchanged; the rocket flies east
+    (shots/early_release.png: returned rocket, two unselected bolt dots)
+  - The hint line and outline were read as component state; the overlay itself was not
+    screenshotted (camera capture excludes UI)
+Known issues: right-click context-menu suppression in the browser is inferred from the Web
+  loader listing "contextmenu" among handled events; NOT verified in a Web build
+Human gate (not yet done): does early release + Q make combat feel faster?
+Next uncompleted task: Phase 5
+```

@@ -16,7 +16,7 @@ namespace BorrowedHex.Runs
     ///   1. advance the gameplay clock (nothing happens while paused)
     ///   2. run due scheduled actions (echoes, delayed spawns)
     ///   3. expire packets and release them   ← before captures, so a freed slot is usable
-    ///   4. player aim, catch activation, dash, movement
+    ///   4. player aim, slot cycle, early release, catch activation, dash, movement
     ///   5. enemies think/move/emit (a Pursuer strike may be parried here)
     ///   6. projectiles sweep: walls → capture → actor impact, in travel order
     ///   7. upgrade auras, director
@@ -77,6 +77,10 @@ namespace BorrowedHex.Runs
         {
             if (!Player.Alive) return;
             PlayerMotor.UpdateAim(Player, cmd);
+            // Cycle, then release, then catch: a slot emptied by an early release this tick is
+            // usable by a catch pressed on the same tick (same rule as expiry, D17).
+            if (cmd.CycleSlot) Packets.CycleSelection();
+            if (cmd.Release) TryReleaseEarly();
             if (cmd.Catch) TryCatch(now);
             if (cmd.Dash) TryDash(cmd.Move, tickStart);
             PlayerMotor.Move(Player, cmd.Move, Stats, now, dt, Walls);
