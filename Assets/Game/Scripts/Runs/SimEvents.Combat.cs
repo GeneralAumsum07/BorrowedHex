@@ -29,6 +29,10 @@ namespace BorrowedHex.Runs
         public event Action<CapturedPacket, int> PacketReleased;
         public event Action<CapturedPacket> PacketBackfired;
         public event Action<int> SlotSwapped;
+        public event Action<EnemyActor> EnemyOverstayed;
+        /// <summary>Clock wear changed cover: pillar and actual durability lost this tick.</summary>
+        public event Action<DecayObstacle, int> PillarDamaged;
+        public event Action<DecayObstacle> PillarCrumbled;
 
         internal void RaiseProjectileSpawned(ProjectileActor p) => ProjectileSpawned?.Invoke(p);
         internal void RaiseProjectileEnded(ProjectileActor p, ProjectileEndReason r) => ProjectileEnded?.Invoke(p, r);
@@ -46,5 +50,8 @@ namespace BorrowedHex.Runs
         internal void RaisePacketReleased(CapturedPacket p, int root) => PacketReleased?.Invoke(p, root);
         internal void RaisePacketBackfired(CapturedPacket p) => PacketBackfired?.Invoke(p);
         internal void RaiseSlotSwapped(int slot) => SlotSwapped?.Invoke(slot);
+        internal void RaiseEnemyOverstayed(EnemyActor enemy) => EnemyOverstayed?.Invoke(enemy);
+        internal void RaisePillarDamaged(DecayObstacle pillar, int lost) => PillarDamaged?.Invoke(pillar, lost);
+        internal void RaisePillarCrumbled(DecayObstacle pillar) => PillarCrumbled?.Invoke(pillar);
     }
 }

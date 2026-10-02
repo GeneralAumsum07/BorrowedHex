@@ -12,13 +12,13 @@ namespace BorrowedHex.Runs
     /// Short-mode flow (owner-revised, D50): encounter 1 → upgrade choice → encounter 2 →
     /// upgrade choice → encounter 3 → upgrade choice → boss intro → boss. Each encounter is a
     /// fixed, seeded list of formations and ends when every member has been KILLED. One shared
-    /// clock of 300 ACTIVE seconds (D56) covers all of it (the clock does not move while paused, so
-    /// menus and choices cost nothing): slow clears leave less time for the boss.
+    /// life budget of 300 seconds (D59) covers all of it: time and hits spend it, kills restore
+    /// it up to the starting cap. Pauses cost nothing; elapsed gameplay time never rewinds.
     ///
     /// Terminal ordering (section 6 / Phase 5 check), resolved once at the END of each tick:
     ///   1. player dead            → Death        (wins over a boss killed on the same tick)
     ///   2. boss killed            → Victory
-    ///   3. the 300 s run clock out → TimeExpired (in any phase, encounters included)
+    ///   3. life drained by time    → TimeExpired (in any phase, encounters included)
     /// Checking at the end of the tick, rather than inside the damage calls, is what makes the
     /// ordering independent of which of the two hits happened to resolve first in the tick.
     ///
@@ -153,6 +153,7 @@ namespace BorrowedHex.Runs
             if (State != RunState.UpgradeChoice) return false;
             Clock.SetPauseReason(PauseReason.UpgradeChoice, false);
             Encounter++;
+            RestorePillars();
             if (TransitionsReached >= Config.shortMode.encounterCount) BeginBossIntro();
             else SetState(RunState.Combat);
             return true;

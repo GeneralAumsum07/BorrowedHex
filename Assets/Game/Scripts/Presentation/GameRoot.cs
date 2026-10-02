@@ -120,6 +120,16 @@ namespace BorrowedHex.Presentation
                 setup = new RunSetup { Mode = GameMode.Short, Seed = System.Environment.TickCount ^ (runCounter * 7919) };
             }
             Sim = new ArenaSim(config, setup);
+            // Keep the authored arena meshes and bind their disposable state to each run.
+            // Tests without an arena and future layouts with fewer pillars simply skip them.
+            for (int i = 0; i < Sim.Pillars.Count; i++)
+            {
+                var pillar = GameObject.Find($"Pillar_{i}");
+                if (pillar == null) continue;
+                var view = pillar.GetComponent<DecayingPillarView>();
+                if (view == null) view = pillar.AddComponent<DecayingPillarView>();
+                view.Bind(Sim, i);
+            }
             View = ArenaView.Create(Sim);
             Hud.Bind(Sim);
             Flow.Bind(Sim);

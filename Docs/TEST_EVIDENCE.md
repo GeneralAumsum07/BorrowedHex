@@ -399,3 +399,37 @@ Test report: EditMode 165/165, PlayMode 2/2.
   existing arena, presentation and tuning. Unity serialized formerly implicit defaults.
 - Human playtest and final build validation remain pending until the rest of Phase 6.
 - PlayMode: 2/2 passed (focus-loss pause and UI click isolation).
+
+## Phase 6, completed core (2 Oct 2026)
+
+- EditMode: 189/189 passed; PlayMode: 2/2 passed. Live CLI recompile completed.
+- The first five per-enemy/arena tests failed before implementation, then passed.
+  Additional boundaries cover a real two-enemy piercing return, six-unit shotgun travel,
+  source destruction before release, exact 72-second pillar crumble, pause, bolt impacts
+  never wearing cover, restoration through the boss transition, elite kill time and boss
+  exclusion from overstay. Existing packet-capacity rejection and lifecycle tests remain green.
+- Restoring a pillar under the player initially failed the new overlap test. Restoration
+  now moves the player to a clear side; the same regression passes.
+- Independent source review found a missing ordinary pillar-wear event. The new wear test
+  failed (expected four durability lost, observed zero event loss), then passed after
+  reporting actual wear before crumble. Pauses and already-crumbled pillars emit no wear.
+- Retained D45 ordering is pinned explicitly: final-tick boss defeat beats ordinary time
+  expiry with zero remaining-time bonus; same-tick damage death still beats boss defeat.
+- Updated zero-passive bot: victory 39.7 seconds into the boss fight, active run elapsed
+  68.7 seconds, 24 packets fired, 18 packets hit, zero backfires. The fixture grants hit
+  immunity and clears encounters instantly: it measures offense, not survival or a human
+  full-run clear. Compared with the earlier D55 bot's 73.0 seconds, this is faster; the
+  separate contributions of return identity, power and pillar decay were not isolated.
+- Live PlayMode inspection (scripted, not human): large clock, both packet contents,
+  power/countdowns and DECAYING/FROZEN labels; pillar durability 12/8/4/0 displayed intact,
+  one crack, additional cracks and rubble. The evolved acolyte had a distinct pink horned
+  outline. The taller panels initially overlapped their control hint; spacing was corrected.
+- Shipped config serialized through the live Editor, including return rules, kill seconds,
+  seeded pillar rates and overstay modifiers. Optional evolved art slots remain empty and
+  use generated placeholders.
+- Windows development build succeeded through the live CLI: zero errors; one warning
+  that Pipeline has no runtime config and is disabled in players (the game does not need
+  runtime Pipeline). Player launched outside the Editor, responded, and its log contained
+  no exception/error matches. Web build validation is still in progress at this commit.
+- Human gate remains pending: play a short run and judge whether swapping matters and
+  the pace is fast. Phase 7 has not started.

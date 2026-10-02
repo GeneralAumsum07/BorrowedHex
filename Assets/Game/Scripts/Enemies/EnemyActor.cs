@@ -22,6 +22,9 @@ namespace BorrowedHex.Enemies
         public float MaxHealth;
         public bool Alive = true;
         public bool Elite;
+        public bool Overstayed;
+        public float MoveScale = 1f;
+        public float CooldownScale = 1f;
 
         public double SpawnedAt;
         /// <summary>Before this time the enemy is a harmless spawn warning (section 4).</summary>

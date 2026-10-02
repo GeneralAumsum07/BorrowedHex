@@ -7,8 +7,8 @@ using UnityEngine.UI;
 namespace BorrowedHex.UI
 {
     /// <summary>
-    /// In-run HUD. It only READS the sim each frame (no event subscriptions), so binding a new
-    /// sim on restart is a single assignment and a stale run can never update the screen.
+    /// In-run HUD. Polls durable state and subscribes only for a transient clock flash;
+    /// rebinding detaches the old sim so a stale run can never update the screen.
     /// </summary>
     public sealed class GameplayHud : MonoBehaviour
     {
@@ -46,13 +46,13 @@ namespace BorrowedHex.UI
             // Section 6: "present the objective clearly from the start" — what phase this is,
             // and the clock above it counts down the time left in that phase.
             objectiveLabel = Ui.Label("Objective", root, "", 22);
-            Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -70), new Vector2(700, 30));
+            Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -90), new Vector2(800, 30));
             objectiveLabel.color = new Color(1, 1, 1, 0.8f);
             scoreLabel = Ui.Label("Score", root, "", 26, TextAnchor.MiddleLeft);
             Ui.Place(scoreLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -116), new Vector2(400, 34));
 
             bossBarBg = Ui.Image("BossBar", root, new Color(0, 0, 0, 0.6f));
-            Ui.Place(bossBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -104), new Vector2(560, 20));
+            Ui.Place(bossBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -128), new Vector2(560, 20));
             bossBarFill = Ui.Image("Fill", bossBarBg.transform, new Color(0.9f, 0.25f, 0.35f));
             var bf = bossBarFill.rectTransform;
             bf.anchorMin = Vector2.zero; bf.anchorMax = Vector2.one; bf.pivot = new Vector2(0, 0.5f);

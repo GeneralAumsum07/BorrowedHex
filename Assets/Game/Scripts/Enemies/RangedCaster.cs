@@ -67,7 +67,7 @@ namespace BorrowedHex.Enemies
                         e.Phase = EnemyPhase.Idle;
                         e.AimLocked = false;
                         e.HasMoveTarget = false;   // next idle picks a new spot
-                        e.PhaseEndsAt = now + t.cooldown;
+                        e.PhaseEndsAt = now + t.cooldown * e.CooldownScale;
                     }
                     break;
             }

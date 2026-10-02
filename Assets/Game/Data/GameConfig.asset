@@ -13,6 +13,16 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: BorrowedHex::BorrowedHex.Data.GameConfig
   combat:
+    acolyteReturnPierce: 1
+    scatterReturnDamage: 1.5
+    scatterReturnHalfAngle: 12
+    scatterReturnRange: 6
+    bossReturnDamage: 2
+    overstaySeconds: 25
+    overstayWarningSeconds: 5
+    overstayHealthScale: 1.5
+    overstayCooldownScale: 0.75
+    overstayMoveScale: 1.15
     spawnWarning: 0.8
     minSpawnDistance: 5
     enemyHitDamage: 10
@@ -154,6 +164,9 @@ MonoBehaviour:
       height: 16
     wallThickness: 1
     wallHeight: 1.2
+    pillarDurability: 12
+    pillarDecayMinInterval: 5
+    pillarDecayMaxInterval: 8
     pillars:
     - serializedVersion: 2
       x: -6.6
@@ -182,6 +195,10 @@ MonoBehaviour:
     fieldOfView: 38
   unlitMaterial: {fileID: 2100000, guid: 5f23f6f37566fe247ad4da1131ad9941, type: 2}
   litMaterial: {fileID: 2100000, guid: b95710eda2863a94da4e6ee4dbd64c37, type: 2}
+  overstayedAcolyte: {fileID: 0}
+  overstayedPursuer: {fileID: 0}
+  overstayedScatter: {fileID: 0}
+  overstayedSiege: {fileID: 0}
   player:
     moveSpeed: 6
     hitInvulnerability: 0.65

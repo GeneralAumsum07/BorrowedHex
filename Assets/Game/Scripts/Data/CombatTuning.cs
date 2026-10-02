@@ -20,7 +20,7 @@ namespace BorrowedHex.Data
         public float radius = 0.18f;
         [Tooltip("Damage when returned by the player against enemies.")]
         public int returnedDamage = 1;
-        [Tooltip("Half hearts lost when it hits the player as a hostile shot (2 = one heart). "
+        [Tooltip("Life seconds lost when it hits the player as a hostile shot. "
                  + "A boss's shots use the boss's own damage instead (BossTuning.hitDamage).")]
         public int hostileDamage = 10;
         [Tooltip("Packet capacity units (section 3: bullet 1, heavy 3, rocket 4).")]
@@ -78,15 +78,28 @@ namespace BorrowedHex.Data
     [Serializable]
     public class CombatTuning
     {
+        [Header("Borrowed hex identities")]
+        public int acolyteReturnPierce = 1;
+        public float scatterReturnDamage = 1.5f;
+        public float scatterReturnHalfAngle = 12f;
+        public float scatterReturnRange = 6f;
+        public float bossReturnDamage = 2f;
+
+        [Header("Overstaying")]
+        public float overstaySeconds = 25f;
+        public float overstayWarningSeconds = 5f;
+        public float overstayHealthScale = 1.5f;
+        public float overstayCooldownScale = 0.75f;
+        public float overstayMoveScale = 1.15f;
         [Tooltip("Seconds an enemy is visible as a harmless spawn warning before it acts.")]
         public float spawnWarning = 0.8f;
         [Tooltip("Enemies never spawn closer than this to the player.")]
         public float minSpawnDistance = 5f;
 
-        // Player damage from ordinary enemies, in half hearts (owner direction).
-        [Tooltip("Half hearts lost to an ordinary enemy's melee strike (2 = one heart).")]
+        // Player damage spends life seconds; enemy health remains ordinary damage units.
+        [Tooltip("Life seconds lost to an ordinary enemy's melee strike.")]
         public int enemyHitDamage = 10;
-        [Tooltip("Half hearts lost on touching an ordinary enemy's body.")]
+        [Tooltip("Life seconds lost on touching an ordinary enemy's body.")]
         public int enemyContactDamage = 5;
 
         public List<AttackTuning> attacks = new List<AttackTuning>

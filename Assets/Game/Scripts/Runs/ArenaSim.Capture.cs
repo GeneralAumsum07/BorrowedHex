@@ -101,9 +101,34 @@ namespace BorrowedHex.Runs
             aim.Normalize();
             foreach (var payload in packet.Payloads)
             {
-                Vector2 dir = Geometry2D.Rotate(aim, payload.SpreadOffsetDeg);
-                Vector2 muzzle = origin + dir * (sim.Player.Radius + payload.Radius + 0.05f);
-                sim.SpawnProjectile(payload, AttackFaction.Returned, muzzle, dir, root, isEcho: false, power: power);
+                // Work on a copy: a packet snapshot is never rewritten, including mixed
+                // sources and future echoes. Identity does not require a surviving caster.
+                var returned = payload;
+                var tuning = sim.Config.combat;
+                int pierce = 0;
+                float range = float.PositiveInfinity;
+                if (!payload.Explodes && payload.Kind != AttackKind.Riposte)
+                {
+                    switch (payload.SourceCategory)
+                    {
+                        case ActorCategory.Acolyte: pierce = tuning.acolyteReturnPierce; break;
+                        case ActorCategory.ScatterCaster:
+                            returned.ReturnedDamage = tuning.scatterReturnDamage;
+                            float ratio = payload.SourceSpreadHalfAngle > 0
+                                ? Mathf.Min(1, tuning.scatterReturnHalfAngle / payload.SourceSpreadHalfAngle) : 1;
+                            returned.SpreadOffsetDeg *= ratio;
+                            range = tuning.scatterReturnRange;
+                            break;
+                        case ActorCategory.Boss:
+                            returned.Kind = AttackKind.HeavyShot;
+                            returned.ReturnedDamage = tuning.bossReturnDamage;
+                            break;
+                    }
+                }
+                Vector2 dir = Geometry2D.Rotate(aim, returned.SpreadOffsetDeg);
+                Vector2 muzzle = origin + dir * (sim.Player.Radius + returned.Radius + 0.05f);
+                sim.SpawnProjectile(returned, AttackFaction.Returned, muzzle, dir, root, isEcho: false,
+                    power: power, pierce: pierce, maxDistance: range);
             }
             packet.Status = PacketStatus.Released;
             sim.Events.RaisePacketReleased(packet, root);

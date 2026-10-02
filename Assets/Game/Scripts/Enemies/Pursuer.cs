@@ -63,7 +63,7 @@ namespace BorrowedHex.Enemies
                         // A parried attacker that survives the riposte (elite tuning, future
                         // health buffs) is staggered for a full cooldown: the follow-up window
                         // is part of the reward.
-                        e.PhaseEndsAt = now + t.cooldown;
+                        e.PhaseEndsAt = now + t.cooldown * e.CooldownScale;
                         break;
                     }
                     if (now >= e.PhaseEndsAt)
@@ -79,7 +79,7 @@ namespace BorrowedHex.Enemies
                         e.ClearParryRim();
                         e.Phase = EnemyPhase.Recover;
                         e.AimLocked = false;
-                        e.PhaseEndsAt = now + t.cooldown * 0.5f;
+                        e.PhaseEndsAt = now + t.cooldown * e.CooldownScale * 0.5f;
                     }
                     break;
 
@@ -87,7 +87,7 @@ namespace BorrowedHex.Enemies
                     if (now >= e.PhaseEndsAt)
                     {
                         e.Phase = EnemyPhase.Idle;
-                        e.PhaseEndsAt = now + t.cooldown * 0.5f;
+                        e.PhaseEndsAt = now + t.cooldown * e.CooldownScale * 0.5f;
                     }
                     break;
             }

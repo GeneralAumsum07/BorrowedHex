@@ -13,7 +13,7 @@ namespace BorrowedHex.Combat
         public AttackKind Kind;
         public float Speed;
         public float Radius;
-        public int ReturnedDamage;
+        public float ReturnedDamage;
         public int HostileDamage;
         public int EnergyCost;
         public float Lifetime;
@@ -25,6 +25,9 @@ namespace BorrowedHex.Combat
         public float SpreadOffsetDeg;
         /// <summary>The enemy that originally fired this shot; kept through capture and return.</summary>
         public int SourceActorId;
+        /// <summary>Copied at emission, so a despawned caster cannot erase the borrowed identity.</summary>
+        public ActorCategory SourceCategory;
+        public float SourceSpreadHalfAngle;
         public int ShotId;
         public bool Perfect;
 

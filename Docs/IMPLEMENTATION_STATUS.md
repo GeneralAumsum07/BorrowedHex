@@ -13,16 +13,21 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
-### Phase 6 — Borrowed time — in progress (2 Oct 2026)
+### Phase 6 — Borrowed time — implemented (owner playtest pending, 2 Oct 2026)
 
-- First chunk implemented: selected-first catches, frozen unselected packets, power from
+- Selected-first catches, frozen unselected packets, power from
   selected time, expiry backfire, clock as health, capped kill-time rewards, seconds-based
   damage, clock/packet HUD and floating time feedback; summary statistics (D57–D60).
-- Regression tests migrated from hearts/automatic return to seconds/manual fire. The
-  177 existing and new packet/clock EditMode checks pass. Five separately authored next-chunk
-  tests currently fail for missing per-enemy returns, pillar decay and overstay, as expected.
-- Remaining: per-enemy hexes, temporary arena, evolved views, complete bot/build validation,
-  and the owner's short-run playtest gate. Do not start Phase 7 before that gate.
+- Acolyte piercing returns, compressed six-unit scatter returns, heavy boss returns;
+  time-only pillar wear with cracks/rubble, shared obstacle removal and safe restoration;
+  one-time overstay, warning rings and evolved placeholder sprites (D61–D63).
+- Regression tests migrated from hearts/automatic return to seconds/manual fire:
+  189/189 EditMode and 2/2 PlayMode checks pass. Final-tick terminal precedence is explicit
+  and tested (D64). The updated offense-only bot wins 39.7 seconds into the boss fight
+  without backfires; this does not establish human survivability.
+- Visual inspection confirmed clock/packet labels, cracks/rubble and the evolved silhouette;
+  the control hint was moved clear of the taller packet panels.
+- Remaining: the owner's short-run playtest gate. Do not start Phase 7 before that gate.
 
 ### Phase 0 — Project and repeatable CLI foundation — done
 

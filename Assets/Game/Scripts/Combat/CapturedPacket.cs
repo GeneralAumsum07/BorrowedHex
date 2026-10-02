@@ -55,8 +55,7 @@ namespace BorrowedHex.Combat
     /// in another slot. <see cref="SelectedSlot"/> is the player's Q selection for early release.
     ///
     /// Expiry is checked with a tiny tolerance so floating accumulation of
-    /// 60 Hz steps (e.g. 0.999999 + 3.0) still releases exactly on the 4.0 boundary tick
-    /// rather than one tick late (Phase 3 boundary vector).
+    /// 60 Hz steps still backfire at exactly three selected seconds rather than one tick late.
     /// </summary>
     public sealed class PacketStore
     {

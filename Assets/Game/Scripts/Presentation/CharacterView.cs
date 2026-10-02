@@ -54,6 +54,7 @@ namespace BorrowedHex.Presentation
         public void SetSprite(Sprite s) => body.sprite = s != null ? s : PixelSprites.Get(PixelSprites.Kind.Magician);
 
         public void SetTint(Color c) => body.color = c;
+        public void SetVisualScale(float scale) => body.transform.localScale = Vector3.one * scale;
 
         /// <summary>Face left/right toward the aim; purely cosmetic.</summary>
         public void SetFacing(float x)

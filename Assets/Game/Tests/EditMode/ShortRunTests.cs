@@ -698,9 +698,8 @@ namespace BorrowedHex.Tests
         public void AZeroPassiveCharacter_CanDefeatTheCollectorInsideTheBossWindow()
         {
             var (sim, boss) = BossFight();
-            // Health raised so this measures OFFENCE only: can baseline catching and returning
-            // deal 50 damage inside 60 s? Dodging is a skill question the human playtest answers.
-            sim.Player.InvulnerableUntil = 0;
+            // Immunity makes this an OFFENCE-only check: baseline packets must defeat the
+            // boss before the life budget expires. Human playtesting must judge survival.
             sim.Player.InvulnerableUntil = 1e9;
             double bossFrom = sim.Clock.Now;
             while (sim.State == RunState.BossCombat) sim.Tick(Bot(sim), P5.Dt);
@@ -712,7 +711,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(0, sim.Score.Backfires, "the bot must fire before expiry");
             // The shared clock (D50) gives the boss whatever the encounters left over; this
             // bot clears them instantly, so the Victory above only proves the boss CAN fall
-            // inside 180 s. How long it took is reported, and is the number to weigh against
+            // inside the shared life budget. How long it took is reported to weigh against
             // how long a real player needs for the three encounters.
             double took = sim.Summary.Duration - bossFrom;
             Assert.Pass($"won {took:F1}s into the boss fight (run clock {sim.Summary.Duration:F1}s), " +

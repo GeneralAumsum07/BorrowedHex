@@ -102,6 +102,19 @@ namespace BorrowedHex.Runs
                     continue;
                 }
                 var t = Config.combat.For(e.Category);
+                if (!e.Overstayed && now >= e.ActiveAt + Config.combat.overstaySeconds - 1e-6)
+                {
+                    // One-way evolution. Restore against the authored base, never compound
+                    // the previous maximum or repeatedly heal every time this check runs.
+                    e.Overstayed = e.Elite = true;
+                    e.MaxHealth = e.Health = t.health * Config.combat.overstayHealthScale;
+                    e.MoveScale = Config.combat.overstayMoveScale;
+                    e.CooldownScale = Config.combat.overstayCooldownScale;
+                    e.KillValue = Mathf.RoundToInt(t.killValue * 1.5f);
+                    if (e.Phase == EnemyPhase.Idle || e.Phase == EnemyPhase.Recover)
+                        e.PhaseEndsAt = now + System.Math.Max(0, e.PhaseEndsAt - now) * e.CooldownScale;
+                    Events.RaiseEnemyOverstayed(e);
+                }
                 if (e.Phase == EnemyPhase.Warning)
                 {
                     if (now < e.ActiveAt) continue;

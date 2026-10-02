@@ -24,7 +24,8 @@ namespace BorrowedHex.Runs
         enum HitKind { None = -1, Capture = 0, Wall = 1, Actor = 2 }
 
         public ProjectileActor SpawnProjectile(in AttackSnapshot shot, AttackFaction faction, Vector2 position,
-            Vector2 direction, int rootReleaseId = 0, bool isEcho = false, float power = 1f, int pierce = 0)
+            Vector2 direction, int rootReleaseId = 0, bool isEcho = false, float power = 1f, int pierce = 0,
+            float maxDistance = float.PositiveInfinity)
         {
             var p = ProjectilePool.Rent();
             p.Active = true;
@@ -40,6 +41,7 @@ namespace BorrowedHex.Runs
             p.IsEcho = isEcho;
             p.PowerMultiplier = power;
             p.PierceRemaining = pierce;
+            p.DistanceRemaining = maxDistance;
             Projectiles.Add(p);
             Events.RaiseProjectileSpawned(p);
             return p;
@@ -59,7 +61,13 @@ namespace BorrowedHex.Runs
                     EndProjectile(p, ProjectileEndReason.Expired);
                     continue;
                 }
-                ResolveSegment(p, p.Position, p.Position + p.Velocity * dt);
+                Vector2 travel = p.Velocity * dt;
+                float length = travel.magnitude;
+                float allowed = Mathf.Min(length, p.DistanceRemaining);
+                if (length > 1e-8f) travel *= allowed / length;
+                ResolveSegment(p, p.Position, p.Position + travel);
+                p.DistanceRemaining -= allowed;
+                if (p.Active && p.DistanceRemaining <= 1e-6f) EndProjectile(p, ProjectileEndReason.Expired);
             }
             CompactProjectiles();
         }

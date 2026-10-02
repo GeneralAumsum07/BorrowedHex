@@ -147,6 +147,7 @@ namespace BorrowedHex.Presentation
         }
 
         static readonly Dictionary<Kind, Sprite> cache = new Dictionary<Kind, Sprite>();
+        static readonly Dictionary<Kind, Sprite> evolvedCache = new Dictionary<Kind, Sprite>();
         static Sprite blob;
 
         /// <summary>Sprite with its pivot at the feet, so the transform sits on the ground.</summary>
@@ -179,6 +180,46 @@ namespace BorrowedHex.Presentation
             s.name = tex.name;
             cache[kind] = s;
             return s;
+        }
+
+        /// <summary>A wider horned silhouette, dark body and bright outline, per enemy palette.</summary>
+        public static Sprite Overstayed(Kind kind)
+        {
+            if (evolvedCache.TryGetValue(kind, out var sprite) && sprite != null) return sprite;
+            var map = Map(kind);
+            var palette = Palette(kind);
+            int w = map[0].Length + 6, h = map.Length + 4;
+            var pixels = new Color32[w * h];
+            for (int y = 0; y < map.Length; y++)
+                for (int x = 0; x < map[y].Length; x++)
+                {
+                    if (!palette.TryGetValue(map[y][x], out var color)) continue;
+                    if (map[y][x] != 'E') color = new Color32((byte)(color.r * 0.55f), (byte)(color.g * 0.45f), (byte)(color.b * 0.6f), 255);
+                    pixels[(h - 5 - y) * w + x + 3] = color;
+                }
+            // Horns above the hood and spikes at both shoulders change the silhouette,
+            // rather than asking the player to recognize a subtle tint in a crowded fight.
+            var spike = new Color32(90, 20, 70, 255);
+            for (int i = 0; i < 4; i++)
+            {
+                pixels[(h - 1 - i) * w + 2 + i] = spike;
+                pixels[(h - 1 - i) * w + w - 3 - i] = spike;
+                pixels[(h / 2 + i / 2) * w + i] = spike;
+                pixels[(h / 2 + i / 2) * w + w - 1 - i] = spike;
+            }
+            var outlined = (Color32[])pixels.Clone();
+            for (int y = 1; y < h - 1; y++)
+                for (int x = 1; x < w - 1; x++)
+                    if (pixels[y * w + x].a == 0 && (pixels[y * w + x - 1].a > 0 || pixels[y * w + x + 1].a > 0
+                        || pixels[(y - 1) * w + x].a > 0 || pixels[(y + 1) * w + x].a > 0))
+                        outlined[y * w + x] = new Color32(200, 60, 155, 255);
+            var texture = new Texture2D(w, h, TextureFormat.RGBA32, false)
+                { name = "Overstayed_" + kind, filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+            texture.SetPixels32(outlined);
+            texture.Apply(false, true);
+            sprite = Sprite.Create(texture, new Rect(0, 0, w, h), new Vector2(0.5f, 0), 12);
+            evolvedCache[kind] = sprite;
+            return sprite;
         }
 
         /// <summary>Soft round shadow used as the ground anchor under every character.</summary>

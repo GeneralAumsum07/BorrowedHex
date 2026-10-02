@@ -23,6 +23,11 @@ namespace BorrowedHex.Enemies
             float sourceRadius, Vector2 aim, float[] spreadDeg, int hostileDamage = -1)
         {
             var def = sim.Attacks.Get(attackId);
+            ActorCategory sourceCategory = ActorCategory.Player; // unknown synthetic shots keep the base rule
+            foreach (var e in sim.Enemies)
+                if (e.ActorId == sourceActorId) { sourceCategory = e.Category; break; }
+            float halfSpread = 0;
+            foreach (float offset in spreadDeg) halfSpread = Mathf.Max(halfSpread, Mathf.Abs(offset));
             if (aim.sqrMagnitude < 1e-8f) aim = Vector2.down;
             aim.Normalize();
             int fired = 0;
@@ -31,6 +36,8 @@ namespace BorrowedHex.Enemies
                 Vector2 dir = Geometry2D.Rotate(aim, offset);
                 Vector2 muzzle = origin + dir * (sourceRadius + def.Radius + 0.05f);
                 var shot = AttackSnapshot.From(def, sourceActorId, sim.Ids.Next(), offset);
+                shot.SourceCategory = sourceCategory;
+                shot.SourceSpreadHalfAngle = halfSpread;
                 if (hostileDamage >= 0) shot.HostileDamage = hostileDamage;
                 sim.SpawnProjectile(shot, AttackFaction.Hostile, muzzle, dir);
                 fired++;

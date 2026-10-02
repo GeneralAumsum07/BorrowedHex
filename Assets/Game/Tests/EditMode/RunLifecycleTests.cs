@@ -280,6 +280,28 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void TimeDrainAndBossDefeatOnTheSameTick_VictoryWinsWithZeroBonus()
+        {
+            var sim = P5.Short();
+            P5.ToBossCombat(sim);
+            var boss = sim.Boss;
+            boss.Health = 1;
+            boss.Phase = EnemyPhase.Recover;
+            boss.PhaseEndsAt = double.MaxValue;
+            LeaveOneSecond(sim);
+            var mine = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 900, sim.Ids.Next(), 0);
+            sim.SpawnProjectile(mine, AttackFaction.Returned,
+                boss.Position + Vector2.right * (boss.Radius + 0.2f), Vector2.left, rootReleaseId: 77);
+            // D45 resolves the entire final tick before choosing death > victory > timeout.
+            sim.Tick(P5.Still, 1);
+            Assert.IsTrue(boss.Killed);
+            Assert.AreEqual(0, sim.LifeSeconds);
+            Assert.AreEqual(RunEndReason.Victory, sim.Summary.Reason);
+            Assert.AreEqual(0, sim.Summary.VictoryBonus);
+            Assert.AreEqual(0, sim.Projectiles.Count);
+        }
+
+        [Test]
         public void DeathAndBossDefeatOnTheSameTick_DeathWins()
         {
             var sim = P5.Short();

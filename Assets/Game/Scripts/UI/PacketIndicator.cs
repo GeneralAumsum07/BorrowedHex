@@ -63,7 +63,8 @@ namespace BorrowedHex.UI
             Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(240, 22));
             hint = Ui.Label("Hint", root, "LMB catch   RMB fire   Q freeze / swap   Expiry backfires!", 16);
             hint.color = new Color(1f, 1f, 1f, 0.55f);
-            Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 116), new Vector2(600, 20));
+            // The three-row panels reach y=120; keep the hint above their selection outline.
+            Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 144), new Vector2(600, 20));
         }
 
         Panel AddPanel()

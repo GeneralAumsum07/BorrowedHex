@@ -17,7 +17,7 @@ namespace BorrowedHex.Enemies
         public static bool Move(ArenaSim sim, EnemyActor e, Vector2 dir, float speed, float dt)
         {
             if (dir.sqrMagnitude < 1e-8f) return false;
-            e.Position = PlayerMotor.SweepMove(e.Position, dir.normalized * (speed * dt), e.Radius, sim.Walls, out bool blocked);
+            e.Position = PlayerMotor.SweepMove(e.Position, dir.normalized * (speed * e.MoveScale * dt), e.Radius, sim.Walls, out bool blocked);
             return blocked;
         }
 

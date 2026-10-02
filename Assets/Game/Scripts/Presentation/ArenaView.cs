@@ -55,6 +55,7 @@ namespace BorrowedHex.Presentation
             // Collector only: the sweep's gold parry arc (D47) and the teleport arrival marker.
             public SpriteRenderer SweepParry, TeleportMarker;
             public bool Seen;
+            public bool Evolved;
         }
 
         readonly Dictionary<int, EnemyView> enemies = new Dictionary<int, EnemyView>();
@@ -219,15 +220,39 @@ namespace BorrowedHex.Presentation
                 Vector2 pos = Vector2.Lerp(e.PrevPosition, e.Position, alpha);
                 v.Body.transform.position = Geometry2D.ToWorld(pos);
                 v.Body.SetFacing(e.AimDirection.x);
+                if (e.Overstayed && !v.Evolved)
+                {
+                    v.Evolved = true;
+                    var kind = e.Category switch
+                    {
+                        ActorCategory.Pursuer => PixelSprites.Kind.Pursuer,
+                        ActorCategory.ScatterCaster => PixelSprites.Kind.ScatterCaster,
+                        ActorCategory.SiegeFamiliar => PixelSprites.Kind.SiegeFamiliar,
+                        _ => PixelSprites.Kind.Acolyte,
+                    };
+                    var art = sim.Config.OverstayedSprite(e.Category);
+                    v.Body.SetSprite(art != null ? art : PixelSprites.Overstayed(kind));
+                    v.Body.SetVisualScale(1.2f);
+                    v.Body.Flash(0.2f);
+                }
 
                 // Spawn warning: a pulsing ring and a ghosted body, so it reads as "not yet".
                 bool warning = now < e.ActiveAt;
-                v.WarningRing.enabled = warning;
+                double overstayLeft = e.ActiveAt + sim.Config.combat.overstaySeconds - now;
+                bool overstayWarning = !e.IsBoss && !e.Overstayed && !warning
+                    && overstayLeft <= sim.Config.combat.overstayWarningSeconds;
+                v.WarningRing.enabled = warning || overstayWarning;
                 if (warning)
                 {
                     float k = Mathf.Repeat((float)now * 3f, 1f);
                     v.WarningRing.transform.localScale = Vector3.one * Mathf.Lerp(1.4f, 0.8f, k);
                     v.WarningRing.color = new Color(1f, 0.3f, 0.3f, 0.4f + 0.5f * k);
+                }
+                else if (overstayWarning)
+                {
+                    float left = Mathf.Clamp01((float)overstayLeft / Mathf.Max(0.01f, sim.Config.combat.overstayWarningSeconds));
+                    v.WarningRing.transform.localScale = Vector3.one * Mathf.Lerp(e.Radius * 2f, 2.8f, left);
+                    v.WarningRing.color = new Color(0.95f, 0.2f, 0.75f, 0.9f);
                 }
                 v.Body.SetTint(warning ? new Color(1f, 1f, 1f, 0.45f) : Color.white);
                 if (e.IsBoss)

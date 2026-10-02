@@ -29,6 +29,8 @@ namespace BorrowedHex.Combat
         public float PowerMultiplier = 1f;
         /// <summary>Additional actors it may pass through after a hit (Piercing upgrade).</summary>
         public int PierceRemaining;
+        /// <summary>Travel budget, independent of speed: shotgun pellets stop at their range.</summary>
+        public float DistanceRemaining = float.PositiveInfinity;
         /// <summary>Actors already damaged, so piercing never hits the same target twice.</summary>
         public readonly HashSet<int> HitActors = new HashSet<int>();
         /// <summary>Catch activation that already rejected this shot (packet/slots full).</summary>
@@ -49,6 +51,7 @@ namespace BorrowedHex.Combat
             IsEcho = false;
             PowerMultiplier = 1f;
             PierceRemaining = 0;
+            DistanceRemaining = float.PositiveInfinity;
             HitActors.Clear();
             CaptureRejectedActivation = 0;
         }

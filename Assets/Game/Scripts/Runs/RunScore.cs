@@ -40,6 +40,8 @@ namespace BorrowedHex.Runs
         public int DamageTaken { get; private set; }
         public int Backfires { get; private set; }
         public int Swaps { get; private set; }
+        public int PillarsCrumbled { get; private set; }
+        public int EnemiesOverstayed { get; private set; }
         public float SecondsGained { get; private set; }
         float totalFirePower;
         public float AverageFirePower => PacketsReleased == 0 ? 0f : totalFirePower / PacketsReleased;
@@ -62,6 +64,8 @@ namespace BorrowedHex.Runs
             ev.PacketReleased += OnPacketReleased;
             ev.PacketBackfired += _ => Backfires++;
             ev.SlotSwapped += _ => Swaps++;
+            ev.PillarCrumbled += _ => PillarsCrumbled++;
+            ev.EnemyOverstayed += _ => EnemiesOverstayed++;
         }
 
         public float HitRate => PacketsReleased == 0 ? 0f : (float)PacketsHit / PacketsReleased;
@@ -156,6 +160,8 @@ namespace BorrowedHex.Runs
         public readonly int DamageTaken;
         public readonly int Backfires;
         public readonly int Swaps;
+        public readonly int PillarsCrumbled;
+        public readonly int EnemiesOverstayed;
         public readonly float AverageFirePower;
         public readonly float SecondsGained;
         public readonly int BestVolleyKills;
@@ -182,6 +188,8 @@ namespace BorrowedHex.Runs
             DamageTaken = s.DamageTaken;
             Backfires = s.Backfires;
             Swaps = s.Swaps;
+            PillarsCrumbled = s.PillarsCrumbled;
+            EnemiesOverstayed = s.EnemiesOverstayed;
             AverageFirePower = s.AverageFirePower;
             SecondsGained = s.SecondsGained;
             BestVolleyKills = s.BestVolleyKills;

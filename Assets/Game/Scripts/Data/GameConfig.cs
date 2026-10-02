@@ -16,6 +16,10 @@ namespace BorrowedHex.Data
         public Rect bounds = new Rect(-12f, -8f, 24f, 16f);
         public float wallThickness = 1f;
         public float wallHeight = 1.2f;
+        [Header("Temporary cover")]
+        public int pillarDurability = 12;
+        public float pillarDecayMinInterval = 5f;
+        public float pillarDecayMaxInterval = 8f;
         public List<Rect> pillars = new List<Rect>
         {
             new Rect(-6.6f, 2.9f, 1.2f, 1.2f),
@@ -68,6 +72,17 @@ namespace BorrowedHex.Data
         public Material unlitMaterial;
         [Tooltip("URP Lit base material for the floor and walls.")]
         public Material litMaterial;
+        [Tooltip("Optional evolved sprites by ordinary actor category; missing entries use spiked placeholders.")]
+        public Sprite overstayedAcolyte, overstayedPursuer, overstayedScatter, overstayedSiege;
+
+        public Sprite OverstayedSprite(Core.ActorCategory category) => category switch
+        {
+            Core.ActorCategory.Acolyte => overstayedAcolyte,
+            Core.ActorCategory.Pursuer => overstayedPursuer,
+            Core.ActorCategory.ScatterCaster => overstayedScatter,
+            Core.ActorCategory.SiegeFamiliar => overstayedSiege,
+            _ => null,
+        };
 
         /// <summary>Config with code defaults, for tests and as a missing-asset fallback.</summary>
         public static GameConfig CreateDefault()

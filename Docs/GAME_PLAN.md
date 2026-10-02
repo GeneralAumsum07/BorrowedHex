@@ -1,13 +1,13 @@
 # Borrowed Hex — Game Design and Implementation Plan
 
 > The shared design and implementation brief for Borrowed Hex. Checkboxes describe work to perform; they do not claim
-> that work is complete. Rulings made during implementation live in `Docs/DECISIONS.md` (D1–D56 so far), measured
+> that work is complete. Rulings made during implementation live in `Docs/DECISIONS.md` (D1–D64 so far), measured
 > results in `Docs/TEST_EVIDENCE.md`, and phase-by-phase progress in `Docs/IMPLEMENTATION_STATUS.md`. Where this
 > document and a later decision disagree, the later decision wins until this document is updated.
 
 **Date:** 2 October 2026 (rewritten for the "borrowed time" core rework)  
 **Status:** Phases 0–5 are implemented (short run, enemy roster, the Collector, score). The core rework in section 3
-and Phase 6 is specified here and not started. Values marked *proposal* are starting points that have not been
+and Phase 6 is implemented, awaiting the owner's short-run playtest. Values marked *proposal* are starting points that have not been
 playtested; the owner's answers to the rework questions are in section 13.  
 **Goal:** A fast, short, replayable action game about a rogue magician who steals enemy attacks. Every stolen hex is
 decaying in the magician's hands, the run clock is the magician's life, and nothing in the arena lasts.  
@@ -206,8 +206,9 @@ its gold arc (D47); its slam never can. Parries ignore packet slots and capacity
 One gameplay clock governs cooldowns, projectiles, packet decay, telegraphs, upgrades, enemy overstay timers and the
 run clock. Pause, upgrade choices, the boss intro, results and focus loss stop it. UI animation may use real time.
 
-Death (the run clock reaching zero) cancels every pending packet, echo, explosion, enemy action and spawn. Nothing
-executes in the results screen or the next run. Restart clears subscriptions and resets pooled objects.
+Terminal resolution cancels every pending packet, echo, explosion, enemy action and spawn. Damage that exhausts
+life kills immediately; ordinary time drain resolves at the end of the tick under D45/D64. Nothing executes in
+the results screen or the next run. Restart clears subscriptions and resets pooled objects.
 
 ### Ordering inside one tick
 
@@ -345,7 +346,8 @@ The clock that limits the run is also the magician's health (owner idea 7; repla
   pillars are restored as the next encounter starts.
 - At the boss transition, ordinary spawning stops; there are no leftover enemies because encounters are kill-all.
   Captured packets are preserved. The banner announces the boss.
-- Defeating the boss wins immediately; the clock reaching zero loses.
+- Terminal checks retain D45: damage death beats boss defeat; boss defeat beats ordinary time expiry on the same
+  tick. A final-tick victory at zero life gets no remaining-time bonus (D64).
 - At most 12 ordinary enemies at once; queued spawns wait rather than stacking pressure (D44).
 
 ### Score and records
@@ -557,16 +559,16 @@ Order matters: the packet rules first (they change every fight), then the clock,
 - [x] Remove automatic release on expiry; add the backfire (clock loss, invulnerability, combo reset, burst, event).
 - [x] Power from decayed time, applied at release to every payload's damage; HUD power and danger-zone display for both
       slots, with a clear frozen state.
-- [ ] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
+- [x] Per-enemy hex rules: piercing acolyte bolts, shotgun scatter pellets, heavy boss bolts.
 - [x] Life clock: remove hearts; hits and backfires subtract, kills add, cap at the start value, end reason from the
       last change; floating gain/loss numbers; the clock as the main HUD element.
-- [ ] Pillar durability that decays over time only (seeded per-pillar rate), damage stages, crumbling
+- [x] Pillar durability that decays over time only (seeded per-pillar rate), damage stages, crumbling
       (collision, line of sight and routing ignore it), restoration at each encounter start and at the boss transition.
-- [ ] Overstay timer, warning ring, one-time overstayed modifiers, an "evolved" placeholder view per enemy type; elite
+- [x] Overstay timer, warning ring, one-time overstayed modifiers, an "evolved" placeholder view per enemy type; elite
       score/XP values.
-- [ ] Update the scripted catch-and-return bot to swap, fire before expiry, and never backfire on purpose. It must
+- [x] Update the scripted catch-and-return bot to swap, fire before expiry, and never backfire on purpose. It must
       still beat the boss.
-- [ ] Record each rule change in `DECISIONS.md` and the measured bot result in `TEST_EVIDENCE.md`.
+- [x] Record each rule change in `DECISIONS.md` and the measured bot result in `TEST_EVIDENCE.md`.
 
 **Required boundary vectors:**
 

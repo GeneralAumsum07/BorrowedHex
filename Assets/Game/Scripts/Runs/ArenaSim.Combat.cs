@@ -15,6 +15,7 @@ namespace BorrowedHex.Runs
         partial void InitCombat()
         {
             Attacks = new AttackCatalog(Config.combat);
+            InitArenaDecay();
             InitCapture();
             InitRun();
             Events.PlayerDied += OnPlayerDied;
@@ -30,6 +31,7 @@ namespace BorrowedHex.Runs
             TickLifeClock(dt);
             BackfireExpiredPackets(now);                  // 3
             if (!Player.Alive) { TickRunFlow(now); return; }
+            TickArenaDecay(now);
             TickPlayer(cmd, tickStart, now, dt);          // 4 (catch, dash, move)
             TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6
