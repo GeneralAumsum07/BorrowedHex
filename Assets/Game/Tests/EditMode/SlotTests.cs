@@ -125,19 +125,23 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void RightClick_OnAnEmptySelectedSlot_FiresTheOtherOne()
+        public void RightClick_OnAnEmptySelectedSlot_FiresNothing()
         {
-            // Never a dead button: with the selection on an empty slot, release the one that is full.
+            // Owner direction (D33 revised): the selection is binding. An empty selected slot
+            // means right mouse does nothing, even while the other slot is full.
             var sim = Sim();
             CatchVolley(sim, 1);
             CatchVolley(sim, 1);
             sim.Tick(Hold.WithRelease(), Dt);          // slot 0 fires, selection stays on 0
             var remaining = sim.Packets.InSlot(1);
-            CapturedPacket fired = null;
-            sim.Events.PacketReleased += (p, _) => fired = p;
+            int releases = 0;
+            sim.Events.PacketReleased += (_, __) => releases++;
             sim.Tick(Hold.WithRelease(), Dt);
-            Assert.AreSame(remaining, fired);
-            Assert.AreEqual(0, sim.Packets.Packets.Count);
+            Assert.AreEqual(0, releases);
+            Assert.AreSame(remaining, sim.Packets.InSlot(1), "slot 2 keeps its packet");
+            sim.Tick(Hold.WithCycle(), Dt);
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, releases, "selecting slot 2 first is what fires it");
         }
 
         [Test]

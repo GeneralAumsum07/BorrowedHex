@@ -31,7 +31,9 @@ namespace BorrowedHex.Enemies
                             e.HasMoveTarget = true;
                         }
                         Vector2 to = e.MoveTarget - e.Position;
-                        if (to.sqrMagnitude > 0.04f) EnemySteering.Move(sim, e, to, t.moveSpeed, dt);
+                        // Routed (D37): a reposition spot on the far side of a pillar used to
+                        // leave the caster grinding against it until its next volley.
+                        if (to.sqrMagnitude > 0.04f) EnemySteering.MoveToward(sim, e, e.MoveTarget, t.moveSpeed, dt);
                     }
                     else EnemySteering.KeepBand(sim, e, t, dt);
 

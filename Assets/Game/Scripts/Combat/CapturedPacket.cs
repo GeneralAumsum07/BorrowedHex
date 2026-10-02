@@ -81,17 +81,12 @@ namespace BorrowedHex.Combat
         public void CycleSelection() => SelectedSlot = SlotCount > 0 ? (SelectedSlot + 1) % SlotCount : 0;
 
         /// <summary>
-        /// The packet an early release fires: the selected slot's, or — if that slot is empty —
-        /// the oldest stored packet, so the button is never dead while anything is held.
+        /// The packet an early release fires: the selected slot's, and ONLY that one (D33 revised,
+        /// owner direction). An empty selected slot means right mouse does nothing. A fallback to
+        /// "whatever else is held" made Q look cosmetic: the player could never be sure which
+        /// bundle RMB would throw, which defeats the point of choosing one.
         /// </summary>
-        public CapturedPacket ReleaseCandidate()
-        {
-            var p = InSlot(SelectedSlot);
-            if (p != null) return p;
-            CapturedPacket oldest = null;
-            foreach (var q in packets) if (oldest == null || q.CapturedAt < oldest.CapturedAt) oldest = q;
-            return oldest;
-        }
+        public CapturedPacket ReleaseCandidate() => InSlot(SelectedSlot);
 
         /// <summary>Take a packet out of its slot (early release). The slot is free immediately.</summary>
         public bool Remove(CapturedPacket p) => packets.Remove(p);

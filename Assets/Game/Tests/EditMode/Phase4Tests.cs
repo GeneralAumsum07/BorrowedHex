@@ -238,6 +238,65 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void Pursuer_RoutesAroundAPillar_InsteadOfStickingBehindIt()
+        {
+            // Owner bug: a pursuer with a pillar dead between it and the player pressed into the
+            // pillar face and stayed there. Pillar at x -6.6..-5.4, y 2.9..4.1; player below it,
+            // pursuer directly above, so straight-line seeking hits the face square-on.
+            var sim = P4.Sim();
+            sim.Player.Position = new Vector2(-6f, 1.0f);
+            sim.Player.InvulnerableUntil = double.MaxValue;
+            var e = sim.SpawnEnemy(ActorCategory.Pursuer, new Vector2(-6f, 6.2f));
+            e.ActiveAt = 0; e.Phase = EnemyPhase.Idle; e.PhaseEndsAt = 0;
+            bool reached = false;
+            for (int i = 0; i < 60 * 5 && !reached; i++)
+            {
+                sim.Tick(P4.Still, P4.Dt);
+                reached = e.Phase == EnemyPhase.Telegraph;
+            }
+            Assert.IsTrue(reached, $"pursuer stuck at {e.Position}");
+        }
+
+        [Test]
+        public void Pursuer_ReachesThePlayer_FromSquareBehindEveryPillarFace()
+        {
+            // Every pillar, every face: the pursuer starts 1.2 beyond the face centre and the
+            // player stands 1.6 beyond the opposite face, so the straight line is the worst case.
+            var dirs = new[] { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+            foreach (var pillar in TestSims.Config.arena.pillars)
+            foreach (var d in dirs)
+            {
+                var sim = P4.Sim();
+                Vector2 half = pillar.size * 0.5f;
+                float reach = Mathf.Abs(Vector2.Dot(half, d));
+                sim.Player.Position = pillar.center - d * (reach + 1.6f);
+                sim.Player.InvulnerableUntil = double.MaxValue;
+                var e = sim.SpawnEnemy(ActorCategory.Pursuer, pillar.center + d * (reach + 1.2f));
+                e.ActiveAt = 0; e.Phase = EnemyPhase.Idle; e.PhaseEndsAt = 0;
+                bool reached = false;
+                for (int i = 0; i < 60 * 6 && !reached; i++)
+                {
+                    sim.Tick(P4.Still, P4.Dt);
+                    reached = e.Phase == EnemyPhase.Telegraph;
+                }
+                Assert.IsTrue(reached, $"pillar {pillar.center} side {d}: stuck at {e.Position}");
+            }
+        }
+
+        [Test]
+        public void RangedEnemy_TooFar_RoutesAroundAPillarToo()
+        {
+            var sim = P4.Sim();
+            sim.Player.Position = new Vector2(-6f, -7f);
+            sim.Player.InvulnerableUntil = double.MaxValue;
+            var e = P4.Parked(sim, ActorCategory.Acolyte, new Vector2(-6f, 6.5f));
+            e.Phase = EnemyPhase.Idle; e.PhaseEndsAt = double.MaxValue; // moves, never fires
+            P4.Run(sim, 60 * 6);
+            Assert.LessOrEqual((e.Position - sim.Player.Position).magnitude, sim.Config.combat.acolyte.preferredMax + 0.5f,
+                $"acolyte stuck at {e.Position}");
+        }
+
+        [Test]
         public void Despawn_IsNotAKill_AndOverkillRaisesOneKill()
         {
             var sim = P4.Sim();
