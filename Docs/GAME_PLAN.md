@@ -620,9 +620,9 @@ backup; Web progress survives a refresh; menus never resume combat by accident.
 
 **Depends on:** Phase 8.
 
-- [ ] XP formula and thresholds from section 7, excess carry, level-10 cap, one point per level gained.
-- [ ] Nine nodes (with `resilience_time` and `quick_draw`), purchase validation, three equipped, free respec.
-- [ ] Resolve style plus equipped passives once at run start; encounter upgrades stay separate.
+- [x] XP formula and thresholds from section 7, excess carry, level-10 cap, one point per level gained (D78).
+- [x] Nine nodes (with `resilience_time` and `quick_draw`), purchase validation, three equipped, free respec (D79, D80).
+- [x] Resolve style plus equipped passives once at run start; encounter upgrades stay separate.
 
 **Checks:** 99 XP stays level 1, 100 reaches level 2 with one point; multiple levels from one run; locked or
 unaffordable nodes rejected; a fourth equipped node rejected; respec refunds correctly; a lost run still grants XP.

@@ -47,8 +47,24 @@ namespace BorrowedHex.Runs
             if (packet == null) return false;
             Packets.Remove(packet);
             Capture.Detach(packet);
-            ReleaseService.Release(this, packet, Player.Position, Player.AimDirection, packet.FirePower(Stats.PowerPerSecond));
+            ReleaseService.Release(this, packet, Player.Position, Player.AimDirection,
+                packet.FirePower(Stats.PowerPerSecond) * QuickDrawMultiplier(Clock.Now));
             return true;
+        }
+
+        /// <summary>When the selection last changed (gameplay time); -inf before the first swap.</summary>
+        public double LastSwapAt { get; private set; } = double.NegativeInfinity;
+
+        /// <summary>
+        /// Quick Draw (section 7). Applies to the player's own fire command only: the swap-then-
+        /// fire rhythm is what it rewards. A swap and fire on the same tick counts (swap runs
+        /// first in TickPlayer). Overflow's forced release is a catch side effect, so it does not
+        /// get the bonus (my ruling, D79).
+        /// </summary>
+        float QuickDrawMultiplier(double now)
+        {
+            if (Stats.QuickDrawBonus <= 0f) return 1f;
+            return now - LastSwapAt <= Stats.QuickDrawWindow + 1e-6 ? 1f + Stats.QuickDrawBonus : 1f;
         }
 
         void TryCatch(double now)

@@ -82,6 +82,7 @@ namespace BorrowedHex.Runs
             if (cmd.CycleSlot)
             {
                 Packets.CycleSelection();
+                LastSwapAt = now;
                 Events.RaiseSlotSwapped(Packets.SelectedSlot);
             }
             if (cmd.Release) TryReleaseEarly();

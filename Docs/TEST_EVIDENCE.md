@@ -479,3 +479,21 @@ Test report: EditMode 165/165, PlayMode 2/2.
   All PlayMode tests use in-memory storage (never the real save).
 - Not verified: the menu layout by eye, a refresh in a served Web build, a Windows player writing
   its file. These are owner checks.
+
+## Phase 9 — Mastery, skill tree, loadouts (3 Oct 2026)
+
+- Files: new `Data/ProgressionTuning.cs`, `Progression/{Mastery,SkillTree,Loadout,ProfileService.Mastery}.cs`,
+  `UI/SkillTreePanel.cs`, `Presentation/GameRoot.Progression.cs`, `Tests/EditMode/MasteryTests.cs`;
+  changed `PlayerStats` (Quick Draw), `ArenaSim` (swap time, Quick Draw multiplier), `RunScore`/`RunSummary`
+  (overstayed kills, perfect hits), `MainMenu` (enable/press entries), `ProfileService` (result fields).
+- Live editor, EditMode: 251/251 pass. New: 99 XP stays level 1, 100 gives level 2 and one point;
+  480 XP gives three levels and carries 30; level 10 cap with nine points, totalXp keeps counting;
+  the formula with the perfect term capped at 20; a lost short run (one encounter cleared, then
+  death) grants 2 per kill + 5, once; overstayed kills are their own term; perfect hits count shots,
+  not pierce victims, never echoes; tier gates, points, prerequisites (owned suffices), unknown
+  ids; a fourth equipped node refused; respec refunds and still validates; three impossible-tree
+  profiles rejected; a legal tree round-trips; each passive changes exactly its stat; Borrowed
+  Hours raises start and cap; Quick Draw x1.30 at 0.067 s after a swap, nothing at 0.33 s.
+- PlayMode: 6/6 pass. New: Mastery & skills from the main menu, buy and equip (two saves), back to
+  the menu, and the next short run's catch cone includes the node; the run's passive list matches.
+- Not verified: the tree panel by eye; whether any node is worth its point (human playtest).

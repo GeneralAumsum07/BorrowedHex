@@ -17,6 +17,8 @@ namespace BorrowedHex.UI
         Text profileLine, warningLine;
         readonly Dictionary<string, Button> entries = new Dictionary<string, Button>();
         readonly Dictionary<string, string> baseLabels = new Dictionary<string, string>();
+        // Looked up at click time, so a later phase can switch a disabled entry on with its action.
+        readonly Dictionary<string, Action> actions = new Dictionary<string, Action>();
         RectTransform panel;
         Button first;
 
@@ -60,7 +62,8 @@ namespace BorrowedHex.UI
         /// <summary>Add an entry in display order. <paramref name="onClick"/> null = visibly disabled.</summary>
         public Button AddEntry(string key, string label, Action onClick, string disabledReason = null)
         {
-            var b = Ui.Sized(Ui.Button(key, panel, label, () => onClick?.Invoke(), 30), 64);
+            actions[key] = onClick;
+            var b = Ui.Sized(Ui.Button(key, panel, label, () => { if (actions.TryGetValue(key, out var a)) a?.Invoke(); }, 30), 64);
             entries[key] = b;
             baseLabels[key] = label;
             if (first == null) first = b;
@@ -76,6 +79,19 @@ namespace BorrowedHex.UI
             var text = b.GetComponentInChildren<Text>();
             text.text = enabled || string.IsNullOrEmpty(disabledReason) ? baseLabels[key] : $"{baseLabels[key]}  <size=20>({disabledReason})</size>";
             text.color = enabled ? Ui.Ink : new Color(1, 1, 1, 0.35f);
+        }
+
+        /// <summary>Give a (disabled) entry its action and switch it on.</summary>
+        public void EnableEntry(string key, Action onClick)
+        {
+            actions[key] = onClick;
+            SetEntry(key, onClick != null);
+        }
+
+        /// <summary>Invoke an entry as if clicked (tests, keyboard shortcuts); a disabled entry does nothing.</summary>
+        public void Press(string key)
+        {
+            if (IsEntryEnabled(key) && actions.TryGetValue(key, out var a)) a?.Invoke();
         }
 
         public bool IsEntryEnabled(string key) => entries.TryGetValue(key, out var b) && b.interactable;

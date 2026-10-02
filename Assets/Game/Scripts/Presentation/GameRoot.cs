@@ -201,8 +201,13 @@ namespace BorrowedHex.Presentation
             if (cam == null) cam = Camera.main;
             if (InMainMenu)
             {
-                // Esc closes settings back to the menu; it never starts or resumes anything.
-                if (pausePressed && Settings.IsOpen) CloseSettings();
+                // Esc closes settings (or a later phase's sub-menu) back to the menu; it never
+                // starts or resumes anything.
+                if (pausePressed)
+                {
+                    if (Settings.IsOpen) CloseSettings();
+                    else CloseSubMenus();
+                }
                 SyncGameplayInput();
                 View.Render(1f);
                 return;

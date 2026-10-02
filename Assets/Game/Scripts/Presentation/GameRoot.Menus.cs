@@ -1,4 +1,5 @@
 using BorrowedHex.Core;
+using BorrowedHex.Data;
 using BorrowedHex.Progression;
 using BorrowedHex.Runs;
 using BorrowedHex.UI;
@@ -50,6 +51,8 @@ namespace BorrowedHex.Presentation
 
         // Later phases (tree, styles, records, endless) switch on their menu entries here.
         partial void BuildProgressionMenus();
+        // ...and close their own panels here (Esc on the main menu, or returning to it).
+        partial void CloseSubMenus();
         // Later phases fill the run's style, passives and stats from the profile here.
         partial void ApplyLoadoutExtra(RunSetup setup);
 
@@ -60,6 +63,8 @@ namespace BorrowedHex.Presentation
             setup.BuildVersion = Application.version;
             ApplyLoadoutExtra(setup);
         }
+
+        public GameConfig Config => config;
 
         public void PlayShort() => StartRun(RunKind.Short);
         public void PlaySandbox() => StartRun(RunKind.Sandbox);
@@ -80,6 +85,7 @@ namespace BorrowedHex.Presentation
         {
             Menu.Show(false);
             Settings.Hide();
+            CloseSubMenus();
             kind = RunKind.Backdrop;
             BeginRun();
             RefreshMainMenu();

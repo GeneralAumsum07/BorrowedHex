@@ -13,6 +13,16 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 9 — Mastery, skill tree, loadouts — implemented (owner check pending, 3 Oct 2026)
+
+- XP from every ending inside the one finalization; levels 1-10, one point per level, carry (D78).
+- Nine nodes with level gates and branch prerequisites, three equipped, free respec; tree panel
+  from the main menu; profile validation rejects impossible trees (D80).
+- `Loadout.Resolve` builds the run's stats once at start; Quick Draw in the sim (D79).
+- Results show the XP breakdown and level-ups; the main menu shows mastery and unspent points.
+- 251/251 EditMode (18 new in `MasteryTests`), 6/6 PlayMode (1 new: tree → next run's stats).
+- Not checked by eye: the tree panel layout.
+
 ### Phase 8 — Menus and the player profile — implemented (owner check pending, 3 Oct 2026)
 
 - Versioned JSON profile (`Scripts/Progression/`): settings, mastery, statistics, nodes, style,

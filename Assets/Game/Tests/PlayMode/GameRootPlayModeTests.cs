@@ -157,6 +157,28 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(1, ProfileService.Load(storage).Profile.stats.runs);
         }
 
+        [UnityTest]
+        public IEnumerator TheTree_FromTheMainMenu_BuysAndEquips_AndTheNextRunUsesIt()
+        {
+            var m = root.Profile.Profile.mastery;
+            m.level = 2;
+            m.points = 1;
+            root.Main.Press("mastery");
+            yield return null;
+            Assert.IsTrue(root.Tree.IsOpen);
+            Assert.IsFalse(root.Main.IsOpen);
+            root.Tree.Click(SkillTree.PrecisionAngle);   // buy
+            root.Tree.Click(SkillTree.PrecisionAngle);   // equip
+            Assert.AreEqual(2, storage.Writes, "each tree change is a save point");
+            CollectionAssert.Contains(root.Profile.Profile.equippedNodes, SkillTree.PrecisionAngle);
+            root.ShowMainMenu();
+            Assert.IsFalse(root.Tree.IsOpen);
+            yield return StartShortRun();
+            float baseCone = root.Config.capture.coneAngle;
+            Assert.AreEqual(baseCone + root.Config.progression.precisionAngle, root.Sim.Stats.CaptureConeAngle, 1e-4f);
+            CollectionAssert.AreEqual(new[] { SkillTree.PrecisionAngle }, root.Sim.Setup.PassiveIds);
+        }
+
         IEnumerator Click(Vector2 pos)
         {
             InputSystem.QueueStateEvent(mouse, new MouseState { position = pos });

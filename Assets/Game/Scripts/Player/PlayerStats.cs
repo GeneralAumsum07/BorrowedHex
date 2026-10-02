@@ -40,6 +40,13 @@ namespace BorrowedHex.Player
         /// </summary>
         public float ParryWindow => CaptureWindow * ParryWindowScale;
 
+        /// <summary>
+        /// Quick Draw (section 7 node): a release fired within <see cref="QuickDrawWindow"/> seconds
+        /// of a swap deals 1 + <see cref="QuickDrawBonus"/> times damage. Zero without the node.
+        /// </summary>
+        public float QuickDrawBonus;
+        public float QuickDrawWindow;
+
         /// <summary>Daredevil: catch performs a capturing dash sharing the dash cooldown.</summary>
         public bool CatchIsDash;
 

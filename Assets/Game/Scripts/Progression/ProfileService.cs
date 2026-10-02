@@ -13,6 +13,10 @@ namespace BorrowedHex.Progression
         /// <summary>Why nothing was applied: "sandbox", "debug", "already finalized".</summary>
         public string SkippedBecause;
         public bool Saved;
+
+        // Phase 9: what the run earned toward mastery.
+        public XpBreakdown Xp;
+        public int LevelBefore, LevelAfter, LevelsGained;
     }
 
     /// <summary>
@@ -208,7 +212,7 @@ namespace BorrowedHex.Progression
         partial void ApplyProgression(RunSummary summary, RunSetup setup, FinalizeResult result);
     }
 
-    /// <summary>Mastery constants (section 7). The XP rules land in Phase 9.</summary>
+    /// <summary>Mastery constants (section 7); the XP rules are in Mastery.cs.</summary>
     public static partial class Mastery
     {
         public const int MaxLevel = 10;

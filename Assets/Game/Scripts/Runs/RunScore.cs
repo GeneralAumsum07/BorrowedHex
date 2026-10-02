@@ -42,6 +42,11 @@ namespace BorrowedHex.Runs
         public int Swaps { get; private set; }
         public int PillarsCrumbled { get; private set; }
         public int EnemiesOverstayed { get; private set; }
+        /// <summary>Kills of enemies that had overstayed (section 7 XP term; the boss never overstays).</summary>
+        public int OverstayedKills { get; private set; }
+        /// <summary>Distinct perfect shots that damaged an enemy (section 7 XP term, Perfect Timing).</summary>
+        public int PerfectHits => perfectHitShots.Count;
+        readonly HashSet<int> perfectHitShots = new HashSet<int>();
         public float SecondsGained { get; private set; }
         float totalFirePower;
         public float AverageFirePower => PacketsReleased == 0 ? 0f : totalFirePower / PacketsReleased;
@@ -78,6 +83,9 @@ namespace BorrowedHex.Runs
 
         void OnEnemyDamaged(EnemyActor e, DamageEvent d)
         {
+            // Counted by shot ID, so a perfect shot that pierces three enemies is one perfect
+            // shot. Echoes are excluded: they copy the perfect flag but were never caught.
+            if (d.Perfect && d.Category != DamageCategory.Echo) perfectHitShots.Add(d.ShotId);
             int root = d.RootReleaseId;
             // Root 0 = not from a player release (nothing today; future contact/orbit damage).
             if (root == 0) return;
@@ -97,6 +105,7 @@ namespace BorrowedHex.Runs
             Score += Mathf.RoundToInt(e.KillValue * Multiplier);
             Kills++;
             if (e.IsBoss) BossesDefeated++;
+            else if (e.Overstayed) OverstayedKills++;
             // Kills by HEX type: only returned payloads count. Orbit and Parting Gift kills are
             // upgrade damage, not a borrowed hex, and would otherwise pose as bolts or rockets.
             if (d.Category == DamageCategory.ReturnedProjectile || d.Category == DamageCategory.Echo
@@ -168,6 +177,8 @@ namespace BorrowedHex.Runs
         public readonly int Swaps;
         public readonly int PillarsCrumbled;
         public readonly int EnemiesOverstayed;
+        public readonly int OverstayedKills;
+        public readonly int PerfectHits;
         public readonly float AverageFirePower;
         public readonly float SecondsGained;
         public readonly int BestVolleyKills;
@@ -196,6 +207,8 @@ namespace BorrowedHex.Runs
             Swaps = s.Swaps;
             PillarsCrumbled = s.PillarsCrumbled;
             EnemiesOverstayed = s.EnemiesOverstayed;
+            OverstayedKills = s.OverstayedKills;
+            PerfectHits = s.PerfectHits;
             AverageFirePower = s.AverageFirePower;
             SecondsGained = s.SecondsGained;
             BestVolleyKills = s.BestVolleyKills;
