@@ -20,6 +20,8 @@ namespace BorrowedHex.UI
         GameObject upgradeDim;
         Text upgradeTitle;
         Text upgradeExpiring;
+        Text upgradeNote;
+        Button retireButton;
         // One button per offer slot. Offers are re-read from the sim each time the panel
         // opens, so the cards never show a previous transition's draw.
         readonly Button[] cards = new Button[3];
@@ -43,15 +45,15 @@ namespace BorrowedHex.UI
         public const float BannerHold = 2.4f;
         const float BannerFade = 0.6f;
 
-        public static RunFlowPanels Create(Canvas canvas, Action<int> onChoose, Action onPlayAgain, Action onMainMenu)
+        public static RunFlowPanels Create(Canvas canvas, Action<int> onChoose, Action onPlayAgain, Action onMainMenu, Action onRetire = null)
         {
             var root = Ui.Stretch(Ui.Rect("RunFlow", canvas.transform));
             var p = root.gameObject.AddComponent<RunFlowPanels>();
-            p.Build(root, onChoose, onPlayAgain, onMainMenu);
+            p.Build(root, onChoose, onPlayAgain, onMainMenu, onRetire);
             return p;
         }
 
-        void Build(RectTransform root, Action<int> onChoose, Action onPlayAgain, Action onMainMenu)
+        void Build(RectTransform root, Action<int> onChoose, Action onPlayAgain, Action onMainMenu, Action onRetire)
         {
             // --- Upgrade choice: three cards, each a button. Section 5 offers no skip: a
             // pick is free and only lasts one encounter, so there is nothing to decline.
@@ -67,8 +69,9 @@ namespace BorrowedHex.UI
             upgradeTitle.color = Ui.Accent;
             upgradeExpiring = Ui.Sized(Ui.Label("Expiring", panel.transform, "", 22), 30);
             upgradeExpiring.color = new Color(1f, 0.6f, 0.5f);
-            var note = Ui.Sized(Ui.Label("Note", panel.transform, "Choose one. It lasts until the next encounter is cleared.", 22), 30);
+            var note = Ui.Sized(Ui.Label("Note", panel.transform, "", 22), 30);
             note.color = new Color(1, 1, 1, 0.7f);
+            upgradeNote = note;
             for (int i = 0; i < cards.Length; i++)
             {
                 int index = i;   // captured per card; the loop variable would be 3 for all of them
@@ -79,6 +82,9 @@ namespace BorrowedHex.UI
                 cardTexts[i].rectTransform.offsetMin = new Vector2(20, 8);
                 cardTexts[i].rectTransform.offsetMax = new Vector2(-20, -8);
             }
+            // Endless only (section 6): retiring is offered between waves, i.e. here. Built
+            // after the cards so it sits under them, smaller, and is never the default focus.
+            retireButton = Ui.Sized(Ui.Button("Retire", panel.transform, "Retire (end run, keep progress)", () => onRetire?.Invoke(), 22), 52);
             upgradeDim.SetActive(false);
 
             // --- Boss banner: a full-width band across the upper third, name in gold.
@@ -158,8 +164,19 @@ namespace BorrowedHex.UI
             bool upgrade = state == RunState.UpgradeChoice;
             if (upgrade && !upgradeDim.activeSelf)
             {
-                // Encounters end on a full clear now (D50), not on surviving a timer.
-                upgradeTitle.text = $"ENCOUNTER {sim.TransitionsReached} CLEARED";
+                if (sim.IsEndlessRun)
+                {
+                    // The wave-six choice is the one deferred until the boss fell.
+                    upgradeTitle.text = sim.Wave >= sim.Config.endless.wavesPerCycle ? "BOSS DEFEATED" : $"WAVE {sim.Wave} COMPLETE";
+                    upgradeNote.text = "Choose one. It lasts until the next choice.";
+                }
+                else
+                {
+                    // Encounters end on a full clear now (D50), not on surviving a timer.
+                    upgradeTitle.text = $"ENCOUNTER {sim.TransitionsReached} CLEARED";
+                    upgradeNote.text = "Choose one. It lasts until the next encounter is cleared.";
+                }
+                retireButton.gameObject.SetActive(sim.IsEndlessRun);
                 FillCards();
             }
             upgradeDim.SetActive(upgrade);
@@ -232,6 +249,7 @@ namespace BorrowedHex.UI
                 case RunEndReason.Victory: resultsTitle.text = "VICTORY"; resultsTitle.color = Ui.Accent; break;
                 case RunEndReason.Death: resultsTitle.text = "DEFEATED"; resultsTitle.color = new Color(1f, 0.4f, 0.45f); break;
                 case RunEndReason.TimeExpired: resultsTitle.text = "TIME EXPIRED"; resultsTitle.color = new Color(1f, 0.6f, 0.3f); break;
+                case RunEndReason.Retired: resultsTitle.text = "RETIRED"; resultsTitle.color = Ui.Accent; break;
                 default: resultsTitle.text = s.Reason.ToString().ToUpperInvariant(); resultsTitle.color = Ui.Ink; break;
             }
             int secs = Mathf.FloorToInt(s.Duration);
@@ -239,13 +257,24 @@ namespace BorrowedHex.UI
             // Centred "label: value" lines: the built-in font is proportional, so space-padded
             // columns would not line up.
             resultsBody.text =
-                $"{ReasonText(s.Reason)}\n" +
+                $"{ReasonText(s)}\n" +
                 $"Score: {s.Score}{bonus}\n" +
                 $"Best volley: {s.BestVolleyKills} kill{(s.BestVolleyKills == 1 ? "" : "s")}\n" +
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased} packets)\n" +
                 $"Time lost to hits: {s.DamageTaken}s   Time gained: {s.SecondsGained:0.#}s\n" +
                 $"Backfires: {s.Backfires}   Swaps: {s.Swaps}   Average power: x{s.AverageFirePower:0.00}\n" +
                 $"Duration: {secs / 60}:{secs % 60:00}   Kills: {s.Kills}";
+        }
+
+        static string ReasonText(RunSummary s)
+        {
+            // Endless has no victory: the line says how far the run got (D84).
+            if (s.Mode == GameMode.Endless)
+            {
+                string how = s.Reason == RunEndReason.Retired ? "Retired" : s.Reason == RunEndReason.Death ? "Fell" : "Clock ran out";
+                return $"{how} in cycle {s.Cycle}   ·   {s.WavesCompleted} wave{(s.WavesCompleted == 1 ? "" : "s")}   ·   {s.BossesDefeated} boss{(s.BossesDefeated == 1 ? "" : "es")}";
+            }
+            return ReasonText(s.Reason);
         }
 
         static string ReasonText(RunEndReason r) => r switch

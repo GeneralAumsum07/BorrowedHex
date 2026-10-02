@@ -61,7 +61,7 @@ namespace BorrowedHex.Presentation
             Menu.AddButton(() => IsWeb ? "Quit to menu" : "Main menu", ShowMainMenu);
             // uGUI draws later siblings on top: the pause menu is raised above the flow panels
             // so pausing during an upgrade choice shows the menu, not the panel behind it.
-            Flow = RunFlowPanels.Create(canvas, i => Sim.ChooseUpgrade(i), Restart, ShowMainMenu);
+            Flow = RunFlowPanels.Create(canvas, i => Sim.ChooseUpgrade(i), Restart, ShowMainMenu, () => Sim.RetireRun());
             Menu.transform.SetAsLastSibling();
             BuildDevPanel();
             BuildMenus();
@@ -108,7 +108,7 @@ namespace BorrowedHex.Presentation
         string AutoSpawnLabel => autoSpawn ? "Auto-spawn: ON" : "Auto-spawn: OFF";
 
         /// <summary>What the next BeginRun starts. Chosen on the main menu; Restart repeats it.</summary>
-        enum RunKind { Backdrop, Short, Sandbox }
+        enum RunKind { Backdrop, Short, Sandbox, Endless, EndlessDebug }
         RunKind kind = RunKind.Backdrop;
 
         /// <summary>Start a fresh run of the current kind: a new sim and view; the old ones are discarded whole.</summary>
@@ -122,6 +122,14 @@ namespace BorrowedHex.Presentation
                 // A fresh seed per run, so formation picks and spawn points vary between runs
                 // (section 6: seeded variation); the seed is kept in the summary for debugging.
                 setup = new RunSetup { Mode = GameMode.Short, Seed = System.Environment.TickCount ^ (runCounter * 7919) };
+                ApplyLoadout(setup);
+            }
+            else if (kind == RunKind.Endless || kind == RunKind.EndlessDebug)
+            {
+                // Phase 12. The debug variant is the same run with the dev panel on; it is
+                // marked Debug up front, so nothing it does can reach the profile.
+                setup = new RunSetup { Mode = GameMode.Endless, Seed = System.Environment.TickCount ^ (runCounter * 7919),
+                    Debug = kind == RunKind.EndlessDebug };
                 ApplyLoadout(setup);
             }
             else

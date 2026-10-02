@@ -57,6 +57,7 @@ namespace BorrowedHex.Runs
             Score = new RunScore(this);
             Events.EnemyKilled += RewardKillTime;
             nextFormationAt = Config.shortMode.firstSpawnDelay;
+            InitEndless();
         }
 
         void SetState(RunState s)
@@ -99,6 +100,8 @@ namespace BorrowedHex.Runs
         {
             Score.Tick(now);
             if (State == RunState.Results) return;
+            // Phase 12: endless has its own schedule and terminals (ArenaSim.Endless.cs).
+            if (IsEndlessRun) { TickEndlessFlow(now); return; }
             if (!IsShortRun)
             {
                 if (lifeSeconds <= Eps && Player.Alive)
@@ -154,6 +157,7 @@ namespace BorrowedHex.Runs
             if (State != RunState.UpgradeChoice) return false;
             Clock.SetPauseReason(PauseReason.UpgradeChoice, false);
             Offers.Clear();
+            if (IsEndlessRun) { ContinueEndless(); return true; }
             Encounter++;
             RestorePillars();
             if (TransitionsReached >= Config.shortMode.encounterCount) BeginBossIntro();
@@ -168,11 +172,11 @@ namespace BorrowedHex.Runs
         /// appears now — so the intro banner shows it on screen — but the clock is held by
         /// BossIntro, and its spawn warning only starts counting once the intro ends.
         /// </summary>
-        void BeginBossIntro()
+        void BeginBossIntro(int completedCycles = 0)
         {
             ClearArena();
             spawnQueue.Clear();
-            Boss = SpawnBoss();
+            Boss = SpawnBoss(completedCycles);
             Clock.SetPauseReason(PauseReason.BossIntro, true);
             SetState(RunState.BossIntro);
         }

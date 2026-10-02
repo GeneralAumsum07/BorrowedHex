@@ -55,7 +55,10 @@ namespace BorrowedHex.Runs
         /// rules. Placed on the far side of the arena from the player, on the centre line,
         /// which is clear of all four pillars.
         /// </summary>
-        public EnemyActor SpawnBoss()
+        /// <param name="completedCycles">Endless only (Phase 12): each completed cycle adds
+        /// boss health, and a REPEATED boss (any cycle after the first) gains its one predefined
+        /// variation, the wider fan. Set before the spawn event so views see the final boss.</param>
+        public EnemyActor SpawnBoss(int completedCycles = 0)
         {
             var t = Config.collector;
             var b = Config.arena.bounds;
@@ -76,8 +79,10 @@ namespace BorrowedHex.Runs
                 MaxHealth = t.health,
                 Health = t.health,
                 KillValue = t.killValue,
-                Boss = new BossState(),
+                Boss = new BossState { Encore = completedCycles > 0 },
             };
+            if (completedCycles > 0)
+                e.MaxHealth = e.Health = t.health * (1f + Config.endless.bossHealthPerCycle * completedCycles);
             Enemies.Add(e);
             Events.RaiseEnemySpawned(e);
             return e;
@@ -102,14 +107,16 @@ namespace BorrowedHex.Runs
                     continue;
                 }
                 var t = Config.combat.For(e.Category);
-                if (!e.Overstayed && now >= e.ActiveAt + Config.combat.overstaySeconds - 1e-6)
+                if (!e.Overstayed && now >= e.ActiveAt + OverstaySeconds - 1e-6)
                 {
-                    // One-way evolution. Restore against the authored base, never compound
-                    // the previous maximum or repeatedly heal every time this check runs.
+                    // One-way evolution, guarded by Overstayed so it can never compound or
+                    // heal twice. It multiplies on top of the spawn-time values, which are the
+                    // authored base in short mode and the endless cycle scaling in endless
+                    // (Phase 12): an overstayer is always stronger than its own cycle.
                     e.Overstayed = e.Elite = true;
-                    e.MaxHealth = e.Health = t.health * Config.combat.overstayHealthScale;
-                    e.MoveScale = Config.combat.overstayMoveScale;
-                    e.CooldownScale = Config.combat.overstayCooldownScale;
+                    e.MaxHealth = e.Health = e.MaxHealth * Config.combat.overstayHealthScale;
+                    e.MoveScale *= Config.combat.overstayMoveScale;
+                    e.CooldownScale *= Config.combat.overstayCooldownScale;
                     e.KillValue = Mathf.RoundToInt(t.killValue * 1.5f);
                     if (e.Phase == EnemyPhase.Idle || e.Phase == EnemyPhase.Recover)
                         e.PhaseEndsAt = now + System.Math.Max(0, e.PhaseEndsAt - now) * e.CooldownScale;

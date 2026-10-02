@@ -224,6 +224,11 @@ namespace BorrowedHex.Runs
         public readonly int BestVolleyKills;
         public readonly IReadOnlyDictionary<AttackKind, int> KillsByKind;
         public readonly int EncountersCompleted;
+        /// <summary>Endless: waves whose 30 s ran out, and the cycle the run ended in.</summary>
+        public readonly int WavesCompleted;
+        /// <summary>Frozen from the setup at the end: a debug-assisted or sandbox run never submits.</summary>
+        public readonly bool Debug;
+        public readonly int Cycle;
 
         RunSummary(ArenaSim sim, RunEndReason reason, double now)
         {
@@ -258,7 +263,11 @@ namespace BorrowedHex.Runs
             KillsByKind = new Dictionary<AttackKind, int>(s.KillsByKind);
             // Section 7: an encounter counts at its transition, which since D50 means it was
             // cleared (every member killed).
-            EncountersCompleted = sim.TransitionsReached;
+            // Endless counts completed waves instead (section 7 XP).
+            EncountersCompleted = sim.IsEndlessRun ? sim.WavesCompleted : sim.TransitionsReached;
+            WavesCompleted = sim.WavesCompleted;
+            Debug = sim.Setup.Debug || sim.Setup.Sandbox;
+            Cycle = sim.Cycle;
         }
 
         internal static RunSummary Freeze(ArenaSim sim, RunEndReason reason, double now) => new RunSummary(sim, reason, now);

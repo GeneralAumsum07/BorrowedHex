@@ -13,6 +13,16 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 12 — Endless mode — implemented (owner check pending, 3 Oct 2026)
+
+- Endless from the main menu: 30 s waves, choices after waves 2 and 4, the boss after wave 6, +30 s and
+  the deferred choice on the kill, then the next cycle with ranked offers and scaled enemies (D84).
+- The repeated boss has more health and a wider fan. A hostile projectile budget delays emissions.
+- Retire button on endless choices; results show cycle, waves and bosses; survival records and XP per wave.
+- Dev panel (editor/development builds): 'Endless (debug)' and 'Skip wave'; such runs never submit.
+- 291/291 EditMode (13 new in `EndlessTests`), 10/10 PlayMode (2 new).
+- Not checked by eye or by hand: how a long endless run feels, the HUD wave line, the Retire button layout.
+
 ### Phase 11 — Capture styles — implemented (owner check pending, 3 Oct 2026)
 
 - Snatcher (baseline), Collector (140 degrees, 0.40 s, 1.00 s) and Daredevil (capturing dash) (D83).

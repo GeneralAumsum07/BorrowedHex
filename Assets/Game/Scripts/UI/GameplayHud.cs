@@ -122,6 +122,15 @@ namespace BorrowedHex.UI
         }
 
         /// <summary>The dev reset only exists in sandbox/debug runs, never in a scored run.</summary>
+        /// <summary>Endless: wave, cycle and the wave's own countdown; the boss's name during the boss.</summary>
+        string EndlessObjective()
+        {
+            if (sim.State == BorrowedHex.Core.RunState.BossIntro || sim.State == BorrowedHex.Core.RunState.BossCombat)
+                return $"DEFEAT {sim.Config.collector.displayName.ToUpperInvariant()}   ·   CYCLE {sim.Cycle}";
+            int secs = Mathf.CeilToInt(sim.WaveSecondsLeft);
+            return $"WAVE {sim.Wave}/{sim.Config.endless.wavesPerCycle}   ·   CYCLE {sim.Cycle}   ·   {secs / 60}:{secs % 60:00}";
+        }
+
         public void SetResetVisible(bool on)
         {
             ResetButton.gameObject.SetActive(on);
@@ -158,7 +167,8 @@ namespace BorrowedHex.UI
             float beat = frac < 1f / 6f && !DisplayOptions.ReduceFlashes ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
             lifeHeart.rectTransform.localScale = new Vector3(beat, beat, 1);
             int n = sim.Config.shortMode.encounterCount;
-            objectiveLabel.text = !sim.IsShortRun ? "SANDBOX"
+            objectiveLabel.text = sim.IsEndlessRun ? EndlessObjective()
+                : !sim.IsShortRun ? "SANDBOX"
                 : sim.Encounter < n ? $"ENCOUNTER {sim.Encounter + 1}/{n} — KILL ALL ENEMIES ({sim.EnemiesLeftInEncounter()} LEFT)"
                 : $"DEFEAT {sim.Config.collector.displayName.ToUpperInvariant()}";
 

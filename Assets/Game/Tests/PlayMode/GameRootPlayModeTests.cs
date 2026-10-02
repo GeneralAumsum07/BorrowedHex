@@ -218,6 +218,61 @@ namespace BorrowedHex.Tests
             Assert.AreEqual("collector", root.Profile.Profile.records[0].styleId, "records are kept per style");
         }
 
+        [UnityTest]
+        public IEnumerator Endless_FromTheMenu_RetiresFromTheChoice_AndIsSaved()
+        {
+            Assert.IsTrue(root.Main.IsEntryEnabled("endless"));
+            root.Main.Press("endless");
+            root.SetFocus(true);
+            root.SetMenuOpen(false);
+            yield return null;
+            Assert.IsTrue(root.Sim.IsEndlessRun);
+            Assert.IsFalse(root.Sim.Setup.Debug);
+            var objective = GameObject.Find("Objective").GetComponent<UnityEngine.UI.Text>();
+            StringAssert.StartsWith("WAVE 1/6", objective.text);
+            // Two waves of sim time, driven directly (the frame loop would take a real minute).
+            root.Sim.Player.InvulnerableUntil = 1e9;
+            for (int i = 0; i < 2 * 30 * 60 + 5 && root.Sim.State != RunState.UpgradeChoice; i++)
+                root.Sim.Tick(BorrowedHex.Player.PlayerCommand.Moving(Vector2.zero), 1f / 60f);
+            Assert.AreEqual(RunState.UpgradeChoice, root.Sim.State);
+            yield return null;
+            var title = GameObject.Find("RunFlow/UpgradeChoice/Panel/Title").GetComponent<UnityEngine.UI.Text>();
+            Assert.AreEqual("WAVE 2 COMPLETE", title.text);
+            var retire = GameObject.Find("RunFlow/UpgradeChoice/Panel/Retire");
+            // A path Find also returns inactive children, so visibility is asserted explicitly.
+            Assert.IsTrue(retire.activeInHierarchy, "endless choices offer retirement");
+            retire.GetComponent<UnityEngine.UI.Button>().onClick.Invoke();
+            yield return null;
+            Assert.AreEqual(RunState.Results, root.Sim.State);
+            Assert.AreEqual(RunEndReason.Retired, root.Sim.Summary.Reason);
+            Assert.IsTrue(root.LastFinalize.Applied, root.LastFinalize.SkippedBecause);
+            Assert.AreEqual(1, storage.Writes);
+            Assert.AreEqual(GameMode.Endless.ToString(), root.Profile.Profile.records[0].mode);
+            var resultsTitle = GameObject.Find("RunFlow/Results/Panel/Title").GetComponent<UnityEngine.UI.Text>();
+            Assert.AreEqual("RETIRED", resultsTitle.text);
+        }
+
+        [UnityTest]
+        public IEnumerator ShortChoices_DoNotOfferRetirement()
+        {
+            yield return StartShortRun();
+            root.Sim.Player.InvulnerableUntil = 1e9;
+            for (int i = 0; i < 60 * 120 && (root.Sim.State == RunState.Ready || root.Sim.State == RunState.Combat); i++)
+            {
+                root.Sim.Tick(BorrowedHex.Player.PlayerCommand.Moving(Vector2.zero), 1f / 60f);
+                foreach (var e in root.Sim.Enemies)
+                    if (e.Alive && root.Sim.Clock.Now >= e.ActiveAt)
+                        root.Sim.DamageEnemy(e, e.Health, DamageCategory.ReturnedProjectile,
+                            new BorrowedHex.Combat.AttackSnapshot { Kind = AttackKind.Bolt, SourceActorId = 900 }, 0);
+            }
+            Assert.AreEqual(RunState.UpgradeChoice, root.Sim.State);
+            yield return null;
+            // A path Find also returns inactive children, so visibility is asserted explicitly.
+            var found = GameObject.Find("RunFlow/UpgradeChoice/Panel/Retire");
+            Assert.IsTrue(GameObject.Find("RunFlow/UpgradeChoice").activeInHierarchy, "fixture: the choice panel is up");
+            Assert.IsFalse(found.activeInHierarchy, "the Retire button is hidden in short mode");
+        }
+
         string RecordsPanelText() => BorrowedHex.UI.RecordsPanel.RecordsBody(root.Profile.Profile);
 
         IEnumerator Click(Vector2 pos)

@@ -651,10 +651,10 @@ pillar; all styles keep the frozen-slot and backfire rules.
 
 **Depends on:** Phase 11.
 
-- [ ] 30 s waves, a choice every two waves lasting until the next, a boss after six waves, deferred wave-six choice,
-      +30 s on a boss kill.
-- [ ] Ranked offers by cycle; cycle scaling including the shorter overstay timer; elites from overstaying only.
-- [ ] Retirement, finalization, survival records; a long debug-assisted session that cannot submit rewards.
+- [x] 30 s waves, a choice every two waves lasting until the next, a boss after six waves, deferred wave-six choice,
+      +30 s on a boss kill (D84).
+- [x] Ranked offers by cycle; cycle scaling including the shorter overstay timer; elites from overstaying only (D84).
+- [x] Retirement, finalization, survival records; a long debug-assisted session that cannot submit rewards (D84).
 
 **Checks:** boss cadence over two cycles; boss time does not advance wave scheduling; pause freezes scaling; enemy and
 projectile caps hold; a late death produces a complete valid summary.

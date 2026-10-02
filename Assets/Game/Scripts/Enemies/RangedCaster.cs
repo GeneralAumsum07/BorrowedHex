@@ -59,7 +59,9 @@ namespace BorrowedHex.Enemies
                         if (toPlayer.sqrMagnitude > 1e-6f) e.AimDirection = toPlayer.normalized;
                         if (now >= e.PhaseEndsAt - t.aimLock) e.AimLocked = true;
                     }
-                    if (now >= e.PhaseEndsAt)
+                    // Phase 12: with the hostile projectile budget full, the shooter holds its
+                    // locked telegraph (a visible delay) and fires on the first tick with room.
+                    if (now >= e.PhaseEndsAt && sim.HostileRoomFor(t.volleySpreadDeg.Length))
                     {
                         AttackEmitter.FireVolley(sim, t.attackId, e.ActorId, e.Position, e.Radius,
                             e.AimDirection, t.volleySpreadDeg);

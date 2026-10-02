@@ -255,7 +255,7 @@ namespace BorrowedHex.Presentation
 
                 // Spawn warning: a pulsing ring and a ghosted body, so it reads as "not yet".
                 bool warning = now < e.ActiveAt;
-                double overstayLeft = e.ActiveAt + sim.Config.combat.overstaySeconds - now;
+                double overstayLeft = e.ActiveAt + sim.OverstaySeconds - now;
                 bool overstayWarning = !e.IsBoss && !e.Overstayed && !warning
                     && overstayLeft <= sim.Config.combat.overstayWarningSeconds;
                 v.WarningRing.enabled = warning || overstayWarning;
@@ -347,7 +347,7 @@ namespace BorrowedHex.Presentation
             var v = new EnemyView { Body = body };
             // Telegraph and warning ring live under the body root but must not inherit its
             // position offsets, so they are placed in world space each frame.
-            int lines = e.IsBoss ? sim.Config.collector.fanSpreadDeg.Length
+            int lines = e.IsBoss ? CollectorBoss.FanOf(e, sim.Config.collector).Length
                 : Mathf.Max(1, sim.Config.combat.For(e.Category).volleySpreadDeg.Length);
             v.Telegraph = new SpriteRenderer[lines];
             for (int i = 0; i < lines; i++)
@@ -394,14 +394,15 @@ namespace BorrowedHex.Presentation
             float yaw = -Mathf.Atan2(e.AimDirection.y, e.AimDirection.x) * Mathf.Rad2Deg;
 
             // Aim lines: the stream shows one (it keeps tracking while firing), the fan all.
-            int shown = b.Pattern == BossPattern.FanVolley && tele ? t.fanSpreadDeg.Length
+            var fan = CollectorBoss.FanOf(e, t);
+            int shown = b.Pattern == BossPattern.FanVolley && tele ? fan.Length
                 : b.Pattern == BossPattern.BoltStream && (tele || active) ? 1 : 0;
             for (int i = 0; i < v.Telegraph.Length; i++)
             {
                 var line = v.Telegraph[i];
                 line.enabled = i < shown;
                 if (!line.enabled) continue;
-                float off = b.Pattern == BossPattern.FanVolley ? t.fanSpreadDeg[i] : 0f;
+                float off = b.Pattern == BossPattern.FanVolley ? fan[i] : 0f;
                 var c = TelegraphColor;
                 c.a = active ? 0.5f : e.AimLocked ? 0.9f : Mathf.Lerp(0.15f, 0.6f, ramp);
                 line.color = c;

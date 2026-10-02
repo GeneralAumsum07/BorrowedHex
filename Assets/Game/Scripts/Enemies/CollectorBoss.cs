@@ -34,6 +34,9 @@ namespace BorrowedHex.Enemies
         public int ShotsLeft;
         public double NextShotAt;
 
+        /// <summary>Endless: a repeated boss (Phase 12) fires the wider encore fan.</summary>
+        public bool Encore;
+
         // Sweep: the blade's current angle relative to the locked aim, and where it ends.
         public float BladeDeg;
         public float BladeEndDeg;
@@ -133,7 +136,10 @@ namespace BorrowedHex.Enemies
                         Recover(e, t, now, t.parriedRecover);
                         break;
                     }
-                    if (now >= b.StageEndsAt) StartActive(sim, e, t, now);
+                    // A fan waits for room in the projectile budget (Phase 12, endless only),
+                    // holding its locked aim lines on screen, rather than firing part of a fan.
+                    if (now >= b.StageEndsAt && (b.Pattern != BossPattern.FanVolley || sim.HostileRoomFor(FanOf(e, t).Length)))
+                        StartActive(sim, e, t, now);
                     break;
 
                 case BossStage.Active:
@@ -382,6 +388,10 @@ namespace BorrowedHex.Enemies
             sim.Events.RaiseEnemyTelegraph(e);
         }
 
+        /// <summary>The fan this boss fires: the encore fan once it has been beaten before.</summary>
+        public static float[] FanOf(EnemyActor e, BossTuning t) =>
+            e.Boss != null && e.Boss.Encore ? t.fanSpreadRepeatDeg : t.fanSpreadDeg;
+
         static void StartActive(ArenaSim sim, EnemyActor e, BossTuning t, double now)
         {
             var b = e.Boss;
@@ -397,7 +407,7 @@ namespace BorrowedHex.Enemies
 
                 case BossPattern.FanVolley:
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
-                        t.fanSpreadDeg, t.hitDamage);
+                        FanOf(e, t), t.hitDamage);
                     sim.Events.RaiseEnemyFired(e);
                     Recover(e, t, now, t.recover);
                     return;
@@ -441,6 +451,9 @@ namespace BorrowedHex.Enemies
                 e.AimDirection = Geometry2D.Rotate(e.AimDirection, Mathf.Clamp(want, -maxTurn, maxTurn)).normalized;
                 while (b.ShotsLeft > 0 && now >= b.NextShotAt - 1e-9)
                 {
+                    // Budget full: the stream pauses (still aiming) and resumes from now,
+                    // so the held bolts are delayed, not lost or fired in a burst later.
+                    if (!sim.HostileRoomFor(1)) { b.NextShotAt = now; break; }
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
                         ZeroSpread, t.hitDamage);
                     sim.Events.RaiseEnemyFired(e);

@@ -534,3 +534,30 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - PlayMode: 8/8 pass. New: the style panel opens from the menu, a selection saves once (re-selecting does
   not save), the next run uses Collector's cone, and the run's record is filed under Collector.
 - Not verified: the panel and the disc visual by eye; Daredevil's feel (radius 1.0 is a placeholder).
+
+## Phase 12 — Endless mode (3 Oct 2026)
+
+- Files: new `Data/EndlessTuning.cs`, `Runs/ArenaSim.Endless.cs`, `Presentation/GameRoot.Endless.cs`,
+  `Tests/EditMode/EndlessTests.cs`; changed `ArenaSim.Run/Combat/Enemies` (endless branch, boss scaling, overstay
+  timer and stacking), `RangedCaster` and `CollectorBoss` (budget, encore fan), `ArenaView` (encore fan lines,
+  overstay warning), `RunSummary` (waves, cycle, debug flag), `ProfileService` (refuses a debug summary),
+  `GameRoot` (endless run kinds), `GameplayHud` (wave line), `RunFlowPanels` (titles, note, Retire, results).
+- Live editor, EditMode: 291/291 pass. New: two full cycles stop exactly at w2/w4 choices, the
+  boss intro after w6 and the deferred choice after the kill, with ranks 1,1,2 / 2,2,3 and +30 s; a wave is
+  1800 ticks and survivors stay through a choice; a 45 s boss fight leaves the next wave at a full 30 s and the
+  next choice exactly two waves later; pause freezes wave clock, life clock, gameplay clock and scaling; cycle-2
+  spawns have 1.15x health, 1.05x move, 0.95x interval and a 23 s overstay; an overstayer stacks on those;
+  the caps 1.25 / 0.70 / 15 s hold; the second boss has 1.2x health and the 11-bolt fan; 18 enemies reached and
+  never passed; with a 12-shot budget the live count reaches 12 and never passes it, also through a 40 s boss
+  fight, and no shot is removed outside the boss transition; short mode has no budget and the old timer; a
+  death in cycle 2 gives a full summary (7 waves counted for XP, 1 boss, new survival record); the real clock ends a
+  kill-less run TimeExpired at exactly its start value; retirement only from an open choice, once, and it
+  finalizes; a two-cycle Skip-wave session is refused as debug, with or without the setup.
+- Mutation check: with the casters' budget test removed, the budget test fails (shots exceeded 12). Removing
+  the Combat-only guard on the wave countdown is NOT caught, and cannot matter: the countdown is already at 0
+  through the boss and is reset at every wave start, so boss time has nothing to leak into.
+- PlayMode: 10/10 pass. New: Endless from the main menu starts a non-debug endless run showing WAVE 1/6; after
+  two waves the choice reads WAVE 2 COMPLETE with a visible Retire button; Retire ends the run Retired, saves once
+  and files an Endless record; a short-mode choice keeps Retire hidden (checked with activeInHierarchy: a path
+  GameObject.Find also returns inactive children, which first made this test fail falsely).
+- Not verified: a full endless cycle played by hand; the HUD wave line, Retire layout and encore fan by eye.

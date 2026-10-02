@@ -29,6 +29,7 @@ namespace BorrowedHex.Runs
             // Aim first (no side effects) so a release this tick uses the freshest valid aim.
             if (Player.Alive) PlayerMotor.UpdateAim(Player, cmd);
             TickLifeClock(dt);
+            TickWaveClock(dt);                            //   endless wave countdown (Combat only)
             BackfireExpiredPackets(now);                  // 3
             if (!Player.Alive) { TickRunFlow(now); return; }
             TickArenaDecay(now);

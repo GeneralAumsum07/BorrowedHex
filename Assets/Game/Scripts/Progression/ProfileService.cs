@@ -189,7 +189,9 @@ namespace BorrowedHex.Progression
             var result = new FinalizeResult();
             if (summary == null) { result.SkippedBecause = "no summary"; return result; }
             if (setup != null && setup.Sandbox) { result.SkippedBecause = "sandbox"; return result; }
-            if (setup != null && setup.Debug) { result.SkippedBecause = "debug"; return result; }
+            // The summary's own flag covers a debug run whose setup could not be passed in, and
+            // a run that became debug-assisted mid-way (endless Skip wave, Phase 12).
+            if ((setup != null && setup.Debug) || summary.Debug) { result.SkippedBecause = "debug"; return result; }
             if (Profile.finalizedRunIds.Contains(summary.RunId)) { result.SkippedBecause = "already finalized"; return result; }
 
             var st = Profile.stats;

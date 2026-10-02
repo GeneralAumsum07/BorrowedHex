@@ -83,6 +83,11 @@ namespace BorrowedHex.Data
         public float fanTelegraph = 0.72f;
         public float fanAimLock = 0.25f;
         public float[] fanSpreadDeg = { -48f, -36f, -24f, -12f, 0f, 12f, 24f, 36f, 48f };
+        // Section 4: a repeated endless boss gains ONE predefined variation, not only health.
+        // The variation is mine (D84; the plan names none): the same fan plus a bolt at
+        // ±60°, so the side-step that beat the first boss's fan no longer clears it.
+        [Tooltip("Endless: the repeated boss's fan.")]
+        public float[] fanSpreadRepeatDeg = { -60f, -48f, -36f, -24f, -12f, 0f, 12f, 24f, 36f, 48f, 60f };
 
         [Header("Sweeping melee")]
         public float sweepTelegraph = 0.77f;
