@@ -27,6 +27,8 @@ namespace BorrowedHex.Combat
         public int RootReleaseId;
         public bool IsEcho;
         public float PowerMultiplier = 1f;
+        /// <summary>1 + perfect bonus for a perfect payload, fixed at release (Final Second included).</summary>
+        public float PerfectMultiplier = 1f;
         /// <summary>Additional actors it may pass through after a hit (Piercing upgrade).</summary>
         public int PierceRemaining;
         /// <summary>Travel budget, independent of speed: shotgun pellets stop at their range.</summary>
@@ -50,6 +52,7 @@ namespace BorrowedHex.Combat
             RootReleaseId = 0;
             IsEcho = false;
             PowerMultiplier = 1f;
+            PerfectMultiplier = 1f;
             PierceRemaining = 0;
             DistanceRemaining = float.PositiveInfinity;
             HitActors.Clear();

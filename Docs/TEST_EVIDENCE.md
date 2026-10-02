@@ -440,3 +440,21 @@ Test report: EditMode 165/165, PlayMode 2/2.
   loading/rendering smoke check, not a Web performance or survival verdict.
 - Human gate remains pending: play a short run and judge whether swapping matters and
   the pace is fast. Phase 7 has not started.
+
+## Phase 7 — Encounter upgrades (3 Oct 2026)
+
+- Live editor, EditMode: 210/210 pass, including 21 new `UpgradeTests`: seeded distinct offers
+  reproduce; picking an upgrade does not shift the next encounter's spawns; lifetime and
+  `ExpiredUpgrade`; the pick after encounter 3 is active in the boss fight; bad index/state
+  rejected; perfect geometry (caught at 1.1 units perfect, at 2.5 not); perfect multiplier
+  1.15 and 1.35 with Final Second; pierce +1 stacks with the acolyte, never on rockets; one
+  hit per body when piercing; one echo after 0.20 s at 25% with the same root, none when Echo
+  was replaced before firing, none after death; Parting Gift reaches 1.6 (body edge) not 4,
+  no combo; Heavy Orbit: nothing without a packet, 3 hits in 60 ticks, no combo, kills not in
+  kills-by-kind; Overflow fires the selected packet and the catch takes slot 0; full slots
+  reject without an upgrade; Fusion merges 2+1+1 payloads, x1.25, locks slot 1 until fired;
+  a fused packet backfires once and unlocks; Overflow at most once per activation.
+- PlayMode: 2/2 pass. Zero-passive bot (no upgrades): won 39.2 s into the boss fight, run
+  clock 68.2 s, 22 released, 17 hit, 0 taken.
+- Not verified: the choice cards and orbit ring in a running game (no visual pass yet), and
+  whether any upgrade is worth picking over another (human playtest).

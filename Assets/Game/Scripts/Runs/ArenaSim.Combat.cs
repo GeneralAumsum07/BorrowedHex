@@ -36,6 +36,7 @@ namespace BorrowedHex.Runs
             TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6
             Capture.Tick(now);                            //   close the window's packet
+            TickOrbit(now);                               // 7 (Heavy Orbit aura)
             TickSandboxDirector(now);                     // 7 (sandbox director)
             RemoveDeadEnemies();
             TickRunFlow(now);                             // 8 (terminal, schedule, short-mode director)

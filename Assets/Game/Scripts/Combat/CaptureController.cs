@@ -12,6 +12,8 @@ namespace BorrowedHex.Combat
         WindowClosed,
         PacketFull,       // this activation's packet cannot fit the shot
         SlotsFull,        // no packet yet this activation and both slots are occupied
+        Overflowed,       // Overflow: the selected packet fired and the catch took its slot
+        Fused,            // Fusion: the catch and the other packet merged into the selected one
     }
 
     /// <summary>
@@ -80,9 +82,11 @@ namespace BorrowedHex.Combat
         public double RecoveryEndsAt { get; private set; } = double.NegativeInfinity;
         /// <summary>The packet created by the current activation, if any.</summary>
         public CapturedPacket ActivePacket { get; private set; }
-        /// <summary>Overflow upgrade (Phase 6): may create one packet beyond the slots per activation.</summary>
-        public bool OverflowAvailable;
-        public bool OverflowUsedThisActivation { get; private set; }
+        /// <summary>
+        /// Overflow or Fusion already fired this activation (section 5: at most one per catch
+        /// activation). Without it, one wide window over a volley could cycle every packet.
+        /// </summary>
+        public bool SlotsFullUpgradeUsed { get; private set; }
 
         public bool IsWindowOpen(double now) => now >= WindowOpensAt && now <= WindowEndsAt + 1e-9;
         public bool IsParryOpen(double now) => now >= WindowOpensAt && now <= ParryEndsAt + 1e-9;
@@ -97,7 +101,7 @@ namespace BorrowedHex.Combat
             ParryEndsAt = now + Mathf.Min(s.ParryWindow, s.CaptureWindow);
             RecoveryEndsAt = now + Mathf.Max(s.CaptureRecovery, s.CaptureWindow);
             ActivePacket = null;
-            OverflowUsedThisActivation = false;
+            SlotsFullUpgradeUsed = false;
             return true;
         }
 
@@ -121,12 +125,28 @@ namespace BorrowedHex.Combat
             }
 
             if (shot.EnergyCost > s.PacketCapacity) return CaptureResult.PacketFull;
-            if (store.FreeSlots <= 0) return CaptureResult.SlotsFull;   // Overflow handled in Phase 6
+            // Overflow and Fusion are resolved by the sim BEFORE this call (they need release
+            // and merge, which live there); by the time we get here a full store is just full.
+            if (store.FreeSlots <= 0) return CaptureResult.SlotsFull;
 
             ActivePacket = store.Create(ids.Next(), ActivationId, now, s.PacketLifetime, s.PacketCapacity);
             Store(ActivePacket, shot);
             return CaptureResult.CreatedPacket;
         }
+
+        /// <summary>
+        /// Fusion: the merged packet becomes this activation's packet, so later catches in the
+        /// same window append to it (capacity permitting) instead of hunting for a free slot.
+        /// </summary>
+        public void AdoptForFusion(CapturedPacket merged, in AttackSnapshot shot)
+        {
+            SlotsFullUpgradeUsed = true;
+            ActivePacket = merged;
+            Store(merged, shot);
+        }
+
+        /// <summary>Overflow: mark the once-per-activation use; the normal create path follows.</summary>
+        public void MarkOverflowUsed() => SlotsFullUpgradeUsed = true;
 
         static void Store(CapturedPacket p, in AttackSnapshot shot)
         {

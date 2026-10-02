@@ -61,6 +61,10 @@ namespace BorrowedHex.UI
             objectiveLabel.color = new Color(1, 1, 1, 0.8f);
             scoreLabel = Ui.Label("Score", root, "", 26, TextAnchor.MiddleLeft);
             Ui.Place(scoreLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -116), new Vector2(400, 34));
+            // Phase 7: the held upgrade, so the player can see what the current encounter grants.
+            upgradeLabel = Ui.Label("Upgrade", root, "", 20, TextAnchor.MiddleLeft);
+            Ui.Place(upgradeLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -146), new Vector2(520, 28));
+            upgradeLabel.color = new Color(0.75f, 0.95f, 1f);
 
             bossBarBg = Ui.Image("BossBar", root, new Color(0, 0, 0, 0.6f));
             Ui.Place(bossBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -128), new Vector2(560, 20));
@@ -79,6 +83,7 @@ namespace BorrowedHex.UI
         }
 
         public PacketIndicator Packets { get; private set; }
+        Text upgradeLabel;
 
         public void Bind(ArenaSim s)
         {
@@ -159,6 +164,9 @@ namespace BorrowedHex.UI
             var score = sim.Score;
             scoreLabel.text = score.Multiplier > 1f ? $"SCORE {score.Score}   x{score.Multiplier:0.00}" : $"SCORE {score.Score}";
             scoreLabel.color = score.Multiplier > 1f ? Ui.Accent : Ui.Ink;
+            var up = sim.ActiveUpgrade;
+            upgradeLabel.text = up.HasValue
+                ? $"UPGRADE: {UpgradeInfo.Name(up.Value.Id).ToUpperInvariant()}{(up.Value.Rank > 1 ? $" {up.Value.Rank}" : "")}" : "";
 
             var boss = sim.LivingBoss();
             bossBarBg.gameObject.SetActive(boss != null);

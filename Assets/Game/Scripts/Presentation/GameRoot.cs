@@ -55,7 +55,7 @@ namespace BorrowedHex.Presentation
             Menu.AddButton(() => ModeSwitchLabel, SwitchMode);
             // uGUI draws later siblings on top: the pause menu is raised above the flow panels
             // so pausing during an upgrade choice shows the menu, not the panel behind it.
-            Flow = RunFlowPanels.Create(canvas, () => Sim.ContinueFromUpgrade(), Restart, SwitchMode, () => ModeSwitchLabel);
+            Flow = RunFlowPanels.Create(canvas, i => Sim.ChooseUpgrade(i), Restart, SwitchMode, () => ModeSwitchLabel);
             Menu.transform.SetAsLastSibling();
             BuildDevPanel();
 
@@ -82,11 +82,21 @@ namespace BorrowedHex.Presentation
             });
             Hud.AddDevButton("+ Collector", () => { if (Sim.LivingBoss() == null) Sim.SpawnBoss(); });
             Hud.AddDevButton("Clear arena", () => Sim.ClearArena());
+            // Phase 7 practice: cycle the held upgrade (none -> each in pool order -> none).
+            UnityEngine.UI.Button upgradeButton = null;
+            upgradeButton = Hud.AddDevButton("Upgrade: none", () =>
+            {
+                devUpgrade = (devUpgrade + 1) % (UpgradeInfo.Pool.Length + 1);
+                if (devUpgrade == 0) Sim.ClearUpgrade(); else Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
+                upgradeButton.GetComponentInChildren<UnityEngine.UI.Text>().text =
+                    "Upgrade: " + (devUpgrade == 0 ? "none" : UpgradeInfo.Name(UpgradeInfo.Pool[devUpgrade - 1]));
+            });
         }
 
         // Held here, not on the sim, so the choice survives Reset: a tester drilling one enemy
         // should not have the director switch back on every restart.
         bool autoSpawn = true;
+        int devUpgrade;   // 0 = none, else 1 + index into UpgradeInfo.Pool; reapplied on Reset
         UnityEngine.UI.Button autoSpawnButton;
         string AutoSpawnLabel => autoSpawn ? "Auto-spawn: ON" : "Auto-spawn: OFF";
 
@@ -120,6 +130,8 @@ namespace BorrowedHex.Presentation
                 setup = new RunSetup { Mode = GameMode.Short, Seed = System.Environment.TickCount ^ (runCounter * 7919) };
             }
             Sim = new ArenaSim(config, setup);
+            // The sandbox upgrade picked on the dev button survives Reset, like auto-spawn.
+            if (sandboxMode && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
             // Keep the authored arena meshes and bind their disposable state to each run.
             // Tests without an arena and future layouts with fewer pillars simply skip them.
             for (int i = 0; i < Sim.Pillars.Count; i++)

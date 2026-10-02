@@ -25,7 +25,7 @@ namespace BorrowedHex.Runs
 
         public ProjectileActor SpawnProjectile(in AttackSnapshot shot, AttackFaction faction, Vector2 position,
             Vector2 direction, int rootReleaseId = 0, bool isEcho = false, float power = 1f, int pierce = 0,
-            float maxDistance = float.PositiveInfinity)
+            float maxDistance = float.PositiveInfinity, float perfectMultiplier = 1f)
         {
             var p = ProjectilePool.Rent();
             p.Active = true;
@@ -40,6 +40,7 @@ namespace BorrowedHex.Runs
             p.RootReleaseId = rootReleaseId;
             p.IsEcho = isEcho;
             p.PowerMultiplier = power;
+            p.PerfectMultiplier = perfectMultiplier;
             p.PierceRemaining = pierce;
             p.DistanceRemaining = maxDistance;
             Projectiles.Add(p);
@@ -183,15 +184,15 @@ namespace BorrowedHex.Runs
             }
         }
 
-        /// <summary>Returned-shot damage: base x power (upgrades) x perfect bonus (Phase 6).</summary>
+        /// <summary>Returned-shot damage: base x perfect bonus x power (power includes any echo fraction).</summary>
         float ReturnedDamageOf(ProjectileActor p) => ScaledReturnedDamage(p, p.Shot.ReturnedDamage);
 
         /// <summary>Apply the projectile's power and per-payload perfect bonus to a base amount.</summary>
         internal float ScaledReturnedDamage(ProjectileActor p, float baseAmount)
         {
-            float dmg = baseAmount * p.PowerMultiplier;
-            if (p.Shot.Perfect) dmg *= 1f + Stats.PerfectBonus;
-            return dmg;
+            // The perfect multiplier was fixed at release, so Final Second expiring mid-flight
+            // cannot change a shot already fired.
+            return baseAmount * p.PerfectMultiplier * p.PowerMultiplier;
         }
 
         void EndProjectile(ProjectileActor p, ProjectileEndReason reason)

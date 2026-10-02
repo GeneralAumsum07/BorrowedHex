@@ -592,12 +592,12 @@ Human gate: the owner plays a short run and judges whether swapping now matters 
 **Depends on:** Phase 6.  
 **Deliverable:** A choice of three after each encounter, lasting one encounter.
 
-- [ ] Upgrade definitions and the one-encounter lifetime; the choice panel shows exact effects and what is expiring.
-- [ ] The seven upgrades of section 5, including Overflow and Fusion under the frozen-slot rules.
-- [ ] Perfect-catch geometry and bonus before Final Second can be offered.
-- [ ] Modifier order as section 5; no recursive echoes, no repeated pierce hits, at most one Overflow or Fusion per
+- [x] Upgrade definitions and the one-encounter lifetime; the choice panel shows exact effects and what is expiring.
+- [x] The seven upgrades of section 5, including Overflow and Fusion under the frozen-slot rules.
+- [x] Perfect-catch geometry and bonus before Final Second can be offered.
+- [x] Modifier order as section 5; no recursive echoes, no repeated pierce hits, at most one Overflow or Fusion per
       catch activation.
-- [ ] Upgrade state is cleared when its encounter ends and on every new run.
+- [x] Upgrade state is cleared when its encounter ends and on every new run.
 
 **Checks:** seeded offers reproduce; an upgrade picked after encounter 3 applies to the boss and nothing after it; a
 packet caught under Echo and fired after the encounter ends gets no echo; Fusion's locked slot unlocks when the merged

@@ -13,6 +13,18 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 7 — Encounter upgrades — implemented (owner playtest pending, 3 Oct 2026)
+
+- Built overnight at the owner's request ("build the next remaining phases one by one"),
+  which overrode the Phase 6 playtest gate. Committed locally, not pushed.
+- Three seeded offers after each cleared encounter; one-encounter lifetime, the pick after
+  encounter 3 lasts the boss (D67). Seven upgrades: Piercing Return, Echo Volley, Heavy
+  Orbit, Parting Gift, Final Second, Overflow, Fusion (D68–D70). Perfect catches (D71).
+- Choice cards, HUD upgrade line, locked/fused slot display, orbit ring, sandbox upgrade
+  dev button (D72).
+- 210/210 EditMode (21 new in `UpgradeTests`), 2/2 PlayMode. Bot unchanged (takes no upgrades).
+- Not checked by eye: the card layout in Play mode.
+
 ### Phase 6 — Borrowed time — implemented (owner playtest pending, 2 Oct 2026)
 
 - Selected-first catches, frozen unselected packets, power from

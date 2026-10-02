@@ -97,8 +97,14 @@ namespace BorrowedHex.Runs
             Score += Mathf.RoundToInt(e.KillValue * Multiplier);
             Kills++;
             if (e.IsBoss) BossesDefeated++;
-            KillsByKind.TryGetValue(d.Kind, out int k);
-            KillsByKind[d.Kind] = k + 1;
+            // Kills by HEX type: only returned payloads count. Orbit and Parting Gift kills are
+            // upgrade damage, not a borrowed hex, and would otherwise pose as bolts or rockets.
+            if (d.Category == DamageCategory.ReturnedProjectile || d.Category == DamageCategory.Echo
+                || d.Category == DamageCategory.Explosion)
+            {
+                KillsByKind.TryGetValue(d.Kind, out int k);
+                KillsByKind[d.Kind] = k + 1;
+            }
             if (d.RootReleaseId != 0)
             {
                 if (!killsByRoot.TryGetValue(d.RootReleaseId, out var set))
@@ -120,7 +126,7 @@ namespace BorrowedHex.Runs
         void OnPacketReleased(CapturedPacket p, int root)
         {
             PacketsReleased++;
-            totalFirePower += p.Power(sim.Stats.PowerPerSecond);
+            totalFirePower += p.FirePower(sim.Stats.PowerPerSecond);
             releasedRoots.Add(root);
             foreach (var s in p.Payloads) if (s.Perfect) PerfectShots++;
         }

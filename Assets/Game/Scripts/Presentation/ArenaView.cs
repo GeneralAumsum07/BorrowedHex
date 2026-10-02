@@ -103,6 +103,7 @@ namespace BorrowedHex.Presentation
         Camera cam;
 
         public CharacterView PlayerView => player;
+        SpriteRenderer heavyOrbitRing;
 
         public static ArenaView Create(ArenaSim sim)
         {
@@ -138,6 +139,12 @@ namespace BorrowedHex.Presentation
             float bandInner = (st.ParryRingRadius - st.ParryRingWidth * 0.5f) / parryBandOuter;
             parryBand = FlatSprite("ParryBand", transform, PixelSprites.ArcBand(st.CaptureConeAngle * 0.5f, bandInner), RiposteColor);
             parryBand.sortingOrder = -3; // above the cone fill
+            // Heavy Orbit (Phase 7): a ring at the true damage reach, shown only while it is live
+            // (upgrade held AND a packet held), so the player sees when holding is a weapon.
+            heavyOrbitRing = FlatSprite("HeavyOrbit", transform, PixelSprites.Disc(true), new Color(0.45f, 0.95f, 1f, 0.35f));
+            heavyOrbitRing.enabled = false;
+            // Echo Volley: a fainter release pop where the echo leaves the player.
+            sim.Events.EchoFired += _ => SpawnPop(sim.Player.Position, ReturnedColor, 0.3f, 1.0f, 0.2f);
             orbitRoot = new GameObject("PacketOrbits").transform;
             orbitRoot.SetParent(transform, false);
 
@@ -198,6 +205,13 @@ namespace BorrowedHex.Presentation
             // Post-hit invulnerability blinks; dash i-frames are short enough to skip.
             player.SetBlink(p.Alive && p.InvulnerableUntil > sim.Clock.Now);
             player.gameObject.SetActive(p.Alive);
+            float orbit = sim.OrbitRadiusNow;
+            heavyOrbitRing.enabled = p.Alive && orbit > 0f;
+            if (heavyOrbitRing.enabled)
+            {
+                heavyOrbitRing.transform.position = Geometry2D.ToWorld(pos, 0.05f);
+                heavyOrbitRing.transform.localScale = Vector3.one * orbit;   // ring sprite: scale == radius
+            }
 
             aimMarker.enabled = p.Alive;
             aimMarker.transform.position = Geometry2D.ToWorld(pos + p.AimDirection * 1.4f, 0.03f);

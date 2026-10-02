@@ -123,6 +123,7 @@ namespace BorrowedHex.Runs
                 // Section 6: the choice pauses gameplay; packets are untouched and every timer
                 // (packet expiry, combo) is frozen with the clock.
                 TransitionsReached++;
+                OpenUpgradeChoice(1);
                 Clock.SetPauseReason(PauseReason.UpgradeChoice, true);
                 SetState(RunState.UpgradeChoice);
             }
@@ -145,13 +146,14 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>
-        /// Leave the upgrade choice. Phase 5 has no upgrades yet (Phase 6), so this is the
-        /// Continue button. After the third choice the boss intro starts instead of combat.
+        /// Leave the upgrade choice WITHOUT taking an upgrade (tests, and the path ChooseUpgrade
+        /// uses before it sets the pick). After the third choice the boss intro starts instead.
         /// </summary>
         public bool ContinueFromUpgrade()
         {
             if (State != RunState.UpgradeChoice) return false;
             Clock.SetPauseReason(PauseReason.UpgradeChoice, false);
+            Offers.Clear();
             Encounter++;
             RestorePillars();
             if (TransitionsReached >= Config.shortMode.encounterCount) BeginBossIntro();

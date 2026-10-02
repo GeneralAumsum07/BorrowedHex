@@ -30,6 +30,7 @@ namespace BorrowedHex.UI
         static readonly Color UrgentColor = new Color(1f, 1f, 1f);
         static readonly Color EmptyBack = new Color(0f, 0f, 0f, 0.35f);
         static readonly Color UsedBack = new Color(0f, 0.1f, 0.15f, 0.7f);
+        static readonly Color LockedBack = new Color(0.2f, 0.05f, 0.1f, 0.7f);
 
         ArenaSim sim;
         RectTransform root;
@@ -115,13 +116,16 @@ namespace BorrowedHex.UI
                     p.Fill.enabled = true;
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
                     p.Fill.color = selected && left < 0.5f ? UrgentColor : FillColor;
-                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.Power(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{(selected ? "DECAYING" : "FROZEN")}";
+                    // FirePower, not Power: a fused packet shows the +25% it will actually fire with.
+                    string state = (selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
+                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{state}";
                 }
                 else
                 {
-                    p.Back.color = EmptyBack;
+                    p.Back.color = store.IsLocked(i) ? LockedBack : EmptyBack;
                     p.Fill.enabled = false;
-                    p.Label.text = $"{tag}  empty";
+                    // Fusion lock (section 5): the slot is unusable until the fused packet leaves.
+                    p.Label.text = store.IsLocked(i) ? $"{tag}  LOCKED\n(fused)" : $"{tag}  empty";
                 }
             }
 

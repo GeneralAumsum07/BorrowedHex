@@ -3,7 +3,8 @@ using BorrowedHex.Core;
 
 namespace BorrowedHex.Combat
 {
-    public enum PacketStatus { Collecting, Stored, Released, Backfired, Cancelled }
+    // Merged: its payloads were folded into another packet by Fusion (Phase 7); it no longer exists.
+    public enum PacketStatus { Collecting, Stored, Released, Backfired, Cancelled, Merged }
 
     /// <summary>
     /// One stored packet (section 3). Holds snapshot DATA only — never references to the
@@ -33,6 +34,10 @@ namespace BorrowedHex.Combat
         public bool Fits(int cost) => CapacityUsed + cost <= Capacity;
         public float Remaining(double now) => (float)System.Math.Max(0.0, Lifetime - DecayedTime);
         public float Power(float gainPerSecond) => 1f + gainPerSecond * (float)DecayedTime;
+        /// <summary>Extra power multiplier (Fusion's +25%, section 5). 1 for an ordinary packet.</summary>
+        public float PowerScale = 1f;
+        /// <summary>The multiplier a release uses: decay power times any fusion scale.</summary>
+        public float FirePower(float gainPerSecond) => Power(gainPerSecond) * PowerScale;
 
         /// <summary>The dominant kind for HUD icons: the most expensive payload carried.</summary>
         public AttackKind DominantKind
@@ -65,7 +70,35 @@ namespace BorrowedHex.Combat
 
         public int SlotCount { get; private set; }
         public IReadOnlyList<CapturedPacket> Packets => packets;
-        public int FreeSlots => SlotCount - packets.Count;
+        // A slot locked by Fusion holds no packet but cannot take one either (section 5).
+        public int FreeSlots => SlotCount - packets.Count - (LockedSlot >= 0 ? 1 : 0);
+
+        /// <summary>
+        /// Fusion lock (Phase 7): the slot the merged-away packet left, or -1. It stays locked
+        /// until the packet that absorbed it fires, backfires or is cancelled, whichever comes first.
+        /// </summary>
+        public int LockedSlot { get; private set; } = -1;
+        int lockOwnerId;
+
+        public bool IsLocked(int slot) => slot == LockedSlot;
+
+        /// <summary>Fusion: <paramref name="absorbed"/> leaves its slot, which stays locked to <paramref name="owner"/>.</summary>
+        public void MergeInto(CapturedPacket owner, CapturedPacket absorbed)
+        {
+            owner.Payloads.AddRange(absorbed.Payloads);
+            owner.CapacityUsed += absorbed.CapacityUsed;
+            absorbed.Status = PacketStatus.Merged;
+            packets.Remove(absorbed);
+            LockedSlot = absorbed.Slot;
+            lockOwnerId = owner.PacketId;
+        }
+
+        // Every way a packet leaves the store goes through here, so the lock can never outlive
+        // the packet it waits for (a backfire, a death cancel and a release all unlock).
+        void Left(CapturedPacket p)
+        {
+            if (LockedSlot >= 0 && p.PacketId == lockOwnerId) LockedSlot = -1;
+        }
 
         /// <summary>Slot the right-mouse release fires first. Persists when that slot empties.</summary>
         public int SelectedSlot { get; private set; }
@@ -90,16 +123,21 @@ namespace BorrowedHex.Combat
         public CapturedPacket ReleaseCandidate() => InSlot(SelectedSlot);
 
         /// <summary>Take a packet out of its slot (early release). The slot is free immediately.</summary>
-        public bool Remove(CapturedPacket p) => packets.Remove(p);
+        public bool Remove(CapturedPacket p)
+        {
+            if (!packets.Remove(p)) return false;
+            Left(p);
+            return true;
+        }
 
         public CapturedPacket Create(int packetId, int activationId, double now, float lifetime, int capacity)
         {
             if (FreeSlots <= 0) return null;
             int slot = SelectedSlot;
-            if (InSlot(slot) != null)
+            if (InSlot(slot) != null || IsLocked(slot))
             {
                 slot = 0;
-                while (InSlot(slot) != null) slot++;
+                while (InSlot(slot) != null || IsLocked(slot)) slot++;
             }
             var p = new CapturedPacket
             {
@@ -135,6 +173,7 @@ namespace BorrowedHex.Combat
                 {
                     expired.Add(packets[i]);
                     packets.RemoveAt(i--);
+                    Left(packet);
                 }
             }
             return expired;
@@ -145,6 +184,7 @@ namespace BorrowedHex.Combat
         {
             foreach (var p in packets) p.Status = PacketStatus.Cancelled;
             packets.Clear();
+            LockedSlot = -1;
         }
 
         public int TotalStoredShots()
