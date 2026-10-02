@@ -430,6 +430,13 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - Windows development build succeeded through the live CLI: zero errors; one warning
   that Pipeline has no runtime config and is disabled in players (the game does not need
   runtime Pipeline). Player launched outside the Editor, responded, and its log contained
-  no exception/error matches. Web build validation is still in progress at this commit.
+  no exception/error matches.
+- Web development build succeeded through the live CLI in 428.9 seconds: zero errors,
+  two warnings (runtime Pipeline disabled; queued uncompiled Editor changes). The latter
+  followed Inspector tooltip/comment edits; no Editor import/post-processing code changed.
+  The built player was served over localhost and visibly rendered the arena, actors,
+  telegraphs, clock and packet HUD, with the hint clear of the panels. Browser console:
+  no errors; one Unity persistent-data synchronization deprecation warning. This is a
+  loading/rendering smoke check, not a Web performance or survival verdict.
 - Human gate remains pending: play a short run and judge whether swapping matters and
   the pace is fast. Phase 7 has not started.

@@ -27,6 +27,9 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   without backfires; this does not establish human survivability.
 - Visual inspection confirmed clock/packet labels, cracks/rubble and the evolved silhouette;
   the control hint was moved clear of the taller packet panels.
+- Windows and Web development builds succeeded with zero build errors. Windows launched
+  outside the Editor; Web loaded and rendered over localhost without browser errors.
+  Build/browser warnings and the limits of these smoke checks are in `TEST_EVIDENCE.md`.
 - Remaining: the owner's short-run playtest gate. Do not start Phase 7 before that gate.
 
 ### Phase 0 — Project and repeatable CLI foundation — done
