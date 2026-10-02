@@ -68,3 +68,6 @@ MonoBehaviour:
     packetSlots: 2
     perfectWindow: 0.1
     perfectBonus: 0.15
+    parryRingRadius: 1.15
+    parryRingWidth: 0.2
+    parryWindowScale: 0.5

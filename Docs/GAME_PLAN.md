@@ -137,6 +137,13 @@ Enemy compositions must normally keep ranged ammunition available. Also implemen
 > and out of place. A melee-only remainder is answered by the **parry** instead: a catch window open while facing a
 > Pursuer when its strike resolves intercepts the strike and redirects it at the attacker as a riposte (2 damage,
 > pierce 1). It stays a borrowed attack, not a direct gun: a riposte exists only when an enemy commits a strike.
+>
+> **Made harder after the second playtest (owner direction, D36).** The parry is no longer the whole cone. A thin gold
+> parry band (1.15 from the player, 0.2 wide, spanning the cone's angle) is shown only during the first half of the
+> catch window (0.125 s of 0.25 s); the Pursuer's strike circle shows a thin gold rim (0.15 wide) during its wind-up.
+> The strike is parried only if the band touches that rim while the parry window is open; otherwise standing anywhere
+> inside the strike circle is a hit. All three numbers are tuning (`capture.parryRingRadius`, `parryRingWidth`,
+> `parryWindowScale`; `pursuer.strikeEdgeWidth`).
 
 ## 4. Enemies and borrowed attack types
 

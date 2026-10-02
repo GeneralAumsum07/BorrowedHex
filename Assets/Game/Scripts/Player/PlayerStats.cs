@@ -28,6 +28,14 @@ namespace BorrowedHex.Player
         public int PacketSlots;
         public float PerfectWindow;
         public float PerfectBonus;
+        public float ParryRingRadius;
+        public float ParryRingWidth;
+        public float ParryWindowScale;
+        /// <summary>
+        /// Seconds from the start of a catch window during which a parry can land. Derived, so
+        /// a future upgrade that lengthens the catch window keeps the owner's 0.5x ratio.
+        /// </summary>
+        public float ParryWindow => CaptureWindow * ParryWindowScale;
 
         /// <summary>Daredevil: catch performs a capturing dash sharing the dash cooldown.</summary>
         public bool CatchIsDash;
@@ -55,6 +63,9 @@ namespace BorrowedHex.Player
                 PacketSlots = c.packetSlots,
                 PerfectWindow = c.perfectWindow,
                 PerfectBonus = c.perfectBonus,
+                ParryRingRadius = c.parryRingRadius,
+                ParryRingWidth = c.parryRingWidth,
+                ParryWindowScale = c.parryWindowScale,
             };
         }
 

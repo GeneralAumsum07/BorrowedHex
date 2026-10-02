@@ -209,3 +209,36 @@ Known issues: right-click context-menu suppression in the browser is inferred fr
 Human gate (not yet done): does early release + Q make combat feel faster?
 Next uncompleted task: Phase 5
 ```
+
+
+```
+Second playtest fixes: pillar routing, binding slot selection, harder parry
+Actual CLI commands: recompile; run_tests editor; run_tests playmode --async_tests; eval
+  (play mode); capture_game_view --source camera
+Test report: EditMode 99/99. PlayMode 2/2.
+  RED first: Pursuer_RoutesAroundAPillar (stuck at (-6.00, 4.50)),
+  RangedEnemy_TooFar_RoutesAroundAPillarToo (stuck at (-6.00, 4.55)),
+  RightClick_OnAnEmptySelectedSlot_FiresNothing (fired the other slot).
+  Routing went through two failed designs before passing, each found by the same tests:
+  a single best corner parked on the corner; a 0.9x sight radius let the planner cut a
+  corner the full body could not fit (tick trace: stuck at (-6.985, 4.502)).
+  Added Pursuer_ReachesThePlayer_FromSquareBehindEveryPillarFace (16 cases).
+  Mutation checks: straight-line MoveToward fails both pursuer routing tests; parry gated on
+  the full catch window fails PressedTooLateForTheParry; parry without the band check fails
+  FacingAway and InsideTheStrike_BandsApart. ParryGeometry closed form agrees with dense
+  arc sampling on >3000 random cases. Restored code passes.
+Manual behaviour observed (play mode, scripted commands, not a human):
+  - Pursuer wound up next to the player, catch pressed: gold parry band visible inside the
+    cyan cone, touching the gold rim of the strike circle (shots/parry_band.png,
+    shots/parry_band_zoom.png)
+  - After the parry window, with the catch window still open: band hidden, cone shown
+  - In that run the catch was pressed ~0.18 s before the strike, so the strike landed
+    (hp 2/3, no parry): consistent with the 0.125 s parry window
+  - Capture-harness note: Destroy is deferred while the editor is unfocused, so a scripted
+    Restart briefly left the old ArenaView in the frame; removed by hand for the capture.
+    Not a game bug (the next real frame destroys it)
+Known issues: GameRoot.Update throws NullReferenceException every frame if scripts recompile
+  during Play mode (Sim is lost on domain reload); editor-only, does not affect builds
+Human gate (not yet done): is the parry now hard but learnable? Do pursuers still get stuck?
+Next uncompleted task: Phase 5
+```

@@ -62,6 +62,8 @@ namespace BorrowedHex.Data
         [Tooltip("Melee: the strike circle sits this far ahead of the body.")]
         public float strikeReach = 0.8f;
         public float strikeRadius = 0.75f;
+        [Tooltip("Melee: width of the strike circle's outer rim band, the part a parry band must touch (D36).")]
+        public float strikeEdgeWidth = 0.15f;
         [Tooltip("Score for a kill (section 6). Elite = 1.5x.")]
         public int killValue = 10;
     }

@@ -134,3 +134,19 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 - HUD: panels pinned to slots, full contents ("Rocket x1  Bolt x2"), gold outline and ">" on
   the selected slot, control hint line. Orbit rings keyed by slot; selected dots larger.
 - `PlayerCommand.With*` builders no longer mutate the receiver.
+
+
+### Second playtest fixes (owner direction) — done (human gate pending)
+
+- Bug: pursuers stuck behind pillars. Enemies now steer by a per-tick shortest path over
+  padded pillar corners whenever the straight line is blocked (`EnemySteering.Waypoint`, D37):
+  pursuer seek, a ranged enemy closing in, and Scatter repositioning.
+- Bug: right mouse on an empty selected slot fired the other slot. The selection is now
+  binding; an empty selected slot does nothing (D33 revised).
+- Parry made harder (D36): thin gold parry band inside the cone during the first half of the
+  catch window only; thin gold rim on the Pursuer's strike circle during its wind-up; parry
+  only when band and rim touch in that window, otherwise the strike lands anywhere inside
+  the circle. New tuning: `capture.parryRingRadius` 1.15, `parryRingWidth` 0.2,
+  `parryWindowScale` 0.5; `pursuer.strikeEdgeWidth` 0.15.
+- Open owner question (D36): should a band touching the strike's NEAR rim from just outside
+  the strike count as a parry? It currently does.

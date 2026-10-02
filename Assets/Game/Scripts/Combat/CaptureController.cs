@@ -72,6 +72,11 @@ namespace BorrowedHex.Combat
         public int ActivationId { get; private set; }
         public double WindowOpensAt { get; private set; } = double.NegativeInfinity;
         public double WindowEndsAt { get; private set; } = double.NegativeInfinity;
+        /// <summary>
+        /// End of the parry part of the window (D36): the FIRST part, so a parry is an early,
+        /// committed press, and the tail of the window still catches projectiles as before.
+        /// </summary>
+        public double ParryEndsAt { get; private set; } = double.NegativeInfinity;
         public double RecoveryEndsAt { get; private set; } = double.NegativeInfinity;
         /// <summary>The packet created by the current activation, if any.</summary>
         public CapturedPacket ActivePacket { get; private set; }
@@ -80,6 +85,7 @@ namespace BorrowedHex.Combat
         public bool OverflowUsedThisActivation { get; private set; }
 
         public bool IsWindowOpen(double now) => now >= WindowOpensAt && now <= WindowEndsAt + 1e-9;
+        public bool IsParryOpen(double now) => now >= WindowOpensAt && now <= ParryEndsAt + 1e-9;
         public bool IsReady(double now) => now >= RecoveryEndsAt - 1e-9;
 
         public bool TryActivate(double now, PlayerStats s)
@@ -88,6 +94,7 @@ namespace BorrowedHex.Combat
             ActivationId++;
             WindowOpensAt = now;
             WindowEndsAt = now + s.CaptureWindow;
+            ParryEndsAt = now + Mathf.Min(s.ParryWindow, s.CaptureWindow);
             RecoveryEndsAt = now + Mathf.Max(s.CaptureRecovery, s.CaptureWindow);
             ActivePacket = null;
             OverflowUsedThisActivation = false;

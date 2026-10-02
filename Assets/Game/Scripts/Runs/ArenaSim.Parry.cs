@@ -25,21 +25,23 @@ namespace BorrowedHex.Runs
         /// Called by a melee brain at the instant its strike resolves, BEFORE damage. Returns
         /// true if the strike was parried (the caller must then deal no damage).
         ///
-        /// Conditions, all at that one instant:
-        ///   - the strike would actually hit (no free ripostes from strikes that miss anyway);
-        ///   - the catch window is open;
-        ///   - the attacker is inside the capture cone (facing the threat; a side or rear strike
-        ///     during an open window still hurts, mirroring projectile capture, D16).
-        /// Packet slots and capacity are deliberately NOT consulted: the riposte never enters
-        /// a packet, so holding ammunition can never stop the player answering a melee enemy.
+        /// Conditions, all at that one instant (D36, owner direction: "make parrying harder"):
+        ///   - the PARRY part of the catch window is open — its first half (ParryWindow), so a
+        ///     parry is an early committed press, not anything inside the full catch window;
+        ///   - the player's parry band (a thin arc inside the cone, at ParryRingRadius) touches
+        ///     the strike circle's thin outer rim band (ParryGeometry.BandsMeet).
+        /// Facing is implied: the band only exists inside the cone. Being inside the strike
+        /// circle is NOT required — a band can reach the near rim from just outside it — and is
+        /// not sufficient either: inside it with the bands apart, the strike lands.
+        /// Packet slots and capacity are deliberately NOT consulted (D28): the riposte never
+        /// enters a packet, so holding ammunition can never stop the player answering a melee enemy.
         /// </summary>
-        internal bool TryParry(EnemyActor attacker, Vector2 strikeCentre, bool wouldHit)
+        internal bool TryParry(EnemyActor attacker, Vector2 strikeCentre, float strikeRadius, float rimWidth)
         {
             double now = Clock.Now;
-            if (!wouldHit || !Player.Alive || !Capture.IsWindowOpen(now)) return false;
-            // Range includes the attacker's body, as projectile capture includes the shot's radius.
-            if (!Geometry2D.InCone(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
-                    Stats.CaptureRange + attacker.Radius, attacker.Position))
+            if (!Player.Alive || !Capture.IsParryOpen(now)) return false;
+            if (!ParryGeometry.BandsMeet(Player.Position, Player.AimDirection, Stats.CaptureConeAngle * 0.5f,
+                    Stats.ParryRingRadius, Stats.ParryRingWidth, strikeCentre, strikeRadius, rimWidth))
                 return false;
 
             // Redirect at the ATTACKER, not along the aim: the cone is 90° wide, so a strike

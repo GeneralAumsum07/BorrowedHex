@@ -261,6 +261,60 @@ namespace BorrowedHex.Presentation
             return s;
         }
 
+        static readonly Dictionary<int, Sprite> bands = new Dictionary<int, Sprite>();
+
+        /// <summary>
+        /// A thin arc band (D36 parry band): the part of a sector between radius
+        /// <paramref name="innerFraction"/> and 1, pivot at the apex, pointing along +X.
+        /// Scale == the band's OUTER radius. Cached per (half-angle, inner fraction in percent):
+        /// both only change with tuning, never per frame.
+        /// </summary>
+        public static Sprite ArcBand(float halfAngleDeg, float innerFraction)
+        {
+            int ang = Mathf.RoundToInt(halfAngleDeg), inner = Mathf.RoundToInt(Mathf.Clamp01(innerFraction) * 100f);
+            int key = ang * 1000 + inner;
+            if (bands.TryGetValue(key, out var s) && s != null) return s;
+            const int n = 192; // thin bands need more pixels than the filled sector to stay crisp
+            float cosHalf = Mathf.Cos(ang * Mathf.Deg2Rad), lo = inner / 100f;
+            s = Bake(n, "ArcBand" + key, (dx, dy, d) => d <= 1f && d >= lo && d > 1e-4f && dx / d >= cosHalf);
+            bands[key] = s;
+            return s;
+        }
+
+        static readonly Dictionary<int, Sprite> annuli = new Dictionary<int, Sprite>();
+
+        /// <summary>
+        /// A ring whose hole is <paramref name="innerFraction"/> of its radius (Disc(true) has a
+        /// fixed 0.86 hole). Used for the strike circle's rim band, whose width is tuning.
+        /// Scale == outer radius. Cached per inner fraction in percent.
+        /// </summary>
+        public static Sprite Annulus(float innerFraction)
+        {
+            int key = Mathf.RoundToInt(Mathf.Clamp01(innerFraction) * 100f);
+            if (annuli.TryGetValue(key, out var s) && s != null) return s;
+            float lo = key / 100f;
+            s = Bake(128, "Annulus" + key, (dx, dy, d) => d <= 1f && d >= lo);
+            annuli[key] = s;
+            return s;
+        }
+
+        /// <summary>White-on-transparent mask over x,y ∈ [-1,1], centred pivot, 2 units across.</summary>
+        static Sprite Bake(int n, string name, System.Func<float, float, float, bool> on)
+        {
+            var tex = new Texture2D(n, n, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, name = name };
+            var px = new Color32[n * n];
+            for (int y = 0; y < n; y++)
+                for (int x = 0; x < n; x++)
+                {
+                    float dx = (x + 0.5f) / n * 2f - 1f, dy = (y + 0.5f) / n * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    px[y * n + x] = on(dx, dy, d) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 255, 0);
+                }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            return Sprite.Create(tex, new Rect(0, 0, n, n), new Vector2(0.5f, 0.5f), n / 2f);
+        }
+
         static Sprite MakeDisc(bool ring)
         {
             const int n = 64;

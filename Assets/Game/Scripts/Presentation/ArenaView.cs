@@ -44,6 +44,9 @@ namespace BorrowedHex.Presentation
             public SpriteRenderer[] Telegraph;
             // Pursuer: ground disc exactly where the strike will land.
             public SpriteRenderer StrikeMarker;
+            // Pursuer: the strike circle's thin rim band, gold like the player's parry band,
+            // because touching THIS edge with THAT band is the parry (D36).
+            public SpriteRenderer StrikeRim;
             public SpriteRenderer WarningRing;
             public bool Seen;
         }
@@ -67,6 +70,11 @@ namespace BorrowedHex.Presentation
         static readonly Color ConeColor = new Color(0.55f, 0.95f, 1f, 0.55f);
         static readonly Color RejectColor = new Color(1f, 0.3f, 0.3f);
         SpriteRenderer cone;
+        // D36: the parry band, drawn inside the cone only while the parry window is open.
+        // When it disappears the cone is exactly the plain catch cone again, so the band's
+        // vanishing IS the "parry over, still catching" cue.
+        SpriteRenderer parryBand;
+        float parryBandOuter;
         readonly List<SpriteRenderer> orbitDots = new List<SpriteRenderer>();
         Transform orbitRoot;
 
@@ -109,6 +117,11 @@ namespace BorrowedHex.Presentation
 
             cone = FlatSprite("CaptureCone", transform, PixelSprites.Sector(sim.Stats.CaptureConeAngle * 0.5f), ConeColor);
             cone.sortingOrder = -4;
+            var st = sim.Stats;
+            parryBandOuter = st.ParryRingRadius + st.ParryRingWidth * 0.5f;
+            float bandInner = (st.ParryRingRadius - st.ParryRingWidth * 0.5f) / parryBandOuter;
+            parryBand = FlatSprite("ParryBand", transform, PixelSprites.ArcBand(st.CaptureConeAngle * 0.5f, bandInner), RiposteColor);
+            parryBand.sortingOrder = -3; // above the cone fill
             orbitRoot = new GameObject("PacketOrbits").transform;
             orbitRoot.SetParent(transform, false);
 
@@ -234,8 +247,16 @@ namespace BorrowedHex.Presentation
                         v.StrikeMarker.transform.position = Geometry2D.ToWorld(sc, 0.05f);
                         // Disc sprites are 2 units across, so scale == radius.
                         v.StrikeMarker.transform.localScale = Vector3.one * tune.strikeRadius;
+                        // Rim slightly above the disc so it is never z-fighting with it; its
+                        // alpha follows the same ramp so the whole marker reads as one shape.
+                        v.StrikeRim.transform.position = Geometry2D.ToWorld(sc, 0.055f);
+                        v.StrikeRim.transform.localScale = Vector3.one * tune.strikeRadius;
+                        var rc = RiposteColor;
+                        rc.a = e.AimLocked ? 0.95f : Mathf.Lerp(0.25f, 0.7f, ramp);
+                        v.StrikeRim.color = rc;
                     }
                 }
+                if (v.StrikeRim != null) v.StrikeRim.enabled = tele;
             }
 
             // Drop views for enemies that died or were removed this frame.
@@ -267,7 +288,12 @@ namespace BorrowedHex.Presentation
             for (int i = 0; i < lines; i++)
                 v.Telegraph[i] = FlatSprite("Telegraph", body.transform, PixelSprites.Pixel(), TelegraphColor);
             if (e.Category == ActorCategory.Pursuer)
+            {
                 v.StrikeMarker = FlatSprite("StrikeMarker", body.transform, PixelSprites.Disc(false), TelegraphColor);
+                var pt = sim.Config.combat.pursuer;
+                v.StrikeRim = FlatSprite("StrikeRim", body.transform,
+                    PixelSprites.Annulus((pt.strikeRadius - pt.strikeEdgeWidth) / pt.strikeRadius), RiposteColor);
+            }
             v.WarningRing = FlatSprite("SpawnWarning", body.transform, PixelSprites.Disc(true), Color.red);
             v.WarningRing.transform.localPosition = new Vector3(0f, 0.04f, 0f);
             return v;
@@ -341,6 +367,14 @@ namespace BorrowedHex.Presentation
                 float yaw = -Mathf.Atan2(p.AimDirection.y, p.AimDirection.x) * Mathf.Rad2Deg;
                 cone.transform.rotation = Quaternion.Euler(90f, yaw, 0f);
                 cone.transform.localScale = Vector3.one * sim.Stats.CaptureRange;
+            }
+            bool parry = open && sim.Capture.IsParryOpen(now);
+            parryBand.enabled = parry;
+            if (parry)
+            {
+                parryBand.transform.position = Geometry2D.ToWorld(pos, 0.045f);
+                parryBand.transform.rotation = cone.transform.rotation;
+                parryBand.transform.localScale = Vector3.one * parryBandOuter;
             }
 
             // Orbit placeholders: one dot per stored shot, each SLOT on its own ring radius and

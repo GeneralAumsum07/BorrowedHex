@@ -6,8 +6,8 @@ namespace BorrowedHex.Enemies
 {
     /// <summary>
     /// Pursuer (section 4): runs at the player and performs a telegraphed close strike. It
-    /// fires nothing capturable; instead its strike can be PARRIED (D26): catch it facing the
-    /// attacker and it comes back as a riposte. So it pressures positioning, is a crowd target
+    /// fires nothing capturable; instead its strike can be PARRIED (D26, D36): touch the strike
+    /// circle's rim with the parry band early in a catch and it comes back as a riposte. So it pressures positioning, is a crowd target
     /// for returned shots and rockets, and is its own answer when no caster is left.
     ///
     /// Rhythm: Idle (seek) → Telegraph (stop; a ground marker shows exactly where the strike
@@ -54,9 +54,10 @@ namespace BorrowedHex.Enemies
                         Vector2 c = StrikeCentre(e, t);
                         float r = t.strikeRadius + player.Radius;
                         bool wouldHit = player.Alive && (player.Position - c).sqrMagnitude <= r * r;
-                        // Parry is checked first: a strike caught in the open window is redirected
-                        // instead of landing, even if the player is also dash-invulnerable.
-                        bool parried = sim.TryParry(e, c, wouldHit);
+                        // Parry is checked first and wins: if the bands meet in time the strike
+                        // is redirected instead of landing (D36), even if the player is also
+                        // dash-invulnerable. Otherwise being inside the circle is a hit.
+                        bool parried = sim.TryParry(e, c, t.strikeRadius, t.strikeEdgeWidth);
                         if (wouldHit && !parried) sim.DamagePlayer(1, e.ActorId);
                         sim.Events.RaiseEnemyFired(e);
                         e.Phase = EnemyPhase.Recover;

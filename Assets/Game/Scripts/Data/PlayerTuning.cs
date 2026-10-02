@@ -33,6 +33,19 @@ namespace BorrowedHex.Data
         [Tooltip("A shot is perfect if its path would reach the player's hitbox within this many seconds.")]
         public float perfectWindow = 0.10f;
         public float perfectBonus = 0.15f;
+
+        // Parry band (D36, owner direction): a thin arc INSIDE the catch cone, not the whole
+        // cone. It sits at 1.15 rather than at the cone's outer rim because a Pursuer strike
+        // circle (radius 0.75, 0.8 ahead of its body) is only reachable by a 2.8 rim while the
+        // player stands well outside the strike — a parry must mean standing in harm's way.
+        // At 1.15 the band crosses the strike's far rim when the player is ~0.3-0.65 from the
+        // strike centre, i.e. squarely inside the damage zone. Tunable without code changes.
+        [Tooltip("Parry band: distance of the band's centre line from the player.")]
+        public float parryRingRadius = 1.15f;
+        [Tooltip("Parry band: full width of the band.")]
+        public float parryRingWidth = 0.2f;
+        [Tooltip("Parry is live only for this fraction of the catch window, from its start.")]
+        public float parryWindowScale = 0.5f;
     }
 
     public partial class GameConfig
