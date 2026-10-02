@@ -173,6 +173,8 @@ The Collector alternates three readable patterns: a bolt stream, a fan volley, a
 
 > **Changed by the owner for Phase 5 (D38):** no rocket attack. The Collector cycles a bolt stream, a sweeping melee attack, a fan volley and an area ground slam, and starts with 50 health instead of 120. Its name is announced by a pop-up banner when the boss window opens. Include short repositioning gaps but no extended period with neither targets nor ammunition. The boss remains damageable in the baseline version.
 
+> **Changed again by the owner after the Phase 5 playtest (D47-D49):** no fixed cycle; the Collector picks its attack from the player's position and distance (behind a pillar → the slam, which ignores line of sight). The slam cannot be parried; the sweep can, through a short-lived gold arc. It moves slightly faster, all four attacks are slightly faster, and when the player is far away it may teleport behind them.
+
 Start with 120 health, then tune so a new character with no permanent skills can win within the short-mode boss window. Test this assumption before adding mastery progression. A repeated endless boss gains one predefined pattern variation, such as a second fan angle, rather than only more health. Charges and melee attacks are avoidable hazards, not automatically stealable abilities.
 
 ## 5. Temporary run upgrades
@@ -199,6 +201,8 @@ Intended build examples: Walking Arsenal combines orbit damage and parting blast
 ### Short mode
 
 - Three 40-second encounters followed by a boss window of at most 60 seconds: maximum 180 active gameplay seconds.
+
+> **Changed by the owner (D50):** each encounter ends when all of its enemies are killed (slightly fewer enemies than before), and one shared 180-second clock covers the three encounters and the boss. Player health is 5 hearts, counted in halves (D51).
 - Upgrade choices at 40, 80, and 120 seconds pause gameplay. Existing packets and enemies are preserved through the choice; all timers remain frozen.
 - Stop ordinary spawn scheduling at the boss transition. Despawn remaining ordinary enemies and their unclaimed projectiles without score or XP; preserve already captured packets. Introduce the boss with a visible warning.
 - Encounter-one roster: acolytes and a few pursuers. Encounter two adds scatter casters. Encounter three adds siege familiars and mixed formations.

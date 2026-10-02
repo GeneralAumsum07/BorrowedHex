@@ -167,3 +167,15 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   Continue panel until Phase 6 (D42). Short run is the default; sandbox switch in the pause
   menu and on results (D43).
 - Not done here: upgrade cards (Phase 6), saving the summary (Phase 7).
+
+### Post-Phase 5 playtest changes (owner direction) — done (human gate pending)
+
+- Pursuer parry rim: short window just after the wind-up starts, gone before the strike;
+  the rim is the parry window (D46).
+- Health: 5 hearts in half-heart units; ordinary hits 1 heart, boss hits 2, contact 0.5/1
+  heart with a 0.5 s blink (D51). HUD pips fill by halves; results show hearts.
+- Short run: kill-all encounters with a pre-drawn formation plan (4/5/5), shared 3:00 clock,
+  objective "KILL ALL ENEMIES (N LEFT)" (D50).
+- Collector: position-based pattern choice with a melee cap (D48), parryable sweep through a
+  gold arc and unparryable slam (D47), teleport behind a far player, faster movement and
+  attacks (D49).

@@ -287,3 +287,42 @@ Human gate (not yet done): is the 3x40 s + 60 s run paced well; is the Collector
   and beatable without upgrades; is the banner long enough?
 Next uncompleted task: Phase 6
 ```
+
+## Post-Phase 5: rim window, hearts, kill-all encounters, Collector by position
+
+```text
+Phase/task: owner playtest changes after Phase 5 (D46-D51)
+Files changed: Scripts/Data/{CombatTuning,PlayerTuning,RunTuning}.cs; Data/GameConfig.asset
+  (maxHealth 3 → 10); Scripts/Player/PlayerStats.cs; Scripts/Combat/ParryGeometry.cs;
+  Scripts/Enemies/{AttackEmitter,CollectorBoss,EnemyActor,Pursuer}.cs;
+  Scripts/Runs/{ArenaSim,ArenaSim.Enemies,ArenaSim.Parry,ArenaSim.Run,RunScore}.cs;
+  Scripts/UI/{GameplayHud,RunFlowPanels}.cs; Scripts/Presentation/ArenaView.cs;
+  Tests/EditMode/{CaptureTests,ParryTests,Phase4Tests,ProjectileCollisionTests,
+  RunLifecycleTests,ShortRunTests}.cs
+Actual CLI commands: recompile; run_tests editor; run_tests playmode; eval (play mode);
+  capture_game_view
+Test report: EditMode 153/153, PlayMode 2/2.
+  Honest ordering note: the sim changes were written first; the 30 existing tests they broke
+  were then updated, and the suite grew by a net 24 tests (rim timing incl. too-early/too-late presses,
+  contact damage, half hearts incl. the shipped asset, kill-all flow and shared clock,
+  pattern choice incl. line of sight and the melee cap, sweep parry and arc geometry, slam
+  never parried, teleport behind/cooldown/never-when-close). Not RED first.
+  Two of my own test assumptions were wrong and corrected, not the code: the parry band
+  meets the gold arc over a range (~2.4-3.2 units), not at one distance; and the teleport
+  wind-up lengthens the worst bolt drought to ~7.2 s (bound now computed from tuning).
+  Zero-passive bot (offence only, 999 health): boss defeated 64.0 s into the fight; with
+  instant encounter clears the run clock read 92.9 s at the win. The old bar (60 s boss
+  window) would now FAIL by 4 s: the faster, teleporting boss is harder to hit.
+Manual behaviour observed (play mode, scripted ticks, not a human):
+  - HUD: 3.5 of 5 heart pips, "ENCOUNTER 1/3 — KILL ALL ENEMIES (10 LEFT)", 2:59 (shots/p6-hud.png)
+  - Pursuer wind-up with the gold rim up, then 0.2 s later the same wind-up with no rim,
+    0.13 s before the strike (shots/p6-rim-open.png, p6-rim-closed.png)
+  - Collector sweep wind-up with the gold parry arc inside the wedge (shots/p6-sweep-arc.png)
+  - Teleport wind-up: boss faded, purple arrival ring behind the player (shots/p6-teleport.png)
+  - A player standing still in encounter 1 died in ~9 s to five one-heart hits (strikes and
+    bolts); no contact hits in that log, since pursuers stop short of the body
+Not verified by eye: the CLEARED upgrade title, the hearts wording on the results screen
+Human gate (not yet done): is the rim window fair while the strike still tracks; is 3:00
+  enough for three cleared encounters plus the boss; do 2-heart boss bolts feel right?
+Next uncompleted task: Phase 6
+```

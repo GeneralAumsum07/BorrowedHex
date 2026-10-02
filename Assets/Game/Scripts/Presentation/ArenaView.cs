@@ -30,6 +30,7 @@ namespace BorrowedHex.Presentation
         static readonly Color RiposteColor = new Color(1f, 0.85f, 0.35f);
         static readonly Color ReturnedColor = new Color(0.45f, 0.95f, 1f);
         static readonly Color TelegraphColor = new Color(1f, 0.25f, 0.2f);
+        static readonly Color TeleportColor = new Color(0.75f, 0.45f, 1f);
         static readonly Color RocketColor = new Color(1f, 0.55f, 0.1f);
 
         ArenaSim sim;
@@ -51,6 +52,8 @@ namespace BorrowedHex.Presentation
             // Collector only: the sweep's wedge and moving blade, and the slam's charge disc
             // inside a ring drawn at the slam's true radius.
             public SpriteRenderer SweepWedge, SweepBlade, SlamFill, SlamRing;
+            // Collector only: the sweep's gold parry arc (D47) and the teleport arrival marker.
+            public SpriteRenderer SweepParry, TeleportMarker;
             public bool Seen;
         }
 
@@ -264,7 +267,8 @@ namespace BorrowedHex.Presentation
                         v.StrikeRim.color = rc;
                     }
                 }
-                if (v.StrikeRim != null) v.StrikeRim.enabled = tele;
+                // The gold rim is the parry chance, and it only exists in its window (D46).
+                if (v.StrikeRim != null) v.StrikeRim.enabled = tele && e.ParryRimOpen(now);
             }
 
             // Drop views for enemies that died or were removed this frame.
@@ -310,6 +314,10 @@ namespace BorrowedHex.Presentation
                 v.SweepBlade = FlatSprite("SweepBlade", body.transform, PixelSprites.Pixel(), Color.white);
                 v.SlamFill = FlatSprite("SlamFill", body.transform, PixelSprites.Disc(false), TelegraphColor);
                 v.SlamRing = FlatSprite("SlamRing", body.transform, PixelSprites.Disc(true), TelegraphColor);
+                float outer = bt.sweepParryArcRadius + bt.sweepParryArcWidth * 0.5f;
+                v.SweepParry = FlatSprite("SweepParry", body.transform,
+                    PixelSprites.ArcBand(bt.sweepHalfAngle, (bt.sweepParryArcRadius - bt.sweepParryArcWidth * 0.5f) / outer), RiposteColor);
+                v.TeleportMarker = FlatSprite("TeleportMarker", body.transform, PixelSprites.Disc(true), TeleportColor);
             }
             v.WarningRing = FlatSprite("SpawnWarning", body.transform, PixelSprites.Disc(true), Color.red);
             v.WarningRing.transform.localPosition = new Vector3(0f, 0.04f, 0f);
@@ -349,7 +357,34 @@ namespace BorrowedHex.Presentation
                 PlaceGroundLine(line.transform, pos + dir * e.Radius, dir, 8f, e.AimLocked || active ? 0.12f : 0.06f);
             }
 
+            // Teleport: the body fades out where it stands while a ring pulses where it will
+            // appear, so the blink is surprising in position but never unannounced (D49).
+            bool porting = b.Stage == BossStage.Teleport;
+            v.TeleportMarker.enabled = porting;
+            if (porting)
+            {
+                float k = 1f - Mathf.Clamp01((float)(b.StageEndsAt - now) / Mathf.Max(0.01f, t.teleportTelegraph));
+                v.Body.SetTint(new Color(1f, 1f, 1f, Mathf.Lerp(1f, 0.25f, k)));
+                v.TeleportMarker.transform.position = Geometry2D.ToWorld(b.TeleportTo, 0.05f);
+                v.TeleportMarker.transform.localScale = Vector3.one * (e.Radius * Mathf.Lerp(1.8f, 1f, k));
+                var tc = TeleportColor;
+                tc.a = Mathf.Lerp(0.3f, 0.95f, k);
+                v.TeleportMarker.color = tc;
+            }
+
             bool sweep = b.Pattern == BossPattern.Sweep && (tele || active);
+            // Gold parry arc: only inside its window, like a Pursuer's rim.
+            bool sweepParry = sweep && tele && e.ParryRimOpen(now);
+            v.SweepParry.enabled = sweepParry;
+            if (sweepParry)
+            {
+                v.SweepParry.transform.position = Geometry2D.ToWorld(pos, 0.055f);
+                v.SweepParry.transform.rotation = Quaternion.Euler(90f, yaw, 0f);
+                v.SweepParry.transform.localScale = Vector3.one * (t.sweepParryArcRadius + t.sweepParryArcWidth * 0.5f);
+                var gc = RiposteColor;
+                gc.a = 0.95f;
+                v.SweepParry.color = gc;
+            }
             v.SweepWedge.enabled = sweep;
             v.SweepBlade.enabled = sweep && active;
             if (sweep)

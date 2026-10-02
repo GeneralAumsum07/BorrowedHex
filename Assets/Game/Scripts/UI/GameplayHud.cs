@@ -110,13 +110,22 @@ namespace BorrowedHex.UI
             foreach (var b in devButtons) b.gameObject.SetActive(on);
         }
 
+        // Health is in half hearts (D51): one pip per heart, each an empty square with a fill
+        // that covers none, half or all of it from the left.
+        readonly List<RectTransform> pipFills = new List<RectTransform>();
+
         void EnsurePips(int count)
         {
             while (pips.Count < count)
             {
-                var pip = Ui.Image("Pip", pipRow, PipFull);
+                var pip = Ui.Image("Pip", pipRow, PipEmpty);
                 pip.rectTransform.sizeDelta = new Vector2(36, 36);
+                var fill = Ui.Image("Fill", pip.transform, PipFull).rectTransform;
+                fill.anchorMin = Vector2.zero;
+                fill.anchorMax = Vector2.one;
+                fill.offsetMin = fill.offsetMax = Vector2.zero;
                 pips.Add(pip);
+                pipFills.Add(fill);
             }
             for (int i = 0; i < pips.Count; i++) pips[i].gameObject.SetActive(i < count);
         }
@@ -125,8 +134,15 @@ namespace BorrowedHex.UI
         {
             if (sim == null) return;
             var p = sim.Player;
-            EnsurePips(p.MaxHealth);
-            for (int i = 0; i < p.MaxHealth; i++) pips[i].color = i < p.Health ? PipFull : PipEmpty;
+            int hearts = (p.MaxHealth + 1) / 2;
+            EnsurePips(hearts);
+            for (int i = 0; i < hearts; i++)
+            {
+                // Half hearts this pip holds: 0, 1 or 2.
+                int inPip = Mathf.Clamp(p.Health - i * 2, 0, 2);
+                pipFills[i].anchorMax = new Vector2(inPip * 0.5f, 1f);
+                pipFills[i].gameObject.SetActive(inPip > 0);
+            }
 
             // Cooldown progress from the gameplay clock, so it freezes while paused.
             double now = sim.Clock.Now;
@@ -138,13 +154,13 @@ namespace BorrowedHex.UI
 
             if (sim.IsShortRun)
             {
-                // Count DOWN in a scored run (time left in this encounter / the boss window),
-                // rounded up so "0:00" only shows at the boundary itself.
-                int left = Mathf.CeilToInt(sim.SecondsLeftInPhase() - 1e-4f);
+                // Count DOWN the shared run clock (D50), rounded up so "0:00" only shows at
+                // the moment it runs out.
+                int left = Mathf.CeilToInt(sim.SecondsLeftInRun() - 1e-4f);
                 clockLabel.text = $"{left / 60}:{left % 60:00}";
                 int n = sim.Config.shortMode.encounterCount;
                 objectiveLabel.text = sim.Encounter < n
-                    ? $"ENCOUNTER {sim.Encounter + 1}/{n} — SURVIVE"
+                    ? $"ENCOUNTER {sim.Encounter + 1}/{n} — KILL ALL ENEMIES ({sim.EnemiesLeftInEncounter()} LEFT)"
                     : $"DEFEAT {sim.Config.collector.displayName.ToUpperInvariant()}";
             }
             else

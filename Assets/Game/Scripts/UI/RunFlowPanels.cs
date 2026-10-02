@@ -130,7 +130,8 @@ namespace BorrowedHex.UI
             bool upgrade = state == RunState.UpgradeChoice;
             if (upgrade && !upgradeDim.activeSelf)
             {
-                upgradeTitle.text = $"ENCOUNTER {sim.TransitionsReached} SURVIVED";
+                // Encounters end on a full clear now (D50), not on surviving a timer.
+                upgradeTitle.text = $"ENCOUNTER {sim.TransitionsReached} CLEARED";
                 Select(continueButton);
             }
             upgradeDim.SetActive(upgrade);
@@ -195,7 +196,8 @@ namespace BorrowedHex.UI
                 $"Score: {s.Score}{bonus}\n" +
                 $"Best volley: {s.BestVolleyKills} kill{(s.BestVolleyKills == 1 ? "" : "s")}\n" +
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased} packets)\n" +
-                $"Damage taken: {s.DamageTaken}\n" +
+                // Stored in half hearts (D51); shown in hearts, the unit the HUD draws.
+                $"Damage taken: {s.DamageTaken * 0.5f:0.#} heart{(s.DamageTaken == 2 ? "" : "s")}\n" +
                 $"Duration: {secs / 60}:{secs % 60:00}   Kills: {s.Kills}";
         }
 
