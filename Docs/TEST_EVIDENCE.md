@@ -345,3 +345,18 @@ Test report: EditMode 160/160, PlayMode 2/2.
   Why it is faster is not established (inference: more fans/streams mean more bolts to capture).
 Human gate: does the boss now feel varied and mobile enough?
 ```
+
+## Post-Phase 5: more melee, melee after teleports (D53)
+
+```text
+Files changed: Scripts/Data/RunTuning.cs; Scripts/Enemies/CollectorBoss.cs;
+  Tests/EditMode/ShortRunTests.cs
+Test report: EditMode 162/162, PlayMode 2/2.
+  RED first (behavioural, code unchanged): Choose_WiderMeleeBands_SlamTo2_4_SweepTo5 (2.3 units gave
+  Sweep), TheAttackRightAfterATeleport_IsAlwaysMelee_AndBothKindsShowUp (every post-teleport
+  attack was Sweep, never Slam), tuning 0.35 != 0.4. Then green.
+  Changed expectation: the pillar test's in-sight control at 5 units is now Sweep, not FanVolley.
+  First run attempt timed out: the PC was locked and the editor processed no commands.
+  Zero-passive bot: 35.6 s into the boss fight, identical to before D53. Inference only: its
+  distances and seed path may not touch the changed bands; not investigated.
+```

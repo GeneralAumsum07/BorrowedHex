@@ -42,9 +42,13 @@ namespace BorrowedHex.Data
 
         [Header("Choosing a pattern (D48)")]
         [Tooltip("Closer than this: slam.")]
-        public float slamChooseDistance = 1.8f;
+        // 1.8 → 2.4 (owner, D53: slams were rare). At 1.8 the slam band was so thin that a
+        // player rarely stood in it when the boss chose; the boss walks in to ~1.8 before a
+        // sweep, and the player has usually stepped back out by the next choice.
+        public float slamChooseDistance = 2.4f;
         [Tooltip("Closer than this (and in sight): sweep.")]
-        public float sweepChooseDistance = 4.0f;
+        // 4.0 → 5.0 (owner, D53: "melee a little more often"); the fan band shrinks to 5-7.5.
+        public float sweepChooseDistance = 5.0f;
         [Tooltip("Closer than this: fan volley; farther: bolt stream.")]
         public float fanMaxDistance = 7.5f;
         [Tooltip("After this many melee patterns in a row the next is ranged, so bolts keep coming.")]
@@ -56,7 +60,7 @@ namespace BorrowedHex.Data
         [Tooltip("Only considered when the player is at least this far away.")]
         public float teleportMinDistance = 6f;
         [Tooltip("Chance per pattern start, when far away and off cooldown (seeded).")]
-        [Range(0f, 1f)] public float teleportChance = 0.35f;
+        [Range(0f, 1f)] public float teleportChance = 0.4f;
         [Tooltip("Visible wind-up: the boss fades and the arrival spot is marked.")]
         public float teleportTelegraph = 0.6f;
         public float teleportCooldown = 5f;

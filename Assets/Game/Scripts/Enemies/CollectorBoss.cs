@@ -101,7 +101,7 @@ namespace BorrowedHex.Enemies
                         // Snap both positions so the view does not draw a streak across the arena.
                         e.Position = e.PrevPosition = b.TeleportTo;
                         b.Teleports++;
-                        BeginPattern(sim, e, t, now, allowTeleport: false);
+                        BeginPattern(sim, e, t, now, allowTeleport: false, afterTeleport: true);
                     }
                     break;
 
@@ -146,7 +146,8 @@ namespace BorrowedHex.Enemies
             }
         }
 
-        static void BeginPattern(ArenaSim sim, EnemyActor e, BossTuning t, double now, bool allowTeleport = true)
+        static void BeginPattern(ArenaSim sim, EnemyActor e, BossTuning t, double now,
+            bool allowTeleport = true, bool afterTeleport = false)
         {
             var b = e.Boss;
             var player = sim.Player;
@@ -158,7 +159,10 @@ namespace BorrowedHex.Enemies
             // Far away: a seeded chance to blink behind the player instead of walking over.
             // The roll happens only when every other condition holds, so the random stream
             // (and with it a seed's replay) does not depend on rolls that could never matter.
+            // Not at the melee cap (D53): a teleport is always followed by a melee pattern, so
+            // teleporting at the cap would break the ammunition guarantee. It walks instead.
             if (allowTeleport && dist >= t.teleportMinDistance && now >= b.NextTeleportAt
+                && b.MeleeStreak < t.maxMeleeInARow
                 && TryFindTeleportSpot(sim, e, t, out var spot) && sim.Random.NextFloat() < t.teleportChance)
             {
                 b.Stage = BossStage.Teleport;
@@ -173,7 +177,9 @@ namespace BorrowedHex.Enemies
 
             // The very first pattern has no "previous" one to repeat.
             BossPattern? last = b.PatternsStarted > 0 ? b.Pattern : (BossPattern?)null;
-            var next = Choose(sim, e, t, b.MeleeStreak, last, b.SameStreak);
+            var next = afterTeleport
+                ? ChooseAfterTeleport(sim, t, last, b.SameStreak)
+                : Choose(sim, e, t, b.MeleeStreak, last, b.SameStreak);
             b.SameStreak = last == next ? b.SameStreak + 1 : 1;
             b.Pattern = next;
             b.MeleeStreak = IsMelee(b.Pattern) ? b.MeleeStreak + 1 : 0;
@@ -210,6 +216,19 @@ namespace BorrowedHex.Enemies
             if (dist <= t.sweepChooseDistance) return BossPattern.Sweep;
             if (dist <= t.fanMaxDistance) return BossPattern.FanVolley;
             return BossPattern.BoltStream;
+        }
+
+        /// <summary>
+        /// Owner direction (D53): the attack right after a teleport behind the player is the
+        /// sweep or the slam, a seeded coin flip, never ranged. Distance can't decide it: the
+        /// boss always arrives at teleportBehindDistance, which would pick the same one every
+        /// time. The repeat cap still applies, so a third slam in a row becomes a sweep.
+        /// </summary>
+        static BossPattern ChooseAfterTeleport(ArenaSim sim, BossTuning t, BossPattern? last, int sameInARow)
+        {
+            var pick = sim.Random.NextFloat() < 0.5f ? BossPattern.Slam : BossPattern.Sweep;
+            if (pick == last && sameInARow >= t.maxSameInARow) pick = PartnerOf(pick);
+            return pick;
         }
 
         static BossPattern PartnerOf(BossPattern p)

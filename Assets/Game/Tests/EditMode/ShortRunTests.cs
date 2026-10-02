@@ -139,11 +139,11 @@ namespace BorrowedHex.Tests
         public void Choose_PlayerBehindAPillar_GetsTheSlam_WhateverTheDistance()
         {
             // Pillar at x 5.4..6.6, y 2.9..4.1. Boss below it, player above: 5 units apart,
-            // which in the open would be a fan volley.
+            // which in the open would be a sweep (the sweep band reaches 5 since D53).
             Vector2 boss = new Vector2(6f, 1f), player = new Vector2(6f, 6f);
             Assert.IsFalse(CollectorBoss.HasLineOfSight(P4.Sim(), boss, player));
             Assert.AreEqual(BossPattern.Slam, ChooseFor(boss, player));
-            Assert.AreEqual(BossPattern.FanVolley, ChooseFor(new Vector2(0f, 1f), new Vector2(0f, 6f)), "same distance, in sight");
+            Assert.AreEqual(BossPattern.Sweep, ChooseFor(new Vector2(0f, 1f), new Vector2(0f, 6f)), "same distance, in sight");
         }
 
         [Test]
@@ -232,12 +232,60 @@ namespace BorrowedHex.Tests
             Assert.GreaterOrEqual(checkedSpots, 3, "fixture: enough ranged patterns");
         }
 
+        // ---- More melee; melee after a teleport (owner direction, D53) ---------------------
+
+        [Test]
+        public void Choose_WiderMeleeBands_SlamTo2_4_SweepTo5()
+        {
+            Vector2 b = new Vector2(0f, 1f);
+            Assert.AreEqual(BossPattern.Slam, ChooseFor(b, b + Vector2.down * 2.3f), "slam band widened from 1.8");
+            Assert.AreEqual(BossPattern.Sweep, ChooseFor(b, b + Vector2.down * 2.6f));
+            Assert.AreEqual(BossPattern.Sweep, ChooseFor(b, b + Vector2.down * 4.8f), "sweep band widened from 4.0");
+            Assert.AreEqual(BossPattern.FanVolley, ChooseFor(b, b + Vector2.down * 5.3f));
+        }
+
+        [Test]
+        public void TheAttackRightAfterATeleport_IsAlwaysMelee_AndBothKindsShowUp()
+        {
+            var (sim, boss) = BossFight(c => c.collector.teleportChance = 1f);
+            var after = new List<BossPattern>();
+            var all = new List<BossPattern>();
+            int seen = 0, lastStarted = boss.Boss.PatternsStarted;
+            for (int i = 0; i < 60 * 90 && sim.State == RunState.BossCombat; i++)
+            {
+                var b = boss.Boss;
+                // Far away whenever the boss is choosing, so teleports keep coming; left alone
+                // during the teleport and its follow-up so the arrival spot is what it chooses from.
+                if (b.Stage != BossStage.Teleport && b.Teleports == seen)
+                    sim.Player.Position = boss.Position.x > 0 ? new Vector2(-9f, 5f) : new Vector2(9f, 5f);
+                sim.Tick(P5.Still.WithAim(sim.Player.Position + Vector2.up * 5f), P5.Dt);
+                if (b.PatternsStarted != lastStarted)
+                {
+                    lastStarted = b.PatternsStarted;
+                    all.Add(b.Pattern);
+                    if (b.Teleports > seen) { seen = b.Teleports; after.Add(b.Pattern); }
+                }
+            }
+            Assert.GreaterOrEqual(after.Count, 6, "fixture: enough teleports");
+            foreach (var p in after) Assert.IsTrue(CollectorBoss.IsMelee(p), $"after a teleport: {string.Join(",", after)}");
+            CollectionAssert.Contains(after, BossPattern.Slam);
+            CollectionAssert.Contains(after, BossPattern.Sweep);
+            // The ammunition guarantee survives: never more melee in a row than the cap.
+            int run = 0;
+            foreach (var p in all)
+            {
+                run = CollectorBoss.IsMelee(p) ? run + 1 : 0;
+                Assert.LessOrEqual(run, sim.Config.collector.maxMeleeInARow, string.Join(",", all));
+            }
+        }
+
         [Test]
         public void Tuning_TeleportFromSixUnits_EveryFiveSeconds_AndLongerRepositioning()
         {
             var t = GameConfig.CreateDefault().collector;
             Assert.AreEqual(6f, t.teleportMinDistance);
             Assert.AreEqual(5f, t.teleportCooldown);
+            Assert.AreEqual(0.4f, t.teleportChance, 1e-6f);
             Assert.AreEqual(2, t.maxSameInARow);
             Assert.Greater(t.repositionMax, 1.0f, "more walking between attacks than before");
         }
