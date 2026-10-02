@@ -93,8 +93,11 @@ namespace BorrowedHex.UI
         Color clockFlashColor;
         void FlashClock(float delta, Vector2 at)
         {
+            // Losses only (D66): hits and backfires are what the player must notice. Kill gains
+            // flashed too often to mean anything and already get a floating "+N" at the kill.
+            if (delta >= 0) return;
             clockFlashUntil = Time.unscaledTime + 0.25f;
-            clockFlashColor = delta < 0 ? new Color(1f, 0.3f, 0.3f) : Ui.Accent;
+            clockFlashColor = new Color(1f, 0.3f, 0.3f);
         }
         void OnDestroy() { if (sim != null) sim.Events.LifeClockChanged -= FlashClock; }
 
@@ -140,8 +143,8 @@ namespace BorrowedHex.UI
             // Hue 0.33 (green) -> 0 (red) passes through yellow on the way, which reads as a
             // traffic light without needing a three-stop gradient.
             lifeBarFill.color = Color.HSVToRGB(frac * 0.33f, 0.85f, 0.95f);
-            // Hits and kill rewards flash the bar background (red on loss, accent on gain),
-            // replacing the old clock-text flash so the feedback stays on the life display.
+            // Hits and backfires flash the bar background red (gains do not, D66), replacing
+            // the old clock-text flash so the feedback stays on the life display.
             bool flashing = Time.unscaledTime < clockFlashUntil;
             lifeBarBg.color = flashing ? clockFlashColor * new Color(1, 1, 1, 0.8f) : new Color(0, 0, 0, 0.6f);
             // Low life: the heart beats (unscaled time, so it keeps beating while paused; it is

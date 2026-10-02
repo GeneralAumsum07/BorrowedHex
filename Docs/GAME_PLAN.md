@@ -332,7 +332,7 @@ The clock that limits the run is also the magician's health (owner idea 7; repla
   overstayed enemies 1.5× their base. Despawned enemies give nothing.
 - **Hits take seconds**, at 5 s per former half heart: an ordinary enemy hit −10 s, a boss attack (including its
   bolts) −20 s, body contact −5 s (ordinary) or −10 s (boss), a backfire −10 s.
-- Damage numbers float up from the player ("−10") and the life bar flashes; kill gains float up from the kill ("+3").
+- Damage numbers float up from the player ("−10") and the life bar flashes red; kill gains float up from the kill ("+3") without flashing the bar (D66).
 - When the clock reaches zero the run ends. If the last change was damage or a backfire the end reason is `Death`;
   if it ran out by ticking it is `TimeExpired`. Both are losses; the distinction is for statistics.
 - The HUD shows life as a **heart icon and a bar** that drains green → yellow → red; no numeric timer (D65).

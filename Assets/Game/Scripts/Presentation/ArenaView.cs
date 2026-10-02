@@ -592,7 +592,9 @@ namespace BorrowedHex.Presentation
             text.characterSize = 0.055f;
             text.anchor = TextAnchor.MiddleCenter;
             text.color = delta < 0 ? RejectColor : ReturnedColor;
-            text.text = $"{(delta > 0 ? "+" : "")}{delta:0.#}s";
+            // No "s" suffix (D66): life reads as a health bar now, not a timer, so the number is
+            // just health gained or lost. The sim still counts it in seconds.
+            text.text = $"{(delta > 0 ? "+" : "")}{delta:0.#}";
             timeNumbers.Add(new TimeNumber { Text = text, Origin = Geometry2D.ToWorld(at, 1.5f) });
         }
 
