@@ -313,10 +313,35 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void AfterATeleport_TheMeleeWindUpStartsOnArrival_NoWalkFirst()
+        {
+            var (sim, boss) = BossFight(c => c.collector.teleportChance = 1f);
+            var t = sim.Config.collector;
+            int seen = 0, checkedArrivals = 0;
+            for (int i = 0; i < 60 * 60 && sim.State == RunState.BossCombat; i++)
+            {
+                var b = boss.Boss;
+                // Far away while the boss chooses, so it keeps teleporting.
+                if (b.Stage != BossStage.Teleport && b.Teleports == seen)
+                    sim.Player.Position = boss.Position.x > 0 ? new Vector2(-9f, 5f) : new Vector2(9f, 5f);
+                sim.Tick(P5.Still.WithAim(sim.Player.Position + Vector2.up * 5f), P5.Dt);
+                if (b.Teleports == seen) continue;
+                seen = b.Teleports;
+                // The tick it lands: already winding up a melee, at full wind-up length.
+                Assert.AreEqual(BossStage.Telegraph, b.Stage, "winds up on arrival");
+                Assert.IsTrue(CollectorBoss.IsMelee(b.Pattern));
+                Assert.AreEqual(CollectorBoss.TelegraphOf(b.Pattern, t), b.StageEndsAt - sim.Clock.Now, P5.Dt + 1e-4,
+                    "the wind-up itself is not shortened: it is the only warning");
+                checkedArrivals++;
+            }
+            Assert.GreaterOrEqual(checkedArrivals, 4, "fixture: enough teleports");
+        }
+
+        [Test]
         public void Tuning_FasterBoss_AndFasterSlam()
         {
             var t = GameConfig.CreateDefault().collector;
-            Assert.AreEqual(3.3f, t.moveSpeed, 1e-6f, "was 3.0");
+            Assert.AreEqual(3.6f, t.moveSpeed, 1e-6f, "was 3.0, then 3.3 (D55)");
             Assert.AreEqual(0.8f, t.slamTelegraph, 1e-6f, "was 0.95");
         }
 
@@ -326,7 +351,7 @@ namespace BorrowedHex.Tests
             var t = GameConfig.CreateDefault().collector;
             Assert.AreEqual(6f, t.teleportMinDistance);
             Assert.AreEqual(5f, t.teleportCooldown);
-            Assert.AreEqual(0.4f, t.teleportChance, 1e-6f);
+            Assert.AreEqual(0.48f, t.teleportChance, 1e-6f, "40% + 8 points (D55)");
             Assert.AreEqual(2, t.maxSameInARow);
             Assert.Greater(t.repositionMax, 1.0f, "more walking between attacks than before");
         }

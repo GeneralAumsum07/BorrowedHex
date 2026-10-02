@@ -17,8 +17,8 @@ namespace BorrowedHex.Data
         public string displayName = "The Collector";
         public int health = 50;
         public float bodyRadius = 0.9f;
-        // 2.6 → 3.0 (D49) → 3.3 (owner, D54: "buff the movement speed slightly").
-        public float moveSpeed = 3.3f;
+        // 2.6 → 3.0 (D49) → 3.3 (D54) → 3.6 (owner, D55).
+        public float moveSpeed = 3.6f;
         [Tooltip("Half hearts lost to ANY boss attack, its bolts included (4 = two hearts).")]
         public int hitDamage = 4;
         [Tooltip("Half hearts lost on touching the boss's body (2 = one heart).")]
@@ -63,7 +63,8 @@ namespace BorrowedHex.Data
         [Tooltip("Only considered when the player is at least this far away.")]
         public float teleportMinDistance = 6f;
         [Tooltip("Chance per pattern start, when far away and off cooldown (seeded).")]
-        [Range(0f, 1f)] public float teleportChance = 0.4f;
+        // 0.35 → 0.40 (D53) → 0.48 (owner, D55: "another 8%", read as 8 points).
+        [Range(0f, 1f)] public float teleportChance = 0.48f;
         [Tooltip("Visible wind-up: the boss fades and the arrival spot is marked.")]
         public float teleportTelegraph = 0.6f;
         public float teleportCooldown = 5f;

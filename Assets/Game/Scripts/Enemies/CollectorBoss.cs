@@ -196,6 +196,12 @@ namespace BorrowedHex.Enemies
             b.Stage = BossStage.Reposition;
             b.StageEndsAt = now + t.repositionMax;
             if (!IsMelee(b.Pattern)) b.MoveTarget = FiringSpot(sim, e, t);
+            // Owner direction (D55): after a teleport the melee comes almost at once, so skip
+            // the walk-in and start the wind-up on arrival. Safe to skip: the boss lands
+            // teleportBehindDistance (2.6) away, inside both the sweep's reach (3.0) and the
+            // slam's radius (3.2). The wind-up itself stays full length; it is the player's only
+            // warning, and the slam cannot be parried.
+            if (afterTeleport) StartTelegraph(sim, e, t, now);
         }
 
         /// <summary>

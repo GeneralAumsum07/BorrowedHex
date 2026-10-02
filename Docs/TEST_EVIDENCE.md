@@ -372,3 +372,15 @@ Test report: EditMode 164/164, PlayMode 2/2.
   choices at 3.5 units to be slams, and fewer than all).
   Zero-passive bot: 37.8 s into the boss fight (run clock 66.7 s), was 35.6 s.
 ```
+
+## Post-Phase 5: instant melee after teleport, speed 3.6, teleport 48% (D55)
+
+```text
+Files changed: Scripts/Data/RunTuning.cs; Scripts/Enemies/CollectorBoss.cs;
+  Tests/EditMode/ShortRunTests.cs
+Test report: EditMode 165/165, PlayMode 2/2.
+  RED first: AfterATeleport_TheMeleeWindUpStartsOnArrival_NoWalkFirst (stage was Reposition on
+  arrival); tuning tests saw 3.3 and 0.4. Then green.
+  Zero-passive bot: 73.0 s into the boss fight (run clock 102.0 s), was 37.8 s. Not investigated
+  (inference: more teleports and instant melee give the offence-only bot fewer free windows).
+```
