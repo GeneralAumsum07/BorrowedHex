@@ -21,7 +21,7 @@ namespace BorrowedHex.Tests
 
         /// <summary>
         /// Hostile hits pass through (section 3: invulnerable players let shots through), so a
-        /// schedule test can run the full 180 s without the player's survival being the subject.
+        /// schedule test can run the full 300 s without the player's survival being the subject.
         /// </summary>
         public static void Invulnerable(ArenaSim sim) => sim.Player.InvulnerableUntil = 1e9;
 
@@ -172,7 +172,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
             Assert.AreEqual(0, sim.Encounter);
-            Assert.AreEqual(180.0, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(300.0, sim.Clock.Now, 1e-4);
             Assert.AreEqual(0f, sim.SecondsLeftInRun());
         }
 
@@ -247,14 +247,14 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void LivingBossAt180Seconds_EndsTheRun_TimeExpired()
+        public void LivingBossWhenTheClockRunsOut_EndsTheRun_TimeExpired()
         {
             var sim = P5.Short();
             P5.ToBossCombat(sim);
             P5.TickWhile(sim, RunState.BossCombat);
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
-            Assert.AreEqual(180.0, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(300.0, sim.Clock.Now, 1e-4);
             Assert.AreEqual(0, sim.Summary.VictoryBonus);
         }
 
@@ -270,7 +270,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.Victory, sim.Summary.Reason);
             // Whole unused seconds of the shared clock, two points each.
-            int unused = (int)System.Math.Floor(180.0 - sim.Clock.Now + 1e-6);
+            int unused = (int)System.Math.Floor(300.0 - sim.Clock.Now + 1e-6);
             Assert.Greater(unused, 0);
             Assert.AreEqual(unused * 2, sim.Summary.VictoryBonus);
             Assert.AreEqual(before + 250 + unused * 2, sim.Summary.Score);

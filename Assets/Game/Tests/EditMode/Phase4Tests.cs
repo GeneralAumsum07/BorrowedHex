@@ -446,4 +446,17 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(10, cfg.player.maxHealth);
         }
     }
+
+    // Owner direction (D56): a 5-minute run, and pursuers 1.4x as fast (3.0 → 4.2).
+    public class D56TuningTests
+    {
+        [Test]
+        public void FiveMinuteRun_AndFasterPursuers()
+        {
+            var cfg = GameConfig.CreateDefault();
+            Assert.AreEqual(300f, cfg.shortMode.runLength);
+            Assert.AreEqual(3.0f * 1.4f, cfg.combat.pursuer.moveSpeed, 1e-5f);
+            Assert.Less(cfg.combat.pursuer.moveSpeed, cfg.player.moveSpeed, "the player can still outrun them");
+        }
+    }
 }

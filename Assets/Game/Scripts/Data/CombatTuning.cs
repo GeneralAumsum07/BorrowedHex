@@ -111,7 +111,8 @@ namespace BorrowedHex.Data
         // Section 4: approaches and performs a telegraphed close strike; supplies no ammunition.
         public EnemyTuning pursuer = new EnemyTuning
         {
-            health = 2, bodyRadius = 0.4f, moveSpeed = 3.0f, telegraph = 0.55f, aimLock = 0.2f,
+            // moveSpeed 3.0 → 4.2 (owner, D56: 1.4x); still under the player's 6.
+            health = 2, bodyRadius = 0.4f, moveSpeed = 4.2f, telegraph = 0.55f, aimLock = 0.2f,
             cooldown = 1.1f, firstShotDelay = 0.2f, attackId = "", volleySpreadDeg = new float[0],
             killValue = 10,
         };
