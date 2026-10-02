@@ -279,6 +279,47 @@ namespace BorrowedHex.Tests
             }
         }
 
+        // ---- Slams in the open, faster boss (owner direction, D54) -------------------------
+
+        [Test]
+        public void APlayerInSweepRange_InTheOpen_StillGetsSlammedSometimes()
+        {
+            // 3.5 units: inside the sweep band, outside the slam band, nowhere near a pillar.
+            // Before D54 this saw sweeps only: two sweeps hit the melee cap before the
+            // same-attack swap could ever turn one into a slam.
+            var (sim, boss) = BossFight(c => c.collector.teleportChance = 0f);
+            int slams = 0, melee = 0, lastStarted = boss.Boss.PatternsStarted;
+            for (int i = 0; i < 60 * 90 && sim.State == RunState.BossCombat; i++)
+            {
+                var b = boss.Boss;
+                if (b.Stage == BossStage.Reposition || b.Stage == BossStage.Recover)
+                    sim.Player.Position = new Vector2(0f, -1f);
+                if (b.Stage == BossStage.Recover)
+                {
+                    // Re-plant the boss 3.5 units off so every choice is made from the sweep band.
+                    boss.Position = boss.PrevPosition = sim.Player.Position + Vector2.up * 3.5f;
+                }
+                sim.Tick(P5.Still, P5.Dt);
+                if (b.PatternsStarted == lastStarted) continue;
+                lastStarted = b.PatternsStarted;
+                if (!CollectorBoss.IsMelee(b.Pattern)) continue;
+                melee++;
+                if (b.Pattern == BossPattern.Slam) slams++;
+            }
+            Assert.GreaterOrEqual(melee, 10, "fixture: enough melee choices");
+            Assert.Greater(slams, 0);
+            Assert.Less(slams, melee, "the sweep is still the usual answer at this range");
+            Assert.GreaterOrEqual((float)slams / melee, 0.15f, $"{slams} slams of {melee} melee");
+        }
+
+        [Test]
+        public void Tuning_FasterBoss_AndFasterSlam()
+        {
+            var t = GameConfig.CreateDefault().collector;
+            Assert.AreEqual(3.3f, t.moveSpeed, 1e-6f, "was 3.0");
+            Assert.AreEqual(0.8f, t.slamTelegraph, 1e-6f, "was 0.95");
+        }
+
         [Test]
         public void Tuning_TeleportFromSixUnits_EveryFiveSeconds_AndLongerRepositioning()
         {

@@ -17,7 +17,8 @@ namespace BorrowedHex.Data
         public string displayName = "The Collector";
         public int health = 50;
         public float bodyRadius = 0.9f;
-        public float moveSpeed = 3.0f;
+        // 2.6 → 3.0 (D49) → 3.3 (owner, D54: "buff the movement speed slightly").
+        public float moveSpeed = 3.3f;
         [Tooltip("Half hearts lost to ANY boss attack, its bolts included (4 = two hearts).")]
         public int hitDamage = 4;
         [Tooltip("Half hearts lost on touching the boss's body (2 = one heart).")]
@@ -55,6 +56,8 @@ namespace BorrowedHex.Data
         public int maxMeleeInARow = 2;
         [Tooltip("The same pattern at most this many times in a row; then its partner (fan↔stream, slam↔sweep).")]
         public int maxSameInARow = 2;
+        [Tooltip("When the position table picks the sweep, the chance (seeded) it slams instead.")]
+        [Range(0f, 1f)] public float slamInsteadOfSweepChance = 0.35f;
 
         [Header("Teleport (D49)")]
         [Tooltip("Only considered when the player is at least this far away.")]
@@ -101,7 +104,9 @@ namespace BorrowedHex.Data
         public float parriedRecover = 1.2f;
 
         [Header("Ground slam")]
-        public float slamTelegraph = 0.95f;
+        // 0.95 → 0.8 (owner, D54: faster slam). Still longer than the sweep's 0.77 s wind-up:
+        // the slam cannot be parried, so its warning is the player's only answer.
+        public float slamTelegraph = 0.8f;
         [Tooltip("Slam radius around the boss's centre.")]
         public float slamRadius = 3.2f;
     }

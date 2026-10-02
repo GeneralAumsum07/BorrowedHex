@@ -180,6 +180,15 @@ namespace BorrowedHex.Enemies
             var next = afterTeleport
                 ? ChooseAfterTeleport(sim, t, last, b.SameStreak)
                 : Choose(sim, e, t, b.MeleeStreak, last, b.SameStreak);
+            // Owner direction (D54): slams were seen only beside pillars. The cause: the melee
+            // cap (2) equals the repeat cap (2), so sweep, sweep hits the melee cap first and the
+            // sweep→slam swap never fires; and the slam band is thin. So a sweep pick sometimes
+            // becomes a slam. Both walk in before striking, so either fits wherever a sweep did.
+            // Rolled here, not in Choose, so Choose stays a pure function of position for tests;
+            // and only on a sweep pick, so seeds that never pick a sweep replay as before.
+            if (!afterTeleport && next == BossPattern.Sweep && sim.Random.NextFloat() < t.slamInsteadOfSweepChance
+                && !(last == BossPattern.Slam && b.SameStreak >= t.maxSameInARow))
+                next = BossPattern.Slam;
             b.SameStreak = last == next ? b.SameStreak + 1 : 1;
             b.Pattern = next;
             b.MeleeStreak = IsMelee(b.Pattern) ? b.MeleeStreak + 1 : 0;

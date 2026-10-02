@@ -360,3 +360,15 @@ Test report: EditMode 162/162, PlayMode 2/2.
   Zero-passive bot: 35.6 s into the boss fight, identical to before D53. Inference only: its
   distances and seed path may not touch the changed bands; not investigated.
 ```
+
+## Post-Phase 5: faster boss and slam, slams in the open (D54)
+
+```text
+Files changed: Scripts/Data/RunTuning.cs; Scripts/Enemies/CollectorBoss.cs;
+  Tests/EditMode/ShortRunTests.cs
+Test report: EditMode 164/164, PlayMode 2/2.
+  RED first: APlayerInSweepRange_InTheOpen_StillGetsSlammedSometimes saw 0 slams;
+  Tuning_FasterBoss_AndFasterSlam saw 3.0. Then green (the test requires >= 15% of melee
+  choices at 3.5 units to be slams, and fewer than all).
+  Zero-passive bot: 37.8 s into the boss fight (run clock 66.7 s), was 35.6 s.
+```
