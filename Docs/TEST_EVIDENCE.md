@@ -497,3 +497,22 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - PlayMode: 6/6 pass. New: Mastery & skills from the main menu, buy and equip (two saves), back to
   the menu, and the next short run's catch cone includes the node; the run's passive list matches.
 - Not verified: the tree panel by eye; whether any node is worth its point (human playtest).
+
+## Phase 10 — Achievements and records (3 Oct 2026)
+
+- Files: new `Progression/{Achievements,Records,ProfileService.Achievements}.cs`, `UI/RecordsPanel.cs`,
+  `Presentation/GameRoot.Records.cs`, `Tests/EditMode/AchievementTests.cs`; changed `RunScore`/`RunSummary`
+  (borrow, return-policy and untouchable facts), `PlayerProfile` (record kind), `ProfileService` (result fields).
+- Live editor, EditMode: 265/265 pass. New: Return Policy needs the caster (another enemy's bolt
+  does not count, a riposte never does, the caster's own echo does); orbit and Parting Gift are not
+  borrowing; Crowd Control counts distinct victims of one root (repeat hits by echo/pierce add
+  nothing, two releases never add, release + echo reaching five does); Untouchable counts a clean
+  clear, not one with a hit, a hit before a pause, or a backfire, and a pause over the choice is
+  not a second clear; a lost run's facts map to Return Policy, First Borrow, Mixed Bag (heavy bolt
+  + rocket), Perfect Timing, Persistent Student, and not to Final Notice, Fully Trained, Second
+  Encore or Crowd Control; a won short run is Final Notice; a second qualifying run awards nothing
+  more; reaching mastery 5 in the run awards Persistent Student; records first/better/worse with
+  metadata; four impossible profiles rejected; an older record without a kind is a best score.
+- PlayMode: 7/7 pass. New: a finished run reports a first record, and the records panel opens from
+  the main menu, lists it, and closes on returning to the menu.
+- Not verified: the panel by eye.

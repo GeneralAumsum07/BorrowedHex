@@ -179,6 +179,25 @@ namespace BorrowedHex.Tests
             CollectionAssert.AreEqual(new[] { SkillTree.PrecisionAngle }, root.Sim.Setup.PassiveIds);
         }
 
+        [UnityTest]
+        public IEnumerator AFinishedRun_ShowsXpAndARecord_AndTheRecordsPanelListsIt()
+        {
+            yield return StartShortRun();
+            root.Sim.DamagePlayer(100000, 0);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Assert.AreEqual(1, root.LastFinalize.Records.Count);
+            Assert.IsTrue(root.LastFinalize.Records[0].IsNewBest);
+            root.ShowMainMenu();
+            root.Main.Press("records");
+            yield return null;
+            Assert.IsTrue(root.RecordsView.IsOpen);
+            StringAssert.Contains("Short", RecordsPanelText());
+            root.ShowMainMenu();
+            Assert.IsFalse(root.RecordsView.IsOpen);
+        }
+
+        string RecordsPanelText() => BorrowedHex.UI.RecordsPanel.RecordsBody(root.Profile.Profile);
+
         IEnumerator Click(Vector2 pos)
         {
             InputSystem.QueueStateEvent(mouse, new MouseState { position = pos });

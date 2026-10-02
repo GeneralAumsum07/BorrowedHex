@@ -17,6 +17,10 @@ namespace BorrowedHex.Progression
         // Phase 9: what the run earned toward mastery.
         public XpBreakdown Xp;
         public int LevelBefore, LevelAfter, LevelsGained;
+
+        // Phase 10: achievements earned for the first time, and the record comparison.
+        public List<string> NewAchievements = new List<string>();
+        public List<RecordOutcome> Records = new List<RecordOutcome>();
     }
 
     /// <summary>

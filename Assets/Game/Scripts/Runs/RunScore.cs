@@ -47,6 +47,15 @@ namespace BorrowedHex.Runs
         /// <summary>Distinct perfect shots that damaged an enemy (section 7 XP term, Perfect Timing).</summary>
         public int PerfectHits => perfectHitShots.Count;
         readonly HashSet<int> perfectHitShots = new HashSet<int>();
+
+        // ---- Achievement facts (section 7), gathered where the events are, frozen in the summary.
+        /// <summary>A returned payload (not a riposte) damaged an enemy.</summary>
+        public bool FirstBorrow { get; private set; }
+        /// <summary>A returned payload killed the very actor that cast it.</summary>
+        public bool ReturnPolicy { get; private set; }
+        /// <summary>Short-mode encounters cleared with no hit and no backfire.</summary>
+        public int UntouchableEncounters { get; private set; }
+        int hitsThisEncounter;
         public float SecondsGained { get; private set; }
         float totalFirePower;
         public float AverageFirePower => PacketsReleased == 0 ? 0f : totalFirePower / PacketsReleased;
@@ -71,7 +80,33 @@ namespace BorrowedHex.Runs
             ev.SlotSwapped += _ => Swaps++;
             ev.PillarCrumbled += _ => PillarsCrumbled++;
             ev.EnemyOverstayed += _ => EnemiesOverstayed++;
+            ev.RunStateChanged += OnRunStateChanged;
         }
+
+        /// <summary>
+        /// Encounter bookkeeping for Untouchable. A backfire costs life through the same damage
+        /// path as a hit (it raises PlayerHit), so counting PlayerHit covers both.
+        /// </summary>
+        void OnRunStateChanged(RunState state)
+        {
+            // Only a real encounter start resets the count: resuming from a pause also sets
+            // Combat, and must not wipe hits taken before the pause.
+            if (state == RunState.Combat && (previousState == RunState.Ready || previousState == RunState.UpgradeChoice))
+                hitsThisEncounter = 0;
+            // Combat -> UpgradeChoice happens only when an encounter is cleared (D50); a resume
+            // from a pause back into the choice is not a second clear.
+            else if (state == RunState.UpgradeChoice && previousState == RunState.Combat
+                     && sim.Setup.Mode == GameMode.Short && hitsThisEncounter == 0)
+                UntouchableEncounters++;
+            previousState = state;
+        }
+
+        RunState previousState = RunState.Ready;
+
+        /// <summary>Captured and returned (or its echo/blast); ripostes were never borrowed.</summary>
+        static bool IsReturnedPayload(in DamageEvent d) =>
+            d.Kind != AttackKind.Riposte && (d.Category == DamageCategory.ReturnedProjectile
+                || d.Category == DamageCategory.Echo || d.Category == DamageCategory.Explosion);
 
         public float HitRate => PacketsReleased == 0 ? 0f : (float)PacketsHit / PacketsReleased;
 
@@ -86,6 +121,7 @@ namespace BorrowedHex.Runs
             // Counted by shot ID, so a perfect shot that pierces three enemies is one perfect
             // shot. Echoes are excluded: they copy the perfect flag but were never caught.
             if (d.Perfect && d.Category != DamageCategory.Echo) perfectHitShots.Add(d.ShotId);
+            if (IsReturnedPayload(d)) FirstBorrow = true;
             int root = d.RootReleaseId;
             // Root 0 = not from a player release (nothing today; future contact/orbit damage).
             if (root == 0) return;
@@ -106,6 +142,7 @@ namespace BorrowedHex.Runs
             Kills++;
             if (e.IsBoss) BossesDefeated++;
             else if (e.Overstayed) OverstayedKills++;
+            if (IsReturnedPayload(d) && d.SourceActorId == e.ActorId) ReturnPolicy = true;
             // Kills by HEX type: only returned payloads count. Orbit and Parting Gift kills are
             // upgrade damage, not a borrowed hex, and would otherwise pose as bolts or rockets.
             if (d.Category == DamageCategory.ReturnedProjectile || d.Category == DamageCategory.Echo
@@ -128,6 +165,7 @@ namespace BorrowedHex.Runs
         void OnPlayerHit(int amount, int source)
         {
             DamageTaken += amount;
+            hitsThisEncounter++;
             Multiplier = 1f;
             ComboExpiresAt = 0;
         }
@@ -179,6 +217,8 @@ namespace BorrowedHex.Runs
         public readonly int EnemiesOverstayed;
         public readonly int OverstayedKills;
         public readonly int PerfectHits;
+        public readonly bool FirstBorrow, ReturnPolicy;
+        public readonly int UntouchableEncounters;
         public readonly float AverageFirePower;
         public readonly float SecondsGained;
         public readonly int BestVolleyKills;
@@ -209,6 +249,9 @@ namespace BorrowedHex.Runs
             EnemiesOverstayed = s.EnemiesOverstayed;
             OverstayedKills = s.OverstayedKills;
             PerfectHits = s.PerfectHits;
+            FirstBorrow = s.FirstBorrow;
+            ReturnPolicy = s.ReturnPolicy;
+            UntouchableEncounters = s.UntouchableEncounters;
             AverageFirePower = s.AverageFirePower;
             SecondsGained = s.SecondsGained;
             BestVolleyKills = s.BestVolleyKills;

@@ -631,8 +631,8 @@ unaffordable nodes rejected; a fourth equipped node rejected; respec refunds cor
 
 **Depends on:** Phase 9.
 
-- [ ] Section 7's ten achievements from combat and run events; per-run, per-encounter, cumulative and profile scopes.
-- [ ] Records per mode and style with metadata; a short comparison with the previous best on the results screen.
+- [x] Section 7's ten achievements from combat and run events; per-run, per-encounter, cumulative and profile scopes (D81).
+- [x] Records per mode and style with metadata; a short comparison with the previous best on the results screen (D82).
 
 **Checks:** piercing and echoes never count a victim twice; Return Policy needs the original caster; Untouchable fails
 on a backfire; repeat completion gives nothing more.

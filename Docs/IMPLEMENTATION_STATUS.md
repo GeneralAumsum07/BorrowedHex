@@ -13,6 +13,15 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 10 — Achievements and records — implemented (owner check pending, 3 Oct 2026)
+
+- Ten achievements evaluated once per run in finalization from facts RunScore gathers (D81);
+  Second Encore waits on endless mode (Phase 12).
+- Best score per mode and style with metadata; results compare with the previous best (D82).
+- Achievements & records panel from the main menu.
+- 265/265 EditMode (14 new in `AchievementTests`), 7/7 PlayMode (1 new).
+- Not checked by eye: the panel layout.
+
 ### Phase 9 — Mastery, skill tree, loadouts — implemented (owner check pending, 3 Oct 2026)
 
 - XP from every ending inside the one finalization; levels 1-10, one point per level, carry (D78).

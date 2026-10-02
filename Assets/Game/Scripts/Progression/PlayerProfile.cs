@@ -100,6 +100,8 @@ namespace BorrowedHex.Progression
     {
         public string mode;
         public string styleId;
+        /// <summary>Records.BestScore or Records.LongestRun; empty in an older file means best score.</summary>
+        public string kind = "score";
         public int score;
         public float duration;
         public int kills;
