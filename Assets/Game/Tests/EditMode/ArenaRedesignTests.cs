@@ -120,5 +120,14 @@ namespace BorrowedHex.Tests
                 }
             }
         }
+
+        [Test]
+        public void EveryCatalogModelLoadsFromResources()
+        {
+            foreach (var name in WorldModelCatalog.Kenney.Concat(WorldModelCatalog.Quaternius))
+                Assert.That(Resources.Load<GameObject>(WorldModelCatalog.ResourcePath(name)), Is.Not.Null, name);
+            Assert.That(Resources.Load<Texture2D>("WorldModels/Kenney/colormap_night"), Is.Not.Null);
+            Assert.That(WorldModelCatalog.Exists(WorldModelCatalog.Crystal), Is.True, "Built in code, never loaded");
+        }
     }
 }
