@@ -21,7 +21,7 @@ namespace BorrowedHex.Tests
         static CapturedPacket Packet(ArenaSim sim, string attack = AttackIds.Bolt, bool perfect = false,
             ActorCategory source = ActorCategory.Pursuer, int count = 1)
         {
-            var p = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+            var p = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
             for (int i = 0; i < count; i++)
             {
                 var s = AttackSnapshot.From(sim.Attacks.Get(attack), 42, sim.Ids.Next(), 0);

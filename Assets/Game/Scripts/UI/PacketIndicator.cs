@@ -31,6 +31,7 @@ namespace BorrowedHex.UI
         static readonly Color EmptyBack = new Color(0f, 0f, 0f, 0.35f);
         static readonly Color UsedBack = new Color(0f, 0.1f, 0.15f, 0.7f);
         static readonly Color LockedBack = new Color(0.2f, 0.05f, 0.1f, 0.7f);
+        static readonly Color RejectRed = new Color(1f, 0.3f, 0.3f);
 
         ArenaSim sim;
         RectTransform root;
@@ -50,7 +51,24 @@ namespace BorrowedHex.UI
             return pi;
         }
 
-        public void Bind(ArenaSim s) => sim = s;
+        float handFullUntil;
+
+        public void Bind(ArenaSim s)
+        {
+            if (sim != null) sim.Events.CaptureRejected -= OnRejected;
+            sim = s;
+            handFullUntil = 0f;
+            sim.Events.CaptureRejected += OnRejected;
+        }
+
+        // D89: the one rejection Q would have prevented gets its own cue on the hand itself,
+        // so "why didn't that catch?" reads as "my hand was full", not as a missed click.
+        void OnRejected(Vector2 at, Combat.CaptureResult r)
+        {
+            if (r == Combat.CaptureResult.HandFull) handFullUntil = Time.unscaledTime + 0.3f;
+        }
+
+        void OnDestroy() { if (sim != null) sim.Events.CaptureRejected -= OnRejected; }
 
         void BuildCatchBar()
         {
@@ -107,6 +125,9 @@ namespace BorrowedHex.UI
 
                 bool selected = i == store.SelectedSlot;
                 p.Highlight.enabled = selected;
+                bool handFullFlash = selected && Time.unscaledTime < handFullUntil;
+                // Red outline while the HandFull cue runs (D89), the usual gold otherwise.
+                p.Highlight.effectColor = handFullFlash ? RejectRed : SelectedColor;
                 var pk = store.InSlot(i);
                 string tag = (selected ? "> " : "") + (i + 1);
                 if (pk != null)
@@ -118,7 +139,7 @@ namespace BorrowedHex.UI
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
                     p.Fill.color = selected && left < 0.5f ? UrgentColor : FillColor;
                     // FirePower, not Power: a fused packet shows the +25% it will actually fire with.
-                    string state = (selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
+                    string state = (handFullFlash ? "HAND FULL — Q" : selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
                     p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{state}";
                 }
                 else

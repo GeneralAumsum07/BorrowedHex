@@ -269,7 +269,7 @@ namespace BorrowedHex.Tests
                 var sim = new ArenaSim(TestSims.Config, setup);
                 var aim = PlayerCommand.Moving(Vector2.zero).WithAim(new Vector2(8f, 0f));
                 // A packet in slot 1, selected by the swap.
-                var p = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+                var p = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
                 p.Payloads.Add(AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 42, sim.Ids.Next(), 0));
                 p.Status = PacketStatus.Stored;
                 sim.Tick(aim, Dt);

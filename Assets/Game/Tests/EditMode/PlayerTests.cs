@@ -1,4 +1,5 @@
 using static BorrowedHex.Tests.ClockFixtures;
+using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
 using BorrowedHex.Player;
@@ -149,5 +150,27 @@ namespace BorrowedHex.Tests
         public static GameConfig Config => config != null ? config : (config = GameConfig.CreateDefault());
 
         public static ArenaSim Sandbox(int seed = 1) => new ArenaSim(Config, RunSetup.ForSandbox(seed));
+
+        /// <summary>
+        /// Seed a packet bypassing the hand rule (D89): the selected slot if it is free, else the
+        /// first free slot — exactly what PacketStore.Create did before D89, so tests written
+        /// against the old auto-banking keep their meaning. Tests that need "two packets held"
+        /// use this; tests about WHICH slot a catch fills must go through a real catch (or
+        /// PacketStore.Create) instead.
+        /// </summary>
+        public static CapturedPacket Seed(PacketStore store, int packetId, int activationId, double now, float lifetime, int capacity)
+        {
+            var inHand = store.CreateInSlot(store.SelectedSlot, packetId, activationId, now, lifetime, capacity);
+            if (inHand != null) return inHand;
+            for (int slot = 0; slot < store.SlotCount; slot++)
+            {
+                var p = store.CreateInSlot(slot, packetId, activationId, now, lifetime, capacity);
+                if (p != null) return p;
+            }
+            return null;
+        }
+
+        /// <summary>Rule A (D89): one tick with Q pressed, pocketing the held hex so the hand is free.</summary>
+        public static void Pocket(ArenaSim sim) => sim.Tick(PlayerCommand.Moving(Vector2.zero).WithCycle(), 1f / 60f);
     }
 }

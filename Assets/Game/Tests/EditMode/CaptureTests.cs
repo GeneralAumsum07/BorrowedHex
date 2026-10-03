@@ -22,7 +22,7 @@ namespace BorrowedHex.Tests
         public void PacketCapturedAt1_DoesNotReleaseAt3_99_AndReleasesOnceAt4()
         {
             var store = new PacketStore(2);
-            store.Create(1, 1, 1.0, 3f, 12);
+            TestSims.Seed(store, 1, 1, 1.0, 3f, 12);
             Assert.AreEqual(0, store.Advance(3.99).Count);
             Assert.AreEqual(1, store.Advance(4.0).Count);
             Assert.AreEqual(0, store.Advance(4.0).Count, "released exactly once");
@@ -35,7 +35,7 @@ namespace BorrowedHex.Tests
             // 240 steps of 1/60 accumulated in double land a hair under 4.0.
             double t = 0; for (int i = 0; i < 60; i++) t += 1f / 60f;
             var store = new PacketStore(2);
-            store.Create(1, 1, t, 3f, 12);
+            TestSims.Seed(store, 1, 1, t, 3f, 12);
             double later = t; for (int i = 0; i < 180; i++) later += 1f / 60f;
             Assert.AreEqual(1, store.Advance(later).Count);
         }
@@ -101,6 +101,7 @@ namespace BorrowedHex.Tests
             var store = new PacketStore(2);
             var ids = new IdGenerator();
             c.TryActivate(0.0, Stats); c.TryCapture(Shot(AttackIds.Bolt), AttackFaction.Hostile, false, 0.0, store, Stats, ids);
+            store.CycleSelection();   // D89: pocket the first hex so the second catch has a free hand
             c.TryActivate(1.0, Stats); c.TryCapture(Shot(AttackIds.Bolt), AttackFaction.Hostile, false, 1.0, store, Stats, ids);
             c.TryActivate(2.0, Stats);
             Assert.AreEqual(CaptureResult.SlotsFull, c.TryCapture(Shot(AttackIds.Bolt), AttackFaction.Hostile, false, 2.0, store, Stats, ids));
@@ -242,21 +243,29 @@ namespace BorrowedHex.Tests
             ShotFrom(sim, new Vector2(2f, 0f));
             sim.Tick(Catch, Dt);
             Run(sim, 60); // 1 s later, recovery is over
+            TestSims.Pocket(sim); // D89: the second catch needs a free hand
             ShotFrom(sim, new Vector2(2f, 0f));
             sim.Tick(Catch, Dt);
             Run(sim, 2);
             Assert.AreEqual(2, sim.Packets.Packets.Count);
+            // Select the first hex again. The second was selected for the few ticks of its own
+            // catch (the hand rule puts every catch in the selected hand), so it is frozen at
+            // whatever it has left now rather than at a full 3 s.
+            TestSims.Pocket(sim);
+            var second = sim.Packets.InSlot(1);
+            float frozenAt = second.Remaining(sim.Clock.Now);
 
             int releases = 0;
             sim.Events.PacketReleased += (_, __) => releases++;
-            Run(sim, 120); // ~3.05 s after the first capture
+            for (int i = 0; i < 240 && sim.Score.Backfires == 0; i++) Run(sim, 1);
             Assert.AreEqual(0, releases);
             Assert.AreEqual(1, sim.Score.Backfires);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
             Run(sim, 60);
             Assert.AreEqual(0, releases);
             Assert.AreEqual(1, sim.Packets.Packets.Count);
-            Assert.AreEqual(3f, sim.Packets.Packets[0].Remaining(sim.Clock.Now), 1e-6f);
+            Assert.AreSame(second, sim.Packets.Packets[0]);
+            Assert.AreEqual(frozenAt, second.Remaining(sim.Clock.Now), 1e-6f);
         }
 
         [Test]
@@ -337,8 +346,10 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             // Fill both slots.
             ShotFrom(sim, new Vector2(2f, 0f)); sim.Tick(Catch, Dt); Run(sim, 59);
+            TestSims.Pocket(sim); // D89: the second catch needs a free hand
             ShotFrom(sim, new Vector2(2f, 0f)); sim.Tick(Catch, Dt); Run(sim, 2);
             Assert.AreEqual(2, sim.Packets.Packets.Count);
+            TestSims.Pocket(sim); // select the first hex again so it is the one that expires
             // Advance to the tick on which the first packet expires, and catch on that tick.
             double firstExpiry = sim.Clock.Now + sim.Packets.Packets[0].Remaining(sim.Clock.Now);
             while (sim.Clock.Now + Dt < firstExpiry - 1e-6) sim.Tick(Hold, Dt);

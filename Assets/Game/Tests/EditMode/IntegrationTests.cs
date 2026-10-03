@@ -61,7 +61,10 @@ namespace BorrowedHex.Tests
                 }
                 if (incoming != null && sim.Capture.IsReady(now))
                 {
+                    // D89: a full hand cannot catch — pocket first (Q and catch on one tick is
+                    // "pocket, then catch", the cycle runs first).
                     cmd = cmd.WithAim(incoming.Position).WithCatch();
+                    if (!sim.Packets.HandFree && sim.Packets.FreeSlots > 0) cmd = cmd.WithCycle();
                     return rng.NextDouble() < 0.5 ? cmd.WithDash() : cmd;
                 }
                 if (rng.NextDouble() < 0.01) cmd = cmd.WithCycle();

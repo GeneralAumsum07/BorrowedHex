@@ -264,20 +264,26 @@ namespace BorrowedHex.Tests
                 var sim = Sim(style.Id);
                 CatchOneHeadOn(sim);
                 Assert.AreEqual(1, sim.Packets.Packets.Count, style.Id);
-                double first = sim.Clock.Now;
                 float ready = Mathf.Max(sim.Stats.CaptureRecovery, sim.Stats.CatchIsDash ? sim.Stats.DashCooldown : 0f);
                 Run(sim, Mathf.CeilToInt(ready / Dt) + 2);
+                TestSims.Pocket(sim);   // D89: the second catch needs a free hand
                 CatchOneHeadOn(sim);
                 Assert.AreEqual(2, sim.Packets.Packets.Count, style.Id);
                 var second = sim.Packets.InSlot(1);
                 Assert.IsNotNull(second, style.Id);
+                // Select the first hex again. The second decayed while it was the hand, so it
+                // freezes at what it has left now, not at a full 3 s (D89).
+                TestSims.Pocket(sim);
+                float frozenAt = second.Remaining(sim.Clock.Now);
 
                 float lifeBefore = sim.LifeSeconds;
-                Run(sim, Mathf.CeilToInt((float)(first + 3.05 - sim.Clock.Now) / Dt));
+                // The first hex was frozen while the second was caught, so it expires later than
+                // first + 3 s: run until it backfires (bounded), then check the second.
+                for (int i = 0; i < 300 && sim.Score.Backfires == 0; i++) Run(sim, 1);
                 Assert.AreEqual(1, sim.Score.Backfires, style.Id);
                 Assert.AreEqual(1, sim.Packets.Packets.Count, style.Id);
                 Assert.Less(sim.LifeSeconds, lifeBefore - sim.Stats.BackfireSeconds + 1f, style.Id + ": the backfire cost the clock");
-                Assert.AreEqual(3f, second.Remaining(sim.Clock.Now), 1e-6f, style.Id + ": unselected slot frozen");
+                Assert.AreEqual(frozenAt, second.Remaining(sim.Clock.Now), 1e-6f, style.Id + ": unselected slot frozen");
             }
         }
     }

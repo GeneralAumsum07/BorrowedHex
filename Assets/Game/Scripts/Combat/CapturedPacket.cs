@@ -55,7 +55,7 @@ namespace BorrowedHex.Combat
 
     /// <summary>
     /// The packet slots (D31): each packet owns one fixed slot index from capture until it is
-    /// released, and a new packet takes the selected slot first, then another free slot. A held slot is locked: nothing
+    /// released, and a new packet takes ONLY the selected slot, and only if it is empty (D89). A held slot is locked: nothing
     /// is ever appended to it after its catch window, so a later catch of any kind always lands
     /// in another slot. <see cref="SelectedSlot"/> is the player's Q selection for early release.
     ///
@@ -130,15 +130,23 @@ namespace BorrowedHex.Combat
             return true;
         }
 
+        /// <summary>
+        /// Rule A (D89): the selected slot is the hand. A catch lands there or nowhere — there is
+        /// no fallback to the other slot any more, because banking a hex is the player's Q
+        /// decision, not the store's. Before D89 the store auto-banked, which made one slot enough.
+        /// </summary>
+        public bool HandFree => InSlot(SelectedSlot) == null && !IsLocked(SelectedSlot);
+
         public CapturedPacket Create(int packetId, int activationId, double now, float lifetime, int capacity)
+            => HandFree ? CreateInSlot(SelectedSlot, packetId, activationId, now, lifetime, capacity) : null;
+
+        /// <summary>
+        /// Put a packet in a specific slot. Gameplay goes through <see cref="Create"/>; this exists
+        /// for tests and sandbox seeding that need "two hexes held" without playing two catches.
+        /// </summary>
+        public CapturedPacket CreateInSlot(int slot, int packetId, int activationId, double now, float lifetime, int capacity)
         {
-            if (FreeSlots <= 0) return null;
-            int slot = SelectedSlot;
-            if (InSlot(slot) != null || IsLocked(slot))
-            {
-                slot = 0;
-                while (InSlot(slot) != null || IsLocked(slot)) slot++;
-            }
+            if (slot < 0 || slot >= SlotCount || InSlot(slot) != null || IsLocked(slot)) return null;
             var p = new CapturedPacket
             {
                 PacketId = packetId,

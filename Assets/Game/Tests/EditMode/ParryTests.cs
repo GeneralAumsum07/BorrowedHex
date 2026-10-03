@@ -237,7 +237,7 @@ namespace BorrowedHex.Tests
             var sim = SimWithPlayerAt(OnTheRim);
             var bolt = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 77, sim.Ids.Next(), 0f);
             for (int i = 0; i < sim.Stats.PacketSlots; i++)
-                sim.Packets.Create(sim.Ids.Next(), 100 + i, 0, 99f, sim.Stats.PacketCapacity).Payloads.Add(bolt);
+                TestSims.Seed(sim.Packets, sim.Ids.Next(), 100 + i, 0, 99f, sim.Stats.PacketCapacity).Payloads.Add(bolt);
             var e = WoundUpPursuer(sim, 0.1);
             CatchAndResolve(sim, AtStrike);
             Assert.AreEqual(0, sim.Score.DamageTaken);

@@ -169,13 +169,15 @@ namespace BorrowedHex.Runs
         // ---- Slots-full catches: Overflow and Fusion ----------------------------------------
 
         /// <summary>
-        /// Before the normal capture: if this catch would be refused for full slots and Overflow
-        /// or Fusion is held (and not yet used this activation), make room or merge. Returns the
-        /// result if it fully handled the shot (Fusion), or null to continue with the normal path.
+        /// Before the normal capture: if this catch would be refused because the hand is full
+        /// (D91), Overflow fires the held hex to make room — pocket empty or not — and Fusion merges,
+        /// but Fusion still needs BOTH slots full since it absorbs the other packet. Used at most
+        /// once per activation. Returns the result if it fully handled the shot (Fusion), or null
+        /// to continue with the normal path.
         /// </summary>
-        CaptureResult? TrySlotsFullUpgrade(ref AttackSnapshot shot)
+        CaptureResult? TryFullHandUpgrade(ref AttackSnapshot shot)
         {
-            if (Capture.ActivePacket != null || Packets.FreeSlots > 0 || Capture.SlotsFullUpgradeUsed) return null;
+            if (Capture.ActivePacket != null || Packets.HandFree || Capture.SlotsFullUpgradeUsed) return null;
             if (shot.EnergyCost > Stats.PacketCapacity) return null;
             var selected = Packets.InSlot(Packets.SelectedSlot);
             if (selected == null) return null;   // selected slot is the locked one: nothing to fire or merge into
@@ -184,6 +186,7 @@ namespace BorrowedHex.Runs
             {
                 // Fire the selected packet at its CURRENT power from where the player stands,
                 // then let the normal path store the catch in the slot it vacated.
+                // Forced release: priming does not apply (D91), like Quick Draw does not (D79).
                 Capture.MarkOverflowUsed();
                 Packets.Remove(selected);
                 Capture.Detach(selected);
@@ -193,6 +196,7 @@ namespace BorrowedHex.Runs
 
             if (Has(UpgradeId.Fusion))
             {
+                if (Packets.FreeSlots > 0) return null;   // a free pocket: nothing to merge (D91)
                 CapturedPacket other = null;
                 foreach (var p in Packets.Packets) if (p != selected) { other = p; break; }
                 if (other == null) return null;

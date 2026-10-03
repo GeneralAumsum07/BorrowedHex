@@ -150,7 +150,7 @@ namespace BorrowedHex.Runs
             // projectile's own snapshot is left alone.
             var shot = p.Shot;
             if (p.Faction == AttackFaction.Hostile && !p.IsEcho && shot.Capturable) shot.Perfect = IsPerfectCatch(p);
-            var special = TrySlotsFullUpgrade(ref shot);
+            var special = TryFullHandUpgrade(ref shot);
             var result = special ?? Capture.TryCapture(shot, p.Faction, p.IsEcho, Clock.Now, Packets, Stats, Ids);
             if (result == CaptureResult.CreatedPacket || result == CaptureResult.Appended || result == CaptureResult.Fused)
             {

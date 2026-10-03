@@ -116,7 +116,7 @@ namespace BorrowedHex.Tests
 
             // Frozen: more ticks move neither the clock nor a packet's expiry.
             double at = sim.Clock.Now;
-            var packet = sim.Packets.Create(sim.Ids.Next(), 0, at, 0.5f, 12);
+            var packet = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, at, 0.5f, 12);
             for (int i = 0; i < 120; i++) sim.Tick(P5.Still, P5.Dt);
             Assert.AreEqual(at, sim.Clock.Now);
             CollectionAssert.Contains(sim.Packets.Packets, packet, "a 0.5 s packet survives 2 s of choice");
@@ -224,7 +224,7 @@ namespace BorrowedHex.Tests
             var bolt = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), leftover.ActorId, sim.Ids.Next(), 0f);
             sim.SpawnProjectile(bolt, AttackFaction.Hostile, new Vector2(5f, 0f), Vector2.left);
             Assert.Greater(sim.AliveOrdinaryCount(), 0);
-            var packet = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+            var packet = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
             Assert.NotNull(packet);
             int score = sim.Score.Score, kills = sim.Score.Kills;
 

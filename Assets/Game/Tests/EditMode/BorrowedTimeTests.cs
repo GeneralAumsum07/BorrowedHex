@@ -15,7 +15,7 @@ namespace BorrowedHex.Tests
 
         static CapturedPacket Packet(ArenaSim sim, string attack = AttackIds.Bolt)
         {
-            var p = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+            var p = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
             p.Payloads.Add(AttackSnapshot.From(sim.Attacks.Get(attack), 42, sim.Ids.Next(), 0));
             p.CapacityUsed = p.Payloads[0].EnergyCost;
             return p;
@@ -35,7 +35,7 @@ namespace BorrowedHex.Tests
         public void FrozenPacketResumesAndExpiresAtSeven()
         {
             var store = new PacketStore(2);
-            var p = store.Create(1, 1, 1, 3, 12);
+            var p = TestSims.Seed(store, 1, 1, 1, 3, 12);
             Assert.AreEqual(0, store.Advance(2).Count);
             store.CycleSelection();
             Assert.AreEqual(0, store.Advance(5).Count, "frozen at two seconds remaining");

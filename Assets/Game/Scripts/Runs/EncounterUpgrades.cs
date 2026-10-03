@@ -80,7 +80,7 @@ namespace BorrowedHex.Runs
                 case UpgradeId.FinalSecond:
                     return $"Perfect catches (caught just before impact) deal +{Pct(UpgradeTuning.ByRank(t.finalSecondBonus, rank))} more damage.";
                 case UpgradeId.Overflow:
-                    return "Catching with both slots full fires your selected packet at once and stores the new catch in its place.";
+                    return "Catching with your hand full fires the hex you hold at once and catches the new shot in its place.";
                 case UpgradeId.Fusion:
                     return $"Catching with both slots full merges the catch and your other packet into the selected one (+{Pct(t.fusionPowerScale - 1f)} power). The other slot stays locked until it fires.";
             }

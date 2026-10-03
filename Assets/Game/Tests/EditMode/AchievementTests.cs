@@ -118,7 +118,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(0, Untouched(sim =>
             {
                 // A packet left to decay backfires: costs life, so the encounter is not untouchable.
-                var p = sim.Packets.Create(sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+                var p = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
                 p.Payloads.Add(AttackSnapshot.From(sim.Attacks.Get(Data.AttackIds.Bolt), 42, sim.Ids.Next(), 0));
                 p.Status = PacketStatus.Stored;
                 P5.Invulnerable(sim);   // backfires bypass immunity; ordinary hits do not count here

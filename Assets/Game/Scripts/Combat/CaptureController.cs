@@ -14,6 +14,7 @@ namespace BorrowedHex.Combat
         SlotsFull,        // no packet yet this activation and both slots are occupied
         Overflowed,       // Overflow: the selected packet fired and the catch took its slot
         Fused,            // Fusion: the catch and the other packet merged into the selected one
+        HandFull,         // D89: the selected hand holds a hex but the other slot is free — press Q first.
     }
 
     /// <summary>
@@ -127,7 +128,10 @@ namespace BorrowedHex.Combat
             if (shot.EnergyCost > s.PacketCapacity) return CaptureResult.PacketFull;
             // Overflow and Fusion are resolved by the sim BEFORE this call (they need release
             // and merge, which live there); by the time we get here a full store is just full.
-            if (store.FreeSlots <= 0) return CaptureResult.SlotsFull;
+            // Rule A (D89): only an empty selected hand can start a packet. Both slots full keeps
+            // its old name (stats, tests); a full hand with a free pocket is the new HandFull, the
+            // one case where Q would have saved the catch, so the HUD can say exactly that.
+            if (!store.HandFree) return store.FreeSlots <= 0 ? CaptureResult.SlotsFull : CaptureResult.HandFull;
 
             ActivePacket = store.Create(ids.Next(), ActivationId, now, s.PacketLifetime, s.PacketCapacity);
             Store(ActivePacket, shot);
