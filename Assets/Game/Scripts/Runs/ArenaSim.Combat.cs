@@ -32,7 +32,7 @@ namespace BorrowedHex.Runs
             TickWaveClock(dt);                            //   endless wave countdown (Combat only)
             BackfireExpiredPackets(now);                  // 3
             if (!Player.Alive) { TickRunFlow(now); return; }
-            TickArenaDecay(now);
+            TickArenaDecay(tickStart, now);
             TickPlayer(cmd, tickStart, now, dt);          // 4 (catch, dash, move)
             TickEnemies(now, dt);                         // 5 (melee strikes resolve / are parried)
             TickProjectiles(now, dt);                     // 6

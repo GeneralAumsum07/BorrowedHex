@@ -161,8 +161,7 @@ namespace BorrowedHex.Tests
             // Exercise the director's stage edge without killing the artist's actors or
             // waiting for an entire run inside a presentation integration test.
             const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-            typeof(BorrowedHex.Runs.ArenaSim).GetMethod("SelectWorldArena", flags).Invoke(root.Sim, new object[] { stage });
-            typeof(BorrowedHex.Runs.ArenaSim).GetMethod("RestorePillars", flags).Invoke(root.Sim, null);
+            typeof(BorrowedHex.Runs.ArenaSim).GetMethod("SelectWorldArena", flags).Invoke(root.Sim, new object[] { stage, false });
         }
 
         [UnityTest]
@@ -254,7 +253,7 @@ namespace BorrowedHex.Tests
         }
 
         [UnityTest]
-        public IEnumerator InterruptedMorphDoesNotResurrectPartiallyFormedScenery()
+        public IEnumerator InterruptedMorphFinishesTheRunningOneBeforeTheNextBegins()
         {
             Attach(); root.useWorldArenas = true; root.PlaySandbox(); root.Sim.AutoSpawn = false;
             yield return null;
@@ -262,15 +261,19 @@ namespace BorrowedHex.Tests
             Transform environment = null;
             foreach (Transform child in artObject.transform)
                 if (child.name == "Environment") environment = child; // the incoming arena is the newest
-            var incoming = environment.Find("Dressing").GetComponentInChildren<Renderer>();
-            Assert.That(incoming, Is.Not.Null);
-            var properties = new MaterialPropertyBlock(); incoming.GetPropertyBlock(properties);
-            float coverage = properties.GetFloat("_Visible");
-            Assert.That(coverage, Is.LessThan(.1f));
+            var properties = new MaterialPropertyBlock();
+            float lowest = 1;
+            foreach (var renderer in environment.Find("Dressing").GetComponentsInChildren<Renderer>())
+            { renderer.GetPropertyBlock(properties); lowest = Mathf.Min(lowest, properties.GetFloat("_Fill")); }
+            Assert.That(lowest, Is.LessThan(1), "Early in the morph some incoming dressing has not formed.");
             SelectStage(2); yield return null;
-            incoming.GetPropertyBlock(properties);
-            Assert.That(properties.GetFloat("_Visible"), Is.LessThanOrEqualTo(coverage + .001f),
-                "The old theme retires from its current pixel coverage.");
+            // Only the arena being left and the one arriving remain: a skip never stacks a
+            // third, half-formed layout (and its invisible collision) underneath.
+            int environments = 0;
+            foreach (Transform child in artObject.transform) if (child.name == "Environment") environments++;
+            Assert.That(environments, Is.EqualTo(2));
+            Assert.That(root.Sim.Morph, Is.Not.Null);
+            Assert.That(root.Sim.Morph.Triggered, Is.LessThanOrEqualTo(2), "The new field starts fresh.");
         }
 
         [UnityTest]
@@ -289,7 +292,8 @@ namespace BorrowedHex.Tests
             {
                 Assert.That(material.shader.name, Is.EqualTo(PaintedMaterials.ShaderName));
                 Assert.That(material.GetTexture("_FromMap"), Is.Not.SameAs(material.GetTexture("_BaseMap")));
-                Assert.That(material.GetFloat("_Morph"), Is.InRange(0f, .1f));
+                // Surfaces resolve the patch field per pixel; objects never take that path.
+                Assert.That(material.GetFloat("_Surface"), Is.EqualTo(1));
             }
             var prop = floor.transform.parent.Find("CoverTrim0");
             var scale = prop.localScale;

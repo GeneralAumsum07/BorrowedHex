@@ -166,10 +166,11 @@ namespace BorrowedHex.Runs
             Offers.Clear();
             if (IsEndlessRun) { ContinueEndless(); return true; }
             Encounter++;
-            SelectWorldArena(UnityEngine.Mathf.Clamp(Encounter, 0, 3));
-            RestorePillars();
+            RestoreClassicCover();
+            // The Sanctum keeps its own relocation transition; every earlier edge only hands the
+            // running glitch morph to its timed tail (the arena already changed mid-encounter).
             if (TransitionsReached >= Config.shortMode.encounterCount) BeginBossIntro();
-            else SetState(RunState.Combat);
+            else { AdvanceWorldMorph(); SetState(RunState.Combat); }
             return true;
         }
 
@@ -183,7 +184,7 @@ namespace BorrowedHex.Runs
         void BeginBossIntro(int completedCycles = 0)
         {
             ClearArena();
-            if (SelectWorldArena(3)) RestorePillars();
+            SelectWorldArena(3);
             spawnQueue.Clear();
             Boss = SpawnBoss(completedCycles);
             Clock.SetPauseReason(PauseReason.BossIntro, true);

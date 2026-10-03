@@ -121,8 +121,9 @@ namespace BorrowedHex.Runs
         {
             Wave = Wave >= Config.endless.wavesPerCycle ? 1 : Wave + 1;
             StartWave();
+            // No kill share in endless: a stage change runs the timed glitch morph.
             SelectWorldArena(Mathf.Clamp((Wave - 1) / 2, 0, 2));
-            RestorePillars();
+            RestoreClassicCover();
             SetState(RunState.Combat);
         }
 

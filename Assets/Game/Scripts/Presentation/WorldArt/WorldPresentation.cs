@@ -31,7 +31,11 @@ namespace BorrowedHex.Presentation.WorldArt
         Vector3 lastPlayerVisual, pullFrom, pullTo, cameraFocus, pullCameraFrom, pullCameraTo;
         GameObject originalArena;
         bool originalArenaActive;
-        Color morphSunFrom, morphFogFrom, morphSunTo, morphFogTo;
+        // The glitch morph blends the whole night rig with patch progress, so no light pops
+        // when the incoming arena's theme is applied at the morph's first kill.
+        WorldLighting morphFrom, morphTo;
+        // The theme whose braziers are burning; swapped at the morph's halfway point.
+        string flamesTheme;
         float nextPullParticle;
         WorldEffects effects;
         WorldEffects terminalEffects;
@@ -113,18 +117,21 @@ namespace BorrowedHex.Presentation.WorldArt
                 || (sim.Boss != null && sim.State == RunState.Results);
             int index = sim.Setup.Mode == GameMode.Endless ? Math.Max(0, (sim.Wave - 1) / 2) : sim.Encounter;
             string theme = sim.Setup.WorldArenas && !sim.Setup.Tutorial ? sim.Arena.worldTheme : WorldArtPolicy.Theme(index, bossScene);
-            if (geometry.CurrentTheme != theme || sceneryIndex != index) { sceneryIndex = index; ApplyTheme(theme); }
+            if (geometry.CurrentTheme != theme || sceneryIndex != index) { sceneryIndex = index; ApplyTheme(theme, keepFlames: previousGeometry != null); }
+            GlitchField.Upload(sim.Morph, sim.Clock.Now, UI.DisplayOptions.ReduceFlashes, WorldLightingPolicy.Seam(sim.Arena.worldTheme));
             geometry.RenderCover(sim); RenderBoss(); effects.Render(sim.Clock.Now, camera);
             if (previousGeometry != null && !travel.Active)
             {
                 float blend = sim.WorldMorphProgress;
-                previousGeometry.RenderRetiring(sim); previousGeometry.RenderSceneryFormation(1 - blend);
-                previousGeometry.RenderMorph(blend, sim.Clock.Now, UI.DisplayOptions.ReduceFlashes);
-                geometry.RenderSceneryFormation(blend);
-                geometry.RenderMorph(blend, sim.Clock.Now, UI.DisplayOptions.ReduceFlashes);
-                if (sun != null) sun.color = Color.Lerp(morphSunFrom, morphSunTo, blend);
-                RenderSettings.fogColor = Color.Lerp(morphFogFrom, morphFogTo, blend);
-                if (blend >= 1) { previousGeometry.Dispose(); previousGeometry = null; }
+                previousGeometry.RenderRetiring(sim); previousGeometry.RenderScenery(sim.Morph, sim.Clock.Now);
+                geometry.RenderScenery(sim.Morph, sim.Clock.Now);
+                BlendLighting(blend);
+                if (blend >= .5f && flamesTheme != geometry.CurrentTheme) SpawnFlames(geometry.CurrentTheme);
+                if (blend >= 1)
+                {
+                    previousGeometry.Dispose(); previousGeometry = null;
+                    geometry.RenderScenery(null, sim.Clock.Now); // settle every prop fully solid
+                }
             }
             RenderPullAndCamera();
             if (root.View != null && root.View.gameObject.activeInHierarchy)
@@ -169,9 +176,10 @@ namespace BorrowedHex.Presentation.WorldArt
             previousGeometry?.Dispose(); previousGeometry = geometry;
             geometry = new WorldGeometry(transform, sim.Arena, art, root.config.litMaterial);
             arenaRevision = sim.ArenaRevision; sceneryIndex = -1;
-            morphSunFrom = sun != null ? sun.color : Color.white; morphFogFrom = RenderSettings.fogColor;
-            ApplyTheme(sim.Arena.worldTheme);
-            morphSunTo = sun != null ? sun.color : Color.white; morphFogTo = RenderSettings.fogColor;
+            morphFrom = WorldLightingPolicy.For(previousGeometry != null ? previousGeometry.CurrentTheme : sim.Arena.worldTheme);
+            ApplyTheme(sim.Arena.worldTheme, keepFlames: sim.WorldMorphing);
+            morphTo = WorldLightingPolicy.For(sim.Arena.worldTheme);
+            if (sim.WorldMorphing) BlendLighting(0);
             if (sim.WorldMorphing)
             {
                 // Live replacement: no camera relocation and no WorldTransition pause.
@@ -232,7 +240,7 @@ namespace BorrowedHex.Presentation.WorldArt
                     geometry.RenderReveal(lit, opening);
                     if (sun != null) sun.intensity = Mathf.Lerp(0, moonIntensity, opening);
                     fireFade = opening;
-                    RenderSettings.fogColor = Color.Lerp(Color.black, morphFogTo, opening);
+                    RenderSettings.fogColor = Color.Lerp(Color.black, morphTo.Fog, opening);
                     while (litPillars < lit)
                     {
                         travelEffects.Spawn("Blue Flame", WorldGeometry.FlameAnchor(sim.Arena, litPillars), 1.4f, age, Color.white, loop: true, fps: 10);
@@ -278,9 +286,37 @@ namespace BorrowedHex.Presentation.WorldArt
             sim.Events.EnemyKilled -= Killed;
         }
 
-        void ApplyTheme(string name)
+        void BlendLighting(float blend)
         {
-            geometry.SetTheme(name); effects.Clear();
+            var ambient = Color.Lerp(morphFrom.Ambient, morphTo.Ambient, blend);
+            RenderSettings.ambientLight = ambient; Shader.SetGlobalColor("_WorldAmbient", ambient);
+            RenderSettings.fogColor = Color.Lerp(morphFrom.Fog, morphTo.Fog, blend);
+            if (camera != null) camera.backgroundColor = RenderSettings.fogColor;
+            if (sun != null)
+            {
+                sun.color = Color.Lerp(morphFrom.Moon, morphTo.Moon, blend);
+                sun.intensity = Mathf.Lerp(morphFrom.MoonIntensity, morphTo.MoonIntensity, blend);
+            }
+            fireLights?.Tint(Color.Lerp(morphFrom.Fire, morphTo.Fire, blend));
+        }
+
+        // Torch or blue flame plus fog drift at the eight anchors. Kept apart from ApplyTheme so
+        // a morph can keep the outgoing braziers burning until its halfway point.
+        void SpawnFlames(string name)
+        {
+            effects.Clear(); flamesTheme = name;
+            if (travel.Active) return; // the reveal lights each Sanctum pillar independently
+            for (int i = 0; i < 8; i++)
+            {
+                var at = WorldGeometry.FlameAnchor(sim.Arena, i);
+                effects.Spawn(name == "Cave" || name == "Sanctum" ? "Blue Flame" : "Torch", at, 1.4f, sim.Clock.Now, Color.white, loop: true, fps: 10);
+                effects.Spawn("Fog Drift", at + Vector3.up * .5f, 3, sim.Clock.Now, new Color(.55f, .6f, .66f, .16f), loop: true, fps: 6);
+            }
+        }
+
+        void ApplyTheme(string name, bool keepFlames = false)
+        {
+            geometry.SetTheme(name);
             var lighting = WorldLightingPolicy.For(name);
             RenderSettings.ambientLight = lighting.Ambient;
             // PaintedWorld reads ambient from this global, not from the SH probe.
@@ -295,13 +331,7 @@ namespace BorrowedHex.Presentation.WorldArt
             }
             fireLights?.Dispose();
             fireLights = new FireLights(transform, sim.Arena, lighting.Fire);
-            if (travel.Active) return; // the reveal lights each Sanctum pillar independently
-            for (int i = 0; i < 8; i++)
-            {
-                var at = WorldGeometry.FlameAnchor(sim.Arena, i);
-                effects.Spawn(name == "Cave" || name == "Sanctum" ? "Blue Flame" : "Torch", at, 1.4f, sim.Clock.Now, Color.white, loop: true, fps: 10);
-                effects.Spawn("Fog Drift", at + Vector3.up * .5f, 3, sim.Clock.Now, new Color(.55f, .6f, .66f, .16f), loop: true, fps: 6);
-            }
+            if (!keepFlames) SpawnFlames(name);
         }
 
         void RenderBoss()
@@ -380,6 +410,7 @@ namespace BorrowedHex.Presentation.WorldArt
             }
             RenderSettings.ambientLight = originalAmbient;
             Shader.SetGlobalColor("_WorldAmbient", originalAmbient);
+            GlitchField.Clear();
             RenderSettings.fog = oldFog; RenderSettings.fogColor = oldFogColor; RenderSettings.fogDensity = oldFogDensity; RenderSettings.fogMode = oldFogMode;
             if (camera != null)
             {

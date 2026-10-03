@@ -16,7 +16,6 @@ namespace BorrowedHex.Presentation.WorldArt
         // corners of a 21:9 view clear the side walls near the north corners, and those rays
         // only meet the ground ~60-70 units past the bounds. The quad is one draw either way.
         public const float OuterMargin = 80, OuterTile = 8;
-        public const int SnapshotCap = 512;
         public Material Floor { get; }
         public Material Outer { get; }
 
@@ -52,35 +51,6 @@ namespace BorrowedHex.Presentation.WorldArt
             value.transform.localScale = new Vector3(size.x, size.y, 1);
             var renderer = value.GetComponent<Renderer>(); renderer.sharedMaterial = material;
             renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = true;
-        }
-
-        /// The shader's morph patch hash, Hash(float3(floor(uv*18), 5)), on the CPU.
-        public static float PatchNoise(float u, float v)
-            => Mathf.Repeat(Mathf.Sin(Mathf.Floor(u * 18) * 127.1f + Mathf.Floor(v * 18) * 311.7f + 5 * 74.7f) * 43758.5453f, 1);
-
-        /// <summary>
-        /// What the material shows right now, as a texture the next morph can start from.
-        /// A finished morph (the usual case) is just its _BaseMap: no CPU work and no new
-        /// texture (spec 2.2). Only an interrupted morph bakes, capped at `cap` px wide.
-        /// When `baked` is false the result is a shared asset the caller must NOT release.
-        /// </summary>
-        public static Texture2D Snapshot(Material material, int cap, out bool baked)
-        {
-            baked = false;
-            var target = material.GetTexture("_BaseMap") as Texture2D; var source = material.GetTexture("_FromMap") as Texture2D;
-            float amount = material.GetFloat("_Morph");
-            if (amount >= 1 || source == null || source == target || target == null) return target;
-            int width = Mathf.Min(cap, target.width), height = Mathf.Max(1, Mathf.RoundToInt(width * (float)target.height / target.width));
-            var pixels = new Color32[width * height];
-            for (int y = 0; y < height; y++) for (int x = 0; x < width; x++)
-            {
-                float u = (x + .5f) / width, v = (y + .5f) / height;
-                float mix = Mathf.Clamp01(amount * 1.65f - PatchNoise(u, v) * .65f);
-                pixels[y * width + x] = Color.Lerp(source.GetPixelBilinear(u, v), target.GetPixelBilinear(u, v), mix);
-            }
-            var snapshot = new Texture2D(width, height, TextureFormat.RGBA32, true) { filterMode = FilterMode.Bilinear, wrapMode = target.wrapMode };
-            snapshot.SetPixels32(pixels); snapshot.Apply();
-            baked = true; return snapshot;
         }
     }
 }

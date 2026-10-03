@@ -22,6 +22,22 @@ namespace BorrowedHex.Presentation.WorldArt
         // the camera's side of the floor.
         public static Quaternion MoonRotation => Quaternion.Euler(50, 160, 0);
 
+        /// <summary>
+        /// The glow of the glitch seam, taken from the INCOMING arena so the crack reads as the
+        /// next reality bleeding through. Saturated rather than white so it reads as a colour,
+        /// not as a flash.
+        /// </summary>
+        public static Color Seam(string theme)
+        {
+            switch (theme)
+            {
+                case "Graveyard": return new Color(.35f, 1f, .6f);
+                case "Cave": return new Color(.5f, .55f, 1f);
+                case "Sanctum": return new Color(.75f, .45f, 1f);
+                default: return new Color(1f, .7f, .4f);
+            }
+        }
+
         public static WorldLighting For(string theme)
         {
             switch (theme)

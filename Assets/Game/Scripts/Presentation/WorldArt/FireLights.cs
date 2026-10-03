@@ -44,6 +44,9 @@ namespace BorrowedHex.Presentation.WorldArt
             }
         }
 
+        /// <summary>Recolours every flame; the glitch morph blends the outgoing arena's fire colour into the incoming one's.</summary>
+        public void Tint(Color color) { foreach (var light in lights) light.color = color; }
+
         public void Dispose() => WorldArtLibrary.Release(root);
     }
 }

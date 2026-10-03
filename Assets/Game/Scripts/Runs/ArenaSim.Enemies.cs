@@ -60,7 +60,7 @@ namespace BorrowedHex.Runs
         /// variation, the wider fan. Set before the spawn event so views see the final boss.</param>
         public EnemyActor SpawnBoss(int completedCycles = 0)
         {
-            if (SelectWorldArena(3)) { ClearArena(); RestorePillars(); }
+            if (SelectWorldArena(3)) ClearArena();
             var t = Config.collector;
             var b = Arena.bounds;
             float y = Player.Position.y > b.center.y ? b.yMin + 3.5f : b.yMax - 3.5f;

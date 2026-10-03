@@ -21,8 +21,8 @@ namespace BorrowedHex.Tests
             Assert.That(ShaderUtil.ShaderHasError(shader), Is.False, "PaintedWorld has compile errors");
             // WorldGeometry's effect code drives these by name; losing one silently breaks
             // decay, morph, reveal or occlusion with no compile error anywhere.
-            foreach (var name in new[] { "_BaseMap", "_FromMap", "_BaseColor", "_Morph", "_Visible", "_Retiring",
-                         "_GlitchTime", "_Glitches", "_Reveal", "_Emission", "_FogAmount", "_Occlusion" })
+            foreach (var name in new[] { "_BaseMap", "_FromMap", "_BaseColor", "_Visible", "_Fill", "_Tear", "_Ghost",
+                         "_Grain", "_Surface", "_HeightRange", "_Reveal", "_Emission", "_FogAmount", "_Occlusion" })
                 Assert.That(shader.FindPropertyIndex(name), Is.GreaterThanOrEqualTo(0), name);
             Assert.That(shader.FindPropertyIndex("_NorthLimit"), Is.EqualTo(-1), "The apron clip is retired");
             var material = PaintedMaterials.Create("probe", Texture2D.whiteTexture, Color.white);
@@ -274,38 +274,6 @@ namespace BorrowedHex.Tests
                         }
                 }
                 finally { Object.DestroyImmediate(parent.gameObject); }
-        }
-
-        static Texture2D Solid(Color color, int width, int height)
-        {
-            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-            var pixels = new Color32[width * height]; for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
-            texture.SetPixels32(pixels); texture.Apply(); return texture;
-        }
-
-        [Test]
-        public void InterruptedMorphSnapshotsWhatWasOnScreen()
-        {
-            Texture2D black = Solid(Color.black, 64, 48), white = Solid(Color.white, 64, 48), shot = null;
-            var material = PaintedMaterials.Create("probe", white, Color.white);
-            try
-            {
-                material.SetTexture("_FromMap", black);
-                // A finished morph needs no CPU work: the snapshot IS the texture on screen.
-                material.SetFloat("_Morph", 1);
-                Assert.That(PaintedFloor.Snapshot(material, 512, out bool baked), Is.SameAs(white)); Assert.That(baked, Is.False);
-                // Interrupted at 60%: every pixel matches the shader's patch mix at that moment.
-                material.SetFloat("_Morph", .6f);
-                shot = PaintedFloor.Snapshot(material, 32, out baked);
-                Assert.That(baked, Is.True); Assert.That(shot.width, Is.EqualTo(32)); Assert.That(shot.height, Is.EqualTo(24));
-                var pixels = shot.GetPixels();
-                for (int y = 0; y < shot.height; y++) for (int x = 0; x < shot.width; x++)
-                {
-                    float expected = Mathf.Clamp01(.6f * 1.65f - PaintedFloor.PatchNoise((x + .5f) / shot.width, (y + .5f) / shot.height) * .65f);
-                    Assert.That(pixels[y * shot.width + x].r, Is.EqualTo(expected).Within(2.5f / 255), $"({x},{y})");
-                }
-            }
-            finally { Object.DestroyImmediate(material); Object.DestroyImmediate(black); Object.DestroyImmediate(white); if (shot != null) Object.DestroyImmediate(shot); }
         }
 
         [Test]

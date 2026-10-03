@@ -90,8 +90,7 @@ namespace BorrowedHex.Tests
         static void Change(ArenaSim sim, int stage)
         {
             const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-            typeof(ArenaSim).GetMethod("SelectWorldArena", flags).Invoke(sim, new object[] { stage });
-            typeof(ArenaSim).GetMethod("RestorePillars", flags).Invoke(sim, null);
+            typeof(ArenaSim).GetMethod("SelectWorldArena", flags).Invoke(sim, new object[] { stage, false });
         }
 
         [Test]

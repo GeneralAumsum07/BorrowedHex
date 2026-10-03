@@ -11,8 +11,9 @@ namespace BorrowedHex.Presentation.WorldArt
     /// Orchestrates one arena's world art and owns its effect API (spec 4.1/4.2): the painted
     /// floor and outer ground (PaintedFloor), the backing ribbon and kit dressing
     /// (ArenaEnclosure) and kit-model cover fitted to the collision rects (CoverModels).
-    /// Analytic collision stays in ArenaSim; nothing here has a collider. Coverage
-    /// dissolves (_Visible/_Retiring) replace growth and shatter animations, as before.
+    /// Analytic collision stays in ArenaSim; nothing here has a collider. The reality-glitch
+    /// morph (design 2026-10-04): surfaces resolve patches per pixel in the shader; every
+    /// object takes its patch's GlitchState (fill, tear, ghost) per renderer.
     /// </summary>
     public sealed class WorldGeometry : IDisposable
     {
@@ -21,16 +22,16 @@ namespace BorrowedHex.Presentation.WorldArt
         readonly WorldArtLibrary art;
         readonly WorldModelLibrary models;
         readonly ArenaLayout layout;
-        // Floor, Outer and Wall (the ribbon) cross-fade through _Morph and never dissolve,
+        // Floor, Outer and Wall (the ribbon) blend old to new per pixel and never dissolve,
         // so a morph can never open a hole onto the void (spec 3.3).
         readonly Dictionary<string, Material> surfaces = new Dictionary<string, Material>();
         readonly List<GameObject> cover = new List<GameObject>(), rubble = new List<GameObject>();
         readonly List<Renderer> scenery = new List<Renderer>();
-        readonly Dictionary<Renderer, float> sceneryBase = new Dictionary<Renderer, float>();
-        readonly Dictionary<GameObject, float> coverBase = new Dictionary<GameObject, float>();
         readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
-        bool morphing, retiring;
-        float sceneryAmount = 1;
+        // True for the outgoing arena of a morph: its objects retire instead of forming.
+        bool retiring;
+        // Which old rubble was on show when this arena started retiring; only that glitches out.
+        readonly HashSet<int> retiringRubble = new HashSet<int>();
         public string CurrentTheme { get; private set; }
         public Material Stone => surfaces["Wall"];
         public Texture2D FloorTexture => (Texture2D)surfaces["Floor"].GetTexture("_BaseMap");
@@ -45,6 +46,7 @@ namespace BorrowedHex.Presentation.WorldArt
             surfaces["Floor"] = floor.Floor; surfaces["Outer"] = floor.Outer;
             surfaces["Wall"] = PaintedMaterials.Create("Wall", PaintedFloor.Texture(CurrentTheme, "Ribbon"), Color.white);
             owned.Add(surfaces["Wall"]);
+            foreach (var material in surfaces.Values) material.SetFloat("_Surface", 1);
             scenery.AddRange(new ArenaEnclosure(root, arena, models, surfaces["Wall"], owned).Scenery);
             for (int i = 0; i < arena.pillars.Count; i++) BuildCover(i);
             if (CurrentTheme == "Sanctum")
@@ -101,61 +103,75 @@ namespace BorrowedHex.Presentation.WorldArt
 
         public void SetTheme(string value) => CurrentTheme = value;
 
-        void Visibility(Renderer renderer, float amount, bool old = false, Color? emission = null)
+        // One property-block write per renderer: wear, the glitch state and the world height
+        // range the fill edge climbs through.
+        void Apply(Renderer renderer, float visible, GlitchState glitch, bool legacyGrain = false)
         {
             renderer.GetPropertyBlock(properties);
-            properties.SetFloat("_Visible", Mathf.Clamp01(amount)); properties.SetFloat("_Retiring", old ? 1 : 0);
-            if (emission.HasValue) properties.SetColor("_Emission", emission.Value);
+            properties.SetFloat("_Visible", Mathf.Clamp01(visible));
+            properties.SetFloat("_Fill", glitch.Fill); properties.SetFloat("_Tear", glitch.Tear); properties.SetFloat("_Ghost", glitch.Ghost);
+            properties.SetFloat("_Grain", legacyGrain ? 1 : 0);
+            var bounds = renderer.bounds;
+            properties.SetVector("_HeightRange", new Vector4(bounds.min.y, bounds.max.y, 0, 0));
             renderer.SetPropertyBlock(properties); properties.Clear();
         }
 
-        void Visibility(GameObject value, float amount, bool old = false)
-        { foreach (var renderer in value.GetComponentsInChildren<Renderer>(true)) Visibility(renderer, amount, old); }
+        void Apply(GameObject value, float visible, GlitchState glitch)
+        { foreach (var renderer in value.GetComponentsInChildren<Renderer>(true)) Apply(renderer, visible, glitch); }
+
+        static bool Shows(GlitchState glitch) => glitch.Fill > 0 || glitch.Ghost > 0;
 
         public void RenderCover(ArenaSim sim)
         {
+            var field = sim.Morph; double now = sim.Clock.Now;
             for (int i = 0; i < cover.Count; i++)
             {
-                var state = sim.Pillars[i]; bool broken = state.Crumbled;
-                float visible = sim.CoverFormed(i) ? Mathf.Clamp01(1 - (float)(sim.Clock.Now - state.RestoredAt) / (state.MaxDurability * state.DecayInterval)) : sim.CoverFormation(i);
-                cover[i].SetActive(!broken); Visibility(cover[i], broken ? 0 : visible);
-                coverBase[cover[i]] = broken ? 0 : visible;
-                rubble[i].SetActive(broken); // static remains; no shatter/growth animation
+                var state = sim.Pillars[i]; bool formed = sim.CoverFormed(i);
+                // Incoming cover is not "crumbled" before it forms, it simply is not there yet.
+                bool broken = formed && state.Crumbled;
+                var glitch = GlitchMorphPolicy.FormingCover(field, sim.CoverPatch(i), formed, sim.CoverFormedLate(i), sim.CoverFormedAt(i), now);
+                bool shown = !broken && Shows(glitch);
+                cover[i].SetActive(shown);
+                if (shown) Apply(cover[i], formed ? sim.CoverIntegrity(state) : 1, glitch);
+                rubble[i].SetActive(broken); // static remains; no in-place rebuild (owner ruling)
             }
         }
 
         public void RenderRetiring(ArenaSim sim)
         {
+            var field = sim.Morph; double now = sim.Clock.Now;
             for (int i = 0; i < cover.Count; i++)
             {
-                int oldIndex = sim.RetiringCover.FindIndex(value => value.Bounds == layout.pillars[i]);
-                float visible = oldIndex < 0 ? 0 : sim.RetiringCoverVisibility(oldIndex);
-                // Retirement starts from the displayed state, so partially decayed cover
-                // never fills itself back in when the next arena starts replacing it.
-                visible *= coverBase.TryGetValue(cover[i], out float baseline) ? baseline : 1;
-                cover[i].SetActive(visible > 0); Visibility(cover[i], visible, true);
-                rubble[i].SetActive(false);
+                int index = sim.RetiringCover.FindIndex(value => value.Bounds == layout.pillars[i]);
+                bool coverShown = false, rubbleShown = false;
+                if (index >= 0)
+                {
+                    var old = sim.RetiringCover[index];
+                    var glitch = GlitchMorphPolicy.Retiring(field, sim.RetiringPatch(index), now);
+                    // Wear keeps running while it waits, so it never fills itself back in.
+                    if (!old.Crumbled) { coverShown = Shows(glitch); if (coverShown) Apply(cover[i], sim.CoverIntegrity(old), glitch); }
+                    else { rubbleShown = Shows(glitch); if (rubbleShown) Apply(rubble[i], 1, glitch); }
+                }
+                else if (retiringRubble.Contains(i) && field != null)
+                {
+                    // Rubble from cover that wore out earlier glitches out with its patch.
+                    var glitch = GlitchMorphPolicy.Retiring(field, field.PatchAt(layout.pillars[i].center), now);
+                    rubbleShown = Shows(glitch); if (rubbleShown) Apply(rubble[i], 1, glitch);
+                }
+                cover[i].SetActive(coverShown); rubble[i].SetActive(rubbleShown);
             }
-        }
-
-        Texture2D Snapshot(Material material)
-        {
-            var snapshot = PaintedFloor.Snapshot(material, PaintedFloor.SnapshotCap, out bool baked);
-            // An un-baked snapshot is a shared Resources texture: releasing it would destroy the asset.
-            if (baked) owned.Add(snapshot);
-            return snapshot;
         }
 
         public void BeginMorphFrom(WorldGeometry previous)
         {
-            morphing = true; previous.retiring = true;
+            previous.retiring = true;
+            // A running morph is always completed before the next begins, so the previous
+            // arena's _BaseMap is exactly what is on screen: no CPU snapshot is needed.
             foreach (var pair in surfaces)
-            {
-                if (!previous.surfaces.TryGetValue(pair.Key, out var before)) continue;
-                var snapshot = Snapshot(before); pair.Value.SetTexture("_FromMap", snapshot); pair.Value.SetFloat("_Morph", 0);
-                before.SetTexture("_FromMap", snapshot); before.SetTexture("_BaseMap", pair.Value.GetTexture("_BaseMap"));
-            }
-            foreach (var renderer in previous.scenery) previous.sceneryBase[renderer] = previous.sceneryAmount;
+                if (previous.surfaces.TryGetValue(pair.Key, out var before))
+                    pair.Value.SetTexture("_FromMap", before.GetTexture("_BaseMap"));
+            for (int i = 0; i < previous.rubble.Count; i++)
+                if (previous.rubble[i].activeSelf) previous.retiringRubble.Add(i);
             // Stages 0-2 share one footprint: the incoming floor, ground and ribbon take over
             // in place, so the outgoing copies are hidden rather than dissolved (no z-fighting).
             foreach (string name in new[] { "Floor", "Outer ground", ArenaEnclosure.RibbonName })
@@ -165,27 +181,24 @@ namespace BorrowedHex.Presentation.WorldArt
             }
         }
 
-        public void RenderMorph(float amount, double now, bool reduceFlashes)
+        /// <summary>Dressing forms (or, on the outgoing arena, retires) with the patch under it.</summary>
+        public void RenderScenery(MorphField field, double now)
         {
-            foreach (var material in surfaces.Values)
-            {
-                material.SetFloat("_Morph", morphing || retiring ? amount : 1);
-                material.SetFloat("_GlitchTime", (float)now); material.SetFloat("_Glitches", reduceFlashes ? 0 : 1);
-            }
-        }
-
-        public void RenderSceneryFormation(float amount)
-        {
-            sceneryAmount = amount;
             foreach (var renderer in scenery)
-                Visibility(renderer, amount * (sceneryBase.TryGetValue(renderer, out float start) ? start : 1), retiring);
+            {
+                var centre = renderer.bounds.center;
+                int patch = field != null ? field.PatchAt(new Vector2(centre.x, centre.z)) : -1;
+                var glitch = retiring ? GlitchMorphPolicy.Retiring(field, patch, now) : GlitchMorphPolicy.Forming(field, patch, now);
+                Apply(renderer, 1, glitch);
+            }
         }
 
         public void RenderReveal(int lit, float opening)
         {
             float room = Mathf.Lerp(.025f + lit * .035f, 1, opening);
             foreach (var material in surfaces.Values) material.SetFloat("_Reveal", room);
-            foreach (var renderer in scenery) Visibility(renderer, opening);
+            // The Sanctum reveal keeps its original grain dissolve (owner: "it's perfect").
+            foreach (var renderer in scenery) Apply(renderer, opening, GlitchState.Solid, legacyGrain: true);
             for (int i = 0; i < cover.Count; i++)
                 foreach (var renderer in cover[i].GetComponentsInChildren<Renderer>())
                 {
@@ -200,7 +213,7 @@ namespace BorrowedHex.Presentation.WorldArt
             foreach (var material in surfaces.Values) material.SetFloat("_Reveal", 1);
             foreach (var group in cover) foreach (var renderer in group.GetComponentsInChildren<Renderer>())
             { renderer.GetPropertyBlock(properties); properties.SetFloat("_Reveal", 1); renderer.SetPropertyBlock(properties); properties.Clear(); }
-            RenderSceneryFormation(1);
+            RenderScenery(null, 0);
         }
 
         public void RenderActorOcclusion(Camera camera, Vector3 player, Vector3? boss)
