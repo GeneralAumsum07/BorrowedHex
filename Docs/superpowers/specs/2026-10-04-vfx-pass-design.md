@@ -50,9 +50,12 @@ ArenaSim events --> CombatFeedback (MonoBehaviour, presentation only)
 - `ArenaView` keeps the enemy hit flash and the hitbox shadow.
 - The boss effects in `WorldPresentation` (Teleport, Vortex, Shockwave, Wide Cleave, Heavy Hit, death) stay where they are.
 
-**Sim changes** (read-only for gameplay; no rule changes):
-- `PacketReleased` gains a `QuickDraw` flag: whether the release got the Quick Draw bonus (`ArenaSim.Capture.QuickDrawMultiplier > 1`).
-- Pierce needs no sim change. `CombatFeedback` sees a second `EnemyDamaged` carrying the same `ShotId`.
+**Sim changes** (additive signals only; no rule changes). Revised while planning, after reading the code:
+- New event `QuickDrawFired(Vector2 at)`, raised when a release got the Quick Draw bonus. A new event, rather than a flag on `PacketReleased`, leaves that event's existing subscribers untouched.
+- New event `OverflowFired(Vector2 at)`. Overflow's forced release raises only `PacketReleased`, and the catch that follows reports `CreatedPacket`, so nothing else identifies it.
+- New event `PartingGiftBurst(Vector2 at, float radius)`, raised immediately before the gift's existing `Explosion`. Parting Gift bursts on every release, so without this event its `Explosion` would get the Tier 1 rocket shake on every release.
+- `DamageEvent` gains `SourceCategory`, copied from the shot, so a hit spark can be tinted by school.
+- Pierce needs no sim change. `CombatFeedback` sees a second `EnemyDamaged` with the same (`RootReleaseId`, `ShotId`, echo-or-not). The echo flag is part of the key because an echo copies its original's `ShotId`.
 
 ## 3. Projectiles
 
@@ -118,7 +121,7 @@ A shot keeps its school sprite after capture and return (D2).
 | 1 | Boss hit | Existing Heavy Hit and hurt pose | 0.06 / 0.10 | none | none |
 | 2 | Parry (`StrikeParried`) | Parry Flash | 0.15 / 0.20 | 0.09 s | Parry! (yellow) |
 | 2 | Perfect catch (`ShotCaptured` with `shot.Perfect`) | Critical Star | none | 0.05 s | Perfect!, or Last Second! with Final Second held (cyan) |
-| 2 | Overcharge (`PacketOvercharged`) | Overload | 0.18 / 0.25 | 0.07 s | Overcharge! (gold) |
+| 2 | Overcharge (`PacketOvercharged`) | Overload | 0.18 / 0.25 | 0.07 s | Overcharge! xP (gold), where P is the fire power. This replaces `ArenaView`'s existing "OVERCHARGE xP" label, so the multiplier stays visible and the label isn't doubled |
 | 2 | Backfire (`PacketBackfired`) | Big Boom | 0.20 / 0.25 | none | Backfire! (red) |
 | 2 | Fusion (`PacketsFused`) | Star Burst plus Zap Ring | none | none | Fusion! (violet) |
 | 2 | Kill chain of 3 or more (`KillChainChanged`) | Star Burst on the kill | none | none | Chain xN! (orange) |
@@ -146,14 +149,14 @@ A shot keeps its school sprite after capture and return (D2).
 | Piercing Return | Second `EnemyDamaged` with the same `ShotId` | Pierce Spark plus a brief Chain Lightning arc between the two enemies |
 | Echo Volley | `EchoFired` | A half-alpha afterimage of the original sprite at the muzzle; echo shots at 60% alpha |
 | Heavy Orbit | `EnemyDamaged`, `DamageCategory.Orbit` | Shock Hit |
-| Parting Gift | `EnemyDamaged`, `DamageCategory.PartingGift` | Zap Ring at the kill, sized to the gift radius |
-| Overflow | `ShotCaptured` with `CaptureResult.Overflowed` | Overload on the released packet |
+| Parting Gift | `PartingGiftBurst` (it bursts around the player on each release, not on a kill) | Zap Ring at the player, sized to the gift radius; Tier 0 school-tinted sparks on each enemy it hits |
+| Overflow | `OverflowFired` | Overload at the player |
 | Fusion | `PacketsFused` | Tier 2 (section 4) |
 | Final Second | A perfect catch while held | Last Second! (section 1) |
 
 ### 5.2 Skill-node moments
 
-- **Quick Draw:** while the post-swap window is open, a small Charge Up glint shows on the player's hand. A release with the `QuickDraw` flag adds Spark Burst at the muzzle.
+- **Quick Draw:** while the post-swap window is open, a small Charge Up glint shows on the player's hand. `QuickDrawFired` adds Spark Burst at the muzzle.
 - **Blood Price (leech, siphon, debt):** `LifeStolen` adds a small red Heal sheet on the player, alongside the existing number pop.
 
 ### 5.3 Passive cues (only while the action is happening)
@@ -188,7 +191,7 @@ Sheets are copied from the local packs into `Assets/Game/Resources/WorldArt` and
   - Each Tier 2 event maps to exactly the callout in 4.1, and Last Second! replaces Perfect! when Final Second is held.
   - The `ProjectileSkins` mapping for each school, state and echo.
   - Pierce detection.
-  - The sim sets the `QuickDraw` flag only inside the post-swap window.
+  - The sim raises `QuickDrawFired` only inside the post-swap window, `OverflowFired` only on Overflow's forced release, and `PartingGiftBurst` once per gift; `DamageEvent.SourceCategory` matches the shot.
 - **PlayMode:**
   - Raising each event spawns its effect.
   - Live callouts stay at 3 or fewer.
