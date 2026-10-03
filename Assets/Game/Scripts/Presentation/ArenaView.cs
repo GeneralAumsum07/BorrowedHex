@@ -32,6 +32,8 @@ namespace BorrowedHex.Presentation
         static readonly Color TelegraphColor = new Color(1f, 0.25f, 0.2f);
         static readonly Color TeleportColor = new Color(0.75f, 0.45f, 1f);
         static readonly Color RocketColor = new Color(1f, 0.55f, 0.1f);
+        // D94: the perfect-release colour, shared with the hand HUD's Overcharge fill.
+        static readonly Color OverchargeGold = new Color(1f, 0.84f, 0.2f);
 
         ArenaSim sim;
         CharacterView player;
@@ -166,6 +168,14 @@ namespace BorrowedHex.Presentation
             // nothing happened" reads as "too fresh", not as a dropped input.
             sim.Events.ReleaseRefused += _ => SpawnPop(sim.Player.Position, new Color(0.7f, 0.7f, 0.75f), 0.2f, 0.6f, 0.15f);
             sim.Events.PacketReleased += (_, __) => SpawnPop(sim.Player.Position, ReturnedColor, 0.4f, 1.4f, 0.25f);
+            // D94: the perfect release - a big gold label at the player and a wide gold ring.
+            sim.Events.PacketOvercharged += (pk, _) =>
+            {
+                SpawnPop(sim.Player.Position, OverchargeGold, 0.4f, 2.2f, 0.3f);
+                SpawnNumber($"OVERCHARGE x{pk.FirePower(sim.Stats.Power):0.0}", OverchargeGold, sim.Player.Position);
+            };
+            // R11: gold damage numbers, only for overcharged hits (the game shows no others).
+            sim.Events.EnemyDamaged += (e, d) => { if (d.Overcharged) SpawnNumber($"{d.Amount:0.#}", OverchargeGold, e.Position); };
             // Rocket burst drawn at its true damage radius (ring scale == radius), so the
             // player learns how far a returned rocket reaches.
             sim.Events.Explosion += (at, r, f) => SpawnPop(at, f == AttackFaction.Returned ? ReturnedColor : RocketColor, r * 0.3f, r, 0.35f);
@@ -521,7 +531,8 @@ namespace BorrowedHex.Presentation
                 Vector2 pos = Vector2.Lerp(p.PrevPosition, p.Position, alpha);
                 v.Root.gameObject.SetActive(true);
                 v.Root.position = Geometry2D.ToWorld(pos);
-                Color c = p.Shot.Kind == AttackKind.Riposte ? RiposteColor
+                Color c = p.Shot.Overcharged ? OverchargeGold
+                    : p.Shot.Kind == AttackKind.Riposte ? RiposteColor
                     : p.Faction == AttackFaction.Returned ? ReturnedColor
                     : p.Shot.Kind == AttackKind.Rocket ? RocketColor : HostileColor;
                 v.Glow.color = c;
@@ -606,7 +617,10 @@ namespace BorrowedHex.Presentation
                     dot.transform.position = Geometry2D.ToWorld(pos + off, 0.7f);
                     // Blink during the final half second: the release is about to happen.
                     bool blink = selected && left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;
-                    dot.color = blink ? RejectColor : selected ? ReturnedColor : new Color(0.4f, 0.55f, 0.7f);
+                    // D94: inside the Overcharge zone the dots go solid gold instead of the red
+                    // blink, matching the HUD: there it means "fire now", not "about to lose it".
+                    bool zone = pk.IsOvercharged(sim.Stats.Power);
+                    dot.color = zone ? OverchargeGold : blink ? RejectColor : selected ? ReturnedColor : new Color(0.4f, 0.55f, 0.7f);
                     if (cam != null) dot.transform.rotation = cam.transform.rotation;
                 }
             }
@@ -625,7 +639,13 @@ namespace BorrowedHex.Presentation
             return sr;
         }
 
-        void SpawnTimeNumber(float delta, Vector2 at)
+        void SpawnTimeNumber(float delta, Vector2 at) =>
+            // No "s" suffix (D66): life reads as a health bar now, not a timer, so the number is
+            // just health gained or lost. The sim still counts it in seconds.
+            SpawnNumber($"{(delta > 0 ? "+" : "")}{delta:0.#}", delta < 0 ? RejectColor : ReturnedColor, at);
+
+        /// <summary>A floating world-space number/label that rises and fades (life changes, D94 Overcharge).</summary>
+        void SpawnNumber(string label, Color color, Vector2 at)
         {
             var go = new GameObject("TimeChange");
             go.transform.SetParent(transform, false);
@@ -635,10 +655,8 @@ namespace BorrowedHex.Presentation
             text.fontSize = 48;
             text.characterSize = 0.055f;
             text.anchor = TextAnchor.MiddleCenter;
-            text.color = delta < 0 ? RejectColor : ReturnedColor;
-            // No "s" suffix (D66): life reads as a health bar now, not a timer, so the number is
-            // just health gained or lost. The sim still counts it in seconds.
-            text.text = $"{(delta > 0 ? "+" : "")}{delta:0.#}";
+            text.color = color;
+            text.text = label;
             timeNumbers.Add(new TimeNumber { Text = text, Origin = Geometry2D.ToWorld(at, 1.5f) });
         }
 

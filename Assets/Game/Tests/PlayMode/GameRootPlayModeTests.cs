@@ -329,5 +329,35 @@ namespace BorrowedHex.Tests
             yield return null;
             yield return null;
         }
+
+        [UnityTest]
+        public IEnumerator Overcharge_FreezesTheFrameBriefly_WithoutLosingGameplayTime()
+        {
+            yield return StartShortRun();
+            // Hold a hex deep in the zone and fire it through the real frame loop. Created at
+            // Clock.Now (decay runs from that stamp, so a back-dated one would expire on the
+            // first step); CapturedAt is back-dated instead so it is primed (D90).
+            var sim = root.Sim;
+            var p = sim.Packets.CreateInSlot(sim.Packets.SelectedSlot, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+            p.CapturedAt = sim.Clock.Now - 3600.0;
+            p.Payloads.Add(BorrowedHex.Combat.AttackSnapshot.From(sim.Attacks.Get(BorrowedHex.Data.AttackIds.Bolt), 999, sim.Ids.Next(), 0f));
+            p.CapacityUsed = 1;
+            p.Status = BorrowedHex.Combat.PacketStatus.Stored;
+            p.DecayedTime = 2.75;
+            int overcharges = 0;
+            sim.Events.PacketOvercharged += (_, __) => overcharges++;
+            root.DebugFireSelected();
+            // A short frame can run zero 60 Hz steps, so wait for the step that fires, not
+            // for exactly one frame. Coroutines resume after Update, i.e. after that step.
+            for (int i = 0; i < 30 && overcharges == 0; i++) yield return null;
+            Assert.AreEqual(1, overcharges, "the release was a perfect one");
+            Assert.IsTrue(root.HitStopActive || BorrowedHex.UI.DisplayOptions.ReduceFlashes);
+            double frozenAt = sim.Clock.Now;
+            yield return null;
+            if (root.HitStopActive) Assert.AreEqual(frozenAt, sim.Clock.Now, 1e-9, "no steps during hit-stop");
+            yield return new WaitForSecondsRealtime(0.2f);
+            Assert.IsFalse(root.HitStopActive);
+            Assert.Greater(sim.Clock.Now, frozenAt, "gameplay resumes");
+        }
     }
 }

@@ -43,6 +43,32 @@ namespace BorrowedHex.Presentation
         float accumulator;
         int runCounter;
 
+        // D94: Overcharge freeze-frame. Real (unscaled) time during which no sim step runs. The
+        // sim clock simply does not advance, so nothing about gameplay changes: it is the same
+        // run, shown with a 70 ms beat on the perfect release.
+        const float HitStopSeconds = 0.07f;
+        float hitStopUntil;
+        CameraShake shake;
+        public bool HitStopActive => Time.unscaledTime < hitStopUntil;
+
+        void OnOvercharged(BorrowedHex.Combat.CapturedPacket p, int root)
+        {
+            // R12: both effects honour Reduce flashes, the existing motion/flash accessibility switch.
+            if (DisplayOptions.ReduceFlashes) return;
+            hitStopUntil = Time.unscaledTime + HitStopSeconds;
+            // Not "?? AddComponent": Unity's destroyed-object null is invisible to ??.
+            if (shake == null && cam != null)
+            {
+                shake = cam.GetComponent<CameraShake>();
+                if (shake == null) shake = cam.gameObject.AddComponent<CameraShake>();
+            }
+            if (shake != null) shake.Kick(0.18f, 0.25f);
+        }
+
+        bool debugFire;
+        /// <summary>PlayMode test hook: the next sim step carries a release command.</summary>
+        public void DebugFireSelected() => debugFire = true;
+
         static bool IsWeb => Application.platform == RuntimePlatform.WebGLPlayer;
 
         void Awake()
@@ -159,6 +185,10 @@ namespace BorrowedHex.Presentation
             if (kind == RunKind.Sandbox && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
             // The one path into the profile: finalized exactly once per run ID (section 8).
             Sim.Events.RunEnded += OnRunEnded;
+            // The old sim is discarded with its subscriptions, so nothing leaks across runs;
+            // a freeze from the previous run must not carry into the new one.
+            Sim.Events.PacketOvercharged += OnOvercharged;
+            hitStopUntil = 0f;
             // Keep the authored arena meshes and bind their disposable state to each run.
             // Tests without an arena and future layouts with fewer pillars simply skip them.
             for (int i = 0; i < Sim.Pillars.Count; i++)
@@ -256,16 +286,28 @@ namespace BorrowedHex.Presentation
                 return;
             }
 
+            if (HitStopActive)
+            {
+                // Same rule as a pause: real time spent frozen is dropped, never fast-forwarded.
+                accumulator = 0f;
+                View.Render(1f);
+                return;
+            }
+
             accumulator += Mathf.Min(Time.unscaledDeltaTime, MaxFrame);
             while (accumulator >= Step)
             {
                 // One command per step; latched presses are cleared by the first consume, so a
                 // single Space press can never start two dashes in a multi-step frame.
                 var cmd = Input.ConsumeCommand(cam);
+                if (debugFire) { cmd = cmd.WithRelease(); debugFire = false; }
                 View.BeforeStep();
                 Sim.Tick(cmd, Step);
                 View.AfterStep();
                 accumulator -= Step;
+                // A perfect release inside a multi-step frame freezes right there, rather than
+                // running the frame's remaining steps first.
+                if (HitStopActive) { accumulator = 0f; break; }
             }
             TickTutorialCard();
             View.Render(accumulator / Step);
