@@ -51,7 +51,7 @@ Evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Tests
 
-- EditMode: **318/318** (live editor, `bash .superpowers/rt.sh editor`).
+- EditMode: **319/319** (live editor, `bash .superpowers/rt.sh editor`).
 - PlayMode: **11/11** (`bash .superpowers/rtp.sh`).
 - `Tests/EditMode/IntegrationTests.cs` soaks 18 whole runs: {short, endless} × {Snatcher, Collector, Daredevil} ×
   {fresh, advanced loadout, assisted}, through random pauses and focus losses, checking the enemy cap, life bounds,

@@ -84,10 +84,14 @@ namespace BorrowedHex.Runs
         /// window, or a window that stays put). The window opens at the tick's START, the same
         /// instant the dash starts, and lasts exactly the dash.
         /// </summary>
-        void TryDashCatch(Vector2 move, double tickStart)
+        void TryDashCatch(double tickStart)
         {
             if (!Capture.IsReady(tickStart)) return;
-            if (!PlayerMotor.TryStartDash(Player, move, Stats, tickStart)) return;
+            // The capturing dash lunges toward the AIM, not the movement keys (D88): the catch
+            // is aimed at a shot, so the body goes where the cursor says the shot is, and the
+            // player can keep strafing one way while lunging another. The plain dash (TryDash)
+            // still follows movement. Aim was already updated from this tick's command.
+            if (!PlayerMotor.TryStartDash(Player, Player.AimDirection, Stats, tickStart)) return;
             Events.RaiseDash(Player.Position, Player.DashDirection);
             if (Capture.TryActivate(tickStart, Stats)) Events.RaiseCatchActivated(Capture.ActivationId);
         }

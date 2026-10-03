@@ -163,6 +163,37 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(2, catches);
         }
 
+        /// <summary>
+        /// Owner direction (D88): the capturing dash goes where the player AIMS, so a Daredevil
+        /// can run north while lunging east at a shot. The plain dash still follows movement.
+        /// </summary>
+        [Test]
+        public void Daredevil_CatchingDash_FollowsTheAim_PlainDash_FollowsMovement()
+        {
+            var north = PlayerCommand.Moving(Vector2.up);
+
+            var sim = Sim(CaptureStyles.Daredevil);
+            sim.Tick(north.WithAim(sim.Player.Position + East * 5f).WithCatch(), Dt);
+            Assert.IsTrue(sim.Player.Dashing);
+            Assert.AreEqual(East.x, sim.Player.DashDirection.x, 1e-4f, "catching dash goes toward the aim...");
+            Assert.AreEqual(0f, sim.Player.DashDirection.y, 1e-4f, "...not toward the movement key");
+            Assert.Greater(sim.Player.Position.x, 0f);
+
+            // Catch + dash on one tick is still the capturing dash (D83), so it aims too.
+            var both = Sim(CaptureStyles.Daredevil);
+            both.Tick(north.WithAim(both.Player.Position + East * 5f).WithCatch().WithDash(), Dt);
+            Assert.AreEqual(East.x, both.Player.DashDirection.x, 1e-4f);
+
+            var plain = Sim(CaptureStyles.Daredevil);
+            plain.Tick(north.WithAim(plain.Player.Position + East * 5f).WithDash(), Dt);
+            Assert.AreEqual(1f, plain.Player.DashDirection.y, 1e-4f, "the plain dash is unchanged: movement first");
+
+            // Other styles' dash never looked at the catch and still follows movement.
+            var snatcher = Sim(CaptureStyles.Snatcher);
+            snatcher.Tick(north.WithAim(snatcher.Player.Position + East * 5f).WithCatch().WithDash(), Dt);
+            Assert.AreEqual(1f, snatcher.Player.DashDirection.y, 1e-4f);
+        }
+
         [Test]
         public void Daredevil_PlainDash_OpensNoWindow_AndUsesTheSharedCooldown()
         {

@@ -23,6 +23,7 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
   completion card), `Presentation/GameRoot.Tutorial.cs`, the movement marker in `ArenaView`, and the HUD reads
   'TUTORIAL · LESSON n/6'.
 - 318/318 EditMode, 11/11 PlayMode.
+- Daredevil's capturing dash now follows the aim (D88); 319/319 EditMode.
 - Not done: played by hand; the band and card layout and prompt wording are unseen by a person.
 
 ### Phase 13 — Integration and build handoff — partly done (3 Oct 2026)

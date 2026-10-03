@@ -610,3 +610,11 @@ Test report: EditMode 165/165, PlayMode 2/2.
   events, higher max health, Elite) by 1.1 s after they become active, the progress reads 'evolved defeated 0/2', and two
   evolved kills complete the tutorial. The scripted player now finishes all six lessons in order.
 - Not verified: the evolution moment by eye (it is the existing sprite swap, no extra effect).
+
+## Daredevil aimed catching dash (3 Oct 2026)
+
+- Changed: `ArenaSim.Capture.TryDashCatch` dashes along `Player.AimDirection`; `ArenaSim.TickPlayer` call site (D88).
+- New `StyleTests.Daredevil_CatchingDash_FollowsTheAim_PlainDash_FollowsMovement`: moving north while aiming east, a
+  catch (and catch + dash) dashes east; a plain dash goes north; a Snatcher's dash goes north. Failed before the change
+  (DashDirection.x was 0), passes after.
+- Live editor, EditMode: 319/319 pass. PlayMode: 11/11 pass.

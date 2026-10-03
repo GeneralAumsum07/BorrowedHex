@@ -91,7 +91,7 @@ namespace BorrowedHex.Runs
                 // Daredevil (section 7): catch and dash share one cooldown, and pressing both on
                 // one tick is ONE action. The capturing dash wins because it is the superset:
                 // it is a dash that also catches (D83).
-                if (cmd.Catch) TryDashCatch(cmd.Move, tickStart);
+                if (cmd.Catch) TryDashCatch(tickStart);
                 else if (cmd.Dash) TryDash(cmd.Move, tickStart);
             }
             else
