@@ -46,11 +46,14 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(0, store.Advance(8).Count, "expiry happens once");
         }
 
-        [TestCase(0f, 1f)]
-        [TestCase(2f, 1.7f)]
-        public void FiredPowerUsesOnlyDecayedTime(float decay, float expected)
+        // D93: power is no longer linear (2 s used to be exactly 1.7), so the expectation comes
+        // from the curve itself; what this test pins is that only the DECAYED time is used.
+        [TestCase(0f)]
+        [TestCase(2f)]
+        public void FiredPowerUsesOnlyDecayedTime(float decay)
         {
             var sim = TestSims.Sandbox();
+            float expected = sim.Stats.Power.Evaluate(decay, 3f);
             Packet(sim);
             if (decay > 0) sim.Tick(Still, decay);
             float actual = 0;

@@ -372,7 +372,7 @@ namespace BorrowedHex.Tests
 
             // Let the window close, then fire the merged packet: the lock lifts.
             P4.Run(sim, 30, Hold);
-            float power = selected.Power(sim.Stats.PowerPerSecond) * 1.25f;
+            float power = selected.Power(sim.Stats.Power) * 1.25f;
             var spawns = CaptureSpawns(sim);
             sim.Tick(Fire, Dt);
             Assert.AreEqual(4, spawns.Count);

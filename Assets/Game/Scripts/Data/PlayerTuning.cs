@@ -34,8 +34,14 @@ namespace BorrowedHex.Data
         public int packetSlots = 2;
         [Tooltip("Rule B (D90): seconds after capture before a hex can be fired. Owner value 0.4.")]
         public float primeSeconds = 0.4f;
-        [Tooltip("Damage power gained per selected second; frozen packets gain nothing.")]
-        public float powerPerSecond = 0.35f;
+        [Tooltip("D93: power reached at the START of the Overcharge zone (placeholder, tune by play).")]
+        public float peakPower = 1.8f;
+        [Tooltip("D93: ramp shape; 1 = linear, 2 = most of the gain comes late.")]
+        public float powerCurveExponent = 2f;
+        [Tooltip("D93: the last N seconds before expiry are the Overcharge (perfect release) zone.")]
+        public float overchargeWindow = 0.35f;
+        [Tooltip("D93: power multiplier inside the Overcharge zone.")]
+        public float overchargeMultiplier = 1.5f;
         [Tooltip("Life-clock seconds lost when a selected packet expires unfired.")]
         public int backfireSeconds = 10;
         [Tooltip("A shot is perfect if its path would reach the player's hitbox within this many seconds.")]

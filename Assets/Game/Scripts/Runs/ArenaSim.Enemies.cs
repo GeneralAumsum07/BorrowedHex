@@ -238,6 +238,7 @@ namespace BorrowedHex.Runs
                 Amount = amount,
                 Category = category,
                 Perfect = shot.Perfect,
+                Overcharged = shot.Overcharged,
             };
             e.Health = Mathf.Max(0f, e.Health - amount);
             Events.RaiseEnemyDamaged(e, ev);

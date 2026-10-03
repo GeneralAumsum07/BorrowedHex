@@ -87,7 +87,7 @@ namespace BorrowedHex.Tests
                 Assert.AreEqual(2, s.PacketSlots, style.Id);
                 Assert.AreEqual(3f, s.PacketLifetime, 1e-6f, style.Id);
                 Assert.AreEqual(b.BackfireSeconds, s.BackfireSeconds, style.Id);
-                Assert.AreEqual(b.PowerPerSecond, s.PowerPerSecond, style.Id);
+                Assert.AreEqual(b.Power.Evaluate(1.0, 3f), s.Power.Evaluate(1.0, 3f), 1e-6f, style.Id);
             }
         }
 

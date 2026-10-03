@@ -61,7 +61,8 @@ namespace BorrowedHex.Runs
             Packets.Remove(packet);
             Capture.Detach(packet);
             ReleaseService.Release(this, packet, Player.Position, Player.AimDirection,
-                packet.FirePower(Stats.PowerPerSecond) * QuickDrawMultiplier(Clock.Now));
+                // Quick Draw stacks with Overcharge (R9): both are multipliers on the same fire.
+                packet.FirePower(Stats.Power) * QuickDrawMultiplier(Clock.Now));
             return true;
         }
 
@@ -208,12 +209,19 @@ namespace BorrowedHex.Runs
                 || packet.Status == PacketStatus.Cancelled || packet.Status == PacketStatus.Merged) return 0;
             int root = sim.Ids.Next();
             var volley = BuildVolley(sim, packet.Payloads);
+            // D93: whether this release is a perfect one is read from the hex's state NOW
+            // (its own decayed time), so Overflow in the zone counts too (R9). The flag goes on
+            // the volley's copies, so the echo (which reuses the volley) is gold as well.
+            bool overcharged = packet.IsOvercharged(sim.Stats.Power);
+            if (overcharged)
+                for (int i = 0; i < volley.Count; i++) { var r = volley[i]; r.Shot.Overcharged = true; volley[i] = r; }
             // Read the perfect bonus NOW: Final Second applies to packets fired while it is held,
             // not to packets that happened to be caught under it (section 5).
             float perfectBonus = sim.PerfectBonusNow;
             SpawnVolley(sim, volley, origin, aim, root, false, power, perfectBonus);
             packet.Status = PacketStatus.Released;
             sim.Events.RaisePacketReleased(packet, root);
+            if (overcharged) sim.Events.RaisePacketOvercharged(packet, root);
             sim.AfterRelease(volley, root, power, perfectBonus);
             return root;
         }

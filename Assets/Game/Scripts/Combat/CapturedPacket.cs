@@ -33,11 +33,14 @@ namespace BorrowedHex.Combat
         public bool IsFull => CapacityUsed >= Capacity;
         public bool Fits(int cost) => CapacityUsed + cost <= Capacity;
         public float Remaining(double now) => (float)System.Math.Max(0.0, Lifetime - DecayedTime);
-        public float Power(float gainPerSecond) => 1f + gainPerSecond * (float)DecayedTime;
+        /// <summary>D93: decay power from the eased curve, including the Overcharge step.</summary>
+        public float Power(PowerCurve curve) => curve.Evaluate(DecayedTime, Lifetime);
+        /// <summary>D93: inside the last OverchargeWindow seconds of its own (selected) decay.</summary>
+        public bool IsOvercharged(PowerCurve curve) => curve.IsOvercharged(DecayedTime, Lifetime);
         /// <summary>Extra power multiplier (Fusion's +25%, section 5). 1 for an ordinary packet.</summary>
         public float PowerScale = 1f;
         /// <summary>The multiplier a release uses: decay power times any fusion scale.</summary>
-        public float FirePower(float gainPerSecond) => Power(gainPerSecond) * PowerScale;
+        public float FirePower(PowerCurve curve) => Power(curve) * PowerScale;
 
         /// <summary>The dominant kind for HUD icons: the most expensive payload carried.</summary>
         public AttackKind DominantKind

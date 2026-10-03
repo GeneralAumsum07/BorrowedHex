@@ -32,6 +32,8 @@ namespace BorrowedHex.UI
         static readonly Color UsedBack = new Color(0f, 0.1f, 0.15f, 0.7f);
         static readonly Color LockedBack = new Color(0.2f, 0.05f, 0.1f, 0.7f);
         static readonly Color RejectRed = new Color(1f, 0.3f, 0.3f);
+        // D93: gold = "fire now for the Overcharge bonus"; distinct from the cyan fill and white urgency.
+        static readonly Color OverchargeGold = new Color(1f, 0.84f, 0.2f);
 
         ArenaSim sim;
         RectTransform root;
@@ -139,12 +141,20 @@ namespace BorrowedHex.UI
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
                     // D90: an unprimed hex is drawn dimmed and labelled UNSTABLE until it can fire.
                     bool primed = sim.IsPrimed(pk);
-                    var fill = selected && left < 0.5f ? UrgentColor : FillColor;
+                    // D93: the Overcharge zone turns the bar gold - it replaces the urgent red,
+                    // because inside the zone "about to expire" is exactly the moment to fire.
+                    bool overcharged = pk.IsOvercharged(sim.Stats.Power);
+                    var fill = overcharged ? OverchargeGold : selected && left < 0.5f ? UrgentColor : FillColor;
                     if (!primed) fill.a = 0.5f;
                     p.Fill.color = fill;
+                    // A pocketed hex frozen inside the zone is a banked crit (R10), so it says so.
+                    string baseState = handFullFlash ? "HAND FULL — Q"
+                        : !primed ? "UNSTABLE"
+                        : selected ? (overcharged ? "OVERCHARGE — FIRE!" : "DECAYING")
+                        : overcharged ? "FROZEN  OVERCHARGED" : "FROZEN";
+                    string state = baseState + (pk.PowerScale > 1f ? "  FUSED" : "");
                     // FirePower, not Power: a fused packet shows the +25% it will actually fire with.
-                    string state = (handFullFlash ? "HAND FULL — Q" : !primed ? "UNSTABLE" : selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
-                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{state}";
+                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.Power):0.00}   {left:0.0}s\n{state}";
                 }
                 else
                 {

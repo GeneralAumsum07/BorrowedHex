@@ -29,7 +29,8 @@ namespace BorrowedHex.Player
         public int PacketSlots;
         /// <summary>Rule B (D90): gameplay seconds after capture before a hex can be fired.</summary>
         public float PrimeSeconds;
-        public float PowerPerSecond;
+        /// <summary>D93: decay-to-power curve with the Overcharge zone (replaces PowerPerSecond).</summary>
+        public BorrowedHex.Combat.PowerCurve Power;
         public int BackfireSeconds;
         public float PerfectWindow;
         public float PerfectBonus;
@@ -77,7 +78,7 @@ namespace BorrowedHex.Player
                 PacketLifetime = c.packetLifetime,
                 PacketSlots = c.packetSlots,
                 PrimeSeconds = c.primeSeconds,
-                PowerPerSecond = c.powerPerSecond,
+                Power = new BorrowedHex.Combat.PowerCurve(c.peakPower, c.powerCurveExponent, c.overchargeWindow, c.overchargeMultiplier),
                 BackfireSeconds = c.backfireSeconds,
                 PerfectWindow = c.perfectWindow,
                 PerfectBonus = c.perfectBonus,

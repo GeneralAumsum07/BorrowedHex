@@ -287,5 +287,115 @@ namespace BorrowedHex.Tests
             sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
             Assert.AreEqual(7.5f, got, 1e-4f);
         }
+
+        // ---- Power curve and Overcharge (D93) ---------------------------------------------------
+
+        static PowerCurve Curve => new PowerCurve(1.8f, 2f, 0.35f, 1.5f);
+
+        [TestCase(0.0, 1.0f)]
+        [TestCase(2.6499, 1.8f)]  // just before the zone: 2.65 itself is IN the zone (x1.5)
+        [TestCase(1.325, 1.2f)]   // halfway through the ramp: 1 + 0.8 * 0.25
+        public void Curve_RampIsEasedUpToTheZone(double decayed, float expected)
+        {
+            Assert.AreEqual(expected, Curve.Evaluate(decayed, 3f), 1e-3f);
+        }
+
+        [TestCase(2.649, false)]
+        [TestCase(2.65, true)]
+        [TestCase(2.99, true)]
+        [TestCase(3.0, false)]   // expiry is a backfire, never a crit
+        public void Curve_ZoneIsTheLast035Seconds(double decayed, bool zone)
+        {
+            Assert.AreEqual(zone, Curve.IsOvercharged(decayed, 3f));
+        }
+
+        [Test]
+        public void Curve_ZoneMultipliesThePeak()
+        {
+            Assert.AreEqual(2.7f, Curve.Evaluate(2.8, 3f), 1e-3f);
+        }
+
+        static CapturedPacket Held(ArenaSim sim, double decayed)
+        {
+            // Seeded at Now, not Now - 5: decay runs from AdvancedAt, so a back-dated seed would
+            // be charged 5 s on the first tick and backfire. Seed already back-dates priming.
+            var p = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+            p.Payloads.Add(AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 999, sim.Ids.Next(), 0f));
+            p.CapacityUsed = 1;
+            p.Status = PacketStatus.Stored;
+            p.DecayedTime = decayed;
+            return p;
+        }
+
+        [Test]
+        public void Overcharge_ReleaseInTheZone_IsGoldAndRaisesTheEventOnce()
+        {
+            var sim = Sim();
+            var p = Held(sim, 2.75);
+            int overcharges = 0;
+            sim.Events.PacketOvercharged += (_, __) => overcharges++;
+            var spawned = new List<ProjectileActor>();
+            sim.Events.ProjectileSpawned += s => spawned.Add(s);
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, overcharges);
+            Assert.AreEqual(1, spawned.Count);
+            Assert.IsTrue(spawned[0].Shot.Overcharged);
+            Assert.AreEqual(sim.Stats.Power.Evaluate(p.DecayedTime, 3f), spawned[0].PowerMultiplier, 1e-3f);
+            Assert.AreEqual(1, sim.Score.Overcharges);
+        }
+
+        [Test]
+        public void Overcharge_ReleaseBeforeTheZone_IsNot()
+        {
+            var sim = Sim();
+            Held(sim, 1.0);
+            int overcharges = 0;
+            sim.Events.PacketOvercharged += (_, __) => overcharges++;
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(0, overcharges);
+        }
+
+        [Test]
+        public void Overcharge_TooLate_StillBackfires()
+        {
+            var sim = Sim();
+            Held(sim, 2.995);
+            int backfires = 0, released = 0;
+            sim.Events.PacketBackfired += _ => backfires++;
+            sim.Events.PacketReleased += (_, __) => released++;
+            sim.Tick(Hold.WithRelease(), Dt);   // expiry runs before input (D17)
+            Assert.AreEqual(1, backfires);
+            Assert.AreEqual(0, released);
+        }
+
+        [Test]
+        public void Overcharge_PocketedInTheZone_StaysOvercharged()
+        {
+            // Review Focus 3 / R10: only the selected hex decays, so a hex pocketed inside the
+            // zone is a banked crit until it is selected again.
+            var sim = Sim();
+            var p = Held(sim, 2.7);
+            TestSims.Pocket(sim);
+            Run(sim, 120);
+            Assert.IsTrue(p.IsOvercharged(sim.Stats.Power));
+            TestSims.Pocket(sim);
+            int overcharges = 0;
+            sim.Events.PacketOvercharged += (_, __) => overcharges++;
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, overcharges);
+        }
+
+        [Test]
+        public void Overcharge_DamageEventCarriesTheFlag()
+        {
+            var sim = Sim();
+            var e = Spawned(sim, ActorCategory.SiegeFamiliar);
+            var shot = From(ActorCategory.Acolyte);
+            shot.Overcharged = true;
+            bool flagged = false;
+            sim.Events.EnemyDamaged += (_, d) => flagged = d.Overcharged;
+            sim.DamageEnemy(e, 1f, DamageCategory.ReturnedProjectile, shot, 1);
+            Assert.IsTrue(flagged);
+        }
     }
 }

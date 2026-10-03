@@ -27,6 +27,8 @@ namespace BorrowedHex.Runs
         public event Action<CapturedPacket, AttackSnapshot, UnityEngine.Vector2, CaptureResult> ShotCaptured;
         public event Action<UnityEngine.Vector2, CaptureResult> CaptureRejected;
         public event Action<CapturedPacket, int> PacketReleased;
+        /// <summary>D93: a release fired inside the Overcharge zone (a perfect release): packet, root release ID.</summary>
+        public event Action<CapturedPacket, int> PacketOvercharged;
         public event Action<CapturedPacket> PacketBackfired;
         /// <summary>D90: fire was pressed on an unprimed (fresh) hex; nothing was fired.</summary>
         public event Action<CapturedPacket> ReleaseRefused;
@@ -50,6 +52,7 @@ namespace BorrowedHex.Runs
         internal void RaiseShotCaptured(CapturedPacket p, AttackSnapshot s, UnityEngine.Vector2 at, CaptureResult r) => ShotCaptured?.Invoke(p, s, at, r);
         internal void RaiseCaptureRejected(UnityEngine.Vector2 at, CaptureResult r) => CaptureRejected?.Invoke(at, r);
         internal void RaisePacketReleased(CapturedPacket p, int root) => PacketReleased?.Invoke(p, root);
+        internal void RaisePacketOvercharged(CapturedPacket p, int root) => PacketOvercharged?.Invoke(p, root);
         internal void RaisePacketBackfired(CapturedPacket p) => PacketBackfired?.Invoke(p);
         internal void RaiseReleaseRefused(CapturedPacket p) => ReleaseRefused?.Invoke(p);
         internal void RaiseSlotSwapped(int slot) => SlotSwapped?.Invoke(slot);

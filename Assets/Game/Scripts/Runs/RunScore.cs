@@ -39,6 +39,8 @@ namespace BorrowedHex.Runs
         public int PerfectShots { get; private set; }
         public int DamageTaken { get; private set; }
         public int Backfires { get; private set; }
+        /// <summary>D93: perfect releases (fired inside the Overcharge zone).</summary>
+        public int Overcharges { get; private set; }
         public int Swaps { get; private set; }
         public int PillarsCrumbled { get; private set; }
         public int EnemiesOverstayed { get; private set; }
@@ -76,6 +78,7 @@ namespace BorrowedHex.Runs
             ev.EnemyKilled += OnEnemyKilled;
             ev.PlayerHit += OnPlayerHit;
             ev.PacketReleased += OnPacketReleased;
+            ev.PacketOvercharged += (_, __) => Overcharges++;   // D93
             ev.PacketBackfired += _ => Backfires++;
             ev.SlotSwapped += _ => Swaps++;
             ev.PillarCrumbled += _ => PillarsCrumbled++;
@@ -173,7 +176,7 @@ namespace BorrowedHex.Runs
         void OnPacketReleased(CapturedPacket p, int root)
         {
             PacketsReleased++;
-            totalFirePower += p.FirePower(sim.Stats.PowerPerSecond);
+            totalFirePower += p.FirePower(sim.Stats.Power);
             releasedRoots.Add(root);
             foreach (var s in p.Payloads) if (s.Perfect) PerfectShots++;
         }
@@ -212,6 +215,8 @@ namespace BorrowedHex.Runs
         public readonly int PerfectShots;
         public readonly int DamageTaken;
         public readonly int Backfires;
+        /// <summary>D93: releases fired inside the Overcharge zone.</summary>
+        public readonly int Overcharges;
         public readonly int Swaps;
         public readonly int PillarsCrumbled;
         public readonly int EnemiesOverstayed;
@@ -249,6 +254,7 @@ namespace BorrowedHex.Runs
             PerfectShots = s.PerfectShots;
             DamageTaken = s.DamageTaken;
             Backfires = s.Backfires;
+            Overcharges = s.Overcharges;
             Swaps = s.Swaps;
             PillarsCrumbled = s.PillarsCrumbled;
             EnemiesOverstayed = s.EnemiesOverstayed;

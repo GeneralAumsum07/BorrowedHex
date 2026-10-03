@@ -190,7 +190,7 @@ namespace BorrowedHex.Runs
                 Capture.MarkOverflowUsed();
                 Packets.Remove(selected);
                 Capture.Detach(selected);
-                ReleaseService.Release(this, selected, Player.Position, Player.AimDirection, selected.FirePower(Stats.PowerPerSecond));
+                ReleaseService.Release(this, selected, Player.Position, Player.AimDirection, selected.FirePower(Stats.Power));   // R9: the Overcharge zone counts here too
                 return null;
             }
 

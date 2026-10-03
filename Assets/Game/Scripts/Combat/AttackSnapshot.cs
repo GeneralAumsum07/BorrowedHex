@@ -30,6 +30,8 @@ namespace BorrowedHex.Combat
         public float SourceSpreadHalfAngle;
         public int ShotId;
         public bool Perfect;
+        /// <summary>D93: fired from an overcharged release (gold in the view). Set on the copy at release.</summary>
+        public bool Overcharged;
 
         public static AttackSnapshot From(AttackDefinition d, int sourceActorId, int shotId, float spreadOffsetDeg)
         {
@@ -71,5 +73,7 @@ namespace BorrowedHex.Combat
         public float Amount;
         public DamageCategory Category;
         public bool Perfect;
+        /// <summary>D93: the hit came from an overcharged release.</summary>
+        public bool Overcharged;
     }
 }

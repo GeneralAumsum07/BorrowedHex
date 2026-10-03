@@ -219,7 +219,10 @@ MonoBehaviour:
     packetLifetime: 3
     packetSlots: 2
     primeSeconds: 0.4
-    powerPerSecond: 0.35
+    peakPower: 1.8
+    powerCurveExponent: 2
+    overchargeWindow: 0.35
+    overchargeMultiplier: 1.5
     backfireSeconds: 10
     perfectWindow: 0.1
     perfectBonus: 0.15
