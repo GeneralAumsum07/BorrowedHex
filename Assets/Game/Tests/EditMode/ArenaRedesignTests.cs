@@ -236,5 +236,44 @@ namespace BorrowedHex.Tests
             Assert.That(ArenaDressing.Known(null), Is.EqualTo("Courtyard"));
             Assert.That(ArenaDressing.Place(odd).Count, Is.EqualTo(ArenaDressing.Place(WorldArenaLayouts.Create(0)).Count));
         }
+
+        [Test]
+        public void CoverFitFillsTheRectWithoutOverhang()
+        {
+            var sizes = new[] { new Vector3(2, 1, .5f), new Vector3(.5f, 3, 2), new Vector3(1, 1, 1) };
+            var rects = new[] { new Vector2(3.2f, 1), new Vector2(1, 3.2f), new Vector2(1.4f, 1.4f) };
+            foreach (var size in sizes) foreach (var rect in rects)
+            {
+                CoverModels.Fit(size, rect, 2.5f, out var scale, out float yaw);
+                var local = Vector3.Scale(size, scale);
+                // After a 90 degree yaw the model's local x runs along world z.
+                var footprint = yaw == 0 ? new Vector2(local.x, local.z) : new Vector2(local.z, local.x);
+                Assert.That(footprint.x, Is.LessThanOrEqualTo(rect.x + 1e-4f)); Assert.That(footprint.y, Is.LessThanOrEqualTo(rect.y + 1e-4f));
+                Assert.That(footprint.x * footprint.y, Is.GreaterThanOrEqualTo(.8f * rect.x * rect.y));
+                Assert.That(local.y, Is.EqualTo(2.5f).Within(1e-4f));
+            }
+        }
+
+        [Test]
+        public void EveryCoverKindBuildsInsideItsCollisionRect()
+        {
+            var parent = new GameObject("probe").transform; var rect = new Vector2(2.2f, 1.3f);
+            using (var library = new WorldModelLibrary(Color.white))
+                try
+                {
+                    foreach (DecayPropKind kind in System.Enum.GetValues(typeof(DecayPropKind)))
+                        foreach (var model in new[] { CoverModels.Model(kind, 0), CoverModels.Rubble(kind, 0) })
+                        {
+                            var built = CoverModels.Build(library, parent, kind.ToString(), model, rect, CoverModels.Height(kind));
+                            Assert.That(built, Is.Not.Null, model);
+                            var bounds = built.GetComponentsInChildren<Renderer>().Select(r => r.bounds).Aggregate((a, b) => { a.Encapsulate(b); return a; });
+                            Assert.That(bounds.size.x, Is.LessThanOrEqualTo(rect.x + .02f), model);
+                            Assert.That(bounds.size.z, Is.LessThanOrEqualTo(rect.y + .02f), model);
+                            Assert.That(bounds.size.x * bounds.size.z, Is.GreaterThanOrEqualTo(.8f * rect.x * rect.y), model);
+                            Object.DestroyImmediate(built);
+                        }
+                }
+                finally { Object.DestroyImmediate(parent.gameObject); }
+        }
     }
 }
