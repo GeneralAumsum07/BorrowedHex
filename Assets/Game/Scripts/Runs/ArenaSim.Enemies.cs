@@ -240,7 +240,12 @@ namespace BorrowedHex.Runs
                 Perfect = shot.Perfect,
                 Overcharged = shot.Overcharged,
             };
+            // D99: lifesteal counts only damage that lands (R17c); a huge hit on a nearly dead
+            // enemy heals for what was left, not for the hit. School resistance is already in
+            // `amount` (above), so a resisted hit steals less, as it should (R17d).
+            float landed = Mathf.Min(amount, e.Health);
             e.Health = Mathf.Max(0f, e.Health - amount);
+            StealLife(landed, e.Position);
             Events.RaiseEnemyDamaged(e, ev);
             if (e.Health <= 1e-4f)
             {
@@ -252,6 +257,25 @@ namespace BorrowedHex.Runs
                 Events.RaiseEnemyKilled(e, ev);
             }
             return true;
+        }
+
+        /// <summary>
+        /// D99: give back Stats.LifePerDamage life per point of landed damage, capped at the
+        /// run's starting seconds like every gain. Nothing in the tutorial (life does not move
+        /// there), after the run ended, or with a dead player. Raises LifeStolen, NOT
+        /// LifeClockChanged: the view gives it its own colour (R17f), and the HUD must not treat
+        /// it as a kill reward.
+        /// </summary>
+        void StealLife(float landed, Vector2 at)
+        {
+            if (Stats.LifePerDamage <= 0f || landed <= 0f || Setup.Tutorial || Summary != null
+                || !Player.Alive || lifeSeconds <= 0) return;
+            double before = lifeSeconds;
+            lifeSeconds = System.Math.Min(Stats.StartingSeconds, lifeSeconds + landed * Stats.LifePerDamage);
+            float gained = (float)(lifeSeconds - before);
+            if (gained <= 0f) return;
+            Score.RecordLifeStolen(gained);
+            Events.RaiseLifeStolen(gained, at);
         }
 
         /// <summary>

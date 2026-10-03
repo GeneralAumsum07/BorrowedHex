@@ -52,6 +52,10 @@ namespace BorrowedHex.Progression
                 case SkillTree.ResilienceDashGrace:
                     s.DashInvulnerability = System.Math.Min(s.DashDuration, s.DashInvulnerability + t.resilienceDashGrace);
                     break;
+                // D99: the three Blood Price nodes stack.
+                case SkillTree.BloodLeech: s.LifePerDamage += t.bloodLeech; break;
+                case SkillTree.BloodSiphon: s.LifePerDamage += t.bloodSiphon; break;
+                case SkillTree.BloodDebt: s.LifePerDamage += t.bloodDebt; break;
                 // Unknown ids are ignored: validation keeps them out of a saved profile, and a
                 // test may pass an arbitrary list.
             }

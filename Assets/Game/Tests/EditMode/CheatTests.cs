@@ -82,46 +82,45 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void UnlockAll_AFreshProfileCanEquipATierThreeNode()
+        public void UnlockAll_MakesEveryNodeActive_ForAFreshProfile()
         {
+            // D101 removed the equip step, so "unlock all" now means every node is ACTIVE in the
+            // next run, not merely equippable. The run and the Style preview read ActiveNodes.
             var p = PlayerProfile.CreateDefault();
-            Assert.IsNotNull(SkillTree.WhyCannotEquip(p, SkillTree.QuickDraw), "locked without the cheat");
+            CollectionAssert.IsEmpty(SkillTree.ActiveNodes(p), "nothing is active without the cheat");
             Cheats.UnlockAllNodes = true;
             Assert.IsTrue(SkillTree.IsOwned(p, SkillTree.QuickDraw));
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.QuickDraw, out var why), why);
-            // The equip cap is a game rule, not a lock: it still holds.
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.MobilitySpeed, out _));
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.ResilienceTime, out _));
-            Assert.IsFalse(SkillTree.TryEquip(p, SkillTree.PrecisionAngle, out _));
+            Assert.AreEqual(SkillTree.Nodes.Count, SkillTree.ActiveNodes(p).Count);
+            var s = Loadout.Resolve(TestSims.Config, SkillTree.ActiveNodes(p));
+            Assert.Greater(s.LifePerDamage, 0f, "even the Blood Price nodes apply");
         }
 
         [Test]
         public void UnlockAll_NeverWritesUnearnedNodesIntoTheSave()
         {
-            // The strict validator (D73) rejects "equipped but not owned"; a cheat-equipped node
+            // The strict validator (D73) rejects nodes above the profile's mastery; a cheat node
             // written to disk would make the next launch throw the whole save away.
             var store = new MemoryProfileStorage();
             var service = ProfileService.Load(store);
             Cheats.UnlockAllNodes = true;
-            SkillTree.TryEquip(service.Profile, SkillTree.QuickDraw, out _);
             Assert.IsTrue(service.Save());
-
             Assert.IsTrue(ProfileService.TryParse(store.Snapshots[0], out var saved, out var why), why);
-            CollectionAssert.DoesNotContain(saved.equippedNodes, SkillTree.QuickDraw);
             CollectionAssert.IsEmpty(saved.ownedNodes);
-            // The session still has it equipped while the cheat is on.
-            CollectionAssert.Contains(service.Profile.equippedNodes, SkillTree.QuickDraw);
         }
 
         [Test]
-        public void UnlockAll_TurningItOff_UnequipsWhatWasNeverEarned()
+        public void UnlockAll_TurningItOff_LeavesOnlyWhatWasBought()
         {
             var p = PlayerProfile.CreateDefault();
-            Cheats.SetUnlockAllNodes(true, p);
-            SkillTree.TryEquip(p, SkillTree.QuickDraw, out _);
-            Cheats.SetUnlockAllNodes(false, p);
+            p.mastery.level = 2;
+            p.mastery.points = 1;
+            Cheats.SetUnlockAllNodes(true);
+            // Buying is still refused for an "owned" node while the cheat is on, so nothing is spent.
+            Assert.IsFalse(SkillTree.TryBuy(p, SkillTree.PrecisionAngle, out _));
+            Cheats.SetUnlockAllNodes(false);
             Assert.IsFalse(Cheats.UnlockAllNodes);
-            CollectionAssert.IsEmpty(p.equippedNodes);
+            CollectionAssert.IsEmpty(SkillTree.ActiveNodes(p));
+            Assert.AreEqual(1, p.mastery.points);
         }
     }
 }

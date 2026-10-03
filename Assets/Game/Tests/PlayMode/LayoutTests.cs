@@ -253,6 +253,46 @@ namespace BorrowedHex.Tests
             AssertCardsClean(panel, "4 held");
         }
 
+        /// <summary>
+        /// D99 added a fourth branch, so the tree went from three 460-wide columns to four
+        /// 360-wide ones. Every direct child of the panel (title, header, branch names, the
+        /// twelve cards, status, note, buttons) must be disjoint, inside the panel, with its text
+        /// fitting - checked with the longest card text each state can produce.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator SkillTree_FourBranches_NothingOverlapsAndAllTextFits()
+        {
+            yield return Frames(2);
+            var profile = root.Profile.Profile;
+            try
+            {
+                // Two passes: a fresh profile (every card "Locked: needs ...", the longest state
+                // line) and the cheat (every card "ACTIVE (cheat)").
+                foreach (bool cheat in new[] { false, true })
+                {
+                    Cheats.SetUnlockAllNodes(cheat);
+                    root.Tree.Show(profile, root.Config.progression, null, null);
+                    yield return Frames(2);
+                    Canvas.ForceUpdateCanvases();
+                    string where = cheat ? "skill tree (cheat)" : "skill tree (fresh)";
+                    var panel = (RectTransform)root.Tree.transform.Find("Panel");
+                    var panelBox = ScreenBox(panel);
+                    AssertOnScreen(new[] { ("Panel", panelBox) }, where);
+
+                    var parts = new List<(string, Rect)>();
+                    foreach (RectTransform child in panel)
+                        if (child.gameObject.activeInHierarchy) parts.Add((child.name, ScreenBox(child)));
+                    Assert.AreEqual(12, parts.Count(p => p.Item1.StartsWith("Node_")), "all twelve nodes have a card");
+                    AssertNoOverlaps(parts, where);
+                    var outside = parts.Where(p => !Inside(p.Item2, panelBox)).Select(p => $"{p.Item1} {p.Item2}").ToList();
+                    Assert.IsEmpty(outside, $"{where}: outside the panel {panelBox}:\n" + string.Join("\n", outside));
+                    AssertTextFits(panel, where);
+                    root.Tree.Hide();
+                }
+            }
+            finally { Cheats.SetUnlockAllNodes(false); }   // a static: never leak into other tests
+        }
+
         [UnityTest]
         public IEnumerator Results_FitTheirTextWithoutDeadSpaceAndClearTheHud()
         {

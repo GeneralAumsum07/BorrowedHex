@@ -112,7 +112,7 @@ namespace BorrowedHex.Tests
         public void StyleCards_ShowEffectiveNumbers()
         {
             var p = new PlayerProfile();
-            p.equippedNodes.Add(SkillTree.PrecisionAngle);
+            p.ownedNodes.Add(SkillTree.PrecisionAngle);   // D101: owned = active
             string collector = StylePanel.CardBody(CaptureStyles.Resolve(CaptureStyles.Collector), p, Cfg, false);
             StringAssert.Contains($"{140f + Cfg.progression.precisionAngle:0}°", collector, "the card includes passives");
             StringAssert.Contains("1.00 s", collector);

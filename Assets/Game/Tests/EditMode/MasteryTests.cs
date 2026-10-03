@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
@@ -11,7 +12,7 @@ using UnityEngine;
 
 namespace BorrowedHex.Tests
 {
-    /// <summary>Phase 9: mastery XP and levels, the nine-node tree, and loadout resolution (section 7).</summary>
+    /// <summary>Phase 9: mastery XP and levels, the twelve-node tree, and loadout resolution (section 7).</summary>
     public class MasteryTests
     {
         const float Dt = 1f / 60f;
@@ -54,17 +55,17 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void LevelTen_IsTheCap_NinePointsTotal_StatisticsKeepCounting()
+        public void MaxLevel_IsTheCap_OnePointPerLevelGained_StatisticsKeepCounting()
         {
             var m = new MasteryState();
             int cost = 0;
             for (int l = 1; l < Mastery.MaxLevel; l++) cost += Mastery.CostToAdvance(l);
-            Assert.AreEqual(9, Mastery.Grant(m, cost + 5000));
-            Assert.AreEqual(10, m.level);
-            Assert.AreEqual(9, m.points);
+            Assert.AreEqual(Mastery.MaxLevel - 1, Mastery.Grant(m, cost + 5000));
+            Assert.AreEqual(Mastery.MaxLevel, m.level);
+            Assert.AreEqual(Mastery.MaxLevel - 1, m.points);
             Assert.AreEqual(0, m.xp, "the bar reads full at the cap");
             Assert.AreEqual(0, Mastery.Grant(m, 1000));
-            Assert.AreEqual(9, m.points, "no point beyond level 10");
+            Assert.AreEqual(Mastery.MaxLevel - 1, m.points, "no point beyond the cap");
             Assert.AreEqual(cost + 6000, m.totalXp);
         }
 
@@ -155,7 +156,7 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void HigherTiers_NeedTheirLevel_AndTheBranchNodeBelow_OwnedNotEquipped()
+        public void HigherTiers_NeedTheirLevel_AndTheBranchNodeBelow()
         {
             var p = Profile(4, 2);
             Assert.IsFalse(SkillTree.TryBuy(p, SkillTree.PrecisionCapacity, out var why));
@@ -170,29 +171,39 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void AFourthEquippedNode_IsRejected_AndOnlyOwnedNodesEquip()
+        public void EveryNode_CanBeOwned_AndOwnedNodesAreActive()
         {
-            var p = Profile(10, 0, SkillTree.PrecisionAngle, SkillTree.MobilitySpeed, SkillTree.ResilienceGrace, SkillTree.PrecisionCapacity);
-            Assert.IsFalse(SkillTree.TryEquip(p, SkillTree.QuickDraw, out var why));
-            Assert.AreEqual("not owned", why);
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.PrecisionAngle, out _));
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.MobilitySpeed, out _));
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.ResilienceGrace, out _));
-            Assert.IsFalse(SkillTree.TryEquip(p, SkillTree.PrecisionCapacity, out why));
-            StringAssert.Contains("3 already equipped", why);
-            Assert.IsTrue(SkillTree.Unequip(p, SkillTree.MobilitySpeed));
-            Assert.IsTrue(SkillTree.TryEquip(p, SkillTree.PrecisionCapacity, out _));
+            // D101 (owner): no equip step and no cap. Level 13 = 12 points = all 12 nodes.
+            Assert.AreEqual(13, Mastery.MaxLevel);
+            Assert.AreEqual(12, SkillTree.Nodes.Count);
+            var p = Profile(Mastery.MaxLevel, Mastery.MaxLevel - 1);
+            // Buy in tier order so every prerequisite is already owned.
+            foreach (var n in SkillTree.Nodes.OrderBy(n => n.Tier))
+                Assert.IsTrue(SkillTree.TryBuy(p, n.Id, out var why), why);
+            Assert.AreEqual(0, p.mastery.points);
+            Assert.IsTrue(ProfileService.Validate(p, out var bad), bad);
+            var s = Loadout.Resolve(TestSims.Config, p.ownedNodes);
+            Assert.Greater(s.LifePerDamage, 0f, "owned = active");
         }
 
         [Test]
-        public void Respec_RefundsEveryOwnedNode_AndUnequipsThem()
+        public void BloodPrice_NodesStack_AndGateLikeTheOtherBranches()
+        {
+            var t = TestSims.Config.progression;
+            var s = Loadout.Resolve(TestSims.Config, new[] { SkillTree.BloodLeech, SkillTree.BloodSiphon, SkillTree.BloodDebt });
+            Assert.AreEqual(t.bloodLeech + t.bloodSiphon + t.bloodDebt, s.LifePerDamage, 1e-6f);
+            var p = Profile(6, 1, SkillTree.BloodLeech, SkillTree.BloodSiphon);
+            Assert.IsFalse(SkillTree.TryBuy(p, SkillTree.BloodDebt, out var why));
+            StringAssert.Contains("mastery 7", why);
+        }
+
+        [Test]
+        public void Respec_RefundsEveryOwnedNode()
         {
             var p = Profile(5, 1, SkillTree.PrecisionAngle, SkillTree.PrecisionCapacity, SkillTree.MobilitySpeed);
-            p.equippedNodes.Add(SkillTree.PrecisionAngle);
             Assert.AreEqual(3, SkillTree.Respec(p));
             Assert.AreEqual(4, p.mastery.points, "one held + three refunded = levels gained");
             Assert.IsEmpty(p.ownedNodes);
-            Assert.IsEmpty(p.equippedNodes);
             Assert.IsTrue(ProfileService.Validate(p, out var why), why);
         }
 
@@ -210,10 +221,8 @@ namespace BorrowedHex.Tests
         {
             var p = Profile(7, 0, SkillTree.ResilienceGrace, SkillTree.ResilienceTime, SkillTree.ResilienceDashGrace);
             p.mastery.points = 3;
-            p.equippedNodes.Add(SkillTree.ResilienceTime);
             Assert.IsTrue(ProfileService.TryParse(ProfileService.ToJson(p), out var back, out var why), why);
             CollectionAssert.AreEqual(p.ownedNodes, back.ownedNodes);
-            CollectionAssert.AreEqual(p.equippedNodes, back.equippedNodes);
         }
 
         // ---- Loadout -----------------------------------------------------------------------

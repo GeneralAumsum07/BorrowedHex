@@ -138,6 +138,7 @@ namespace BorrowedHex.Presentation
 
             sim.Events.PlayerHit += (_, __) => player.Flash(0.12f);
             sim.Events.LifeClockChanged += SpawnTimeNumber;
+            sim.Events.LifeStolen += SpawnStolenNumber;
             sim.Events.PacketBackfired += _ => SpawnPop(sim.Player.Position, RejectColor, 0.1f, 2f, 0.35f);
             sim.Events.EnemyDamaged += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.1f); };
 
@@ -646,6 +647,15 @@ namespace BorrowedHex.Presentation
             // A change that rounds to 0 points is skipped, so tiny gains never leave a "0" behind.
             if (LifeDisplay.Points(delta) == 0) return;
             SpawnNumber(LifeDisplay.Signed(delta), delta < 0 ? RejectColor : ReturnedColor, at);
+        }
+
+        // D99/R17f: lifesteal gets its own muted red so a heal from hitting reads differently
+        // from a kill's reward; shown x10 (D100), and skipped when it rounds to nothing.
+        static readonly Color StolenColor = new Color(1f, 0.45f, 0.5f);
+        void SpawnStolenNumber(float seconds, Vector2 at)
+        {
+            if (LifeDisplay.Points(seconds) <= 0) return;
+            SpawnNumber(LifeDisplay.Signed(seconds), StolenColor, at);
         }
 
         /// <summary>A floating world-space number/label that rises and fades (life changes, D94 Overcharge).</summary>

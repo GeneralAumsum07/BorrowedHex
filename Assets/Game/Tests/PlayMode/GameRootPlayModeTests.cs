@@ -201,7 +201,7 @@ namespace BorrowedHex.Tests
         }
 
         [UnityTest]
-        public IEnumerator TheTree_FromTheMainMenu_BuysAndEquips_AndTheNextRunUsesIt()
+        public IEnumerator TheTree_FromTheMainMenu_Buys_AndTheNextRunUsesIt()
         {
             var m = root.Profile.Profile.mastery;
             m.level = 2;
@@ -210,10 +210,9 @@ namespace BorrowedHex.Tests
             yield return null;
             Assert.IsTrue(root.Tree.IsOpen);
             Assert.IsFalse(root.Main.IsOpen);
-            root.Tree.Click(SkillTree.PrecisionAngle);   // buy
-            root.Tree.Click(SkillTree.PrecisionAngle);   // equip
-            Assert.AreEqual(2, storage.Writes, "each tree change is a save point");
-            CollectionAssert.Contains(root.Profile.Profile.equippedNodes, SkillTree.PrecisionAngle);
+            root.Tree.Click(SkillTree.PrecisionAngle);   // buy: owning it makes it active (D101)
+            Assert.AreEqual(1, storage.Writes, "each tree change is a save point");
+            CollectionAssert.Contains(root.Profile.Profile.ownedNodes, SkillTree.PrecisionAngle);
             root.ShowMainMenu();
             Assert.IsFalse(root.Tree.IsOpen);
             yield return StartShortRun();

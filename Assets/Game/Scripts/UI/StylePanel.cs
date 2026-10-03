@@ -95,7 +95,7 @@ namespace BorrowedHex.UI
         /// <summary>Card body for one style; static so EditMode tests can read it without a canvas.</summary>
         public static string CardBody(CaptureStyle style, PlayerProfile p, GameConfig c, bool selected)
         {
-            var stats = Loadout.Resolve(c, p.equippedNodes, style.Id);
+            var stats = Loadout.Resolve(c, SkillTree.ActiveNodes(p), style.Id);
             string state = selected ? "<color=#8CF0A8>SELECTED</color>" : "Click to select";
             return $"<b><size=30>{style.Name}</size></b>\n<color=#FAD150>{style.TradeOff}</color>\n\n" +
                    $"{style.Summary}\n\n<size=20>{CaptureStyles.Describe(stats)}</size>\n\n<size=20>{state}</size>";

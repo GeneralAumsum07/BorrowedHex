@@ -400,7 +400,7 @@ namespace BorrowedHex.UI
                 $"{ReasonText(s)}{bonus}\n" +
                 $"Best volley: {s.BestVolleyKills}   Best chain: x{s.BestChain}   Overcharges: {s.Overcharges}\n" +
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased})   Average power: x{s.AverageFirePower:0.00}\n" +
-                $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}   Backfires: {s.Backfires}   Swaps: {s.Swaps}\n" +
+                $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}   Health stolen: {LifeDisplay.Points(s.LifeStolen)}   Backfires: {s.Backfires}   Swaps: {s.Swaps}\n" +
                 $"Health sacrificed: {LifeDisplay.Points(s.SecondsSacrificed)} ({s.UpgradesPaidFor} upgrade{(s.UpgradesPaidFor == 1 ? "" : "s")})   Most held: {s.MostUpgradesHeld}";
             FitToText(resultsBody);
         }

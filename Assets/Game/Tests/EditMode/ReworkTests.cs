@@ -647,5 +647,70 @@ namespace BorrowedHex.Tests
         [TestCase(180.0, 1800)]
         public void LifeDisplay_ShowsTenPointsPerSecond(double seconds, int points)
             => Assert.AreEqual(points, LifeDisplay.Points(seconds));
+
+        // ---- Lifesteal (D99) -------------------------------------------------------------------
+
+        static ArenaSim WithLifesteal(float perDamage)
+        {
+            var stats = PlayerStats.FromConfig(TestSims.Config);
+            stats.LifePerDamage = perDamage;
+            var setup = RunSetup.ForSandbox(1);
+            setup.Stats = stats;   // ArenaSim reads Setup.Stats ?? PlayerStats.FromConfig
+            var sim = new ArenaSim(TestSims.Config, setup);
+            sim.Player.Position = Vector2.zero;
+            return sim;
+        }
+
+        [Test]
+        public void Lifesteal_ReturnsAShareOfTheDamageThatLands()
+        {
+            var sim = WithLifesteal(0.1f);
+            sim.DebugSetLife(60.0);
+            float stolen = 0f;
+            sim.Events.LifeStolen += (s, _) => stolen += s;
+            var e = Spawned(sim, ActorCategory.SiegeFamiliar);   // 100 health in the helper
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
+            // 10 x 1.33 (another school) = 13.3 damage, x 0.1 = 1.33 s (13 on screen).
+            Assert.AreEqual(60f + 1.33f, sim.LifeSeconds, 1e-3f);
+            Assert.AreEqual(1.33f, sim.Score.LifeStolen, 1e-3f);
+            Assert.AreEqual(1.33f, stolen, 1e-3f, "R17f: the pop is driven by this event");
+        }
+
+        [Test]
+        public void Lifesteal_IgnoresOverkill()
+        {
+            // R17c: a 13.3-damage hit on 2 health left steals for 2.
+            var sim = WithLifesteal(0.1f);
+            sim.DebugSetLife(60.0);
+            var e = Spawned(sim, ActorCategory.SiegeFamiliar);
+            e.Health = 2f;
+            float stolen = 0f;
+            sim.Events.LifeStolen += (x, _) => stolen += x;
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
+            // The hit also KILLS the enemy, and the kill pays its own reward into the same clock,
+            // so the clock alone cannot isolate the steal; the event and the score can.
+            Assert.AreEqual(0.2f, stolen, 1e-3f);
+            Assert.AreEqual(0.2f, sim.Score.LifeStolen, 1e-3f);
+            Assert.AreEqual(60.2f + sim.Score.SecondsGained, sim.LifeSeconds, 1e-3f, "the clock is the steal plus the kill reward, nothing else");
+        }
+
+        [Test]
+        public void Lifesteal_NeverExceedsTheCap()
+        {
+            var sim = WithLifesteal(10f);
+            var e = Spawned(sim, ActorCategory.SiegeFamiliar);
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
+            Assert.AreEqual(sim.Stats.StartingSeconds, sim.LifeSeconds, 1e-4f);
+        }
+
+        [Test]
+        public void Lifesteal_OffByDefault()
+        {
+            var sim = Sim();
+            sim.DebugSetLife(60.0);
+            var e = Spawned(sim, ActorCategory.SiegeFamiliar);
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
+            Assert.AreEqual(60f, sim.LifeSeconds, 1e-4f);
+        }
     }
 }

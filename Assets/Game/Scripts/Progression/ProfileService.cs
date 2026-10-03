@@ -117,7 +117,6 @@ namespace BorrowedHex.Progression
             p.mastery ??= new MasteryState();
             p.stats ??= new ProfileStats();
             p.ownedNodes ??= new List<string>();
-            p.equippedNodes ??= new List<string>();
             p.achievements ??= new List<AchievementEntry>();
             p.records ??= new List<RunRecord>();
             p.finalizedRunIds ??= new List<string>();
@@ -138,9 +137,6 @@ namespace BorrowedHex.Progression
                 || st.perfectShots < 0 || st.packetsReleased < 0 || st.backfires < 0
                 || !(st.secondsPlayed >= 0f) || float.IsInfinity(st.secondsPlayed)) { why = "stats"; return false; }
 
-            if (p.equippedNodes.Count > Mastery.MaxEquipped) { why = "too many equipped"; return false; }
-            foreach (var id in p.equippedNodes)
-                if (!p.ownedNodes.Contains(id)) { why = "equipped but not owned"; return false; }
             if (new HashSet<string>(p.ownedNodes).Count != p.ownedNodes.Count) { why = "duplicate node"; return false; }
             foreach (var a in p.achievements)
                 if (a == null || string.IsNullOrEmpty(a.id)) { why = "achievement"; return false; }
@@ -214,20 +210,11 @@ namespace BorrowedHex.Progression
         }
 
         /// <summary>
-        /// The JSON that goes to disk. Normally just <see cref="ToJson"/>; but with the
-        /// unlock-all cheat on, the session can have nodes equipped that were never bought, and
-        /// Validate rejects "equipped but not owned" - writing that would cost the player the
-        /// whole save on the next launch. Those ids are left out of the written copy only; the
-        /// live session keeps them equipped while the cheat is on.
+        /// The JSON that goes to disk. Since D101 the unlock-all cheat writes nothing into the
+        /// profile (it only widens <see cref="SkillTree.ActiveNodes"/>), so there is nothing to
+        /// strip: the file is exactly the live profile.
         /// </summary>
-        static string SaveJson(PlayerProfile p)
-        {
-            if (p.equippedNodes.TrueForAll(p.ownedNodes.Contains)) return ToJson(p);
-            var live = p.equippedNodes;
-            p.equippedNodes = live.FindAll(p.ownedNodes.Contains);
-            try { return ToJson(p); }
-            finally { p.equippedNodes = live; }
-        }
+        static string SaveJson(PlayerProfile p) => ToJson(p);
 
         // Mastery (Phase 9), achievements and records (Phase 10) plug in here, inside the same
         // idempotent finalization, so none of them can be applied twice for one run.
@@ -237,7 +224,7 @@ namespace BorrowedHex.Progression
     /// <summary>Mastery constants (section 7); the XP rules are in Mastery.cs.</summary>
     public static partial class Mastery
     {
-        public const int MaxLevel = 10;
-        public const int MaxEquipped = 3;
+        // D101 (owner): 12 points for the 12 nodes; everything can be unlocked.
+        public const int MaxLevel = 13;
     }
 }

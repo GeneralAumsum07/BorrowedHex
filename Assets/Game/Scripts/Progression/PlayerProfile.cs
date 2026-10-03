@@ -26,9 +26,11 @@ namespace BorrowedHex.Progression
         public MasteryState mastery = new MasteryState();
         public ProfileStats stats = new ProfileStats();
 
-        /// <summary>Skill-tree nodes bought (Phase 9) and the at-most-three equipped.</summary>
+        /// <summary>
+        /// Skill-tree nodes bought (Phase 9). D101: owning a node makes it active. Old saves'
+        /// equippedNodes key is ignored by JsonUtility, so they still load.
+        /// </summary>
         public List<string> ownedNodes = new List<string>();
-        public List<string> equippedNodes = new List<string>();
         /// <summary>Selected capture style (Phase 11); unknown ids fall back to Snatcher.</summary>
         public string styleId = "snatcher";
 

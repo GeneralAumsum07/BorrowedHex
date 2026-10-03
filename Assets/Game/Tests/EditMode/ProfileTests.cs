@@ -32,7 +32,6 @@ namespace BorrowedHex.Tests
             p.mastery.points = 1;
             p.ownedNodes.Add("precision_angle");
             p.ownedNodes.Add("mobility_speed");
-            p.equippedNodes.Add("mobility_speed");
             p.stats.runs = 3;
             p.stats.victories = 1;
             p.achievements.Add(new AchievementEntry { id = "first_borrow", runId = "abc" });
@@ -51,7 +50,6 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(4, q.mastery.level);
             Assert.AreEqual(37, q.mastery.xp);
             CollectionAssert.AreEqual(p.ownedNodes, q.ownedNodes);
-            CollectionAssert.AreEqual(p.equippedNodes, q.equippedNodes);
             Assert.AreEqual(3, q.stats.runs);
             Assert.AreEqual("first_borrow", q.achievements[0].id);
             Assert.AreEqual(1234, q.records[0].score);
@@ -69,7 +67,7 @@ namespace BorrowedHex.Tests
         [TestCase("")]
         [TestCase("not json at all")]
         [TestCase("{\"version\":2}")]
-        [TestCase("{\"version\":1,\"mastery\":{\"level\":11}}")]
+        [TestCase("{\"version\":1,\"mastery\":{\"level\":14}}")]   // one above MaxLevel 13 (D101)
         [TestCase("{\"version\":1,\"mastery\":{\"level\":1,\"points\":3}}")]
         [TestCase("{\"version\":1,\"settings\":{\"uiScale\":9}}")]
         [TestCase("{\"version\":1,\"stats\":{\"runs\":1,\"victories\":2}}")]

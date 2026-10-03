@@ -1,5 +1,6 @@
 using System;
 using BorrowedHex.Core;
+using UnityEngine;
 
 namespace BorrowedHex.Runs
 {
@@ -26,6 +27,10 @@ namespace BorrowedHex.Runs
         /// <summary>D96: life was paid for an upgrade (an add or a rank-up): the card and the seconds paid.</summary>
         public event Action<UpgradeOffer, float> UpgradePaid;
         internal void RaiseUpgradePaid(UpgradeOffer offer, float seconds) => UpgradePaid?.Invoke(offer, seconds);
+
+        /// <summary>D99: lifesteal returned this many life seconds (after the cap) at this position.</summary>
+        public event Action<float, Vector2> LifeStolen;
+        internal void RaiseLifeStolen(float seconds, Vector2 at) => LifeStolen?.Invoke(seconds, at);
 
         internal void RaiseUpgradeChosen(UpgradeOffer o) => UpgradeChosen?.Invoke(o);
         internal void RaiseEchoFired(int root) => EchoFired?.Invoke(root);

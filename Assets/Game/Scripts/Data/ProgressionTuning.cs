@@ -36,6 +36,14 @@ namespace BorrowedHex.Data
         public float resilienceTime = 20f;
         [Tooltip("resilience_dash_grace: seconds added to dash invulnerability (capped at the dash duration).")]
         public float resilienceDashGrace = 0.04f;
+
+        [Header("Blood Price")]
+        [Tooltip("blood_leech: life SECONDS returned per point of damage that lands (shown x10 on screen, D100). Placeholder.")]
+        public float bloodLeech = 0.10f;
+        [Tooltip("blood_siphon: added to the above; the nodes stack (placeholder).")]
+        public float bloodSiphon = 0.10f;
+        [Tooltip("blood_debt: added to the above; the nodes stack (placeholder).")]
+        public float bloodDebt = 0.15f;
     }
 
     public partial class GameConfig

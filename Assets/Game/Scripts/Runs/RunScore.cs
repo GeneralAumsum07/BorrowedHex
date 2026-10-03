@@ -48,6 +48,10 @@ namespace BorrowedHex.Runs
         public int UpgradesPaidFor { get; private set; }
         public int MostUpgradesHeld { get; private set; }
         internal void RecordUpgradePaid(float seconds) { SecondsSacrificed += seconds; UpgradesPaidFor++; }
+        // D99: life returned by lifesteal. Kept apart from SecondsGained (kill rewards and chains),
+        // so the results can show what the Blood Price nodes actually paid back.
+        public float LifeStolen { get; private set; }
+        internal void RecordLifeStolen(float seconds) => LifeStolen += seconds;
         // A high-water mark: a swap keeps the count, so only adds can raise it.
         internal void RecordHeld(int count) { if (count > MostUpgradesHeld) MostUpgradesHeld = count; }
         public int Swaps { get; private set; }
@@ -228,6 +232,7 @@ namespace BorrowedHex.Runs
         public readonly int Overcharges;
         public readonly int BestChain;   // D95
         public readonly float SecondsSacrificed;   // D96
+        public readonly float LifeStolen;          // D99
         public readonly int UpgradesPaidFor;
         public readonly int MostUpgradesHeld;
         public readonly int Swaps;
@@ -270,6 +275,7 @@ namespace BorrowedHex.Runs
             Overcharges = s.Overcharges;
             BestChain = s.BestChain;
             SecondsSacrificed = s.SecondsSacrificed;
+            LifeStolen = s.LifeStolen;
             UpgradesPaidFor = s.UpgradesPaidFor;
             MostUpgradesHeld = s.MostUpgradesHeld;
             Swaps = s.Swaps;

@@ -54,6 +54,8 @@ namespace BorrowedHex.Player
         public bool CatchIsDash;
         /// <summary>Daredevil: capture reach around the player's centre along the dash path (D83).</summary>
         public float DashCatchRadius;
+        /// <summary>D99: life seconds returned per point of damage that lands on an enemy (0 = none).</summary>
+        public float LifePerDamage;
 
         public static PlayerStats FromConfig(GameConfig config)
         {

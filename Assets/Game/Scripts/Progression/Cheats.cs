@@ -8,7 +8,8 @@ namespace BorrowedHex.Progression
     /// Session-only on purpose: these are statics, never fields of <see cref="PlayerProfile"/>,
     /// so nothing here can be serialized. The save validator is strict (D73) and would reject a
     /// file that owned nodes above its mastery level, so "unlock all" is expressed as a query
-    /// override (<see cref="SkillTree.IsOwned"/>) rather than by writing nodes into the profile.
+    /// override (<see cref="SkillTree.ActiveNodes"/>, <see cref="SkillTree.IsOwned"/>) rather
+    /// than by writing nodes into the profile.
     /// Restarting the game turns every cheat off.
     /// </summary>
     public static class Cheats
@@ -16,21 +17,17 @@ namespace BorrowedHex.Progression
         /// <summary>Hits still land (flash, invulnerability window) but cost no life, and the life clock is frozen.</summary>
         public static bool Invincible;
 
-        /// <summary>Every skill node counts as owned, so any of them can be equipped (the equip cap still holds).</summary>
+        /// <summary>Every skill node is active in runs and shows as owned in the tree (D101: owned = active).</summary>
         public static bool UnlockAllNodes;
 
         public static bool AnyActive => Invincible || UnlockAllNodes;
 
         /// <summary>
-        /// Switch the unlocked tree on or off. Turning it OFF also unequips every node the
-        /// profile never earned, so the next run cannot carry a cheat passive into a run that
-        /// would otherwise count.
+        /// Switch the unlocked tree on or off. Nothing in the profile changes either way (D101
+        /// removed equips, the only state the cheat used to leave behind), so turning it off
+        /// leaves exactly what was bought.
         /// </summary>
-        public static void SetUnlockAllNodes(bool on, PlayerProfile profile)
-        {
-            UnlockAllNodes = on;
-            if (!on && profile != null) profile.equippedNodes.RemoveAll(id => !profile.ownedNodes.Contains(id));
-        }
+        public static void SetUnlockAllNodes(bool on) => UnlockAllNodes = on;
 
         /// <summary>
         /// Stamp the cheats into a run's setup. ANY active cheat marks the run Debug: an

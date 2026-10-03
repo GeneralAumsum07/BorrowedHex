@@ -20,13 +20,8 @@ namespace BorrowedHex.Presentation
 
         void ToggleInvincible() => Cheats.Invincible = !Cheats.Invincible;
 
-        void ToggleUnlockAll()
-        {
-            Cheats.SetUnlockAllNodes(!Cheats.UnlockAllNodes, Profile.Profile);
-            // Switching it off may have unequipped unearned nodes; save so the file matches
-            // what the tree panel now shows (the save itself never holds cheat nodes).
-            if (!Cheats.UnlockAllNodes) Profile.Save();
-        }
+        // The profile is untouched either way (see Cheats.SetUnlockAllNodes), so no save.
+        void ToggleUnlockAll() => Cheats.SetUnlockAllNodes(!Cheats.UnlockAllNodes);
 
         void CloseCheats()
         {

@@ -47,7 +47,7 @@ namespace BorrowedHex.Presentation
         /// </summary>
         partial void ApplyLoadoutExtra(RunSetup setup)
         {
-            setup.PassiveIds = new List<string>(Profile.Profile.equippedNodes);
+            setup.PassiveIds = SkillTree.ActiveNodes(Profile.Profile);   // D101: owned = active
             setup.Stats = Loadout.Resolve(Config, setup.PassiveIds);
             ApplyStyleExtra(setup);
         }

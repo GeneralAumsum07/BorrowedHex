@@ -618,3 +618,21 @@ Test report: EditMode 165/165, PlayMode 2/2.
   catch (and catch + dash) dashes east; a plain dash goes north; a Snatcher's dash goes north. Failed before the change
   (DashDirection.x was 0), passes after.
 - Live editor, EditMode: 319/319 pass. PlayMode: 11/11 pass.
+
+## Rework Task 10: Blood Price lifesteal and an unlockable tree (3 Oct 2026)
+
+- Changed: `ProgressionTuning` (Blood Price), `PlayerStats.LifePerDamage`, `Loadout`, `SkillTree` (fourth branch,
+  `ActiveNodes`, equip API removed), `ProfileService`/`PlayerProfile` (MaxLevel 13, `equippedNodes` gone), `Cheats`,
+  `ArenaSim.Enemies` (`StealLife` inside `DamageEnemy`), `SimEvents.LifeStolen`, `RunScore.LifeStolen`, `ArenaView`
+  (muted-red pop), `SkillTreePanel` (four columns, buy-only), `RunFlowPanels` ("Health stolen") (D99, D101).
+- New EditMode: lifesteal returns 0.1 x landed damage after school resistance, ignores overkill (a 13.3 hit on 2 health
+  steals 0.2; the kill's own reward is separate), never passes the cap, and is off by default; Blood Price nodes stack
+  and gate like the others; every node can be owned at MaxLevel 13 with MaxLevel - 1 points; unlock-all makes every
+  node active without writing any into the save, and turning it off leaves only what was bought.
+- New PlayMode `LayoutTests.SkillTree_FourBranches_NothingOverlapsAndAllTextFits`: every panel child disjoint and
+  inside the panel, all text fitting, for a fresh profile and with the cheat. It found three overlaps that predate
+  the fourth column (title/header by 12 px, tier-3 cards/status, note/buttons by 10 px); fixed by moving the header,
+  card rows, status and note.
+- Live editor, EditMode: 402/402 pass. PlayMode: 29/29 pass.
+- Not verified: the tree and the stolen-health pops by eye at 1920x1080 (needs a human look); whether the lifesteal
+  values feel right (placeholders, human playtest).
