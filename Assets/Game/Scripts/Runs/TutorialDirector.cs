@@ -7,7 +7,7 @@ using UnityEngine;
 namespace BorrowedHex.Runs
 {
     /// <summary>The tutorial's lessons, in the order they are taught (D86).</summary>
-    public enum TutorialStep { Move, Dash, Capture, Slots, Parry, Complete }
+    public enum TutorialStep { Move, Dash, Capture, Slots, Parry, Evolve, Complete }
 
     /// <summary>
     /// Phase 14: the scripted tutorial. It runs inside an ordinary sandbox sim (so it can never
@@ -34,7 +34,7 @@ namespace BorrowedHex.Runs
         public string Progress { get; private set; } = "";
         /// <summary>1-based lesson number and how many there are, for the "LESSON n/5" header.</summary>
         public int LessonNumber => Mathf.Min((int)Step + 1, LessonCount);
-        public const int LessonCount = 5;
+        public const int LessonCount = 6;
         public bool IsComplete => Step == TutorialStep.Complete;
         /// <summary>True during the quiet beat after a lesson is passed.</summary>
         public bool Celebrating => celebrateUntil > sim.Clock.Now;
@@ -50,11 +50,17 @@ namespace BorrowedHex.Runs
         static readonly Vector2[] Markers = { new Vector2(0f, 3f), new Vector2(-9f, 0f), new Vector2(9f, 0f) };
         public const int DashesNeeded = 3;
         public const int ParriesNeeded = 2;
+        /// <summary>
+        /// The evolution lesson lets its enemies be seen in their normal form for this long after
+        /// their spawn warning ends, then evolves them on the spot (D87). Long enough to register
+        /// "that is an Acolyte", short enough that nobody waits.
+        /// </summary>
+        public const double EvolveAfter = 1.0;
         const double BeatSeconds = 1.6;
         // A summon has a spawn warning; give the roster a moment before judging it "all dead".
         const double RespawnGrace = 0.5;
 
-        int markerIndex, dashes, parries, releases, slotReleases;
+        int markerIndex, dashes, parries, releases, slotReleases, evolvedKills;
         bool captured, bothSlotsHeld, swapped;
         double celebrateUntil = double.NegativeInfinity;
         TutorialStep pendingStep;
@@ -73,6 +79,8 @@ namespace BorrowedHex.Runs
             sim.Events.PacketReleased += OnReleased;
             sim.Events.SlotSwapped += _ => { if (Step == TutorialStep.Slots && bothSlotsHeld) swapped = true; };
             sim.Events.StrikeParried += (enemy, at) => { if (Step == TutorialStep.Parry) parries++; };
+            // Only an EVOLVED kill counts: the lesson is "an overstayer is tougher, beat it anyway".
+            sim.Events.EnemyKilled += (enemy, dmg) => { if (Step == TutorialStep.Evolve && enemy.Overstayed) evolvedKills++; };
             UpdateText();
         }
 
@@ -117,8 +125,17 @@ namespace BorrowedHex.Runs
                     break;
                 case TutorialStep.Parry:
                     bool parryGoal = parries >= ParriesNeeded;
-                    if (parryGoal && RosterDead()) Pass(TutorialStep.Complete);
+                    if (parryGoal && RosterDead()) Pass(TutorialStep.Evolve);
                     else KeepRosterAlive(now, parryGoal);
+                    break;
+                case TutorialStep.Evolve:
+                    // Overstay never fires on its own in a tutorial (ArenaSim.OverstaySeconds), so
+                    // evolution here is always this explicit call, made once each enemy is active.
+                    foreach (var e in roster)
+                        if (e.Alive && !e.Overstayed && now >= e.ActiveAt + EvolveAfter) sim.EvolveEnemy(e, now);
+                    bool evolveGoal = evolvedKills >= roster.Count;
+                    if (evolveGoal && RosterDead()) Pass(TutorialStep.Complete);
+                    else if (RosterDead() && now - rosterSpawnedAt >= RespawnGrace) { evolvedKills = 0; Respawn(); }
                     break;
             }
             UpdateText();
@@ -147,6 +164,9 @@ namespace BorrowedHex.Runs
                 case TutorialStep.Capture: SpawnRoster(ActorCategory.Acolyte); break;
                 case TutorialStep.Slots: SpawnRoster(ActorCategory.Acolyte, ActorCategory.SiegeFamiliar); break;
                 case TutorialStep.Parry: SpawnRoster(ActorCategory.Pursuer); break;
+                // One of each fighting style the player has learned to answer: a caster to catch
+                // from and a Pursuer to parry, both stronger and faster once evolved.
+                case TutorialStep.Evolve: SpawnRoster(ActorCategory.Acolyte, ActorCategory.Pursuer); break;
             }
         }
 
@@ -227,6 +247,14 @@ namespace BorrowedHex.Runs
                         ? "A Pursuer strikes up close. Aim at it and press LEFT MOUSE just as it strikes to parry and hit back."
                         : "Well parried. Finish the Pursuer.";
                     Progress = $"parries {Mathf.Min(parries, ParriesNeeded)}/{ParriesNeeded}";
+                    break;
+                case TutorialStep.Evolve:
+                    bool anyEvolved = false;
+                    foreach (var e in roster) if (e.Overstayed) anyEvolved = true;
+                    Prompt = !anyEvolved
+                        ? "Enemies left alive too long EVOLVE. Watch: these two are about to..."
+                        : "They evolved: more health, faster, quicker attacks. Take both down!";
+                    Progress = $"evolved defeated {Mathf.Min(evolvedKills, 2)}/2";
                     break;
                 case TutorialStep.Complete:
                     Prompt = "Tutorial complete! You are ready for a real run.";

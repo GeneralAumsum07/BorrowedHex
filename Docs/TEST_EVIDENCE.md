@@ -599,3 +599,14 @@ Test report: EditMode 165/165, PlayMode 2/2.
   frozen; Restart repeats the tutorial; Main menu hides the band; the profile records no run and no save is written.
 - Not verified: the completion card and its Play/Main menu buttons in the frame loop (the pause it sets is three lines,
   unexercised by a test); the scripted player only ran the default Snatcher style; layout, wording and feel by eye.
+
+### Phase 14 addendum — evolution lesson (3 Oct 2026)
+
+- Changed: `ArenaSim.Enemies` (evolution moved into public `EvolveEnemy`), `ArenaSim.Endless` (`OverstaySeconds` infinite in a
+  tutorial), `TutorialDirector` (Evolve step), `TutorialPanel` (card text), `TutorialTests` (D87).
+- Live editor, EditMode: 318/318 pass (3 new). PlayMode: 11/11 pass.
+- New: a capture-lesson Acolyte left alive 40 s never evolves; a sandbox Acolyte still evolves on the normal timer (the
+  refactor kept it); in the evolution lesson an Acolyte and a Pursuer spawn unevolved, both evolve (two EnemyOverstayed
+  events, higher max health, Elite) by 1.1 s after they become active, the progress reads 'evolved defeated 0/2', and two
+  evolved kills complete the tutorial. The scripted player now finishes all six lessons in order.
+- Not verified: the evolution moment by eye (it is the existing sprite swap, no extra effect).

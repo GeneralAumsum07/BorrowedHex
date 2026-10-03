@@ -64,8 +64,9 @@ namespace BorrowedHex.UI
             var title = Ui.Sized(Ui.Label("Title", panel.transform, "TUTORIAL COMPLETE", 52), 72);
             title.color = Ui.Accent;
             Ui.Sized(Ui.Label("Body", panel.transform,
-                "You can move, dash, catch, fire from both slots and parry.\n" +
-                "In a real run the life bar drains and every hit costs time.", 24), 80);
+                "You can move, dash, catch, fire from both slots and parry,\n" +
+                "and you know to kill enemies before they evolve.\n" +
+                "In a real run the life bar drains and every hit costs time.", 24), 110);
             Ui.Sized(Ui.Button("Play", panel.transform, "Play a run", onPlay), 72);
             Ui.Sized(Ui.Button("MainMenu", panel.transform, "Main menu", onMainMenu), 64);
             cardDim.SetActive(false);

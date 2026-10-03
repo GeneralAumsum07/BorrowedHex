@@ -95,6 +95,29 @@ namespace BorrowedHex.Runs
             return null;
         }
 
+        /// <summary>
+        /// The overstay evolution (D63). Normally reached only from TickEnemies when an enemy's
+        /// timer runs out; public so the tutorial's evolution lesson (D87) can show it on the spot
+        /// instead of making the player wait 25 seconds. Bosses never evolve.
+        /// </summary>
+        public void EvolveEnemy(EnemyActor e, double now)
+        {
+            // One-way evolution, guarded by Overstayed so it can never compound or heal twice.
+            // It multiplies on top of the spawn-time values, which are the authored base in
+            // short mode and the endless cycle scaling in endless (Phase 12): an overstayer is
+            // always stronger than its own cycle.
+            if (e.Overstayed || e.IsBoss || !e.Alive) return;
+            var t = Config.combat.For(e.Category);
+            e.Overstayed = e.Elite = true;
+            e.MaxHealth = e.Health = e.MaxHealth * Config.combat.overstayHealthScale;
+            e.MoveScale *= Config.combat.overstayMoveScale;
+            e.CooldownScale *= Config.combat.overstayCooldownScale;
+            e.KillValue = Mathf.RoundToInt(t.killValue * 1.5f);
+            if (e.Phase == EnemyPhase.Idle || e.Phase == EnemyPhase.Recover)
+                e.PhaseEndsAt = now + System.Math.Max(0, e.PhaseEndsAt - now) * e.CooldownScale;
+            Events.RaiseEnemyOverstayed(e);
+        }
+
         void TickEnemies(double now, float dt)
         {
             foreach (var e in Enemies)
@@ -107,21 +130,7 @@ namespace BorrowedHex.Runs
                     continue;
                 }
                 var t = Config.combat.For(e.Category);
-                if (!e.Overstayed && now >= e.ActiveAt + OverstaySeconds - 1e-6)
-                {
-                    // One-way evolution, guarded by Overstayed so it can never compound or
-                    // heal twice. It multiplies on top of the spawn-time values, which are the
-                    // authored base in short mode and the endless cycle scaling in endless
-                    // (Phase 12): an overstayer is always stronger than its own cycle.
-                    e.Overstayed = e.Elite = true;
-                    e.MaxHealth = e.Health = e.MaxHealth * Config.combat.overstayHealthScale;
-                    e.MoveScale *= Config.combat.overstayMoveScale;
-                    e.CooldownScale *= Config.combat.overstayCooldownScale;
-                    e.KillValue = Mathf.RoundToInt(t.killValue * 1.5f);
-                    if (e.Phase == EnemyPhase.Idle || e.Phase == EnemyPhase.Recover)
-                        e.PhaseEndsAt = now + System.Math.Max(0, e.PhaseEndsAt - now) * e.CooldownScale;
-                    Events.RaiseEnemyOverstayed(e);
-                }
+                if (!e.Overstayed && now >= e.ActiveAt + OverstaySeconds - 1e-6) EvolveEnemy(e, now);
                 if (e.Phase == EnemyPhase.Warning)
                 {
                     if (now < e.ActiveAt) continue;

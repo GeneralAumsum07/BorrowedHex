@@ -205,7 +205,7 @@ namespace BorrowedHex.Tests
 
                 // Keep some distance from the Pursuer until it commits, so its strike is a clean one.
                 Vector2 move = Vector2.zero;
-                if (t.Step != TutorialStep.Parry && target != null && best < 9f) move = (p.Position - target.Position).normalized;
+                if (t.Step != TutorialStep.Parry && t.Step != TutorialStep.Evolve && target != null && best < 9f) move = (p.Position - target.Position).normalized;
 
                 // Catch the nearest hostile shot heading in.
                 ProjectileActor incoming = null;
@@ -255,6 +255,58 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void TutorialEnemies_NeverEvolveOnTheirOwn_AndShowNoOverstayCountdown()
+        {
+            var sim = AtLesson(TutorialStep.Capture);
+            var acolyte = sim.Tutorial.Roster[0];
+            Assert.IsTrue(float.IsPositiveInfinity(sim.OverstaySeconds), "the view's warning ring reads this too");
+            // Keep the player out of the way and alive-ish; 40 s is well past the 25 s overstay.
+            for (int i = 0; i < 60 * 40; i++) sim.Tick(Still, Dt);
+            Assert.IsTrue(acolyte.Alive);
+            Assert.IsFalse(acolyte.Overstayed, "no evolution in the tutorial's early lessons");
+        }
+
+        [Test]
+        public void ARealRun_StillEvolvesItsEnemies()
+        {
+            var sim = TestSims.Sandbox();
+            var e = sim.SummonEnemy(ActorCategory.Acolyte);
+            sim.Player.Position = new Vector2(-11f, -7f);
+            for (int i = 0; i < 60 * 30 && !e.Overstayed && e.Alive; i++) sim.Tick(Still, Dt);
+            Assert.IsTrue(e.Overstayed, "the refactor into EvolveEnemy kept the normal timer");
+        }
+
+        [Test]
+        public void EvolutionLesson_EvolvesBothAtOnce_AndOnlyEvolvedKillsCount()
+        {
+            var sim = Tutorial(5);
+            var bot = new TutorialBot();
+            for (int i = 0; i < 60 * 400 && sim.Tutorial.Step != TutorialStep.Evolve; i++) sim.Tick(bot.Next(sim), Dt);
+            Assert.AreEqual(TutorialStep.Evolve, sim.Tutorial.Step);
+            Assert.AreEqual(6, sim.Tutorial.LessonNumber);
+            var roster = new List<EnemyActor>(sim.Tutorial.Roster);
+            CollectionAssert.AreEquivalent(new[] { ActorCategory.Acolyte, ActorCategory.Pursuer }, roster.ConvertAll(e => e.Category));
+            Assert.IsFalse(roster.Exists(e => e.Overstayed), "seen in their normal form first");
+            StringAssert.Contains("EVOLVE", sim.Tutorial.Prompt);
+            double activeAt = Mathf.Max((float)roster[0].ActiveAt, (float)roster[1].ActiveAt);
+            float baseHealth = roster[0].MaxHealth;
+            int evolved = 0;
+            sim.Events.EnemyOverstayed += _ => evolved++;
+            while (sim.Clock.Now < activeAt + TutorialDirector.EvolveAfter + 0.1) sim.Tick(Still, Dt);
+            Assert.AreEqual(2, evolved, "both evolved, about a second after they could fight, not 25");
+            Assert.IsTrue(roster.TrueForAll(e => e.Overstayed && e.Elite));
+            Assert.Greater(roster[0].MaxHealth, baseHealth);
+            StringAssert.Contains("Take both down", sim.Tutorial.Prompt);
+            Assert.AreEqual("evolved defeated 0/2", sim.Tutorial.Progress);
+
+            foreach (var e in roster) Kill(sim, e);
+            for (int i = 0; i < 5; i++) sim.Tick(Still, Dt);
+            Assert.IsTrue(sim.Tutorial.Celebrating || sim.Tutorial.IsComplete);
+            SkipBeat(sim);
+            Assert.IsTrue(sim.Tutorial.IsComplete, "two evolved kills finish the tutorial");
+        }
+
+        [Test]
         public void AScriptedPlayer_FinishesEveryLesson_UsingTheRealVerbs()
         {
             var sim = Tutorial(11);
@@ -266,7 +318,7 @@ namespace BorrowedHex.Tests
             sim.Events.SlotSwapped += _ => swaps++;
             sim.Events.StrikeParried += (_, __) => parries++;
             float life = sim.LifeSeconds;
-            for (int i = 0; i < 60 * 600 && !sim.Tutorial.IsComplete; i++)
+            for (int i = 0; i < 60 * 900 && !sim.Tutorial.IsComplete; i++)
             {
                 if (reached.Count == 0 || reached[reached.Count - 1] != sim.Tutorial.Step) reached.Add(sim.Tutorial.Step);
                 sim.Tick(bot.Next(sim), Dt);
@@ -275,7 +327,7 @@ namespace BorrowedHex.Tests
             Assert.IsTrue(sim.Tutorial.IsComplete, $"stuck at {sim.Tutorial.Step}: '{sim.Tutorial.Prompt}' {sim.Tutorial.Progress}");
             reached.Add(sim.Tutorial.Step);
             CollectionAssert.AreEqual(new[] { TutorialStep.Move, TutorialStep.Dash, TutorialStep.Capture,
-                TutorialStep.Slots, TutorialStep.Parry, TutorialStep.Complete }, reached, "lessons in order, none skipped");
+                TutorialStep.Slots, TutorialStep.Parry, TutorialStep.Evolve, TutorialStep.Complete }, reached, "lessons in order, none skipped");
             Assert.GreaterOrEqual(captures, 3, "one catch for the Acolyte, two to fill both slots");
             Assert.GreaterOrEqual(swaps, 1);
             Assert.GreaterOrEqual(parries, TutorialDirector.ParriesNeeded);

@@ -207,7 +207,10 @@ namespace BorrowedHex.Runs
         /// (section 6), the plain combat value everywhere else. Read by the sim AND the view's
         /// warning ring, so the warning can never disagree with the evolution.
         /// </summary>
-        public float OverstaySeconds => IsEndlessRun
+        /// The tutorial returns infinity (D87): an enemy must never evolve on its own while a
+        /// new player is still learning to catch; its last lesson evolves enemies explicitly.
+        public float OverstaySeconds => Setup.Tutorial ? float.PositiveInfinity
+            : IsEndlessRun
             ? Mathf.Max(Config.endless.overstayMinSeconds, Config.combat.overstaySeconds - Config.endless.overstayStepPerCycle * CyclesCompleted)
             : Config.combat.overstaySeconds;
 

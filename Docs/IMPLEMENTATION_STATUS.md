@@ -15,13 +15,14 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ### Phase 14 — Tutorial — implemented (owner check pending, 3 Oct 2026)
 
-- 'Tutorial' on the main menu, under Play. Five lessons: move, dash, capture (Acolyte), two slots and Q
-  (Acolyte + Siege Familiar), parry (Pursuer). Lessons cannot be failed; the clock is frozen (D86).
+- 'Tutorial' on the main menu, under Play. Six lessons: move, dash, capture (Acolyte), two slots and Q
+  (Acolyte + Siege Familiar), parry (Pursuer), evolution (an Acolyte and a Pursuer evolve on the spot and must
+  be killed). Lessons cannot be failed; the clock is frozen; enemies never evolve on their own (D86, D87).
 - `Runs/TutorialDirector.cs` (watches sim events, spawns each lesson's enemies, respawns them until the goal
   is met), `Runs/ArenaSim.Tutorial.cs`, `RunSetup.ForTutorial`; `UI/TutorialPanel.cs` (prompt band and
   completion card), `Presentation/GameRoot.Tutorial.cs`, the movement marker in `ArenaView`, and the HUD reads
-  'TUTORIAL · LESSON n/5'.
-- 315/315 EditMode, 11/11 PlayMode.
+  'TUTORIAL · LESSON n/6'.
+- 318/318 EditMode, 11/11 PlayMode.
 - Not done: played by hand; the band and card layout and prompt wording are unseen by a person.
 
 ### Phase 13 — Integration and build handoff — partly done (3 Oct 2026)

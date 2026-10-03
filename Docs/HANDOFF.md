@@ -42,7 +42,8 @@ Evidence: `Docs/TEST_EVIDENCE.md`.
 ## Modes and debug tools
 
 - **Play**: the short run (encounters, choices, the Collector).
-- **Tutorial**: five lessons (move, dash, capture, two slots, parry); the clock is frozen and nothing is saved (D86).
+- **Tutorial**: six lessons (move, dash, capture, two slots, parry, evolution); the clock is frozen, enemies only
+  evolve in the last lesson, and nothing is saved (D86, D87).
 - **Endless**: 30 s waves, a choice every two waves, the boss every six, Retire from any choice (D84).
 - **Practice sandbox**: never submits rewards.
 - Dev-only, shown in the editor and development builds only (`Application.isEditor || Debug.isDebugBuild`):
@@ -50,7 +51,7 @@ Evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Tests
 
-- EditMode: **315/315** (live editor, `bash .superpowers/rt.sh editor`).
+- EditMode: **318/318** (live editor, `bash .superpowers/rt.sh editor`).
 - PlayMode: **11/11** (`bash .superpowers/rtp.sh`).
 - `Tests/EditMode/IntegrationTests.cs` soaks 18 whole runs: {short, endless} × {Snatcher, Collector, Daredevil} ×
   {fresh, advanced loadout, assisted}, through random pauses and focus losses, checking the enemy cap, life bounds,
