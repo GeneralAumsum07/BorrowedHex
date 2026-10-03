@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BorrowedHex.Core;
 using BorrowedHex.Data;
 using BorrowedHex.Runs;
 using UnityEngine;
@@ -8,407 +9,353 @@ using UnityEngine.Rendering;
 namespace BorrowedHex.Presentation.WorldArt
 {
     /// <summary>
-    /// Mesh scenery follows ArenaLayout but owns no collision or gameplay randomness.
-    /// High silhouettes live beyond the north wall; the near parapet stays low so actors
-    /// and telegraphs remain visible. One owner releases every generated material/texture.
+    /// Solid architecture receives native atlas pixels. Ordinary cover is full-size
+    /// cutout artwork; analytic collision stays in ArenaSim. Pixel coverage replaces
+    /// growth and shatter animations throughout the live world transformation.
     /// </summary>
     public sealed class WorldGeometry : IDisposable
     {
         readonly List<UnityEngine.Object> owned = new List<UnityEngine.Object>();
-        readonly List<GameObject> trim = new List<GameObject>(), rubble = new List<GameObject>();
-        readonly List<GameObject> cracks = new List<GameObject>();
-        readonly Dictionary<string, GameObject> themes = new Dictionary<string, GameObject>();
-        readonly WorldArtLibrary art;
         readonly Transform root;
-        readonly Material stone, basalt, floor, earth;
-        readonly List<Rect> coverBounds;
-        readonly Dictionary<Renderer, Vector3> sceneryScale = new Dictionary<Renderer, Vector3>();
-        readonly Dictionary<SpriteRenderer, Color> sceneryColor = new Dictionary<SpriteRenderer, Color>();
-        Texture2D morphTexture, destinationFloor;
-        Color32[] morphSource, morphDestination, morphPixels;
-        float[] morphThreshold;
-        int morphTick = -1;
-        Color morphColorFrom, morphColorTo;
+        readonly WorldArtLibrary art;
+        readonly ArenaLayout layout;
+        readonly Dictionary<string, Material> surfaces = new Dictionary<string, Material>();
+        readonly List<GameObject> cover = new List<GameObject>(), rubble = new List<GameObject>();
+        readonly List<Renderer> boundary = new List<Renderer>(), scenery = new List<Renderer>();
+        readonly Dictionary<Renderer, float> sceneryBase = new Dictionary<Renderer, float>();
+        readonly Dictionary<GameObject, float> coverBase = new Dictionary<GameObject, float>();
+        readonly Dictionary<string, Renderer> backgrounds = new Dictionary<string, Renderer>();
+        readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
+        bool morphing, retiring;
+        float sceneryAmount = 1;
         public string CurrentTheme { get; private set; }
-        public Material Stone => stone;
+        public Material Stone => surfaces["Wall"];
+        public Texture2D FloorTexture => (Texture2D)surfaces["Floor"].GetTexture("_BaseMap");
+        public Texture2D FloorFrom => (Texture2D)surfaces["Floor"].GetTexture("_FromMap");
 
-        public WorldGeometry(Transform parent, ArenaLayout layout, WorldArtLibrary library, Material template)
+        public WorldGeometry(Transform parent, ArenaLayout arena, WorldArtLibrary library, Material unusedTemplate)
         {
-            art = library;
-            coverBounds = layout.pillars;
-            root = new GameObject("Environment").transform;
-            root.SetParent(parent, false);
-            stone = Surface("Weathered masonry", template, new Color(.48f, .47f, .44f));
-            basalt = Surface("Basalt", template, new Color(.24f, .25f, .28f));
-            floor = Surface("Broken cobbles", template, new Color(.58f, .57f, .54f));
-            earth = Surface("Ash earth", template, new Color(.38f, .35f, .32f));
-            var cobbles = Cobbles();
-            floor.mainTexture = WornFloor(art.Texture("CaveGround"), layout.worldTheme);
-            destinationFloor = (Texture2D)floor.mainTexture;
-            stone.mainTexture = cobbles;
-            earth.mainTexture = GroundPatch(art.Texture("CaveGround"));
-            var b = layout.bounds;
-            Box("Floor", root, new Vector3(b.center.x, -.25f, b.center.y), new Vector3(b.width + 2, .5f, b.height + 2), floor);
-            Box("Foundation", root, new Vector3(b.center.x, -.6f, b.center.y), new Vector3(b.width + 2.6f, .35f, b.height + 2.6f), basalt);
-            foreach (float side in new[] { -1f, 1f })
-                Box("Earth border", root, new Vector3(b.center.x + side * (b.width / 2 - 1), -.031f, b.center.y), new Vector3(2, .08f, b.height), earth);
-            var boundaries = layout.BuildObstacles();
-            for (int i = 0; i < 4; i++)
+            art = library; layout = arena; CurrentTheme = arena.worldTheme;
+            root = Group("Environment", parent).transform;
+            foreach (string key in new[] { "Floor", "Wall", "Detail" })
             {
-                var w = boundaries[i];
-                float h = i == 0 ? .55f : i == 1 ? 2.2f : 1f;
-                Box("Boundary" + i, root, new Vector3(w.center.x, h / 2, w.center.y), new Vector3(w.width, h, w.height), stone);
-                Box("Coping" + i, root, new Vector3(w.center.x, h + .08f, w.center.y), new Vector3(w.width + .12f, .16f, w.height + .12f), basalt);
+                var texture = WorldPixelSurfaces.Create(art, CurrentTheme, key != "Floor"); owned.Add(texture);
+                surfaces[key] = Surface(key, texture);
             }
-            for (float x = b.xMin + 1.6f; x < b.xMax; x += 4.2f)
+            var b = arena.bounds;
+            Box("Floor", root, new Vector3(b.center.x, -.25f, b.center.y), new Vector3(b.width + 2, .5f, b.height + 2), surfaces["Floor"]);
+            surfaces["Floor"].SetTextureScale("_BaseMap", Vector2.one * 2);
+            Box("Foundation", root, new Vector3(b.center.x, -.6f, b.center.y), new Vector3(b.width + 2.6f, .35f, b.height + 2.6f), Stone);
+            int stage = CurrentTheme == "Courtyard" ? 0 : CurrentTheme == "Graveyard" ? 1 : CurrentTheme == "Cave" ? 2 : 3;
+            // Missing segments change the actual enclosing structure, not just its tint.
+            for (int side = 0; side < 4; side++) for (int i = 0; i < 12; i++)
             {
-                Arch(new Vector3(x, 0, b.yMax + 2.2f), 2.8f, 3.0f);
-                Box("Buttress", root, new Vector3(x + 1.4f, 1.1f, b.yMax + 3), new Vector3(.7f, 2.2f, 2), basalt);
+                float height = WorldBoundaryPolicy.Height(stage, i + side * 2);
+                if (height <= 0) continue;
+                if (side == 0) height = Mathf.Min(height, 1.1f);
+                bool horizontal = side < 2;
+                float length = (horizontal ? b.width : b.height) / 12;
+                Vector3 at = horizontal ? new Vector3(b.xMin + length * (i + .5f), height / 2, side == 0 ? b.yMin : b.yMax)
+                    : new Vector3(side == 2 ? b.xMin : b.xMax, height / 2, b.yMin + length * (i + .5f));
+                var wall = Box("Boundary" + side + "_" + i, root, at, horizontal ? new Vector3(length + .015f, height, .7f) : new Vector3(.7f, height, length + .015f), Stone);
+                boundary.Add(wall.GetComponent<Renderer>());
+                var coping = Box("Broken coping", root, at + Vector3.up * (height / 2 + .065f), horizontal ? new Vector3(length, .13f, .8f) : new Vector3(.8f, .13f, length), surfaces["Detail"]);
+                boundary.Add(coping.GetComponent<Renderer>());
             }
-            for (int i = 0; i < 3; i++)
-                Box("Outer stair", root, new Vector3(b.center.x, -.12f - i * .18f, b.yMin - 1.65f - i * .45f), new Vector3(7 + i * .5f, .22f, .5f), stone);
-            for (int i = 0; i < layout.pillars.Count; i++)
+            if (stage == 0 || stage == 3)
+                for (float x = b.xMin + 2; x < b.xMax; x += 5) Arch(new Vector3(x, 0, b.yMax + 2), 2.8f, 2.8f);
+            for (int i = 0; i < arena.pillars.Count; i++) BuildCover(i);
+            // Breaches expose the downloaded backgrounds behind the combat footprint.
+            // The downloaded layers are composed for a side view. Sink their base below
+            // the horizon so the shallow camera sees the actual skyline, not only the
+            // bottom of a giant sprite above its frustum. The terrain apron stops here.
+            Background("Sky", "GraveSky", new Vector3(b.center.x, -33, b.yMax + 6), 100);
+            Background("Horizon", stage == 2 || stage == 3 ? "Temple" : "GraveSilhouette", new Vector3(b.center.x, -16, b.yMax + 3), 65);
+            for (int i = 0; i < 12; i++)
             {
-                var p = layout.pillars[i];
-                var group = Group("CoverTrim" + i, root);
-                group.transform.position = Core.Geometry2D.ToWorld(p.center);
-                var kind = i < layout.propKinds.Count ? layout.propKinds[i] : DecayPropKind.Column;
-                float height = kind == DecayPropKind.Column ? 2.1f : kind == DecayPropKind.Obelisk ? 2.7f
-                    : kind == DecayPropKind.DeadTree ? 1.8f : kind == DecayPropKind.Rock ? 1.3f : 1.15f;
-                Box("Base", group.transform, new Vector3(p.center.x, .12f, p.center.y), new Vector3(p.width, .24f, p.height), basalt);
-                if (kind == DecayPropKind.RuinedWall)
-                {
-                    for (int k = 0; k < 3; k++)
-                    {
-                        float h = height + (k == 1 ? -.3f : .25f);
-                        Box("Wall fragment", group.transform, new Vector3(p.xMin + p.width * (k + .5f) / 3, h / 2, p.center.y),
-                            new Vector3(p.width / 3 - .02f, h, p.height), stone);
-                    }
-                }
-                else if (kind == DecayPropKind.Rock)
-                {
-                    var rock = Box("Boulder", group.transform, new Vector3(p.center.x, height / 2, p.center.y), new Vector3(p.width * .85f, height, p.height * .85f), basalt);
-                    rock.transform.rotation = Quaternion.Euler(8, i * 23, 8);
-                    Prop("Rock", group.transform, Core.Geometry2D.ToWorld(p.center, .5f), .8f);
-                }
-                else if (kind == DecayPropKind.DeadTree)
-                {
-                    Box("Stump", group.transform, new Vector3(p.center.x, .5f, p.center.y), new Vector3(p.width * .7f, 1, p.height * .7f), earth);
-                    Prop("DeadTree", group.transform, Core.Geometry2D.ToWorld(p.center), .28f);
-                }
-                else
-                {
-                    Box(kind == DecayPropKind.Tomb ? "Sarcophagus" : "Column", group.transform, new Vector3(p.center.x, height / 2, p.center.y),
-                        new Vector3(p.width * .8f, height, p.height * .8f), kind == DecayPropKind.Obelisk ? basalt : stone);
-                    Box("Capital", group.transform, new Vector3(p.center.x, height, p.center.y), new Vector3(p.width, .2f, p.height), stone);
-                    if (kind == DecayPropKind.Tomb)
-                        Prop("Tomb", group.transform, Core.Geometry2D.ToWorld(p.center, height), .6f);
-                    if (kind == DecayPropKind.Obelisk)
-                    {
-                        var crown = Box("Ritual crown", group.transform, Core.Geometry2D.ToWorld(p.center, height + .3f), new Vector3(.7f, .5f, .7f), basalt);
-                        crown.transform.rotation = Quaternion.Euler(0, 45, 0);
-                    }
-                }
-                var wear = Group("Fractures", group.transform);
-                var fractureMaterial = Surface("Cover fractures", template, new Color(.08f, .07f, .1f));
-                for (int k = 0; k < 3; k++)
-                {
-                    var line = Box("Fracture", wear.transform, new Vector3(p.center.x + (k - 1) * p.width * .16f, height * (.3f + k * .18f), p.yMin - .015f),
-                        new Vector3(.035f, height * .35f, .015f), fractureMaterial);
-                    line.transform.rotation = Quaternion.Euler(0, 0, k % 2 == 0 ? 24 : -28);
-                }
-                wear.SetActive(false); cracks.Add(wear);
-                trim.Add(group);
-                var debris = Group("CoverRubble" + i, root);
-                debris.transform.position = Core.Geometry2D.ToWorld(p.center);
-                for (int k = 0; k < 6; k++)
-                {
-                    float a = k * 1.9f;
-                    var piece = Box("Fragment", debris.transform, new Vector3(p.center.x + Mathf.Cos(a) * p.width * .36f, .09f, p.center.y + Mathf.Sin(a) * p.height * .36f), new Vector3(.38f, .18f, .3f), k % 2 == 0 ? stone : basalt);
-                    piece.transform.rotation = Quaternion.Euler(0, k * 47, 8);
-                }
-                debris.SetActive(false);
-                rubble.Add(debris);
+                float sign = i % 2 == 0 ? -1 : 1;
+                var at = new Vector3(b.center.x + sign * (b.width / 2 + 3 + i % 3), 0, b.yMin + i * b.height / 12);
+                var prop = Prop(stage == 1 ? "Ruin" : stage == 2 ? "RockTree" : "DeadTree", root, at, 3.5f);
+                if (prop != null) scenery.Add(prop);
             }
-            foreach (string name in new[] { "Courtyard", "Graveyard", "Cave", "Sanctum" })
+            if (stage == 3)
             {
-                var group = Group(name, root);
-                themes[name] = group;
-                for (int i = 0; i < 10; i++)
+                var glyph = art.Effect("Vortex", 100);
+                if (glyph.Length > 0)
                 {
-                    float side = i % 2 == 0 ? -1 : 1;
-                    float x = b.center.x + side * (b.width / 2 + 2.4f + i % 3);
-                    float z = b.yMin + 1 + i * b.height / 10;
-                    if (name == "Cave")
-                    {
-                        var rock = Box("RockMass", group.transform, new Vector3(x, 1.2f, z), new Vector3(2.5f, 2.5f + i % 3, 2), basalt);
-                        rock.transform.rotation = Quaternion.Euler(12, i * 37, 15);
-                        Prop("Rock", group.transform, new Vector3(x * .9f, 0, z), 1.4f);
-                    }
-                    else if (name == "Graveyard")
-                    {
-                        Box("Gravestone", group.transform, new Vector3(x, .7f, z), new Vector3(.7f, 1.4f, .3f), stone);
-                        Prop("Tomb", group.transform, new Vector3(x * .92f, 0, z + .8f), 1.4f);
-                    }
-                    else if (name == "Sanctum")
-                    {
-                        Box("ObeliskBase", group.transform, new Vector3(x, .6f, z), new Vector3(1.2f, 1.2f, 1.2f), basalt);
-                        Prop("Obelisk", group.transform, new Vector3(x, 1.2f, z), 1.4f);
-                    }
-                    else Prop("DeadTree", group.transform, new Vector3(x, 0, z), .8f);
+                    var ring = Group("Ritual seal", root); ring.transform.position = Geometry2D.ToWorld(b.center, .025f);
+                    ring.transform.rotation = Quaternion.Euler(90, 0, 0); ring.transform.localScale = Vector3.one * 19;
+                    var renderer = ring.AddComponent<SpriteRenderer>(); renderer.sprite = glyph[0];
+                    renderer.color = new Color(.38f, .55f, .8f, .3f);
                 }
-                group.SetActive(false);
-            }
-            Prop("GraveSky", themes["Graveyard"].transform, new Vector3(b.center.x, 1, b.yMax + 13), 1.7f, new Color(.7f, .75f, .9f));
-            Prop("Temple", themes["Sanctum"].transform, new Vector3(b.center.x, 0, b.yMax + 12), .85f, new Color(.58f, .6f, .72f));
-            // Physical braziers anchor the sprite flames to visible geometry.
-            for (int i = 0; i < 8; i++)
-            {
-                var at = FlameAnchor(layout, i);
-                Box("Brazier stem", root, at - Vector3.up * .65f, new Vector3(.18f, 1.3f, .18f), basalt);
-                Box("Brazier bowl", root, at - Vector3.up * .12f, new Vector3(.5f, .2f, .5f), stone);
             }
         }
 
-        public static Vector3 FlameAnchor(ArenaLayout layout, int i)
+        void BuildCover(int index)
         {
-            var b = layout.bounds;
-            return new Vector3(b.center.x + (i % 2 == 0 ? -1 : 1) * (b.width / 2 + .45f), 1.4f, b.yMin + 1 + i * b.height / 8);
+            var p = layout.pillars[index];
+            var group = Group("CoverTrim" + index, root); group.transform.position = Geometry2D.ToWorld(p.center);
+            var kind = index < layout.propKinds.Count ? layout.propKinds[index] : DecayPropKind.Column;
+            if (kind == DecayPropKind.Obelisk)
+            {
+                Box("Base", group.transform, Geometry2D.ToWorld(p.center, .12f), new Vector3(p.width, .24f, p.height), Stone);
+                Box("Obelisk", group.transform, Geometry2D.ToWorld(p.center, 1.35f), new Vector3(p.width * .8f, 2.7f, p.height * .8f), Stone);
+                Box("Capital", group.transform, Geometry2D.ToWorld(p.center, 2.7f), new Vector3(p.width, .2f, p.height), surfaces["Detail"]);
+                var crown = Box("Ritual crown", group.transform, Geometry2D.ToWorld(p.center, 3), new Vector3(.7f, .5f, .7f), surfaces["Detail"]);
+                crown.transform.rotation = Quaternion.Euler(0, 45, 0);
+                Prop("RunePillar", group.transform, Geometry2D.ToWorld(p.center + new Vector2(0, -.6f), .2f), p.width * .8f);
+            }
+            else
+            {
+                string asset = kind == DecayPropKind.Tomb ? "Tomb" : kind == DecayPropKind.Urn ? "Urn"
+                    : kind == DecayPropKind.Crystal ? "Crystal" : kind == DecayPropKind.Rock ? "Rock"
+                    : kind == DecayPropKind.DeadTree ? "RockTree" : kind == DecayPropKind.Column ? "RunePillar" : "Ruin";
+                Prop(asset, group.transform, Geometry2D.ToWorld(p.center), p.width);
+            }
+            cover.Add(group);
+            var debris = Group("CoverRubble" + index, root);
+            Prop(kind == DecayPropKind.Tomb ? "TombRubble" : "Rock", debris.transform, Geometry2D.ToWorld(p.center, .01f), p.width * .7f);
+            debris.SetActive(false); rubble.Add(debris);
         }
 
         static GameObject Group(string name, Transform parent)
-        { var go = new GameObject(name); go.transform.SetParent(parent, false); return go; }
+        { var value = new GameObject(name); value.transform.SetParent(parent, false); return value; }
 
-        void Arch(Vector3 at, float width, float height)
+        Material Surface(string name, Texture2D texture)
         {
-            foreach (float side in new[] { -1f, 1f })
-                Box("Arch pier", root, at + new Vector3(side * width / 2, height / 2, 0), new Vector3(.55f, height, .85f), stone);
-            for (int i = 0; i < 7; i++)
+            var shader = Shader.Find("BorrowedHex/PixelWorld");
+            var material = new Material(shader != null ? shader : Shader.Find("Universal Render Pipeline/Unlit")) { name = name };
+            material.SetTexture("_BaseMap", texture); material.SetTexture("_FromMap", texture);
+            material.SetColor("_BaseColor", Color.white); owned.Add(material); return material;
+        }
+
+        Renderer Prop(string name, Transform parent, Vector3 at, float width)
+        {
+            var sprite = art.Prop(name); if (sprite == null) return null;
+            var value = Group(name, parent); value.transform.position = at;
+            value.transform.rotation = WorldCameraPolicy.Rotation();
+            value.transform.localScale = Vector3.one * (width / Mathf.Max(.1f, sprite.bounds.size.x));
+            var renderer = value.AddComponent<SpriteRenderer>(); renderer.sprite = sprite;
+            renderer.sharedMaterial = Surface(name, sprite.texture); return renderer;
+        }
+
+        void Background(string name, string asset, Vector3 at, float width)
+        {
+            var renderer = Prop(asset, root, at, width); if (renderer == null) return;
+            renderer.name = name; backgrounds[name] = renderer;
+            renderer.sharedMaterial.SetFloat("_FogAmount", name == "Sky" ? .25f : .55f);
+            if (name == "Sky" && CurrentTheme == "Cave")
             {
-                float a = i * Mathf.PI / 6;
-                var block = Box("Arch stone", root, at + new Vector3(Mathf.Cos(a) * width / 2, height + Mathf.Sin(a) * width / 2, 0), new Vector3(.72f, .5f, .85f), i % 2 == 0 ? stone : basalt);
-                block.transform.rotation = Quaternion.Euler(0, 0, a * Mathf.Rad2Deg - 90);
-            }
-        }
-
-        public void SetTheme(string next)
-        {
-            if (CurrentTheme == next) return;
-            CurrentTheme = next;
-            foreach (var pair in themes) pair.Value.SetActive(pair.Key == next);
-            floor.color = next == "Sanctum" ? new Color(.43f, .41f, .5f) : next == "Cave" ? new Color(.38f, .43f, .47f) : next == "Graveyard" ? new Color(.48f, .53f, .55f) : new Color(.58f, .55f, .49f);
-        }
-
-        public void RenderCover(ArenaSim sim)
-        {
-            for (int i = 0; i < trim.Count; i++)
-            {
-                bool broken = i < sim.Pillars.Count && sim.Pillars[i].Crumbled;
-                float formation = sim.CoverFormation(i);
-                trim[i].SetActive(!broken && formation > 0); rubble[i].SetActive(broken);
-                float coverWear = i < sim.Pillars.Count ? 1f - (float)sim.Pillars[i].Durability / sim.Pillars[i].MaxDurability : 0;
-                cracks[i].SetActive(!broken && coverWear >= .3f);
-                trim[i].transform.localScale = new Vector3(1, formation * Mathf.Lerp(1, .82f, coverWear), 1);
-            }
-            // Time wear changes visual soil colour, not walkability or damage rules.
-            float wear = sim.Pillars.Count == 0 ? 0 : Mathf.Clamp01((float)(sim.Clock.Now - sim.Pillars[0].RestoredAt) / 90);
-            earth.color = Color.Lerp(new Color(.38f, .35f, .32f), new Color(.24f, .23f, .26f), wear);
-        }
-
-        public void RenderRetiring(ArenaSim sim)
-        {
-            for (int i = 0; i < coverBounds.Count; i++)
-            {
-                Core.DecayObstacle state = null;
-                foreach (var old in sim.RetiringCover) if (old.Bounds == coverBounds[i]) { state = old; break; }
-                bool broken = state == null || state.Crumbled;
-                trim[i].SetActive(!broken); rubble[i].SetActive(broken); cracks[i].SetActive(!broken);
-                if (!broken) trim[i].transform.localScale = new Vector3(1, Mathf.Lerp(1, .3f, sim.WorldMorphProgress), 1);
-            }
-        }
-
-        public void BeginMorphFrom(WorldGeometry previous)
-        {
-            morphColorFrom = previous.floor.color; morphColorTo = floor.color;
-            previous.CaptureSceneryForRetirement();
-            morphSource = ((Texture2D)previous.floor.mainTexture).GetPixels32();
-            morphDestination = destinationFloor.GetPixels32(); morphPixels = new Color32[morphDestination.Length];
-            // Cache the spatial pattern once. Re-evaluating Perlin noise per pixel at
-            // every upload would add needless CPU spikes while combat is running.
-            morphThreshold = new float[morphPixels.Length];
-            for (int i = 0; i < morphThreshold.Length; i++)
-                morphThreshold[i] = Mathf.PerlinNoise(i % 512 / 54f + 5, i / 512 / 69f + 8) * .7f;
-            morphTexture = new Texture2D(512, 512, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
-            owned.Add(morphTexture); floor.mainTexture = morphTexture;
-            RenderMorph(0, 0, false);
-            // Identical outer structures never double-render and flicker. Retiring cover
-            // and themed scenery remain visible, fracture and collapse in place.
-            foreach (Transform child in previous.root)
-                if (!child.name.StartsWith("Cover", StringComparison.Ordinal) && !previous.themes.ContainsKey(child.name))
-                    child.gameObject.SetActive(false);
-        }
-
-        public void RenderMorph(float progress, double now, bool reduceFlashes)
-        {
-            if (morphTexture == null) return;
-            floor.color = Color.Lerp(morphColorFrom, morphColorTo, progress);
-            int tick = (int)(now * 6);
-            if (tick == morphTick && progress < 1) return; morphTick = tick;
-            if (progress >= 1) { floor.mainTexture = destinationFloor; return; }
-            for (int i = 0; i < morphPixels.Length; i++)
-            {
-                int x = i % 512, y = i / 512;
-                float blend = Mathf.Clamp01(progress * 1.7f - morphThreshold[i]);
-                var target = morphDestination[i];
-                // Narrow, sparse bands offset the incoming texture: a decaying-world glitch
-                // without a fullscreen flash. Accessibility can remove the band entirely.
-                if (!reduceFlashes && progress > .05f && ((y / 5 + tick * 3) % 67 == 0))
-                    target = morphDestination[y * 512 + (x + 13 + tick % 7) % 512];
-                morphPixels[i] = Color32.Lerp(morphSource[i], target, blend);
-            }
-            morphTexture.SetPixels32(morphPixels); morphTexture.Apply();
-        }
-
-        public void RenderSceneryFormation(float amount)
-        {
-            foreach (var pair in themes)
-                if (pair.Value.activeSelf)
-                    foreach (var renderer in pair.Value.GetComponentsInChildren<Renderer>(true))
+                // Keep an opaque sky behind the ruined Temple layer's transparent areas.
+                var sky = art.Texture("GraveSky"); var ruins = art.Texture("TempleDark");
+                if (sky != null && ruins != null)
+                {
+                    var pixels = sky.GetPixels();
+                    for (int y = 0; y < sky.height; y++) for (int x = 0; x < sky.width; x++)
                     {
-                        if (!sceneryScale.ContainsKey(renderer)) sceneryScale[renderer] = renderer.transform.localScale;
-                        if (renderer is SpriteRenderer sprite)
-                        {
-                            if (!sceneryColor.ContainsKey(sprite)) sceneryColor[sprite] = sprite.color;
-                            var color = sceneryColor[sprite]; color.a *= amount; sprite.color = color;
-                        }
-                        else
-                        {
-                            var scale = sceneryScale[renderer]; scale.y *= Mathf.Max(.02f, amount); renderer.transform.localScale = scale;
-                        }
+                        var ruin = art.Pixels("TempleDark")[y * ruins.height / sky.height * ruins.width + x * ruins.width / sky.width];
+                        var dark = pixels[y * sky.width + x] * new Color(.45f, .42f, .62f);
+                        pixels[y * sky.width + x] = Color.Lerp(dark, ruin, ruin.a / 255f);
                     }
-        }
-
-        void CaptureSceneryForRetirement()
-        {
-            // A very fast encounter can interrupt formation. Preserve what is currently
-            // visible rather than resurrecting the whole previous theme at full strength.
-            sceneryScale.Clear(); sceneryColor.Clear();
-            foreach (var pair in themes)
-                if (pair.Value.activeSelf)
-                    foreach (var renderer in pair.Value.GetComponentsInChildren<Renderer>(true))
-                    {
-                        sceneryScale[renderer] = renderer.transform.localScale;
-                        if (renderer is SpriteRenderer sprite) sceneryColor[sprite] = sprite.color;
-                    }
+                    var texture = new Texture2D(sky.width, sky.height, TextureFormat.RGBA32, false) {filterMode = FilterMode.Point};
+                    texture.SetPixels(pixels); texture.Apply(); owned.Add(texture);
+                    renderer.sharedMaterial.SetTexture("_BaseMap", texture); renderer.sharedMaterial.SetTexture("_FromMap", texture);
+                }
+            }
         }
 
         GameObject Box(string name, Transform parent, Vector3 at, Vector3 size, Material material)
         {
-            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            go.name = name; go.transform.SetParent(parent, false); go.transform.position = at; go.transform.localScale = size;
-            var collider = go.GetComponent<Collider>(); collider.enabled = false;
-            WorldArtLibrary.Release(collider);
-            var renderer = go.GetComponent<Renderer>(); renderer.sharedMaterial = material;
+            var value = GameObject.CreatePrimitive(PrimitiveType.Cube); value.name = name;
+            value.transform.SetParent(parent, false); value.transform.position = at; value.transform.localScale = size;
+            var collider = value.GetComponent<Collider>(); collider.enabled = false; WorldArtLibrary.Release(collider);
+            var renderer = value.GetComponent<Renderer>(); renderer.sharedMaterial = material;
             renderer.shadowCastingMode = ShadowCastingMode.Off; renderer.receiveShadows = false;
-            if (material == stone)
+            var filter = value.GetComponent<MeshFilter>(); var mesh = UnityEngine.Object.Instantiate(filter.sharedMesh);
+            var vertices = mesh.vertices; var normals = mesh.normals; var uv = mesh.uv;
+            for (int i = 0; i < uv.Length && name != "Floor"; i++)
             {
-                // World-size UVs stop long walls stretching a single brick into a beam.
-                var filter = go.GetComponent<MeshFilter>();
-                var mesh = UnityEngine.Object.Instantiate(filter.sharedMesh);
-                var vertices = mesh.vertices; var normals = mesh.normals; var uv = new Vector2[vertices.Length];
-                for (int i = 0; i < uv.Length; i++)
+                var p = Vector3.Scale(vertices[i], size);
+                uv[i] = Mathf.Abs(normals[i].y) > .5f ? new Vector2(p.x, p.z) / 3
+                    : Mathf.Abs(normals[i].x) > .5f ? new Vector2(p.z, p.y) / 3 : new Vector2(p.x, p.y) / 3;
+            }
+            mesh.uv = uv; filter.sharedMesh = mesh; owned.Add(mesh); return value;
+        }
+
+        void Arch(Vector3 at, float width, float height)
+        {
+            foreach (float sign in new[] { -1f, 1f })
+                boundary.Add(Box("Arch pier", root, at + new Vector3(sign * width / 2, height / 2, 0), new Vector3(.55f, height, .85f), Stone).GetComponent<Renderer>());
+            for (int i = 0; i < 7; i++)
+            {
+                float a = i * Mathf.PI / 6;
+                var block = Box("Arch stone", root, at + new Vector3(Mathf.Cos(a) * width / 2, height + Mathf.Sin(a) * width / 2, 0), new Vector3(.72f, .5f, .85f), Stone);
+                block.transform.rotation = Quaternion.Euler(0, 0, a * Mathf.Rad2Deg - 90); boundary.Add(block.GetComponent<Renderer>());
+            }
+        }
+
+        public static Vector3 FlameAnchor(ArenaLayout arena, int i)
+        {
+            if (arena.worldTheme == "Sanctum" && i < arena.pillars.Count) return Geometry2D.ToWorld(arena.pillars[i].center, 3.1f);
+            var b = arena.bounds;
+            return new Vector3(b.center.x + (i % 2 == 0 ? -1 : 1) * (b.width / 2 + .45f), 1.4f, b.yMin + 1 + i * b.height / 8);
+        }
+
+        public void SetTheme(string value) => CurrentTheme = value;
+
+        void Visibility(Renderer renderer, float amount, bool old = false, Color? emission = null)
+        {
+            renderer.GetPropertyBlock(properties);
+            properties.SetFloat("_Visible", Mathf.Clamp01(amount)); properties.SetFloat("_Retiring", old ? 1 : 0);
+            if (emission.HasValue) properties.SetColor("_Emission", emission.Value);
+            renderer.SetPropertyBlock(properties); properties.Clear();
+        }
+
+        void Visibility(GameObject value, float amount, bool old = false)
+        { foreach (var renderer in value.GetComponentsInChildren<Renderer>(true)) Visibility(renderer, amount, old); }
+
+        public void RenderCover(ArenaSim sim)
+        {
+            for (int i = 0; i < cover.Count; i++)
+            {
+                var state = sim.Pillars[i]; bool broken = state.Crumbled;
+                float visible = sim.CoverFormed(i) ? Mathf.Clamp01(1 - (float)(sim.Clock.Now - state.RestoredAt) / (state.MaxDurability * state.DecayInterval)) : sim.CoverFormation(i);
+                cover[i].SetActive(!broken); Visibility(cover[i], broken ? 0 : visible);
+                coverBase[cover[i]] = broken ? 0 : visible;
+                rubble[i].SetActive(broken); // static remains; no shatter/growth animation
+            }
+        }
+
+        public void RenderRetiring(ArenaSim sim)
+        {
+            for (int i = 0; i < cover.Count; i++)
+            {
+                int oldIndex = sim.RetiringCover.FindIndex(value => value.Bounds == layout.pillars[i]);
+                float visible = oldIndex < 0 ? 0 : sim.RetiringCoverVisibility(oldIndex);
+                // Retirement starts from the displayed state, so partially decayed cover
+                // never fills itself back in when the next arena starts replacing it.
+                visible *= coverBase.TryGetValue(cover[i], out float baseline) ? baseline : 1;
+                cover[i].SetActive(visible > 0); Visibility(cover[i], visible, true);
+                rubble[i].SetActive(false);
+            }
+        }
+
+        Texture2D Snapshot(Material material)
+        {
+            var target = (Texture2D)material.GetTexture("_BaseMap"); var source = (Texture2D)material.GetTexture("_FromMap");
+            float amount = material.GetFloat("_Morph"); var next = target.GetPixels32();
+            var old = source != null ? source.GetPixels32() : next;
+            int width = target.width, height = target.height;
+            for (int i = 0; i < next.Length; i++)
+            {
+                int x = i % width, y = i / width;
+                int j = source != null ? y * source.height / height * source.width + x * source.width / width : i;
+                float noise = Mathf.Repeat(Mathf.Sin(Mathf.Floor(x * 18f / width) * 127.1f + Mathf.Floor(y * 18f / height) * 311.7f + 5 * 74.7f) * 43758.5453f, 1);
+                next[i] = Color32.Lerp(old[j], next[i], Mathf.Clamp01(amount * 1.65f - noise * .65f));
+            }
+            var snapshot = new Texture2D(width, height, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat };
+            snapshot.SetPixels32(next); snapshot.Apply(); owned.Add(snapshot); return snapshot;
+        }
+
+        public void BeginMorphFrom(WorldGeometry previous)
+        {
+            morphing = true; previous.retiring = true;
+            foreach (var pair in surfaces)
+            {
+                var snapshot = Snapshot(previous.surfaces[pair.Key]); pair.Value.SetTexture("_FromMap", snapshot); pair.Value.SetFloat("_Morph", 0);
+                previous.surfaces[pair.Key].SetTexture("_FromMap", snapshot);
+                previous.surfaces[pair.Key].SetTexture("_BaseMap", pair.Value.GetTexture("_BaseMap"));
+            }
+            foreach (var pair in backgrounds)
+                if (previous.backgrounds.TryGetValue(pair.Key, out var before))
                 {
-                    var p = Vector3.Scale(vertices[i], size);
-                    uv[i] = Mathf.Abs(normals[i].y) > .5f ? new Vector2(p.x, p.z) / 3
-                        : Mathf.Abs(normals[i].x) > .5f ? new Vector2(p.z, p.y) / 3 : new Vector2(p.x, p.y) / 3;
+                    pair.Value.sharedMaterial.SetTexture("_FromMap", Snapshot(before.sharedMaterial));
+                    pair.Value.sharedMaterial.SetFloat("_Morph", 0); before.gameObject.SetActive(false);
                 }
-                mesh.uv = uv; filter.sharedMesh = mesh; owned.Add(mesh);
-            }
-            return go;
+            foreach (var renderer in previous.scenery) previous.sceneryBase[renderer] = previous.sceneryAmount;
+            previous.root.Find("Floor").gameObject.SetActive(false); previous.root.Find("Foundation").gameObject.SetActive(false);
         }
 
-        void Prop(string name, Transform parent, Vector3 at, float scale, Color? color = null)
+        public void RenderMorph(float amount, double now, bool reduceFlashes)
         {
-            var sprite = art.Prop(name); if (sprite == null) return;
-            var go = Group(name, parent);
-            go.transform.position = at; go.transform.localScale = Vector3.one * scale;
-            if (Camera.main != null) go.transform.rotation = Camera.main.transform.rotation;
-            var sr = go.AddComponent<SpriteRenderer>(); sr.sprite = sprite; sr.color = color ?? new Color(.65f, .65f, .67f);
-        }
-
-        Material Surface(string name, Material template, Color color)
-        {
-            var value = template != null ? new Material(template) : new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            value.name = name; value.color = color;
-            value.SetFloat("_ReceiveShadows", 0); value.EnableKeyword("_RECEIVE_SHADOWS_OFF");
-            owned.Add(value); return value;
-        }
-
-        Texture2D Cobbles()
-        {
-            // Nearest-filtered low-resolution masonry fits arbitrary 3D faces. Side-view
-            // wall sprites cannot wrap those faces without baking incorrect perspective.
-            var texture = new Texture2D(64, 64, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat };
-            for (int y = 0; y < 64; y++) for (int x = 0; x < 64; x++)
+            foreach (var pair in surfaces)
             {
-                int sx = (x + (y / 8 % 2) * 8) % 16;
-                bool seam = y % 8 == 0 || sx == 0;
-                float value = seam ? .31f : .68f + ((x * 13 + y * 7) % 11) / 110f;
-                if (!seam && ((x / 16 * 17 + y / 8 * 31) % 9 == 0) && sx == y % 8 + 3) value -= .24f;
-                texture.SetPixel(x, y, new Color(value, value * .96f, value * .91f));
+                pair.Value.SetFloat("_Morph", morphing || retiring ? amount : 1);
+                pair.Value.SetFloat("_GlitchTime", (float)now); pair.Value.SetFloat("_Glitches", reduceFlashes ? 0 : 1);
             }
-            texture.Apply(); owned.Add(texture); return texture;
-        }
-
-        Texture2D GroundPatch(Texture2D source)
-        {
-            if (source == null || source.width < 512 || source.height < 512) return null;
-            var texture = new Texture2D(128, 128, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat };
-            // Sample an interior atlas patch away from white margins and empty quadrants.
-            var pixels = source.GetPixels(128, source.height - 320, 128, 128);
-            for (int i = 0; i < pixels.Length; i++) { float v = pixels[i].grayscale; pixels[i] = new Color(v * 1.5f, v * 1.45f, v * 1.4f, 1); }
-            texture.SetPixels(pixels); texture.Apply(); owned.Add(texture); return texture;
-        }
-
-        Texture2D WornFloor(Texture2D source, string theme)
-        {
-            // The floor uses a single authored-size texture: varied pavers and patches of
-            // the downloaded cracked earth avoid an endless repeated brick carpet. All
-            // variation is deterministic and never consumes the combat random generator.
-            const int n = 512;
-            var texture = new Texture2D(n, n, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point };
-            var pixels = new Color[n * n];
-            var ground = source != null ? source.GetPixels32() : null;
-            for (int y = 0; y < n; y++) for (int x = 0; x < n; x++)
+            foreach (var renderer in backgrounds.Values)
             {
-                int row = y / 16, offsetX = x + (row % 2) * 8, col = offsetX / 16;
-                int sx = offsetX % 16, sy = y % 16;
-                int hash = (col * 73 + row * 137 + col * row * 17) % 101;
-                float shade = .66f + hash / 480f;
-                if (sx <= 1 || sy <= 1) shade = .25f;
-                else if (sx == 2 || sy == 2) shade += .06f;
-                else if (sx == 15 || sy == 15) shade -= .1f;
-                if (hash < 15 && sx == (sy * 3 / 5 + hash) % 16) shade *= .6f;
-                float age = theme == "Graveyard" ? 7 : theme == "Cave" ? 16 : theme == "Sanctum" ? 25 : 0;
-                float weather = Mathf.PerlinNoise(x / 83f + 12 + age, y / 91f + 4);
-                var color = new Color(shade, shade * .96f, shade * .89f);
-                if (ground != null && source.width >= 1024 && source.height >= 1024)
+                renderer.sharedMaterial.SetFloat("_Morph", morphing ? amount : 1);
+                renderer.sharedMaterial.SetFloat("_GlitchTime", (float)now);
+                renderer.sharedMaterial.SetFloat("_Glitches", reduceFlashes ? 0 : 1);
+            }
+            foreach (var renderer in boundary) Visibility(renderer, retiring ? 1 - amount : morphing ? amount : 1, retiring);
+        }
+
+        public void RenderSceneryFormation(float amount)
+        {
+            sceneryAmount = amount;
+            foreach (var renderer in scenery)
+                Visibility(renderer, amount * (sceneryBase.TryGetValue(renderer, out float start) ? start : 1), retiring);
+        }
+
+        public void RenderReveal(int lit, float opening)
+        {
+            float room = Mathf.Lerp(.025f + lit * .035f, 1, opening);
+            foreach (var material in surfaces.Values) material.SetFloat("_Reveal", room);
+            foreach (var renderer in scenery) Visibility(renderer, opening);
+            foreach (var renderer in backgrounds.Values)
+            {
+                renderer.GetPropertyBlock(properties); properties.SetFloat("_Reveal", room);
+                renderer.SetPropertyBlock(properties); properties.Clear();
+            }
+            for (int i = 0; i < cover.Count; i++)
+                foreach (var renderer in cover[i].GetComponentsInChildren<Renderer>())
                 {
-                    var sample = ground[(source.height - 40 - y * 3 / 2) * source.width + 40 + x * 3 / 2];
-                    float v = ((Color)sample).grayscale * 1.5f;
-                    color = Color.Lerp(color, new Color(v * .7f, v * .75f, v * .73f), Mathf.Clamp01((weather - .47f) * 3.4f));
+                    renderer.GetPropertyBlock(properties); properties.SetFloat("_Reveal", i < lit ? 1 : .015f);
+                    properties.SetColor("_Emission", i < lit ? new Color(.035f, .12f, .2f) : Color.black);
+                    renderer.SetPropertyBlock(properties); properties.Clear();
                 }
-                pixels[y * n + x] = color;
+        }
+
+        public void FinishReveal()
+        {
+            foreach (var material in surfaces.Values) material.SetFloat("_Reveal", 1);
+            foreach (var group in cover) foreach (var renderer in group.GetComponentsInChildren<Renderer>())
+            { renderer.GetPropertyBlock(properties); properties.SetFloat("_Reveal", 1); renderer.SetPropertyBlock(properties); properties.Clear(); }
+            RenderSceneryFormation(1);
+            foreach (var renderer in backgrounds.Values)
+            { renderer.GetPropertyBlock(properties); properties.SetFloat("_Reveal", 1); renderer.SetPropertyBlock(properties); properties.Clear(); }
+        }
+
+        public void RenderActorOcclusion(Camera camera, Vector3 player, Vector3? boss)
+        {
+            if (camera == null) return;
+            bool Behind(Renderer renderer, Vector3 actor)
+            {
+                var delta = actor + Vector3.up * 1.2f - camera.transform.position;
+                return renderer.bounds.IntersectRay(new Ray(camera.transform.position, delta.normalized), out float distance)
+                    && distance < delta.magnitude - .15f;
             }
-            texture.SetPixels(pixels); texture.Apply(); owned.Add(texture); return texture;
+            foreach (var group in cover)
+            {
+                var renderers = group.GetComponentsInChildren<Renderer>();
+                bool blocks = false;
+                foreach (var renderer in renderers)
+                    if (Behind(renderer, player) || boss.HasValue && Behind(renderer, boss.Value)) { blocks = true; break; }
+                // The low camera can put a retained pillar directly over the Collector
+                // or player. Pixel cutout keeps their silhouettes readable while retaining
+                // the pillar's geometry and collision; this is unrelated to world decay.
+                foreach (var renderer in renderers)
+                {
+                    renderer.GetPropertyBlock(properties); properties.SetFloat("_Occlusion", blocks ? .12f : 1);
+                    renderer.SetPropertyBlock(properties); properties.Clear();
+                }
+            }
         }
 
         public void Dispose()
-        {
-            if (root != null) WorldArtLibrary.Release(root.gameObject);
-            foreach (var value in owned) WorldArtLibrary.Release(value);
-            owned.Clear();
-        }
+        { WorldArtLibrary.Release(root.gameObject); foreach (var item in owned) WorldArtLibrary.Release(item); owned.Clear(); }
         public void SetVisible(bool value) => root.gameObject.SetActive(value);
     }
 }

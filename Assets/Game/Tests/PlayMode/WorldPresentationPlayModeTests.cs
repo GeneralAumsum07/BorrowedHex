@@ -174,7 +174,7 @@ namespace BorrowedHex.Tests
             root.Sim.Player.Position += Vector2.right * 8;
             yield return new WaitForSecondsRealtime(.3f);
             Assert.That(camera.transform.position.x, Is.GreaterThan(start.x + 3));
-            Assert.That(camera.transform.eulerAngles.x, Is.EqualTo(30).Within(.01));
+            Assert.That(camera.transform.eulerAngles.x, Is.EqualTo(25).Within(.01));
             Assert.That(camera.fieldOfView, Is.EqualTo(40));
             SelectStage(1);
             yield return null;
@@ -207,10 +207,14 @@ namespace BorrowedHex.Tests
             var observer = (WorldPresentation)Attach();
             root.useWorldArenas = true; root.PlaySandbox(); root.Sim.AutoSpawn = false;
             yield return null;
+            float departureNorth = root.Sim.Arena.bounds.yMax;
             root.Sim.SpawnBoss();
             yield return null;
             Assert.That(observer.Travelling, Is.True);
             Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition), Is.True);
+            Assert.That(artObject.transform.Find("ContinuousWorldGround").GetComponent<Renderer>()
+                .sharedMaterial.GetFloat("_NorthLimit"), Is.EqualTo(departureNorth + 1.3f).Within(.001f),
+                "The departure skyline remains visible until the curtain hides relocation.");
             double before = root.Sim.Clock.Now;
             root.Sim.SetPause(PauseReason.Manual, true);
             var held = root.View.PlayerView.transform.position;
@@ -218,7 +222,7 @@ namespace BorrowedHex.Tests
             Assert.That(root.View.PlayerView.transform.position, Is.EqualTo(held));
             Assert.That(root.Sim.Clock.Now, Is.EqualTo(before));
             root.Sim.SetPause(PauseReason.Manual, false);
-            yield return new WaitForSecondsRealtime(4.8f);
+            yield return new WaitForSecondsRealtime(WorldIntroPolicy.Duration + .3f);
             Assert.That(observer.Travelling, Is.False);
             Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition), Is.False);
             Assert.That(observer.Theme, Is.EqualTo("Sanctum"));
@@ -258,13 +262,112 @@ namespace BorrowedHex.Tests
             SelectStage(1); yield return new WaitForSecondsRealtime(.3f);
             Renderer incoming = null;
             foreach (var renderer in artObject.GetComponentsInChildren<Renderer>())
-                if (renderer.name == "Gravestone") { incoming = renderer; break; }
+                if (renderer.name == "Ruin" && renderer.transform.parent.name == "Environment") { incoming = renderer; break; }
+            if (incoming == null) Assert.Ignore("Local scenery source is optional.");
             Assert.That(incoming, Is.Not.Null);
-            float height = incoming.transform.localScale.y;
-            Assert.That(height, Is.LessThan(.1f));
+            var properties = new MaterialPropertyBlock(); incoming.GetPropertyBlock(properties);
+            float coverage = properties.GetFloat("_Visible");
+            Assert.That(coverage, Is.LessThan(.1f));
             SelectStage(2); yield return null;
-            Assert.That(incoming.transform.localScale.y, Is.LessThanOrEqualTo(height + .001f),
-                "The old theme retires from its visible size, never from its original full size.");
+            incoming.GetPropertyBlock(properties);
+            Assert.That(properties.GetFloat("_Visible"), Is.LessThanOrEqualTo(coverage + .001f),
+                "The old theme retires from its current pixel coverage.");
+        }
+
+        [UnityTest]
+        public IEnumerator FloorAndWallsOverlapDifferentAtlasTexturesWhileCoverKeepsItsShape()
+        {
+            Attach(); root.useWorldArenas = true; root.PlaySandbox(); root.Sim.AutoSpawn = false;
+            yield return null; SelectStage(1); yield return null;
+            MeshRenderer floor = null, wall = null;
+            foreach (var renderer in artObject.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (renderer.name == "Floor") floor = renderer;
+                if (renderer.name.StartsWith("Boundary")) wall = renderer;
+            }
+            Assert.That(floor, Is.Not.Null); Assert.That(wall, Is.Not.Null);
+            foreach (var material in new[] { floor.sharedMaterial, wall.sharedMaterial })
+            {
+                Assert.That(material.shader.name, Is.EqualTo("BorrowedHex/PixelWorld"));
+                Assert.That(material.GetTexture("_FromMap"), Is.Not.SameAs(material.GetTexture("_BaseMap")));
+                Assert.That(material.GetFloat("_Morph"), Is.InRange(0f, .1f));
+            }
+            var prop = floor.transform.parent.Find("CoverTrim0");
+            var scale = prop.localScale;
+            yield return new WaitForSecondsRealtime(.2f);
+            Assert.That(prop.localScale, Is.EqualTo(scale), "Cover changes pixel coverage, not shape through a breaking/growth animation.");
+        }
+
+        [UnityTest]
+        public IEnumerator PartlyDecayedCoverDoesNotFillBackInWhenItStartsRetiring()
+        {
+            var observer = (WorldPresentation)Attach(); root.useWorldArenas = true;
+            root.PlaySandbox(); root.Sim.AutoSpawn = false;
+            yield return null; yield return null;
+            root.Sim.Tick(default, 8);
+            root.Sim.SetPause(PauseReason.Manual, true);
+            observer.SendMessage("LateUpdate");
+            var renderer = artObject.transform.Find("Environment/CoverTrim0").GetComponentInChildren<Renderer>();
+            var properties = new MaterialPropertyBlock(); renderer.GetPropertyBlock(properties);
+            float before = properties.GetFloat("_Visible");
+            Assert.That(before, Is.InRange(.05f, .99f));
+            SelectStage(1); observer.SendMessage("LateUpdate");
+            renderer.GetPropertyBlock(properties);
+            Assert.That(properties.GetFloat("_Visible"), Is.EqualTo(before).Within(.001f));
+        }
+
+        [UnityTest]
+        public IEnumerator RealBossIntroRisesVerticallyThenLightsPillarsBeforeTitleAndCostsNoLife()
+        {
+            var observer = (WorldPresentation)Attach(); root.useWorldArenas = true; root.PlayShort();
+            root.Sim.Player.InvulnerableUntil = double.MaxValue;
+            yield return null;
+            // Let Start/LateUpdate bind the departed arena before forcing the later
+            // boss state; coroutine continuation can precede Start on the first frame.
+            yield return null;
+            Assert.That(observer.BoundSim, Is.SameAs(root.Sim));
+            Assert.That(observer.Theme, Is.EqualTo("Courtyard"));
+            var departed = root.View.PlayerView.transform.position;
+            typeof(BorrowedHex.Runs.ArenaSim).GetMethod("BeginBossIntro", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(root.Sim, new object[] { 0 });
+            yield return null;
+            double clock = root.Sim.Clock.Now; float life = root.Sim.LifeSeconds;
+            yield return new WaitForSecondsRealtime(.8f);
+            // Test coroutines resume after GameRoot.Update resets the interpolated
+            // pose but before the observer's LateUpdate applies the cinematic pose.
+            observer.SendMessage("LateUpdate");
+            var lifted = root.View.PlayerView.transform.position;
+            Assert.That(lifted.x, Is.EqualTo(departed.x).Within(.01f));
+            Assert.That(lifted.z, Is.EqualTo(departed.z).Within(.01f));
+            Assert.That(lifted.y, Is.GreaterThan(departed.y + 1),
+                $"Travel={observer.Travelling}, age={observer.IntroElapsed}, stage={root.Sim.ArenaStage}, state={root.Sim.State}, " +
+                $"manual={root.Sim.Clock.HasPauseReason(PauseReason.Manual)}, menu={root.Sim.Clock.HasPauseReason(PauseReason.Menu)}, focus={root.Sim.Clock.HasPauseReason(PauseReason.FocusLost)}");
+            yield return new WaitForSecondsRealtime(2.6f);
+            Assert.That(observer.IntroLitPillars, Is.InRange(1, 7));
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.BossIntro));
+            Assert.That(root.Sim.Clock.Now, Is.EqualTo(clock));
+            Assert.That(root.Sim.LifeSeconds, Is.EqualTo(life));
+            Assert.That(root.Flow.transform.Find("BossBanner").gameObject.activeSelf, Is.False);
+            var title = GameObject.Find("WorldIntroOverlay").transform.Find("Collector reveal");
+            Assert.That(title.gameObject.activeSelf, Is.False);
+            yield return new WaitForSecondsRealtime(2.3f);
+            Assert.That(observer.IntroLitPillars, Is.EqualTo(8));
+            Assert.That(title.gameObject.activeSelf, Is.True);
+            var collector = root.View.transform.Find("Enemies/Boss#" + root.Sim.Boss.ActorId + "/Billboard/Sprite").GetComponent<SpriteRenderer>();
+            Assert.That(collector.forceRenderingOff, Is.False);
+            Assert.That(collector.sprite.texture.name, Is.EqualTo("Necromancer"));
+            foreach (var effect in artObject.GetComponentsInChildren<SpriteRenderer>())
+                if (effect.sprite != null && effect.sprite.texture.name == "Blue Flame")
+                    Assert.That(effect.sortingOrder, Is.LessThan(collector.sortingOrder), "Decorative flames cannot cover the boss reveal.");
+            var northPillar = artObject.transform.Find("Environment/CoverTrim2/Obelisk").GetComponent<Renderer>();
+            var visible = new MaterialPropertyBlock(); northPillar.GetPropertyBlock(visible);
+            Assert.That(visible.GetFloat("_Occlusion"), Is.LessThan(1), "The retained north pillar must not hide the Collector reveal.");
+            Assert.That(root.Sim.Clock.Now, Is.EqualTo(clock));
+            Assert.That(root.Sim.LifeSeconds, Is.EqualTo(life));
+            yield return new WaitForSecondsRealtime(2.4f);
+            Assert.That(observer.Travelling, Is.False);
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.BossCombat));
+            Assert.That(root.Sim.Clock.Now, Is.GreaterThan(clock));
         }
 
         [UnityTearDown]

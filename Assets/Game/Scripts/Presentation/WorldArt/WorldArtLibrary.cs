@@ -12,11 +12,18 @@ namespace BorrowedHex.Presentation.WorldArt
     public sealed class WorldArtLibrary : IDisposable
     {
         readonly Dictionary<string, Sprite[]> sheets = new Dictionary<string, Sprite[]>();
+        readonly Dictionary<string, Color32[]> pixels = new Dictionary<string, Color32[]>();
         readonly List<UnityEngine.Object> owned = new List<UnityEngine.Object>();
         readonly string folder;
         public WorldArtLibrary(string resourceFolder = "WorldArt") => folder = resourceFolder;
         public Texture2D Texture(string name) => Resources.Load<Texture2D>(folder + "/" + name);
         public bool HasBoss => Texture("Necromancer") != null;
+        public Color32[] Pixels(string name)
+        {
+            if (pixels.TryGetValue(name, out var cached)) return cached;
+            var texture = Texture(name);
+            return pixels[name] = texture != null ? texture.GetPixels32() : Array.Empty<Color32>();
+        }
 
         public Sprite[] Boss(string clip)
         {
@@ -28,9 +35,18 @@ namespace BorrowedHex.Presentation.WorldArt
             var texture = Texture("Necromancer");
             var frames = new List<Sprite>();
             if (texture != null && texture.width == 2720 && texture.height == 896)
+            {
+                var pixels = texture.GetPixels32();
+                int rowY = texture.height - (row + 1) * 128, bottom = 127;
+                // Anchor a whole clip at its lowest opaque row. A fixed .22 pivot put
+                // visible boots below y=0; a per-frame pivot would introduce pose jitter.
+                for (int y = 0; y < 128; y++)
+                    for (int x = 0; x < lengths[row] * 160; x++)
+                        if (pixels[(rowY + y) * texture.width + x].a > 8) bottom = Math.Min(bottom, y);
                 for (int x = 0; x < lengths[row]; x++)
                     frames.Add(Make(texture, new Rect(x * 160, texture.height - (row + 1) * 128, 160, 128),
-                        new Vector2(0.5f, 0.22f), 32));
+                        new Vector2(0.5f, bottom / 128f), 32));
+            }
             return sheets["Boss/" + clip] = frames.ToArray();
         }
 
@@ -66,8 +82,16 @@ namespace BorrowedHex.Presentation.WorldArt
         {
             if (sheets.TryGetValue(name, out var cached)) return cached.Length > 0 ? cached[0] : null;
             var tex = Texture(name);
-            var frames = tex == null ? Array.Empty<Sprite>() : new[] {
-                Make(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0), ppu) };
+            var frames = Array.Empty<Sprite>();
+            if (tex != null)
+            {
+                var pixels = tex.GetPixels32(); int left = tex.width, right = 0, bottom = tex.height, top = 0;
+                for (int y = 0; y < tex.height; y++) for (int x = 0; x < tex.width; x++)
+                    if (pixels[y * tex.width + x].a > 8)
+                    { left = Math.Min(left, x); right = Math.Max(right, x + 1); bottom = Math.Min(bottom, y); top = Math.Max(top, y + 1); }
+                if (right > left && top > bottom)
+                    frames = new[] { Make(tex, new Rect(left, bottom, right - left, top - bottom), new Vector2(.5f, 0), ppu) };
+            }
             sheets[name] = frames;
             return frames.Length > 0 ? frames[0] : null;
         }
@@ -86,6 +110,6 @@ namespace BorrowedHex.Presentation.WorldArt
             if (Application.isPlaying) UnityEngine.Object.Destroy(value);
             else UnityEngine.Object.DestroyImmediate(value);
         }
-        public void Dispose() { foreach (var value in owned) Release(value); owned.Clear(); sheets.Clear(); }
+        public void Dispose() { foreach (var value in owned) Release(value); owned.Clear(); sheets.Clear(); pixels.Clear(); }
     }
 }

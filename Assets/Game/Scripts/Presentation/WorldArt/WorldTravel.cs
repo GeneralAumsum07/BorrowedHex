@@ -11,7 +11,7 @@ namespace BorrowedHex.Presentation.WorldArt
         public bool Magical { get; private set; }
         public float Progress => Duration <= 0 ? 1 : Mathf.Clamp01(Elapsed / Duration);
         public float Blend => Mathf.SmoothStep(0, 1, Progress);
-        public void Begin(bool magical) { Magical = magical; Duration = magical ? 4 : 4.5f; Elapsed = 0; Active = true; }
+        public void Begin(bool magical) { Magical = magical; Duration = magical ? WorldIntroPolicy.Duration : 4.5f; Elapsed = 0; Active = true; }
         public void Reset() { Elapsed = 0; Duration = 0; Active = false; }
         public void Advance(float delta, bool held)
         {

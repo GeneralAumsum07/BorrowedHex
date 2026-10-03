@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace BorrowedHex.Data
 {
-    public enum DecayPropKind { Column, RuinedWall, Tomb, DeadTree, Rock, Obelisk }
+    public enum DecayPropKind { Column, RuinedWall, Tomb, DeadTree, Rock, Obelisk, Urn, Crystal }
 
     /// <summary>
     /// Four spaces in one continuous world. Rectangles remain authoritative for collision;
@@ -43,16 +43,17 @@ namespace BorrowedHex.Data
             else if (stage == 1)
             {
                 // Offset tomb rows create several lanes rather than four symmetric pillars.
-                for (int i = 0; i < 10; i++)
-                    Cover((i % 2 == 0 ? -1 : 1) * (5 + i % 3 * 3), -11 + i / 2 * 5, 2.2f, 1.2f, DecayPropKind.Tomb);
-                Cover(-16, 11, 3, 1, DecayPropKind.RuinedWall);
-                Cover(16, -10, 1.4f, 1.4f, DecayPropKind.DeadTree);
+                for (int i = 0; i < 12; i++)
+                    Cover((i % 2 == 0 ? -1 : 1) * (6 + i % 3 * 3), -11 + i / 2 * 4.5f,
+                        i % 3 == 2 ? 1.3f : 2.2f, 1.3f,
+                        i % 3 == 0 ? DecayPropKind.Tomb : i % 3 == 1 ? DecayPropKind.DeadTree : DecayPropKind.Urn);
             }
             else if (stage == 2)
             {
                 // Uneven rock islands leave an open winding route through the cave.
                 for (int i = 0; i < 10; i++)
-                    Cover((i % 2 == 0 ? -1 : 1) * (7 + i % 3 * 4), -11 + i / 2 * 5, 1.8f + i % 3 * .4f, 1.5f, DecayPropKind.Rock);
+                    Cover((i % 2 == 0 ? -1 : 1) * (7 + i % 3 * 4), -11 + i / 2 * 5, 1.8f + i % 3 * .4f, 1.5f,
+                        i % 3 == 0 ? DecayPropKind.Rock : i % 3 == 1 ? DecayPropKind.Crystal : DecayPropKind.DeadTree);
             }
             else
             {

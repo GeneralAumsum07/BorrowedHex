@@ -27,9 +27,13 @@ namespace BorrowedHex.Presentation.WorldArt
         }
 
         public void Spawn(string name, Vector3 at, float scale, double now, Color color, bool ground = false, bool loop = false, float fps = 12, int cell = 32)
-            => Spawn(art.Effect(name, cell), at, scale, now, color, ground, loop, fps);
+            // Decorative pillar flames must sort behind actors. At the shallow camera
+            // angle a near flame otherwise covers the player and the Collector's robe
+            // even after its supporting pillar has correctly faded for readability.
+            => Spawn(art.Effect(name, cell), at, scale, now, color, ground, loop, fps,
+                name == "Torch" || name == "Blue Flame" || name == "Fog Drift" ? -2 : 1);
 
-        public void Spawn(Sprite[] frames, Vector3 at, float scale, double now, Color color, bool ground, bool loop, float fps)
+        public void Spawn(Sprite[] frames, Vector3 at, float scale, double now, Color color, bool ground, bool loop, float fps, int sortingOrder = 1)
         {
             if (frames.Length == 0 || fps <= 0) return;
             Effect effect = null;
@@ -46,7 +50,7 @@ namespace BorrowedHex.Presentation.WorldArt
             sr.transform.position = at; sr.transform.localScale = Vector3.one * scale;
             sr.transform.rotation = ground ? Quaternion.Euler(90, 0, 0) : Camera.main != null ? Camera.main.transform.rotation : Quaternion.identity;
             // Telegraphs already use -5 and above. Decorative ground bursts sit under them.
-            sr.sortingOrder = ground ? -6 : 1;
+            sr.sortingOrder = ground ? -6 : sortingOrder;
         }
 
         public void Render(double now, Camera camera)

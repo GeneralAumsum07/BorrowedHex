@@ -17,6 +17,8 @@ namespace BorrowedHex.Runs
         public float WorldMorphProgress => WorldMorphing ? Mathf.Clamp01((float)(Clock.Now - WorldMorphStartedAt) / WorldMorphDuration) : 1;
         public bool CoverFormed(int index) => index >= formedCover.Count || formedCover[index];
         public float CoverFormation(int index) => CoverFormed(index) ? 1 : Mathf.Clamp01((float)(Clock.Now - (formationTimes[index] - 4)) / 4) * .85f;
+        public float RetiringCoverVisibility(int index) => RetiringCover[index].Crumbled ? 0
+            : Mathf.Clamp01((float)((retirementTimes[index] - Clock.Now) / (retirementTimes[index] - WorldMorphStartedAt)));
 
         void InitArenaDecay()
         {

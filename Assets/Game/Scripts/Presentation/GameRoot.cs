@@ -291,7 +291,8 @@ namespace BorrowedHex.Presentation
             SyncGameplayInput();
             if (HandleRestartKey(restartPressed)) return;
             // The boss banner holds the frozen frame for a beat, then the fight starts.
-            if (Sim.State == RunState.BossIntro && Flow.BannerDone) Sim.CompleteBossIntro();
+            if (Sim.State == RunState.BossIntro && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition)
+                && Flow.BannerDone) Sim.CompleteBossIntro();
 
             if (Sim.Clock.IsPaused)
             {

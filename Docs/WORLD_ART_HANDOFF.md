@@ -11,7 +11,7 @@ Player/ordinary-enemy art, music and UI redesign remain outside this change.
 In the open Unity Editor, use **Borrowed Hex → Art → Import Local Downloads**.
 The source folder is `%USERPROFILE%/Downloads/itch_downloads`, with the downloaded
 archives already extracted. `WorldArtImporter.cs` contains the exact source paths
-and prepares 36 selected textures. **Install World Presentation** adds the observer
+and prepares 43 selected textures. **Install World Presentation** adds the observer
 to a clean, saved Arena scene; it does not rerun the project bootstrap.
 
 The raw textures and their metadata are deliberately ignored under
@@ -42,29 +42,40 @@ is trimmed while internal transparent frames retain their timing.
   cover layouts. At encounter boundaries (or each pair of Endless waves), the
   environment morphs over 24 gameplay seconds while combat continues. Player
   position, aim and packets stay in place; ordinary transitions add no pause.
-- Old cover breaks on staggered deadlines, incoming cover grows from fragments
+- Old cover retires through gradual pixel coverage, incoming artwork materializes
   and becomes solid only when its footprint is clear of the player, enemies and
   retiring cover. Interrupted transitions cannot leave abandoned collision behind.
-- Floor textures transform in irregular patches with sparse shifting glitch bands;
-  Reduce Flashes removes those bands. Floor tint, sunlight, fog and surrounding
-  scenery change gradually. Pausing freezes the transformation.
-- The 40×34 Sanctum is physically separate. A four-second vortex and rising pull
-  carry the player/camera there while WorldTransition holds combat and life time.
+- Floors, walls and backgrounds overlap different downloaded atlas textures in
+  irregular patches with sparse shifting glitch bands; Reduce Flashes removes
+  those bands. Cover never scales or plays a shatter animation. Interrupted morphs
+  preserve the currently displayed texture and coverage. Pausing freezes morphs.
+- Courtyard walls enclose encounter 1, breached graveyard walls expose the scenery
+  in encounter 2, and only low wall remnants remain in encounter 3. Backgrounds
+  morph from the graveyard skyline into the darker ruined temple. Masonry and
+  ground use native pixels from the Graveyard, World/Dungeon and Temple packs.
+- The 40×34 Sanctum is physically separate. A 7.8-second entrance lifts the player
+  vertically, relocates under a dark curtain, and lights its eight retained pillars
+  one by one. The Collector and boss title appear after all eight lights; combat
+  resumes after the title hold. WorldTransition holds combat, timer and life drain.
   Manual/menu/focus pauses also hold this cinematic. Endless return uses the same
   safe route; restart releases the abandoned pause and effects.
-- The perspective camera points down 30°, uses a 40° field of view and an 18-unit
+- The perspective camera points down 25°, uses a 40° field of view and an 18-unit
   offset, follows smoothly with forward framing, and clamps near arena edges.
   Continuous textured terrain covers the frustum and route between spaces.
-- Weathered pavers, cracked earth, foundations, coping, buttresses, stairs and
-  cover are real meshes. Eight courtyard props, twelve graveyard props, ten cave
-  rocks and eight Sanctum obelisks replace the placeholder four-column layout in
-  world mode. Tombs, ruined walls, trees, rocks and obelisks show wear and rubble.
+- Pixel terrain, foundations, coping and enclosing architecture are real meshes.
+  Ordinary cover uses trimmed, full-size downloaded sprites: three types per arena.
+  Eight courtyard props, twelve graveyard tomb/tree/urn props, ten wasteland
+  rock/crystal/tree props and eight textured Sanctum obelisks replace placeholders.
   Generated scenery adds no physical colliders: analytic simulation rectangles
   remain authoritative for movement, spawning, shots and boss sight.
-- Necromancer clips follow the Collector's existing pattern/stage, with hurt,
+- Necromancer clips use the lowest opaque pixel across each animation row as the
+  grounded pivot, preventing the robe from clipping below the floor. Clips follow
+  the Collector's existing pattern/stage, with hurt,
   death, teleport departure/arrival, ranged casts, sweep and slam effects.
-- Braziers use animated fire and restrained drifting fog. Collapse produces dust
-  and rock bursts. Additional imported sheets are available to extend effects;
+- Cover directly between the camera and the player/Collector uses a pixel cutout
+  to keep actors readable at 25°. Geometry, collision and decay remain intact.
+- Braziers use animated fire and restrained drifting fog. Cover leaves static
+  remains; collapse dust and rock bursts have been removed. Additional sheets can extend effects;
   importing a sheet does not mean every animation in its pack is already used.
 - Gameplay animations freeze with simulation time. Only death flourishes advance
   during results; manual/menu/focus pauses freeze those too. Pools are bounded,
@@ -87,26 +98,24 @@ already-started Web build may remain; no Windows build is authorized at this sta
 Unity 6000.3.25f1, connected Editor via Unity CLI:
 
 - Compilation completed without errors.
-- EditMode: **346/350 passed**; all six world-layout/morph tests and all thirteen
-  art-policy tests passed.
-- PlayMode: **22/22 passed**, including follow/frustum, live morph,
-  interrupted formation, Sanctum/return travel, pause, restart, component cleanup,
-  missing local art, and terminal boss effects.
-- Fresh scoped code review cleared after correcting occupied-cover recovery,
-  Sanctum return, interpolation on landing and interrupted scenery continuity.
-- Camera-only Editor previews: `Temp/redesign-courtyard.png` and
-  `Temp/redesign-mid-morph.png` and `Temp/redesign-sanctum.png`. These exclude
+- EditMode: **407/407 passed**, including five pixel revision tests covering camera
+  angle, varied props, structural decay, ordered reveal and every boss clip's grounding.
+- PlayMode: the full suite checks follow/frustum, native floor/wall texture overlap,
+  interrupted formation, vertical Sanctum travel and return, pause, restart,
+  component cleanup, missing art, terminal effects and the complete real boss intro.
+  The intro check confirms eight sequential lights/title ordering and unchanged
+  simulation time and health throughout the cinematic. The full suite passed
+  **32/32**; focused checks rerun after the last visual corrections also passed.
+- Scoped review corrected retirement from partially faded cover, overlay cleanup
+  before run binding, and preservation of the departure horizon during the rise.
+- Camera-only Editor previews: `Temp/pixel-courtyard.png`,
+  `Temp/pixel-graveyard.png`, `Temp/pixel-wasteland.png`, `Temp/pixel-sanctum.png`. These exclude
   the screen-space overlay UI.
 - Earlier first-pass output: `Builds/ArtIntegration/Web` (0 build errors, one
   expected Pipeline-runtime-disabled warning; browser console clean). This output
   **does not contain the redesign**. No additional player build was started.
-- SHA256 comparison: all fifteen pre-redesign protected files unchanged. Earlier
-  externally edited Lore was preserved and separately backed up, not reverted.
-
-The protected unfinished tutorial tests currently have four failures: the scripted
-full playthrough, evolution lesson, two-parry lesson and pocketing/Q lesson. They
-exercise the plain simulation without this presentation layer. Their files and
-the other protected work were left untouched.
+- SHA256 comparison: all **41** files protected at the start of this revision
+  unchanged, including Claude's pending mechanics, UI, tests and project settings.
 
 The downloaded kit remains locally imported and sprite replacements can use the
 existing view interfaces. A new WebGL performance measurement is still needed;
