@@ -47,6 +47,11 @@ namespace BorrowedHex.Presentation.WorldArt
         BossStage previousStage;
         Vector2 beforeTeleport;
         Light sun;
+        // Night rig state. moonIntensity is the reveal's target; fireFade is 0 while the
+        // Sanctum is dark and rises with the reveal.
+        FireLights fireLights;
+        float moonIntensity = 1.15f, fireFade = 1;
+        Quaternion originalSunRotation; LightShadows originalShadows;
         Camera camera;
         Vector3 originalCameraPosition;
         Quaternion originalCameraRotation;
@@ -75,7 +80,11 @@ namespace BorrowedHex.Presentation.WorldArt
             originalArena = GameObject.Find("Arena");
             if (originalArena != null) { originalArenaActive = originalArena.activeSelf; originalArena.SetActive(false); }
             sun = GameObject.Find("Sun")?.GetComponent<Light>();
-            if (sun != null) { originalSun = sun.color; originalIntensity = sun.intensity; }
+            if (sun != null)
+            {
+                originalSun = sun.color; originalIntensity = sun.intensity;
+                originalSunRotation = sun.transform.rotation; originalShadows = sun.shadows;
+            }
             originalAmbient = RenderSettings.ambientLight;
             if (camera != null)
             {
@@ -132,6 +141,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 && !sim.Clock.HasPauseReason(PauseReason.Menu) && !sim.Clock.HasPauseReason(PauseReason.FocusLost))
                 terminalElapsed += Time.unscaledDeltaTime;
             terminalEffects.Render(sim.Clock.Now + terminalElapsed, camera);
+            fireLights?.Render(Time.unscaledTime, fireFade);
         }
 
         void Rebind()
@@ -144,6 +154,7 @@ namespace BorrowedHex.Presentation.WorldArt
             geometry = new WorldGeometry(transform, sim.Arena, art, root.config.litMaterial);
             arenaRevision = sim.ArenaRevision;
             sceneryIndex = -1; effects.Clear(); terminalEffects.Clear(); travelEffects.Clear(); terminalElapsed = 0; travel.Reset();
+            fireFade = 1;
             lastPlayerVisual = Geometry2D.ToWorld(sim.Player.Position);
             cameraFocus = Geometry2D.ToWorld(WorldCameraPolicy.ClampFocus(sim.Player.Position, sim.Arena.bounds));
             if (camera != null) camera.transform.position = cameraFocus + WorldCameraPolicy.Offset;
@@ -171,6 +182,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 // Endless cycles also return from the remote Sanctum. Both directions
                 // need the same safe pull rather than combat under a travelling camera.
                 travel.Begin(true); sim.Clock.SetPauseReason(PauseReason.WorldTransition, true);
+                fireFade = sim.ArenaStage == 3 ? 0 : 1; // the Sanctum starts dark
                 effects.Clear(); litPillars = 0;
                 pullFrom = lastPlayerVisual; pullTo = Geometry2D.ToWorld(sim.Player.Position);
                 pullCameraFrom = cameraFocus;
@@ -218,7 +230,8 @@ namespace BorrowedHex.Presentation.WorldArt
                     int lit = WorldIntroPolicy.LitPillars(age);
                     float opening = Mathf.Clamp01((age - WorldIntroPolicy.TitleAt) / WorldIntroPolicy.TitleHold);
                     geometry.RenderReveal(lit, opening);
-                    if (sun != null) sun.intensity = Mathf.Lerp(0, 1.15f, opening);
+                    if (sun != null) sun.intensity = Mathf.Lerp(0, moonIntensity, opening);
+                    fireFade = opening;
                     RenderSettings.fogColor = Color.Lerp(Color.black, morphFogTo, opening);
                     while (litPillars < lit)
                     {
@@ -244,6 +257,7 @@ namespace BorrowedHex.Presentation.WorldArt
                     geometry.FinishReveal(); introOverlay.Clear();
                     sim.Clock.SetPauseReason(PauseReason.WorldTransition, false);
                     previousGeometry?.Dispose(); previousGeometry = null; travelEffects.Clear();
+                    fireFade = 1;
                     ApplyTheme(sim.Arena.worldTheme);
                     if (sim.State == RunState.BossIntro) sim.CompleteBossIntro();
                 }
@@ -267,10 +281,20 @@ namespace BorrowedHex.Presentation.WorldArt
         void ApplyTheme(string name)
         {
             geometry.SetTheme(name); effects.Clear();
-            var tint = name == "Sanctum" ? new Color(.24f, .18f, .32f) : name == "Cave" ? new Color(.17f, .23f, .28f) : new Color(.28f, .28f, .32f);
-            RenderSettings.ambientLight = new Color(.48f, .48f, .54f); RenderSettings.fogColor = tint;
-            if (camera != null) camera.backgroundColor = tint * .5f;
-            if (sun != null) { sun.color = name == "Courtyard" ? new Color(.95f, .83f, .69f) : new Color(.67f, .76f, .92f); sun.intensity = 1.15f; }
+            var lighting = WorldLightingPolicy.For(name);
+            RenderSettings.ambientLight = lighting.Ambient;
+            // PaintedWorld reads ambient from this global, not from the SH probe.
+            Shader.SetGlobalColor("_WorldAmbient", lighting.Ambient);
+            RenderSettings.fogColor = lighting.Fog;
+            if (camera != null) camera.backgroundColor = lighting.Fog;
+            moonIntensity = lighting.MoonIntensity;
+            if (sun != null)
+            {
+                sun.color = lighting.Moon; sun.intensity = lighting.MoonIntensity;
+                sun.transform.rotation = WorldLightingPolicy.MoonRotation; sun.shadows = LightShadows.Soft;
+            }
+            fireLights?.Dispose();
+            fireLights = new FireLights(transform, sim.Arena, lighting.Fire);
             if (travel.Active) return; // the reveal lights each Sanctum pillar independently
             for (int i = 0; i < 8; i++)
             {
@@ -349,8 +373,13 @@ namespace BorrowedHex.Presentation.WorldArt
             // Start can allocate the overlay before a run binds any geometry. Owned
             // resources must still be released when that observer is removed early.
             if (art == null) return;
-            if (sun != null) { sun.color = originalSun; sun.intensity = originalIntensity; }
+            if (sun != null)
+            {
+                sun.color = originalSun; sun.intensity = originalIntensity;
+                sun.transform.rotation = originalSunRotation; sun.shadows = originalShadows;
+            }
             RenderSettings.ambientLight = originalAmbient;
+            Shader.SetGlobalColor("_WorldAmbient", originalAmbient);
             RenderSettings.fog = oldFog; RenderSettings.fogColor = oldFogColor; RenderSettings.fogDensity = oldFogDensity; RenderSettings.fogMode = oldFogMode;
             if (camera != null)
             {
@@ -358,7 +387,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 camera.transform.SetPositionAndRotation(originalCameraPosition, originalCameraRotation); camera.fieldOfView = originalFov;
             }
             effects.Dispose(); terminalEffects.Dispose(); travelEffects.Dispose(); previousGeometry?.Dispose();
-            geometry?.Dispose(); introOverlay.Dispose(); art.Dispose();
+            geometry?.Dispose(); fireLights?.Dispose(); introOverlay.Dispose(); art.Dispose();
         }
     }
 }

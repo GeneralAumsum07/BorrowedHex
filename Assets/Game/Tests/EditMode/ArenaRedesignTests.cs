@@ -351,5 +351,52 @@ namespace BorrowedHex.Tests
             }
             finally { geometry.Dispose(); art.Dispose(); Object.DestroyImmediate(parent.gameObject); }
         }
+
+        [Test]
+        public void UnknownThemeFallsBackToCourtyard()
+        {
+            var courtyard = WorldLightingPolicy.For("Courtyard");
+            foreach (var odd in new[] { "Tutorial", "", null })
+            {
+                var lighting = WorldLightingPolicy.For(odd);
+                Assert.That(lighting.Ambient, Is.EqualTo(courtyard.Ambient)); Assert.That(lighting.Fog, Is.EqualTo(courtyard.Fog));
+                Assert.That(lighting.Moon, Is.EqualTo(courtyard.Moon)); Assert.That(lighting.MoonIntensity, Is.EqualTo(courtyard.MoonIntensity));
+                Assert.That(lighting.Fire, Is.EqualTo(courtyard.Fire));
+            }
+        }
+
+        [Test]
+        public void EveryThemeIsANightRig()
+        {
+            foreach (var theme in Themes)
+            {
+                var lighting = WorldLightingPolicy.For(theme);
+                Assert.That(lighting.Ambient.maxColorComponent, Is.LessThanOrEqualTo(.15f), theme);
+                Assert.That(lighting.Fog.maxColorComponent, Is.LessThanOrEqualTo(.06f), theme);
+                Assert.That(lighting.MoonIntensity, Is.InRange(.2f, .5f), theme);
+            }
+        }
+
+        [Test]
+        public void RevealFadeScalesFireLights()
+        {
+            var parent = new GameObject("probe").transform;
+            var fire = new FireLights(parent, WorldArenaLayouts.Create(3), Color.white);
+            try
+            {
+                Assert.That(fire.Lights.Count, Is.EqualTo(FireLights.Count));
+                // The Sanctum starts dark: a zero fade means zero light, whatever the flicker.
+                fire.Render(12.3f, 0);
+                foreach (var light in fire.Lights) Assert.That(light.intensity, Is.EqualTo(0));
+                fire.Render(12.3f, .5f);
+                var half = fire.Lights.Select(l => l.intensity).ToArray();
+                foreach (float value in half) Assert.That(value, Is.InRange(1e-4f, FireLights.Intensity * .5f * 1.2f + 1e-4f));
+                // Same clock, double fade: exactly double, so a held (paused) reveal holds its light.
+                fire.Render(12.3f, 1);
+                for (int i = 0; i < half.Length; i++) Assert.That(fire.Lights[i].intensity, Is.EqualTo(half[i] * 2).Within(1e-4f));
+                foreach (var light in fire.Lights) { Assert.That(light.type, Is.EqualTo(LightType.Point)); Assert.That(light.range, Is.EqualTo(FireLights.Range)); }
+            }
+            finally { fire.Dispose(); Object.DestroyImmediate(parent.gameObject); }
+        }
     }
 }
