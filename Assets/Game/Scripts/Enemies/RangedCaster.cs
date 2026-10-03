@@ -64,7 +64,7 @@ namespace BorrowedHex.Enemies
                     if (now >= e.PhaseEndsAt && sim.HostileRoomFor(t.volleySpreadDeg.Length))
                     {
                         AttackEmitter.FireVolley(sim, t.attackId, e.ActorId, e.Position, e.Radius,
-                            e.AimDirection, t.volleySpreadDeg);
+                            e.AimDirection, t.volleySpreadDeg, range: t.range);
                         sim.Events.RaiseEnemyFired(e);
                         e.Phase = EnemyPhase.Idle;
                         e.AimLocked = false;

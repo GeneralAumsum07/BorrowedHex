@@ -56,6 +56,11 @@ namespace BorrowedHex.Data
         [Tooltip("Attack fired by ranged kinds; empty for melee-only kinds.")]
         public string attackId = AttackIds.Bolt;
         public float[] volleySpreadDeg = { -8f, 0f, 8f };
+        // Per shooter, not per attack: Acolyte, Scatter and the Collector all fire the one
+        // "bolt" definition, whose 4 s lifetime at speed 9 (36 units) outlasts any arena, so
+        // before this every hostile shot simply flew until it met a wall (owner report).
+        [Tooltip("Ranged kinds: units a shot travels before it expires (owner values: Scatter 10, Acolyte 15, Siege 22).")]
+        public float range = 15f;
         [Tooltip("Scatter Caster: moves to a fresh firing spot between volleys.")]
         public bool repositions;
         [Tooltip("Melee: starts a wind-up when the player is this close (centre to centre).")]
@@ -138,6 +143,7 @@ namespace BorrowedHex.Data
             health = 5, bodyRadius = 0.5f, moveSpeed = 2.6f, preferredMin = 5.5f, preferredMax = 8.5f,
             telegraph = 0.85f, aimLock = 0.3f, cooldown = 2.4f, firstShotDelay = 0.7f,
             volleySpreadDeg = new[] { -24f, -12f, 0f, 12f, 24f }, repositions = true, killValue = 20, killSeconds = 5f,
+            range = 10f, // mid range: just past its 8.5 standing distance, so backing off escapes the fan
         };
 
         // Slow, long, clearly telegraphed single rocket: the crowd-clearing ammunition source.
@@ -146,6 +152,7 @@ namespace BorrowedHex.Data
             health = 8, bodyRadius = 0.6f, moveSpeed = 1.1f, preferredMin = 6f, preferredMax = 10f,
             telegraph = 1.3f, aimLock = 0.35f, cooldown = 3.4f, firstShotDelay = 0.8f,
             attackId = AttackIds.Rocket, volleySpreadDeg = new[] { 0f }, killValue = 25, killSeconds = 6f,
+            range = 22f, // the longest ordinary reach; 22 / speed 6 = 3.7 s, inside the rocket's 5 s lifetime
         };
 
         public EnemyTuning For(ActorCategory c)

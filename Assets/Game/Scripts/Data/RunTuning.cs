@@ -78,11 +78,18 @@ namespace BorrowedHex.Data
         public float streamInterval = 0.105f;
         [Tooltip("Degrees per second the stream turns to follow the player while firing.")]
         public float streamTurnRate = 70f;
+        // Owner direction: the stream has no range limit. Its bolts ignore the bolt's lifetime
+        // too (36 units), which is shorter than the Sanctum's 52-unit diagonal; a wall or a
+        // hit is the only thing that ends them.
+        [Tooltip("Stream bolts never expire; only a wall or a hit ends them.")]
+        public bool streamUnlimited = true;
 
         [Header("Fan volley")]
         public float fanTelegraph = 0.72f;
         public float fanAimLock = 0.25f;
         public float[] fanSpreadDeg = { -48f, -36f, -24f, -12f, 0f, 12f, 24f, 36f, 48f };
+        [Tooltip("Units a fan bolt travels before it expires (owner: very long, 30).")]
+        public float fanRange = 30f;
         // Section 4: a repeated endless boss gains ONE predefined variation, not only health.
         // The variation is mine (D84; the plan names none): the same fan plus a bolt at
         // ±60°, so the side-step that beat the first boss's fan no longer clears it.

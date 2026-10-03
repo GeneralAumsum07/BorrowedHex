@@ -76,6 +76,7 @@ MonoBehaviour:
       - -8
       - 0
       - 8
+      range: 15
       repositions: 0
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -97,6 +98,7 @@ MonoBehaviour:
       firstShotDelay: 0.2
       attackId: 
       volleySpreadDeg: []
+      range: 15
       repositions: 0
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -123,6 +125,7 @@ MonoBehaviour:
       - 0
       - 12
       - 24
+      range: 10
       repositions: 1
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -145,6 +148,7 @@ MonoBehaviour:
       attackId: rocket
       volleySpreadDeg:
       - 0
+      range: 22
       repositions: 0
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -265,6 +269,7 @@ MonoBehaviour:
     streamShots: 12
     streamInterval: 0.105
     streamTurnRate: 70
+    streamUnlimited: 1
     fanTelegraph: 0.72
     fanAimLock: 0.25
     fanSpreadDeg:
@@ -277,6 +282,7 @@ MonoBehaviour:
     - 24
     - 36
     - 48
+    fanRange: 30
     sweepTelegraph: 0.77
     sweepAimLock: 0.25
     sweepReach: 3

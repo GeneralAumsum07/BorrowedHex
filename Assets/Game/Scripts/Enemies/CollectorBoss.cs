@@ -407,7 +407,7 @@ namespace BorrowedHex.Enemies
 
                 case BossPattern.FanVolley:
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
-                        FanOf(e, t), t.hitDamage);
+                        FanOf(e, t), t.hitDamage, range: t.fanRange);
                     sim.Events.RaiseEnemyFired(e);
                     Recover(e, t, now, t.recover);
                     return;
@@ -455,7 +455,7 @@ namespace BorrowedHex.Enemies
                     // so the held bolts are delayed, not lost or fired in a burst later.
                     if (!sim.HostileRoomFor(1)) { b.NextShotAt = now; break; }
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
-                        ZeroSpread, t.hitDamage);
+                        ZeroSpread, t.hitDamage, unlimited: t.streamUnlimited);
                     sim.Events.RaiseEnemyFired(e);
                     b.ShotsLeft--;
                     b.NextShotAt += t.streamInterval;

@@ -19,8 +19,14 @@ namespace BorrowedHex.Enemies
         /// <param name="hostileDamage">Overrides the attack's damage to the player (half hearts);
         /// the boss uses it so its bolts hit harder than an acolyte's while staying ordinary,
         /// capturable bolts. Negative keeps the attack's own value. Returned damage is untouched.</param>
+        /// <param name="range">Units each shot travels before it expires. The shooter owns this,
+        /// not the attack, because several shooters share one attack definition. Infinity keeps
+        /// only the attack's lifetime as the limit.</param>
+        /// <param name="unlimited">Ignore range AND lifetime (the Collector's stream): only a
+        /// wall, a hit or a capture ends the shot.</param>
         public static int FireVolley(ArenaSim sim, string attackId, int sourceActorId, Vector2 origin,
-            float sourceRadius, Vector2 aim, float[] spreadDeg, int hostileDamage = -1)
+            float sourceRadius, Vector2 aim, float[] spreadDeg, int hostileDamage = -1,
+            float range = float.PositiveInfinity, bool unlimited = false)
         {
             var def = sim.Attacks.Get(attackId);
             ActorCategory sourceCategory = ActorCategory.Player; // unknown synthetic shots keep the base rule
@@ -39,7 +45,11 @@ namespace BorrowedHex.Enemies
                 shot.SourceCategory = sourceCategory;
                 shot.SourceSpreadHalfAngle = halfSpread;
                 if (hostileDamage >= 0) shot.HostileDamage = hostileDamage;
-                sim.SpawnProjectile(shot, AttackFaction.Hostile, muzzle, dir);
+                var p = sim.SpawnProjectile(shot, AttackFaction.Hostile, muzzle, dir,
+                    maxDistance: unlimited ? float.PositiveInfinity : range);
+                // Clearing the timer after spawning keeps SpawnProjectile's one lifetime rule
+                // for every other caller (returns, ripostes) untouched.
+                if (unlimited) p.ExpireAt = double.PositiveInfinity;
                 fired++;
             }
             return fired;
