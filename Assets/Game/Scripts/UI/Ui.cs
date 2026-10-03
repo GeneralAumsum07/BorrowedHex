@@ -138,6 +138,18 @@ namespace BorrowedHex.UI
             return v;
         }
 
+        /// <summary>
+        /// Height <paramref name="t"/>'s current text needs when wrapped at <paramref name="width"/>.
+        /// Takes the width explicitly because panels are often filled while still inactive, before
+        /// any layout pass has given the label its real width. Settings and the divide use the same
+        /// pixelsPerUnit, so the result is in layout units whether or not a canvas is found yet.
+        /// </summary>
+        public static float TextHeight(Text t, float width)
+        {
+            var settings = t.GetGenerationSettings(new Vector2(width, 0f));
+            return t.cachedTextGeneratorForLayout.GetPreferredHeight(t.text, settings) / t.pixelsPerUnit;
+        }
+
         public static T Sized<T>(T c, float height) where T : Component
         {
             var le = c.gameObject.GetComponent<LayoutElement>() ?? c.gameObject.AddComponent<LayoutElement>();

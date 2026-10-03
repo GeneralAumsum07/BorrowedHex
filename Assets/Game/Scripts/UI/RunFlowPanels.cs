@@ -35,6 +35,12 @@ namespace BorrowedHex.UI
         // Three targets cover every legal swap: swaps stop once maxHeld (4) is reached, so at
         // most three are held when one is offered. A larger maxHeld hides Swap past three.
         const int MaxSwapTargets = 3;
+
+        // Card geometry, shared by Build (the rects) and FillCards (the height each row needs).
+        // The text's width is the panel's 900 minus the column's 2 x 40 padding, minus its own
+        // left inset and the 312 px reserved for the button column on the right.
+        const float CardMinHeight = 124f, CardTextInset = 8f, CardTextLeft = 20f, CardButtonColumn = 312f;
+        const float CardTextWidth = 900f - 2 * 40f - CardTextLeft - CardButtonColumn;
         Text swapTitle;
         readonly Button[] swapTargets = new Button[MaxSwapTargets];
         Button swapBack;
@@ -92,15 +98,15 @@ namespace BorrowedHex.UI
             for (int i = 0; i < cardRows.Length; i++)
             {
                 int index = i;   // captured per card; the loop variable would be 3 for all of them
-                var row = Ui.Sized(Ui.Image($"Card{i}", panel.transform, new Color(0.16f, 0.12f, 0.26f, 1f)), 124);
+                var row = Ui.Sized(Ui.Image($"Card{i}", panel.transform, new Color(0.16f, 0.12f, 0.26f, 1f)), CardMinHeight);
                 cardRows[i] = row.gameObject;
                 cardTexts[i] = Ui.Label("Text", row.transform, "", 24, TextAnchor.MiddleLeft);
                 cardTexts[i].supportRichText = true;
                 // Text fills the row left of the 290 px button column, inset so long descriptions wrap.
                 var tr = cardTexts[i].rectTransform;
                 tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
-                tr.offsetMin = new Vector2(20, 8);
-                tr.offsetMax = new Vector2(-312, -8);
+                tr.offsetMin = new Vector2(CardTextLeft, CardTextInset);
+                tr.offsetMax = new Vector2(-CardButtonColumn, -CardTextInset);
                 cardMain[i] = Ui.Button("Main", row.transform, "", () => choose?.Invoke(index, -1), 20);
                 cardSwap[i] = Ui.Button("Swap", row.transform, "Swap — free", () => OnSwap(index), 20);
             }
@@ -148,16 +154,20 @@ namespace BorrowedHex.UI
             Ui.Stretch(rdim.rectTransform);
             resultsDim = rdim.gameObject;
             var rp = Ui.Image("Panel", rdim.transform, Ui.Panel);
-            Ui.Place(rp.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(620, 0));
+            // 760 wide (was 620): the stat lines are written as one line each; at 620 the longest
+            // wrapped, which read as a jumble rather than a list.
+            Ui.Place(rp.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(ResultsWidth, 0));
             rp.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             var rcol = Ui.Column(rp.rectTransform, 14);
-            rcol.padding = new RectOffset(44, 44, 32, 36);
+            rcol.padding = new RectOffset(ResultsPad, ResultsPad, 32, 36);
             resultsTitle = Ui.Sized(Ui.Label("Title", rp.transform, "", 58), 76);
             // D97: one big headline (score, time, kills) under the title, so the outcome reads in
             // a glance; the detailed stats move below it, smaller and dimmer, for whoever wants them.
             resultsHeadline = Ui.Sized(Ui.Label("Headline", rp.transform, "", 40), 52);
             resultsHeadline.color = Ui.Ink;
-            resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 21, TextAnchor.UpperCenter), 340);   // 340: D96 added a line, and long lines wrap at 620 wide
+            // Height is set per run in FillResults, from the text it holds. A fixed 340 left a dead
+            // gap half the panel tall whenever the stats were short (owner report: "cluttered").
+            resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 21, TextAnchor.UpperCenter), 0);
             resultsBody.color = new Color(1, 1, 1, 0.65f);
             // Profile outcome (saved / XP / achievements / records), filled by the finalization.
             progressBody = Ui.Sized(Ui.Label("Progress", rp.transform, "", 24, TextAnchor.UpperCenter), 0);
@@ -188,8 +198,19 @@ namespace BorrowedHex.UI
         public void SetProgress(string text)
         {
             progressBody.text = text ?? "";
-            int lines = string.IsNullOrEmpty(text) ? 0 : text.Split('\n').Length;
-            progressBody.GetComponent<LayoutElement>().preferredHeight = lines * 30;
+            FitToText(progressBody);
+        }
+
+        const int ResultsWidth = 760, ResultsPad = 44;
+
+        /// <summary>
+        /// Sizes a results text block to exactly what it holds (plus a few px so descenders are
+        /// not clipped). Measured at the column's inner width, so a line that wraps is counted.
+        /// </summary>
+        static void FitToText(Text t)
+        {
+            float h = string.IsNullOrEmpty(t.text) ? 0f : Mathf.Ceil(Ui.TextHeight(t, ResultsWidth - 2 * ResultsPad)) + 4f;
+            Ui.Sized(t, h);
         }
 
         /// <summary>True while the boss banner has held long enough to start the fight.</summary>
@@ -268,6 +289,11 @@ namespace BorrowedHex.UI
                 if (!rankUp && locked) body += $"\n<size=20><color=#FF6B6B>Locked: {held.Count} held</color></size>";
                 else if (!rankUp && lastCard) body += "\n<size=20><b>Your last card: after this, only rank-ups.</b></size>";
                 cardTexts[i].text = body;
+                // The row grows to its text: a rank-3 description plus the "last card" line runs
+                // to four lines and spilled out of a fixed 124 px row. 124 stays the floor because
+                // the Add + Swap buttons stack to that height (2 x 48 + margins).
+                float need = Ui.TextHeight(cardTexts[i], CardTextWidth) + 2 * CardTextInset;
+                Ui.Sized(cardRows[i].transform, Mathf.Max(CardMinHeight, Mathf.Ceil(need)));
 
                 // The button column follows D96's table: rank-up = one paid button; a new card =
                 // Take (nothing held) or Add + Swap (1-3 held); a new card while locked = none.
@@ -376,6 +402,7 @@ namespace BorrowedHex.UI
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased})   Average power: x{s.AverageFirePower:0.00}\n" +
                 $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}   Backfires: {s.Backfires}   Swaps: {s.Swaps}\n" +
                 $"Health sacrificed: {LifeDisplay.Points(s.SecondsSacrificed)} ({s.UpgradesPaidFor} upgrade{(s.UpgradesPaidFor == 1 ? "" : "s")})   Most held: {s.MostUpgradesHeld}";
+            FitToText(resultsBody);
         }
 
         static string ReasonText(RunSummary s)

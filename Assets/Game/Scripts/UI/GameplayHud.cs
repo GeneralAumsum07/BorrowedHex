@@ -33,13 +33,19 @@ namespace BorrowedHex.UI
 
         void Build(RectTransform root, Action onPause, Action onReset)
         {
-            var dashBg = Ui.Image("DashBar", root, new Color(0, 0, 0, 0.55f));
+            // Combat-only readouts (dash, objective, chain, boss bar, the hand) live in their own
+            // full-screen group so they can go together while a choice or the results are open:
+            // the clock is frozen then, none of them can change or be used, and the centred
+            // panels would otherwise sit on top of them (owner report: "overlapping and cluttered").
+            // Life, score, held upgrades and pause stay: the panels price things in life.
+            combat = Ui.Stretch(Ui.Rect("Combat", root));
+            var dashBg = Ui.Image("DashBar", combat, new Color(0, 0, 0, 0.55f));
             Ui.Place(dashBg.rectTransform, new Vector2(0, 1), new Vector2(32, -86), new Vector2(220, 18));
             dashFill = Ui.Image("Fill", dashBg.transform, Ui.Accent);
             var fr = dashFill.rectTransform;
             fr.anchorMin = Vector2.zero; fr.anchorMax = new Vector2(1, 1); fr.pivot = new Vector2(0, 0.5f);
             fr.offsetMin = fr.offsetMax = Vector2.zero;
-            dashLabel = Ui.Label("DashLabel", root, "DASH", 20, TextAnchor.MiddleLeft);
+            dashLabel = Ui.Label("DashLabel", combat, "DASH", 20, TextAnchor.MiddleLeft);
             Ui.Place(dashLabel.rectTransform, new Vector2(0, 1), new Vector2(262, -83), new Vector2(160, 24));
 
             // D65: life is shown as a heart plus a draining bar instead of a numeric timer.
@@ -57,11 +63,11 @@ namespace BorrowedHex.UI
             lf.anchorMin = Vector2.zero; lf.anchorMax = Vector2.one; lf.pivot = new Vector2(0, 0.5f);
             lf.offsetMin = lf.offsetMax = Vector2.zero;
             // D95: the chain counter sits right of the life bar, because chains are life.
-            chainLabel = Ui.Label("Chain", root, "", 22, TextAnchor.MiddleLeft);
+            chainLabel = Ui.Label("Chain", combat, "", 22, TextAnchor.MiddleLeft);
             Ui.Place(chainLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(26 + 200 + 95, -38), new Vector2(170, 30));
             chainLabel.color = Ui.Accent;
             // Section 6: "present the objective clearly from the start" — what phase this is.
-            objectiveLabel = Ui.Label("Objective", root, "", 22);
+            objectiveLabel = Ui.Label("Objective", combat, "", 22);
             Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -90), new Vector2(800, 30));
             objectiveLabel.color = new Color(1, 1, 1, 0.8f);
             scoreLabel = Ui.Label("Score", root, "", 26, TextAnchor.MiddleLeft);
@@ -69,11 +75,13 @@ namespace BorrowedHex.UI
             // D96: every held upgrade, one per line under a header. Four names on one line ran
             // past 520 px and widening would collide with the centred boss bar, so the label grows
             // DOWN from the top-left instead (header + 4 lines at 20 px fit in 130 px).
+            // 400 wide (was 520): the longest line ("UPGRADES (LOCKED)", "PIERCING RETURN 3") is
+            // about 200 px, and at 520 the box reached under the 900-wide upgrade panel's left edge.
             upgradeLabel = Ui.Label("Upgrade", root, "", 20, TextAnchor.UpperLeft);
-            Ui.Place(upgradeLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -152), new Vector2(520, 130));
+            Ui.Place(upgradeLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -152), new Vector2(400, 130));
             upgradeLabel.color = new Color(0.75f, 0.95f, 1f);
 
-            bossBarBg = Ui.Image("BossBar", root, new Color(0, 0, 0, 0.6f));
+            bossBarBg = Ui.Image("BossBar", combat, new Color(0, 0, 0, 0.6f));
             Ui.Place(bossBarBg.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -128), new Vector2(560, 20));
             bossBarFill = Ui.Image("Fill", bossBarBg.transform, new Color(0.9f, 0.25f, 0.35f));
             var bf = bossBarFill.rectTransform;
@@ -86,11 +94,12 @@ namespace BorrowedHex.UI
             ResetButton = Ui.Button("Reset", root, "Reset", onReset, 22);
             Ui.Place((RectTransform)ResetButton.transform, new Vector2(1, 1), new Vector2(-104, -28), new Vector2(110, 64));
 
-            Packets = PacketIndicator.Create(root);
+            Packets = PacketIndicator.Create(combat);
         }
 
         public PacketIndicator Packets { get; private set; }
         Text upgradeLabel;
+        RectTransform combat;
 
         public void Bind(ArenaSim s)
         {
@@ -147,6 +156,9 @@ namespace BorrowedHex.UI
         void LateUpdate()
         {
             if (sim == null) return;
+            // Polled like everything else here, so a restart or a closed panel restores it with no event.
+            var state = sim.State;
+            combat.gameObject.SetActive(state != BorrowedHex.Core.RunState.UpgradeChoice && state != BorrowedHex.Core.RunState.Results);
             var p = sim.Player;
             // Cooldown progress from the gameplay clock, so it freezes while paused.
             double now = sim.Clock.Now;
