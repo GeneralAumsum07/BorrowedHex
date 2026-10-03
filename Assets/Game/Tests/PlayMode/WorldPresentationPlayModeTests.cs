@@ -45,8 +45,10 @@ namespace BorrowedHex.Tests
             Assert.That(artObject.GetComponentsInChildren<Collider>(true), Is.Empty);
             var floor = artObject.transform.Find("Environment/Floor");
             Assert.That(floor, Is.Not.Null);
-            Assert.That(floor.position.y + floor.localScale.y * 0.5f, Is.EqualTo(0).Within(0.001));
-            Assert.That(floor.localScale.x, Is.EqualTo(root.config.arena.bounds.width + 2));
+            // One painted quad lies exactly on the gameplay plane and covers the bounds once.
+            Assert.That(floor.position.y, Is.EqualTo(0).Within(0.001));
+            Assert.That(floor.localScale.x, Is.EqualTo(root.config.arena.bounds.width).Within(.001));
+            Assert.That(floor.localScale.y, Is.EqualTo(root.config.arena.bounds.height).Within(.001));
         }
 
         [UnityTest]
@@ -185,18 +187,19 @@ namespace BorrowedHex.Tests
             yield return new WaitForSecondsRealtime(.3f);
             Assert.That(root.Sim.Clock.Now, Is.GreaterThan(before));
             Assert.That(observer.MorphProgress, Is.InRange(0.001f, .1f));
-            // Every viewport corner intersects continuous terrain; no background clear
-            // colour can leak through at the camera's shallow pitch.
-            var plane = new Plane(Vector3.up, new Vector3(0, -.725f, 0));
-            var terrain = artObject.transform.Find("ContinuousWorldGround");
-            Assert.That(terrain, Is.Not.Null);
+            // Every viewport corner meets the outer ground; no clear colour can leak through.
+            var plane = new Plane(Vector3.up, new Vector3(0, -.02f, 0));
+            Transform ground = null;
+            foreach (Transform child in artObject.transform)
+                if (child.name == "Environment") ground = child.Find("Outer ground"); // the newest arena is last
+            Assert.That(ground, Is.Not.Null);
             foreach (float x in new[] { 0f, 1f }) foreach (float y in new[] { 0f, 1f })
             {
                 var ray = camera.ViewportPointToRay(new Vector3(x, y));
                 Assert.That(plane.Raycast(ray, out float distance), Is.True);
                 var point = ray.GetPoint(distance);
-                Assert.That(Mathf.Abs(point.x - terrain.position.x), Is.LessThan(terrain.localScale.x / 2));
-                Assert.That(Mathf.Abs(point.z - terrain.position.z), Is.LessThan(terrain.localScale.z / 2));
+                Assert.That(Mathf.Abs(point.x - ground.position.x), Is.LessThan(ground.localScale.x / 2));
+                Assert.That(Mathf.Abs(point.z - ground.position.z), Is.LessThan(ground.localScale.y / 2));
             }
             Assert.That(artObject.GetComponentsInChildren<Collider>(true), Is.Empty);
         }
@@ -207,14 +210,10 @@ namespace BorrowedHex.Tests
             var observer = (WorldPresentation)Attach();
             root.useWorldArenas = true; root.PlaySandbox(); root.Sim.AutoSpawn = false;
             yield return null;
-            float departureNorth = root.Sim.Arena.bounds.yMax;
             root.Sim.SpawnBoss();
             yield return null;
             Assert.That(observer.Travelling, Is.True);
             Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition), Is.True);
-            Assert.That(artObject.transform.Find("ContinuousWorldGround").GetComponent<Renderer>()
-                .sharedMaterial.GetFloat("_NorthLimit"), Is.EqualTo(departureNorth + 1.3f).Within(.001f),
-                "The departure skyline remains visible until the curtain hides relocation.");
             double before = root.Sim.Clock.Now;
             root.Sim.SetPause(PauseReason.Manual, true);
             var held = root.View.PlayerView.transform.position;
@@ -260,10 +259,10 @@ namespace BorrowedHex.Tests
             Attach(); root.useWorldArenas = true; root.PlaySandbox(); root.Sim.AutoSpawn = false;
             yield return null;
             SelectStage(1); yield return new WaitForSecondsRealtime(.3f);
-            Renderer incoming = null;
-            foreach (var renderer in artObject.GetComponentsInChildren<Renderer>())
-                if (renderer.name == "Ruin" && renderer.transform.parent.name == "Environment") { incoming = renderer; break; }
-            if (incoming == null) Assert.Ignore("Local scenery source is optional.");
+            Transform environment = null;
+            foreach (Transform child in artObject.transform)
+                if (child.name == "Environment") environment = child; // the incoming arena is the newest
+            var incoming = environment.Find("Dressing").GetComponentInChildren<Renderer>();
             Assert.That(incoming, Is.Not.Null);
             var properties = new MaterialPropertyBlock(); incoming.GetPropertyBlock(properties);
             float coverage = properties.GetFloat("_Visible");
@@ -283,12 +282,12 @@ namespace BorrowedHex.Tests
             foreach (var renderer in artObject.GetComponentsInChildren<MeshRenderer>())
             {
                 if (renderer.name == "Floor") floor = renderer;
-                if (renderer.name.StartsWith("Boundary")) wall = renderer;
+                if (renderer.name == ArenaEnclosure.RibbonName) wall = renderer;
             }
             Assert.That(floor, Is.Not.Null); Assert.That(wall, Is.Not.Null);
             foreach (var material in new[] { floor.sharedMaterial, wall.sharedMaterial })
             {
-                Assert.That(material.shader.name, Is.EqualTo("BorrowedHex/PixelWorld"));
+                Assert.That(material.shader.name, Is.EqualTo(PaintedMaterials.ShaderName));
                 Assert.That(material.GetTexture("_FromMap"), Is.Not.SameAs(material.GetTexture("_BaseMap")));
                 Assert.That(material.GetFloat("_Morph"), Is.InRange(0f, .1f));
             }
@@ -359,7 +358,7 @@ namespace BorrowedHex.Tests
             foreach (var effect in artObject.GetComponentsInChildren<SpriteRenderer>())
                 if (effect.sprite != null && effect.sprite.texture.name == "Blue Flame")
                     Assert.That(effect.sortingOrder, Is.LessThan(collector.sortingOrder), "Decorative flames cannot cover the boss reveal.");
-            var northPillar = artObject.transform.Find("Environment/CoverTrim2/Obelisk").GetComponent<Renderer>();
+            var northPillar = artObject.transform.Find("Environment/CoverTrim2/Obelisk").GetComponentInChildren<Renderer>();
             var visible = new MaterialPropertyBlock(); northPillar.GetPropertyBlock(visible);
             Assert.That(visible.GetFloat("_Occlusion"), Is.LessThan(1), "The retained north pillar must not hide the Collector reveal.");
             Assert.That(root.Sim.Clock.Now, Is.EqualTo(clock));

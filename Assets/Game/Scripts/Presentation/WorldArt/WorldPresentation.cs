@@ -22,7 +22,6 @@ namespace BorrowedHex.Presentation.WorldArt
         WorldArtLibrary art;
         WorldGeometry geometry;
         WorldGeometry previousGeometry;
-        WorldBackdrop backdrop;
         WorldEffects travelEffects;
         WorldIntroOverlay introOverlay;
         SpriteRenderer hiddenPlayer;
@@ -34,7 +33,6 @@ namespace BorrowedHex.Presentation.WorldArt
         bool originalArenaActive;
         Color morphSunFrom, morphFogFrom, morphSunTo, morphFogTo;
         float nextPullParticle;
-        float arenaNorth, departureNorth;
         WorldEffects effects;
         WorldEffects terminalEffects;
         double terminalElapsed;
@@ -93,7 +91,6 @@ namespace BorrowedHex.Presentation.WorldArt
             effects = new WorldEffects(transform, art);
             terminalEffects = new WorldEffects(transform, art, "TerminalEffects");
             travelEffects = new WorldEffects(transform, art, "SanctumPullEffects");
-            backdrop = new WorldBackdrop(transform, art);
             introOverlay = new WorldIntroOverlay();
             Rebind();
         }
@@ -120,8 +117,6 @@ namespace BorrowedHex.Presentation.WorldArt
                 RenderSettings.fogColor = Color.Lerp(morphFogFrom, morphFogTo, blend);
                 if (blend >= 1) { previousGeometry.Dispose(); previousGeometry = null; }
             }
-            float visibleNorth = travel.Active && travel.Elapsed < WorldIntroPolicy.Rise ? departureNorth : arenaNorth;
-            backdrop.Render(geometry.FloorTexture, geometry.FloorFrom, sim.WorldMorphProgress, sim.Clock.Now, UI.DisplayOptions.ReduceFlashes, visibleNorth);
             RenderPullAndCamera();
             if (root.View != null && root.View.gameObject.activeInHierarchy)
             {
@@ -148,22 +143,18 @@ namespace BorrowedHex.Presentation.WorldArt
             geometry?.Dispose(); previousGeometry?.Dispose(); previousGeometry = null;
             geometry = new WorldGeometry(transform, sim.Arena, art, root.config.litMaterial);
             arenaRevision = sim.ArenaRevision;
-            arenaNorth = sim.Arena.bounds.yMax;
             sceneryIndex = -1; effects.Clear(); terminalEffects.Clear(); travelEffects.Clear(); terminalElapsed = 0; travel.Reset();
             lastPlayerVisual = Geometry2D.ToWorld(sim.Player.Position);
             cameraFocus = Geometry2D.ToWorld(WorldCameraPolicy.ClampFocus(sim.Player.Position, sim.Arena.bounds));
             if (camera != null) camera.transform.position = cameraFocus + WorldCameraPolicy.Offset;
             sim.Events.EnemyFired += Fired; sim.Events.EnemyDamaged += Damaged;
             sim.Events.EnemyKilled += Killed;
-            introOverlay.Clear(); backdrop.SetReveal(1);
+            introOverlay.Clear();
             if (hiddenPlayer != null) hiddenPlayer.forceRenderingOff = false;
         }
 
         void ChangeArena()
         {
-            // Keep the departure horizon throughout the visible rise. Switch terrain
-            // cutoff only when the camera relocates under the opaque curtain.
-            departureNorth = arenaNorth; arenaNorth = sim.Arena.bounds.yMax;
             previousGeometry?.Dispose(); previousGeometry = geometry;
             geometry = new WorldGeometry(transform, sim.Arena, art, root.config.litMaterial);
             arenaRevision = sim.ArenaRevision; sceneryIndex = -1;
@@ -226,7 +217,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 {
                     int lit = WorldIntroPolicy.LitPillars(age);
                     float opening = Mathf.Clamp01((age - WorldIntroPolicy.TitleAt) / WorldIntroPolicy.TitleHold);
-                    geometry.RenderReveal(lit, opening); backdrop.SetReveal(Mathf.Lerp(.015f, 1, opening));
+                    geometry.RenderReveal(lit, opening);
                     if (sun != null) sun.intensity = Mathf.Lerp(0, 1.15f, opening);
                     RenderSettings.fogColor = Color.Lerp(Color.black, morphFogTo, opening);
                     while (litPillars < lit)
@@ -250,7 +241,7 @@ namespace BorrowedHex.Presentation.WorldArt
                     if (hiddenPlayer != null) hiddenPlayer.forceRenderingOff = false;
                     if (root.View != null) root.View.gameObject.SetActive(true);
                     if (bossBody != null) bossBody.transform.Find("Billboard/Sprite").GetComponent<SpriteRenderer>().forceRenderingOff = false;
-                    geometry.FinishReveal(); backdrop.SetReveal(1); introOverlay.Clear();
+                    geometry.FinishReveal(); introOverlay.Clear();
                     sim.Clock.SetPauseReason(PauseReason.WorldTransition, false);
                     previousGeometry?.Dispose(); previousGeometry = null; travelEffects.Clear();
                     ApplyTheme(sim.Arena.worldTheme);
@@ -367,7 +358,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 camera.transform.SetPositionAndRotation(originalCameraPosition, originalCameraRotation); camera.fieldOfView = originalFov;
             }
             effects.Dispose(); terminalEffects.Dispose(); travelEffects.Dispose(); previousGeometry?.Dispose();
-            geometry?.Dispose(); backdrop.Dispose(); introOverlay.Dispose(); art.Dispose();
+            geometry?.Dispose(); introOverlay.Dispose(); art.Dispose();
         }
     }
 }

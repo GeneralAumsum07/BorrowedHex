@@ -333,5 +333,23 @@ namespace BorrowedHex.Tests
                 }
                 finally { Object.DestroyImmediate(root.gameObject); foreach (var item in owned) Object.DestroyImmediate(item); }
         }
+
+        [Test]
+        public void WorldGeometryBuildsTheRedesignedArena()
+        {
+            var parent = new GameObject("probe").transform; var art = new WorldArtLibrary();
+            var geometry = new WorldGeometry(parent, WorldArenaLayouts.Create(1), art, null);
+            try
+            {
+                var environment = parent.Find("Environment");
+                Assert.That(environment.Find("Floor").GetComponent<Renderer>().sharedMaterial.shader.name, Is.EqualTo(PaintedMaterials.ShaderName));
+                Assert.That(environment.Find(ArenaEnclosure.RibbonName), Is.Not.Null);
+                Assert.That(environment.Find("CoverTrim0/Tomb"), Is.Not.Null, "Stage 1 pillar 0 is a Tomb");
+                foreach (Transform child in environment) Assert.That(child.name, Does.Not.StartWith("Boundary"));
+                Assert.That(parent.GetComponentsInChildren<SpriteRenderer>(true), Is.Empty, "No billboard sprites in ordinary arenas");
+                Assert.That(parent.GetComponentsInChildren<Collider>(true), Is.Empty);
+            }
+            finally { geometry.Dispose(); art.Dispose(); Object.DestroyImmediate(parent.gameObject); }
+        }
     }
 }

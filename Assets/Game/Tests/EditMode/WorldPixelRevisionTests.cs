@@ -29,22 +29,6 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void BoundaryProgressesFromClosedToBrokenToOpen()
-        {
-            var type = typeof(ArenaSim).Assembly.GetType("BorrowedHex.Presentation.WorldArt.WorldBoundaryPolicy");
-            Assert.That(type, Is.Not.Null);
-            var method = type.GetMethod("Height");
-            int gaps = 0;
-            for (int i = 0; i < 12; i++)
-            {
-                Assert.That((float)method.Invoke(null, new object[] { 0, i }), Is.GreaterThan(1));
-                if ((float)method.Invoke(null, new object[] { 1, i }) == 0) gaps++;
-                Assert.That((float)method.Invoke(null, new object[] { 2, i }), Is.LessThanOrEqualTo(.2f));
-            }
-            Assert.That(gaps, Is.InRange(3, 8));
-        }
-
-        [Test]
         public void SanctumTitleWaitsForAllEightPillarsAndTheDarkArrival()
         {
             var type = typeof(ArenaSim).Assembly.GetType("BorrowedHex.Presentation.WorldArt.WorldIntroPolicy");
