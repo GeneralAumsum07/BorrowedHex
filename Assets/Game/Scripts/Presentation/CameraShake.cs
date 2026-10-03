@@ -11,8 +11,14 @@ namespace BorrowedHex.Presentation
     /// camera position every frame to follow the player, and a stored base would freeze that
     /// follow for the whole shake and then jump. Each frame the previous offset is removed only
     /// if nobody else moved the camera since it was applied; if the follow camera already wrote
-    /// a fresh position, that position is the new base. This holds whichever LateUpdate runs first.
+    /// a fresh position, that position is the new base.
+    ///
+    /// Execution order 300 puts this LateUpdate AFTER WorldPresentation's (200). The base logic
+    /// above survives either order, but the offset does not: run first and the follow camera
+    /// overwrites it in the same frame, so nothing ever shakes (final review, Important 1;
+    /// pinned by CameraShake_SurvivesTheWorldFollowCamera).
     /// </summary>
+    [DefaultExecutionOrder(300)]
     public sealed class CameraShake : MonoBehaviour
     {
         float until, amplitude, duration;

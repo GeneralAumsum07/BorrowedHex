@@ -370,6 +370,31 @@ namespace BorrowedHex.Tests
             Assert.That(root.Sim.Clock.Now, Is.GreaterThan(clock));
         }
 
+        [UnityTest]
+        public IEnumerator CameraShake_SurvivesTheWorldFollowCamera()
+        {
+            // Final review, Important 1: the follow camera rewrites the camera position every
+            // LateUpdate. If the shake runs before it, the offset is overwritten and the
+            // Overcharge / perfect-release kick is invisible whenever world arenas are on.
+            var observer = (WorldPresentation)Attach();
+            root.PlaySandbox(); root.Sim.AutoSpawn = false;
+            yield return null;
+            var shake = cameraObject.GetComponent<CameraShake>() ?? cameraObject.AddComponent<CameraShake>();
+            var focusField = typeof(WorldPresentation).GetField("cameraFocus",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            Assert.That(focusField, Is.Not.Null, "fixture: the follow camera's focus field");
+            float maxDeviation = 0f;
+            for (int i = 0; i < 6; i++)
+            {
+                // Re-kick every frame so the falloff never shrinks the offset to noise.
+                shake.Kick(1f, 1f);
+                yield return new WaitForEndOfFrame();
+                var follow = (Vector3)focusField.GetValue(observer) + WorldCameraPolicy.Offset;
+                maxDeviation = Mathf.Max(maxDeviation, (cameraObject.transform.position - follow).magnitude);
+            }
+            Assert.That(maxDeviation, Is.GreaterThan(0.05f), "the shake offset must reach the rendered frame");
+        }
+
         [UnityTearDown]
         public IEnumerator TearDown()
         {

@@ -45,6 +45,10 @@ namespace BorrowedHex.UI
         readonly Button[] swapTargets = new Button[MaxSwapTargets];
         Button swapBack;
         int swapCard = -1;   // the offer being swapped in while the target row shows, else -1
+        float upgradeOpenedAt = -1f;   // unscaled time the current choice opened (PaidClickGuard)
+
+        // Unscaled time: the sim clock is paused for the whole choice, so game time never moves.
+        bool PaidArmed => upgradeOpenedAt >= 0f && Time.unscaledTime - upgradeOpenedAt >= PaidClickGuard;
 
         RectTransform banner;
         CanvasGroup bannerGroup;
@@ -63,6 +67,15 @@ namespace BorrowedHex.UI
 
         /// <summary>Seconds the boss banner holds the frozen frame before the fight starts.</summary>
         public const float BannerHold = 2.4f;
+
+        /// <summary>
+        /// Seconds after the upgrade choice opens during which the paid buttons ignore clicks.
+        /// The choice opens mid-fight, often under a held or freshly pressed left button (aim /
+        /// fire); without a guard that click lands on whatever card is under the cursor and
+        /// spends life the player never meant to spend (final review, Important 2). Free
+        /// actions (Continue, Swap, Back) are not guarded: a stray click on them costs nothing.
+        /// </summary>
+        public const float PaidClickGuard = 0.35f;
         const float BannerFade = 0.6f;
 
         public static RunFlowPanels Create(Canvas canvas, Action<int, int> onChoose, Action onContinue, Action onPlayAgain, Action onMainMenu, Action onRetire = null)
@@ -107,7 +120,8 @@ namespace BorrowedHex.UI
                 tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
                 tr.offsetMin = new Vector2(CardTextLeft, CardTextInset);
                 tr.offsetMax = new Vector2(-CardButtonColumn, -CardTextInset);
-                cardMain[i] = Ui.Button("Main", row.transform, "", () => choose?.Invoke(index, -1), 20);
+                // Paid: guarded against the click that was already in flight when the panel opened.
+                cardMain[i] = Ui.Button("Main", row.transform, "", () => { if (PaidArmed) choose?.Invoke(index, -1); }, 20);
                 cardSwap[i] = Ui.Button("Swap", row.transform, "Swap — free", () => OnSwap(index), 20);
             }
             // Swap targets (R13d), hidden until a Swap with 2+ held asks which card goes.
@@ -235,9 +249,17 @@ namespace BorrowedHex.UI
                 // D96 caption (owner's words): upgrades are kept now, and taking one costs life.
                 upgradeNote.text = "You rely on borrowed power — and it comes with a price.";
                 ShowSwapTargets(-1);   // a new choice always opens on the cards, never mid-swap
+                upgradeOpenedAt = Time.unscaledTime;
                 FillCards();
             }
             upgradeDim.SetActive(upgrade);
+            // Grey the paid buttons out while the guard holds, so a click that is ignored reads as
+            // "not yet" rather than as a broken button. 0.35 s is shorter than any deliberate read.
+            if (upgrade)
+            {
+                bool armed = PaidArmed;
+                foreach (var b in cardMain) if (b.interactable != armed) b.interactable = armed;
+            }
 
             UpdateBanner(state);
 

@@ -202,6 +202,27 @@ namespace BorrowedHex.Tests
         }
 
         [UnityTest]
+        public IEnumerator UpgradePanel_PaidButtons_IgnoreAClickTheMomentThePanelOpens()
+        {
+            // Final review, Important 2: the panel opens mid-fight, under a held left button
+            // (aim / fire). A click that lands in the first instant was aimed at the arena, not
+            // at a card, and must not spend life. A deliberate click a moment later still buys.
+            yield return Frames(10);
+            var sim = root.Sim;
+            sim.DebugOpenChoice(new UpgradeOffer(UpgradeId.Overflow, 1));
+            yield return null;   // the panel opens in RunFlowPanels.LateUpdate
+            var main = OpenPanel(root.Flow, "UpgradeChoice").Find("Card0/Main").GetComponent<UnityEngine.UI.Button>();
+            double life = sim.LifeSeconds;
+            main.onClick.Invoke();
+            Assert.AreEqual(RunState.UpgradeChoice, sim.State, "a click on the opening frame is ignored");
+            Assert.AreEqual(0, sim.HeldUpgrades.Count);
+            Assert.AreEqual(life, sim.LifeSeconds, "no life spent");
+            yield return new WaitForSecondsRealtime(RunFlowPanels.PaidClickGuard + 0.1f);
+            main.onClick.Invoke();
+            Assert.AreEqual(1, sim.HeldUpgrades.Count, "after the guard, the same click buys");
+        }
+
+        [UnityTest]
         public IEnumerator UpgradePanel_EveryCardShape_IsCleanAndClearsTheHud()
         {
             yield return Frames(10);
