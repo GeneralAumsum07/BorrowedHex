@@ -88,7 +88,8 @@ namespace BorrowedHex.Presentation
             Menu.AddButton(() => IsWeb ? "Quit to menu" : "Main menu", ShowMainMenu);
             // uGUI draws later siblings on top: the pause menu is raised above the flow panels
             // so pausing during an upgrade choice shows the menu, not the panel behind it.
-            Flow = RunFlowPanels.Create(canvas, i => Sim.ChooseUpgrade(i), Restart, ShowMainMenu, () => Sim.RetireRun());
+            // D96: a card click passes (card, replace-or--1); Continue is the free "take nothing".
+            Flow = RunFlowPanels.Create(canvas, (i, r) => Sim.ChooseUpgrade(i, r), () => Sim.ContinueFromUpgrade(), Restart, ShowMainMenu, () => Sim.RetireRun());
             // Phase 14: built before the pause menu is raised, so Esc over the tutorial card
             // still shows the pause menu on top.
             BuildTutorial();

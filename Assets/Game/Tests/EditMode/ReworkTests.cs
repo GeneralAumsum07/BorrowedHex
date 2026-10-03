@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
@@ -441,5 +442,192 @@ namespace BorrowedHex.Tests
             CollectionAssert.AreEqual(new[] { 3f, 4f, 6f }, gains);
             Assert.AreEqual(3, sim.Score.BestChain);
         }
+
+        /// <summary>A short run at its first upgrade choice (invulnerable, encounter 1 cleared).</summary>
+        static ArenaSim AtFirstChoice()
+        {
+            var sim = P5.Short(1);
+            P5.Invulnerable(sim);
+            P5.ClearEncounter(sim);
+            Assert.AreEqual(RunState.UpgradeChoice, sim.State);
+            return sim;
+        }
+
+        /// <summary>
+        /// An endless run at its first choice (two 30 s waves, as EndlessTests does). The REAL
+        /// starting clock, not EndlessTests' 100000 s one: prices are fractions of life, and a
+        /// float near 15000 cannot hold the 1e-3 the price assertions need.
+        /// </summary>
+        static ArenaSim EndlessAtChoice()
+        {
+            var sim = new ArenaSim(TestSims.Config, new RunSetup { Seed = 1, Mode = GameMode.Endless });
+            P5.Invulnerable(sim);
+            P5.TickWhile(sim, RunState.Ready);
+            P5.TickWhile(sim, RunState.Combat, 40000);
+            Assert.AreEqual(RunState.UpgradeChoice, sim.State);
+            sim.DebugSetLife(sim.Stats.StartingSeconds);
+            return sim;
+        }
+
+        // ---- Upgrades for life (D96) -----------------------------------------------------------
+
+        static void NextChoice(ArenaSim sim)
+        {
+            if (sim.IsEndlessRun)
+            {
+                P5.TickWhile(sim, RunState.Combat, 40000);
+                // The third endless choice is the one deferred until the wave-six boss falls
+                // (EndlessTests: "BossIntro w6", then "UpgradeChoice w6"), so kill it as they do.
+                if (sim.State == RunState.BossIntro)
+                {
+                    Assert.IsTrue(sim.CompleteBossIntro());
+                    P5.Run(sim, 90);
+                    Assert.AreEqual(RunState.BossCombat, sim.State);
+                    P5.Kill(sim, sim.Boss);
+                    sim.Tick(P5.Still, P5.Dt);
+                }
+            }
+            else P5.ClearEncounter(sim);
+            Assert.AreEqual(RunState.UpgradeChoice, sim.State);
+            // Refill (Task 7's helper): three paid picks plus the waves between them would
+            // otherwise drain a test run to death before the case under test is reached.
+            sim.DebugSetLife(sim.Stats.StartingSeconds);
+        }
+
+        /// <summary>Index of the first offer that is NOT a rank-up (a new card), or -1.</summary>
+        static int NewCard(ArenaSim sim)
+        {
+            for (int i = 0; i < sim.Offers.Count; i++) if (!sim.IsRankUp(sim.Offers[i])) return i;
+            return -1;
+        }
+
+        [Test]
+        public void Continue_IsFree_AndTakesNothing()
+        {
+            var sim = AtFirstChoice();
+            float life = sim.LifeSeconds;
+            Assert.IsTrue(sim.ContinueFromUpgrade());
+            Assert.AreEqual(0, sim.HeldUpgrades.Count);
+            Assert.AreEqual(life, sim.LifeSeconds, 1e-4f);
+        }
+
+        [TestCase(0, 0.15f)]
+        [TestCase(1, 0.25f)]
+        [TestCase(2, 0.40f)]
+        [TestCase(3, 0.50f)]
+        public void Adding_CostsMoreTheMoreYouHold(int held, float fraction)
+        {
+            var sim = EndlessAtChoice();
+            for (int i = 0; i < held; i++) { Assert.IsTrue(sim.ChooseUpgrade(NewCard(sim))); NextChoice(sim); }
+            Assert.AreEqual(held, sim.HeldUpgrades.Count);
+            float life = sim.LifeSeconds;
+            Assert.AreEqual(life * fraction, sim.TakeCost, 1e-3f);
+            int hits = sim.Score.DamageTaken;
+            Assert.IsTrue(sim.ChooseUpgrade(NewCard(sim)));
+            Assert.AreEqual(life * (1f - fraction), sim.LifeSeconds, 1e-3f);
+            Assert.AreEqual(held + 1, sim.HeldUpgrades.Count);
+            Assert.AreEqual(hits, sim.Score.DamageTaken, "a price, not a hit (R13f)");
+        }
+
+        [Test]
+        public void Upgrades_NeverExpire_BetweenEncounters()
+        {
+            var sim = AtFirstChoice();
+            var pick = sim.Offers[0];
+            Assert.IsTrue(sim.ChooseUpgrade(0));
+            NextChoice(sim);
+            Assert.IsTrue(sim.Has(pick.Id), "R13a: nothing is discarded");
+            Assert.IsTrue(sim.ContinueFromUpgrade());
+            Assert.IsTrue(sim.Has(pick.Id));
+        }
+
+        [Test]
+        public void Swapping_IsFree_AndReplacesTheCardYouChose()
+        {
+            // R13d: with two held, the player names the one that goes.
+            var sim = EndlessAtChoice();
+            sim.ChooseUpgrade(NewCard(sim)); NextChoice(sim);
+            sim.ChooseUpgrade(NewCard(sim)); NextChoice(sim);
+            var keep = sim.HeldUpgrades[0].Id;
+            var drop = sim.HeldUpgrades[1].Id;
+            int i = NewCard(sim);
+            var incoming = sim.Offers[i].Id;
+            float life = sim.LifeSeconds;
+            Assert.IsTrue(sim.CanSwap);
+            Assert.IsTrue(sim.ChooseUpgrade(i, replace: 1));
+            Assert.AreEqual(life, sim.LifeSeconds, 1e-4f, "swaps are free");
+            Assert.IsTrue(sim.Has(keep));
+            Assert.IsFalse(sim.Has(drop));
+            Assert.IsTrue(sim.Has(incoming));
+            Assert.AreEqual(2, sim.HeldUpgrades.Count);
+        }
+
+        [Test]
+        public void RankUp_CostsTheSameAsAdding_AndRaisesOnlyThatCard()
+        {
+            var sim = Sim();
+            sim.DebugHold(UpgradeId.PiercingReturn, UpgradeId.EchoVolley);
+            // R13b: rank-up is never weaker. Held rank 1, offer rank 1 (cycle): new rank = max(1+1, 1) = 2.
+            sim.DebugOpenChoice(new UpgradeOffer(UpgradeId.PiercingReturn, 2), new UpgradeOffer(UpgradeId.Overflow, 1));
+            Assert.IsTrue(sim.IsRankUp(sim.Offers[0]));
+            float life = sim.LifeSeconds;
+            Assert.AreEqual(life * 0.40f, sim.TakeCost, 1e-3f, "two held: 40% either way");
+            Assert.IsTrue(sim.ChooseUpgrade(0));
+            Assert.AreEqual(2, sim.RankOf(UpgradeId.PiercingReturn));
+            Assert.AreEqual(1, sim.RankOf(UpgradeId.EchoVolley));
+            Assert.AreEqual(2, sim.HeldUpgrades.Count, "a rank-up adds no card");
+            Assert.AreEqual(life * 0.60f, sim.LifeSeconds, 1e-3f);
+        }
+
+        [Test]
+        public void FourHeld_OffersOnlyRankUps_AtHalfYourLife()
+        {
+            // R13c (owner): locked at four, but rank-ups stay on the table for 50%.
+            var sim = EndlessAtChoice();
+            sim.ContinueFromUpgrade();
+            sim.DebugHold(UpgradeId.Overflow, UpgradeId.Fusion, UpgradeId.EchoVolley, UpgradeId.HeavyOrbit);
+            Assert.IsTrue(sim.UpgradesLocked);
+            NextChoice(sim);
+            Assert.IsTrue(sim.Offers.Count > 0);
+            Assert.IsTrue(sim.Offers.All(sim.IsRankUp), "no new cards once locked");
+            Assert.IsFalse(sim.CanSwap);
+            Assert.AreEqual(sim.LifeSeconds * 0.50f, sim.TakeCost, 1e-3f);
+            Assert.IsFalse(sim.ChooseUpgrade(0, replace: 0), "no swaps once locked");
+            Assert.IsTrue(sim.ChooseUpgrade(0));
+            Assert.AreEqual(4, sim.HeldUpgrades.Count);
+        }
+
+        [Test]
+        public void MaxRankCards_AreNeverOffered()
+        {
+            var sim = AtFirstChoice();
+            sim.ContinueFromUpgrade();
+            sim.ForceUpgrade(UpgradeId.FinalSecond, 3);
+            for (int k = 0; k < 2; k++)
+            {
+                NextChoice(sim);
+                Assert.IsFalse(sim.Offers.Any(o => o.Id == UpgradeId.FinalSecond), "already at max rank");
+                Assert.AreEqual(sim.Config.upgrades.offerCount, sim.Offers.Count);
+                sim.ContinueFromUpgrade();
+            }
+        }
+
+        [Test]
+        public void HeldUpgrades_EachUseTheirOwnRank()
+        {
+            var sim = Sim();
+            sim.ForceUpgrade(UpgradeId.PiercingReturn, 2);
+            sim.DebugHold(UpgradeId.EchoVolley);
+            Assert.AreEqual(2, sim.RankOf(UpgradeId.PiercingReturn));
+            Assert.AreEqual(1, sim.RankOf(UpgradeId.EchoVolley));
+            Assert.AreEqual(0, sim.RankOf(UpgradeId.Overflow));
+        }
+
+        [TestCase(10.0, 100)]
+        [TestCase(0.1, 1)]
+        [TestCase(0.04, 0)]
+        [TestCase(180.0, 1800)]
+        public void LifeDisplay_ShowsTenPointsPerSecond(double seconds, int points)
+            => Assert.AreEqual(points, LifeDisplay.Points(seconds));
     }
 }

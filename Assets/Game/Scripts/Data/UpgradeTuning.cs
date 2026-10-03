@@ -13,6 +13,12 @@ namespace BorrowedHex.Data
     {
         [Tooltip("Distinct upgrades offered at each choice.")]
         public int offerCount = 3;
+        [Tooltip("D96: most upgrades held at once. At this many, only rank-ups are offered (owner value 4).")]
+        public int maxHeld = 4;
+        [Tooltip("D96: highest rank. Must match the length of the rank tables below (3).")]
+        public int maxRank = 3;
+        [Tooltip("D96: fraction of CURRENT life a paid pick (add or rank up) costs, by how many upgrades you hold BEFORE it (0, 1, 2, 3+). Owner values 0.15, 0.25, 0.40, 0.50; the last repeats.")]
+        public float[] takeCostByHeld = { 0.15f, 0.25f, 0.40f, 0.50f };
 
         [Header("Piercing Return")]
         [Tooltip("Extra enemies a returned non-explosive payload passes through, per rank.")]

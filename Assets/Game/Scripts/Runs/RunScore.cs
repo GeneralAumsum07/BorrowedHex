@@ -43,6 +43,13 @@ namespace BorrowedHex.Runs
         public int Overcharges { get; private set; }
         /// <summary>D95: the longest kill chain this run (owned by the sim's KillChain).</summary>
         public int BestChain => sim.Chain?.Best ?? 0;
+        // D96: life paid for upgrades. Kept apart from DamageTaken: a price is not a hit (R13f).
+        public float SecondsSacrificed { get; private set; }
+        public int UpgradesPaidFor { get; private set; }
+        public int MostUpgradesHeld { get; private set; }
+        internal void RecordUpgradePaid(float seconds) { SecondsSacrificed += seconds; UpgradesPaidFor++; }
+        // A high-water mark: a swap keeps the count, so only adds can raise it.
+        internal void RecordHeld(int count) { if (count > MostUpgradesHeld) MostUpgradesHeld = count; }
         public int Swaps { get; private set; }
         public int PillarsCrumbled { get; private set; }
         public int EnemiesOverstayed { get; private set; }
@@ -220,6 +227,9 @@ namespace BorrowedHex.Runs
         /// <summary>D93: releases fired inside the Overcharge zone.</summary>
         public readonly int Overcharges;
         public readonly int BestChain;   // D95
+        public readonly float SecondsSacrificed;   // D96
+        public readonly int UpgradesPaidFor;
+        public readonly int MostUpgradesHeld;
         public readonly int Swaps;
         public readonly int PillarsCrumbled;
         public readonly int EnemiesOverstayed;
@@ -259,6 +269,9 @@ namespace BorrowedHex.Runs
             Backfires = s.Backfires;
             Overcharges = s.Overcharges;
             BestChain = s.BestChain;
+            SecondsSacrificed = s.SecondsSacrificed;
+            UpgradesPaidFor = s.UpgradesPaidFor;
+            MostUpgradesHeld = s.MostUpgradesHeld;
             Swaps = s.Swaps;
             PillarsCrumbled = s.PillarsCrumbled;
             EnemiesOverstayed = s.EnemiesOverstayed;

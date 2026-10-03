@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
@@ -89,21 +90,21 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void ChosenUpgrade_LastsOneEncounter_ThenExpiresAtTheNextClear()
+        public void Upgrade_PersistsAfterItsEncounter()
         {
+            // D96 (R13a) supersedes section 5's one-encounter upgrades: nothing expires.
             var sim = P5.Short(5);
             P5.Invulnerable(sim);
             P5.ClearEncounter(sim);
             var pick = sim.Offers[1];
             Assert.IsTrue(sim.ChooseUpgrade(1));
             Assert.AreEqual(RunState.Combat, sim.State);
-            Assert.AreEqual(pick.Id, sim.ActiveUpgrade.Value.Id);
+            Assert.AreEqual(pick.Id, sim.HeldUpgrades.Last().Id);
             Assert.AreEqual(0, sim.Offers.Count, "offers are gone once chosen");
 
             P5.ClearEncounter(sim);
             Assert.AreEqual(RunState.UpgradeChoice, sim.State);
-            Assert.IsFalse(sim.ActiveUpgrade.HasValue, "expired when its encounter was cleared");
-            Assert.AreEqual(pick.Id, sim.ExpiredUpgrade.Value.Id, "the panel can say what expired");
+            Assert.IsTrue(sim.Has(pick.Id), "still held after the next clear");
         }
 
         [Test]
@@ -117,7 +118,7 @@ namespace BorrowedHex.Tests
             Assert.IsTrue(sim.ChooseUpgrade(0));
             Assert.AreEqual(RunState.BossIntro, sim.State);
             Assert.IsTrue(sim.CompleteBossIntro());
-            Assert.AreEqual(pick.Id, sim.ActiveUpgrade.Value.Id);
+            Assert.IsTrue(sim.Has(pick.Id));
         }
 
         [Test]

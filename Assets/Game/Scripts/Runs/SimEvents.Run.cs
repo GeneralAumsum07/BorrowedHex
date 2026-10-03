@@ -23,6 +23,10 @@ namespace BorrowedHex.Runs
 
         internal void RaiseKillChainChanged(int length, float bonus) => KillChainChanged?.Invoke(length, bonus);
 
+        /// <summary>D96: life was paid for an upgrade (an add or a rank-up): the card and the seconds paid.</summary>
+        public event Action<UpgradeOffer, float> UpgradePaid;
+        internal void RaiseUpgradePaid(UpgradeOffer offer, float seconds) => UpgradePaid?.Invoke(offer, seconds);
+
         internal void RaiseUpgradeChosen(UpgradeOffer o) => UpgradeChosen?.Invoke(o);
         internal void RaiseEchoFired(int root) => EchoFired?.Invoke(root);
         internal void RaisePacketsFused(Combat.CapturedPacket into, Combat.CapturedPacket from) => PacketsFused?.Invoke(into, from);

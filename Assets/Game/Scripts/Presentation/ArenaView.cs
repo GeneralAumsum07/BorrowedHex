@@ -639,10 +639,14 @@ namespace BorrowedHex.Presentation
             return sr;
         }
 
-        void SpawnTimeNumber(float delta, Vector2 at) =>
-            // No "s" suffix (D66): life reads as a health bar now, not a timer, so the number is
-            // just health gained or lost. The sim still counts it in seconds.
-            SpawnNumber($"{(delta > 0 ? "+" : "")}{delta:0.#}", delta < 0 ? RejectColor : ReturnedColor, at);
+        void SpawnTimeNumber(float delta, Vector2 at)
+        {
+            // No "s" suffix (D66), shown x10 (D100): life reads as a health bar, not a timer, so
+            // the number is whole health points. The sim still counts it in seconds.
+            // A change that rounds to 0 points is skipped, so tiny gains never leave a "0" behind.
+            if (LifeDisplay.Points(delta) == 0) return;
+            SpawnNumber(LifeDisplay.Signed(delta), delta < 0 ? RejectColor : ReturnedColor, at);
+        }
 
         /// <summary>A floating world-space number/label that rises and fades (life changes, D94 Overcharge).</summary>
         void SpawnNumber(string label, Color color, Vector2 at)

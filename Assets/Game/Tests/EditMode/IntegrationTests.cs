@@ -139,11 +139,15 @@ namespace BorrowedHex.Tests
                 {
                     case RunState.UpgradeChoice:
                         choices++;
-                        // Rotate through offer slots so different upgrades get held.
+                        // D96: four held at max rank leaves no cards; Continue is always legal.
+                        if (sim.Offers.Count == 0) { Assert.IsTrue(sim.ContinueFromUpgrade()); continue; }
+                        // Rotate through offer slots so different upgrades get held. ChooseUpgrade(i)
+                        // is an add or a rank-up (never a swap), so every pick now pays life (D96).
                         var pick = sim.Offers[choices % sim.Offers.Count];
                         Assert.IsTrue(sim.ChooseUpgrade(choices % sim.Offers.Count));
                         upgradesSeen.Add(pick.Id);
-                        Assert.AreEqual(pick.Id, sim.ActiveUpgrade.Value.Id);
+                        Assert.IsTrue(sim.Has(pick.Id));
+                        Assert.AreEqual(pick.Rank, sim.RankOf(pick.Id), "an add or rank-up holds the card at the offered rank");
                         continue;
                     case RunState.BossIntro:
                         Assert.IsTrue(sim.CompleteBossIntro());

@@ -66,9 +66,11 @@ namespace BorrowedHex.UI
             objectiveLabel.color = new Color(1, 1, 1, 0.8f);
             scoreLabel = Ui.Label("Score", root, "", 26, TextAnchor.MiddleLeft);
             Ui.Place(scoreLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -116), new Vector2(400, 34));
-            // Phase 7: the held upgrade, so the player can see what the current encounter grants.
-            upgradeLabel = Ui.Label("Upgrade", root, "", 20, TextAnchor.MiddleLeft);
-            Ui.Place(upgradeLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -146), new Vector2(520, 28));
+            // D96: every held upgrade, one per line under a header. Four names on one line ran
+            // past 520 px and widening would collide with the centred boss bar, so the label grows
+            // DOWN from the top-left instead (header + 4 lines at 20 px fit in 130 px).
+            upgradeLabel = Ui.Label("Upgrade", root, "", 20, TextAnchor.UpperLeft);
+            Ui.Place(upgradeLabel.rectTransform, new Vector2(0, 1), new Vector2(32, -152), new Vector2(520, 130));
             upgradeLabel.color = new Color(0.75f, 0.95f, 1f);
 
             bossBarBg = Ui.Image("BossBar", root, new Color(0, 0, 0, 0.6f));
@@ -192,9 +194,16 @@ namespace BorrowedHex.UI
             var score = sim.Score;
             scoreLabel.text = score.Multiplier > 1f ? $"SCORE {score.Score}   x{score.Multiplier:0.00}" : $"SCORE {score.Score}";
             scoreLabel.color = score.Multiplier > 1f ? Ui.Accent : Ui.Ink;
-            var up = sim.ActiveUpgrade;
-            upgradeLabel.text = up.HasValue
-                ? $"UPGRADE: {UpgradeInfo.Name(up.Value.Id).ToUpperInvariant()}{(up.Value.Rank > 1 ? $" {up.Value.Rank}" : "")}" : "";
+            // D96: up to four upgrades are held for the whole run; "LOCKED" once no new card can join.
+            var held = sim.HeldUpgrades;
+            if (held.Count == 0) upgradeLabel.text = "";
+            else
+            {
+                var parts = new string[held.Count];
+                for (int i = 0; i < held.Count; i++)
+                    parts[i] = UpgradeInfo.Name(held[i].Id).ToUpperInvariant() + (held[i].Rank > 1 ? $" {held[i].Rank}" : "");
+                upgradeLabel.text = (sim.UpgradesLocked ? "UPGRADES (LOCKED)\n" : "UPGRADES\n") + string.Join("\n", parts);
+            }
 
             var boss = sim.LivingBoss();
             bossBarBg.gameObject.SetActive(boss != null);
