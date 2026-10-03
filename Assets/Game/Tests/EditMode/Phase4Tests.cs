@@ -57,8 +57,10 @@ namespace BorrowedHex.Tests
             P4.Returned(sim, AttackIds.Rocket, new Vector2(0.5f, 0f), Vector2.right);
             P4.Run(sim, 60);
             Assert.AreEqual(0, sim.Score.DamageTaken);
-            Assert.AreEqual(3f, a.Health, 1e-4f, "8 - 5");
-            Assert.AreEqual(3f, b.Health, 1e-4f, "neighbour inside the radius");
+            // D92: the test rocket carries the default (Player) school, so a Siege takes x1.33.
+            float hit = 5f * sim.Config.combat.otherSchoolDamage;
+            Assert.AreEqual(a.MaxHealth - hit, a.Health, 1e-4f, "8 - 5 x other-school");
+            Assert.AreEqual(b.MaxHealth - hit, b.Health, 1e-4f, "neighbour inside the radius");
         }
 
         [Test]
@@ -91,7 +93,7 @@ namespace BorrowedHex.Tests
             sim.Events.ProjectileEnded += (p, r) => why = r;
             P4.Run(sim, 90);
             Assert.AreEqual(ProjectileEndReason.HitWall, why);
-            Assert.AreEqual(3f, e.Health, 1e-4f);
+            Assert.AreEqual(e.MaxHealth - 5f * sim.Config.combat.otherSchoolDamage, e.Health, 1e-4f, "D92: Player-school rocket on a Siege");
         }
 
         [Test]

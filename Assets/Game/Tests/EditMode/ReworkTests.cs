@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
+using BorrowedHex.Enemies;
 using BorrowedHex.Player;
 using BorrowedHex.Runs;
 using NUnit.Framework;
@@ -215,6 +216,76 @@ namespace BorrowedHex.Tests
             Shot(sim, new Vector2(1.2f, 0f));
             sim.Tick(Hold.WithCatch(), Dt);
             Assert.AreSame(first, released, "Overflow fires an unprimed hex (D91)");
+        }
+
+        // ---- School resistance (D92) -----------------------------------------------------------
+
+        static EnemyActor Spawned(ArenaSim sim, ActorCategory cat)
+        {
+            // The boss has no ordinary-enemy tuning (SpawnEnemy throws on it), so it comes in
+            // through its own spawner.
+            var e = cat == ActorCategory.Boss ? sim.SpawnBoss() : sim.SpawnEnemy(cat, new Vector2(4f, 0f));
+            e.ActiveAt = 0;
+            e.Health = e.MaxHealth = 100f;
+            return e;
+        }
+
+        static AttackSnapshot From(ActorCategory school)
+            => new AttackSnapshot { DefinitionId = "test", Kind = AttackKind.Bolt, SourceCategory = school };
+
+        [TestCase(ActorCategory.Acolyte, ActorCategory.Acolyte, 0.75f)]
+        [TestCase(ActorCategory.Acolyte, ActorCategory.SiegeFamiliar, 1.33f)]
+        [TestCase(ActorCategory.SiegeFamiliar, ActorCategory.SiegeFamiliar, 0.75f)]
+        public void School_OwnAttacksResisted_OthersAmplified(ActorCategory victim, ActorCategory school, float factor)
+        {
+            var sim = Sim();
+            var e = Spawned(sim, victim);
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(school), 1);
+            Assert.AreEqual(100f - 10f * factor, e.Health, 1e-3f);
+        }
+
+        [TestCase(DamageCategory.Orbit)]
+        [TestCase(DamageCategory.PartingGift)]
+        public void School_UpgradeDamageIsNeutral(DamageCategory category)
+        {
+            // R5 (owner): upgrades get neither the resistance nor the x1.33.
+            var sim = Sim();
+            var e = Spawned(sim, ActorCategory.Acolyte);
+            sim.DamageEnemy(e, 10f, category, From(ActorCategory.Player), 0);
+            Assert.AreEqual(90f, e.Health, 1e-3f);
+        }
+
+        [Test]
+        public void School_Riposte_CountsAsAnotherSource()
+        {
+            // R6 (owner): parry stays the Pursuer counter. The riposte snapshot is built exactly
+            // as FireRiposte builds it, so a later change there that tags it with the Pursuer's
+            // category fails this test.
+            var sim = Sim();
+            var e = Spawned(sim, ActorCategory.Pursuer);
+            var riposte = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Riposte), 999, sim.Ids.Next(), 0f);
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, riposte, 1);
+            Assert.AreEqual(100f - 10f * 1.33f, e.Health, 1e-3f);
+        }
+
+        [Test]
+        public void School_BossIgnoresIt()
+        {
+            var sim = Sim();
+            var e = Spawned(sim, ActorCategory.Boss);
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Boss), 1);
+            Assert.AreEqual(90f, e.Health, 1e-3f, "R7");
+        }
+
+        [Test]
+        public void School_DamageEventReportsTheScaledAmount()
+        {
+            var sim = Sim();
+            var e = Spawned(sim, ActorCategory.Acolyte);
+            float got = 0f;
+            sim.Events.EnemyDamaged += (_, d) => got = d.Amount;
+            sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
+            Assert.AreEqual(7.5f, got, 1e-4f);
         }
     }
 }

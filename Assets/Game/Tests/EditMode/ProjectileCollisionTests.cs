@@ -101,7 +101,8 @@ namespace BorrowedHex.Tests
             sim.Events.EnemyDamaged += (e, d) => seen = d;
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
             Assert.AreEqual(0, sim.Score.DamageTaken, "returned fire passes through the player");
-            Assert.AreEqual(enemy.MaxHealth - 1f, enemy.Health, 1e-4f);
+            // D92: the test bolt keeps the default (Player) school, so an Acolyte takes x1.33.
+            Assert.AreEqual(enemy.MaxHealth - sim.Config.combat.otherSchoolDamage, enemy.Health, 1e-4f);
             Assert.AreEqual(999, seen.SourceActorId, "provenance: original shooter survives the return");
             Assert.AreEqual(77, seen.RootReleaseId);
         }
@@ -136,8 +137,9 @@ namespace BorrowedHex.Tests
             var e2 = ActiveEnemy(sim, new Vector2(-1f, 0f));
             sim.SpawnProjectile(Bolt(sim), AttackFaction.Returned, new Vector2(-5f, 0f), Vector2.right, pierce: 1);
             for (int i = 0; i < 60; i++) sim.Tick(Idle, Dt);
-            Assert.AreEqual(e1.MaxHealth - 1f, e1.Health, 1e-4f);
-            Assert.AreEqual(e2.MaxHealth - 1f, e2.Health, 1e-4f);
+            float other = sim.Config.combat.otherSchoolDamage;   // D92, Player-school bolt
+            Assert.AreEqual(e1.MaxHealth - other, e1.Health, 1e-4f);
+            Assert.AreEqual(e2.MaxHealth - other, e2.Health, 1e-4f);
         }
 
         [Test]

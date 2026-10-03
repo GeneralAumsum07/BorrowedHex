@@ -115,8 +115,10 @@ namespace BorrowedHex.Tests
             }
             ReleaseService.Release(sim, packet, Vector2.zero, Vector2.right, 1);
             sim.Tick(P5.Still, 0.5f);
-            Assert.AreEqual(2f, first.Health);
-            Assert.AreEqual(2f, second.Health);
+            // D92: an Acolyte's own bolt returned onto Acolytes is resisted (x0.75).
+            float own = sim.Config.combat.ownSchoolDamage;
+            Assert.AreEqual(first.MaxHealth - own, first.Health, 1e-4f);
+            Assert.AreEqual(second.MaxHealth - own, second.Health, 1e-4f);
             Assert.AreEqual(0, sim.Projectiles.Count);
         }
 

@@ -201,12 +201,32 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>
+        /// School resistance (D92, owner rule): an enemy shrugs off its own school's magic (x0.75)
+        /// and takes x1.33 from any other school. "School" is the attack's SourceCategory, which a
+        /// returned payload keeps from its caster, so a bolt caught from ANY Acolyte is Acolyte
+        /// school. A riposte keeps the default Player category, so it is "another source" and
+        /// parry stays the Pursuer counter (R6, owner). Upgrade damage (Orbit, Parting Gift) is
+        /// neutral: the rule is about turning enemy magic on enemies, and upgrades are not enemy
+        /// magic (R5, owner). The boss is exempt (R7): in its fight its own returned shots are
+        /// nearly the only damage there is, so resistance would only lengthen it.
+        /// Applied in DamageEnemy, the single entry point, so the DamageEvent, kill check and
+        /// score all see the same scaled number.
+        /// </summary>
+        internal float SchoolMultiplier(EnemyActor victim, DamageCategory category, in AttackSnapshot shot)
+        {
+            if (victim.IsBoss || category == DamageCategory.Orbit || category == DamageCategory.PartingGift) return 1f;
+            var c = Config.combat;
+            return shot.SourceCategory == victim.Category ? c.ownSchoolDamage : c.otherSchoolDamage;
+        }
+
+        /// <summary>
         /// The single entry point for enemy damage. Ignores dead or still-warning enemies, so a
         /// spawn warning is genuinely harmless in both directions.
         /// </summary>
         public bool DamageEnemy(EnemyActor e, float amount, DamageCategory category, in AttackSnapshot shot, int rootReleaseId)
         {
             if (Summary != null || e == null || !e.IsActive(Clock.Now) || amount <= 0f) return false;
+            amount *= SchoolMultiplier(e, category, shot);
             var ev = new DamageEvent
             {
                 DamageId = Ids.Next(),

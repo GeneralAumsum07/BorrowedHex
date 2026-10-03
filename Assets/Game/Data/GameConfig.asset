@@ -155,6 +155,8 @@ MonoBehaviour:
       killValue: 25
       killSeconds: 6
     ripostePierce: 1
+    ownSchoolDamage: 0.75
+    otherSchoolDamage: 1.33
   arena:
     bounds:
       serializedVersion: 2

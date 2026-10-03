@@ -162,6 +162,11 @@ namespace BorrowedHex.Data
 
         [Tooltip("Parry: extra enemies the riposte passes through after the attacker (D26).")]
         public int ripostePierce = 1;
+
+        [Tooltip("D92: damage multiplier when an enemy is hit by its own school's attack (owner value 0.75).")]
+        public float ownSchoolDamage = 0.75f;
+        [Tooltip("D92: damage multiplier from any other school, ripostes included; upgrade damage is neutral (owner value 1.33).")]
+        public float otherSchoolDamage = 1.33f;
     }
 
     /// <summary>String IDs shared by data, snapshots, stats and save files.</summary>
