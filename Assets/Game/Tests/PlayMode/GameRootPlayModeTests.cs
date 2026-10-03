@@ -359,5 +359,43 @@ namespace BorrowedHex.Tests
             Assert.IsFalse(root.HitStopActive);
             Assert.Greater(sim.Clock.Now, frozenAt, "gameplay resumes");
         }
+
+        [UnityTest]
+        public IEnumerator RestartKey_OnlyActsOnTheResultsScreen()
+        {
+            yield return StartShortRun();
+            var first = root.Sim;
+            // D97: R in live combat does nothing.
+            Assert.IsFalse(root.HandleRestartKey(true));
+            Assert.AreSame(first, root.Sim);
+
+            // Die: the results screen comes up, then R starts a fresh run of the same kind.
+            first.DamagePlayer(100000, 0);
+            for (int i = 0; i < 10 && first.State != RunState.Results; i++) yield return null;
+            Assert.AreEqual(RunState.Results, first.State);
+            Assert.IsTrue(root.HandleRestartKey(true));
+            Assert.AreNotSame(first, root.Sim);
+            Assert.AreEqual(GameMode.Short, root.Sim.Setup.Mode);
+            StringAssert.Contains("[R]", root.Flow.AgainLabel);
+        }
+
+        [UnityTest]
+        public IEnumerator RestartKey_ThroughTheKeyboard()
+        {
+            yield return StartShortRun();
+            var kb = InputSystem.AddDevice<Keyboard>();
+            try
+            {
+                var first = root.Sim;
+                first.DamagePlayer(100000, 0);
+                for (int i = 0; i < 10 && first.State != RunState.Results; i++) yield return null;
+                InputSystem.QueueStateEvent(kb, new KeyboardState(Key.R));
+                yield return null;
+                InputSystem.QueueStateEvent(kb, new KeyboardState());
+                yield return null;
+                Assert.AreNotSame(first, root.Sim);
+            }
+            finally { InputSystem.RemoveDevice(kb); }
+        }
     }
 }

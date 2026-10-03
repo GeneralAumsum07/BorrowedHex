@@ -49,6 +49,7 @@ namespace BorrowedHex.UI
 
         GameObject resultsDim;
         Text resultsTitle;
+        Text resultsHeadline;
         Text resultsBody;
         Button againButton;
         RunSummary shownSummary;
@@ -152,13 +153,18 @@ namespace BorrowedHex.UI
             var rcol = Ui.Column(rp.rectTransform, 14);
             rcol.padding = new RectOffset(44, 44, 32, 36);
             resultsTitle = Ui.Sized(Ui.Label("Title", rp.transform, "", 58), 76);
-            resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 28, TextAnchor.UpperCenter), 340);   // 340: D96 added a line, and long lines wrap at 620 wide
+            // D97: one big headline (score, time, kills) under the title, so the outcome reads in
+            // a glance; the detailed stats move below it, smaller and dimmer, for whoever wants them.
+            resultsHeadline = Ui.Sized(Ui.Label("Headline", rp.transform, "", 40), 52);
+            resultsHeadline.color = Ui.Ink;
+            resultsBody = Ui.Sized(Ui.Label("Body", rp.transform, "", 21, TextAnchor.UpperCenter), 340);   // 340: D96 added a line, and long lines wrap at 620 wide
+            resultsBody.color = new Color(1, 1, 1, 0.65f);
             // Profile outcome (saved / XP / achievements / records), filled by the finalization.
             progressBody = Ui.Sized(Ui.Label("Progress", rp.transform, "", 24, TextAnchor.UpperCenter), 0);
             progressBody.color = new Color(0.75f, 0.95f, 1f);
             progressBody.supportRichText = true;
             resultsBody.lineSpacing = 1.15f;
-            againButton = Ui.Sized(Ui.Button("PlayAgain", rp.transform, "Play again", onPlayAgain), 72);
+            againButton = Ui.Sized(Ui.Button("PlayAgain", rp.transform, "Play again  [R]", onPlayAgain), 72);
             Ui.Sized(Ui.Button("MainMenu", rp.transform, "Main menu", onMainMenu), 64);
             resultsDim.SetActive(false);
         }
@@ -188,6 +194,9 @@ namespace BorrowedHex.UI
 
         /// <summary>True while the boss banner has held long enough to start the fight.</summary>
         public bool BannerDone => bannerShownAt >= 0f && Time.unscaledTime - bannerShownAt >= BannerHold;
+
+        /// <summary>The "Play again" button label, for testing that it contains [R].</summary>
+        public string AgainLabel => againButton.GetComponentInChildren<Text>().text;
 
         void LateUpdate()
         {
@@ -359,19 +368,14 @@ namespace BorrowedHex.UI
                 default: resultsTitle.text = s.Reason.ToString().ToUpperInvariant(); resultsTitle.color = Ui.Ink; break;
             }
             int secs = Mathf.FloorToInt(s.Duration);
+            resultsHeadline.text = $"{s.Score}   ·   {secs / 60}:{secs % 60:00}   ·   {s.Kills} kill{(s.Kills == 1 ? "" : "s")}";
             string bonus = s.VictoryBonus > 0 ? $"   (time bonus +{s.VictoryBonus})" : "";
-            // Centred "label: value" lines: the built-in font is proportional, so space-padded
-            // columns would not line up.
             resultsBody.text =
-                $"{ReasonText(s)}\n" +
-                $"Score: {s.Score}{bonus}\n" +
-                $"Best volley: {s.BestVolleyKills} kill{(s.BestVolleyKills == 1 ? "" : "s")}\n" +
-                $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased} packets)\n" +
-                // D100: life reads x10 on screen, so these use the same points as the pops.
-                $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}\n" +
-                $"Health sacrificed: {LifeDisplay.Points(s.SecondsSacrificed)} ({s.UpgradesPaidFor} upgrade{(s.UpgradesPaidFor == 1 ? "" : "s")})   Most held: {s.MostUpgradesHeld}\n" +
-                $"Backfires: {s.Backfires}   Swaps: {s.Swaps}   Average power: x{s.AverageFirePower:0.00}\n" +
-                $"Duration: {secs / 60}:{secs % 60:00}   Kills: {s.Kills}";
+                $"{ReasonText(s)}{bonus}\n" +
+                $"Best volley: {s.BestVolleyKills}   Best chain: x{s.BestChain}   Overcharges: {s.Overcharges}\n" +
+                $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased})   Average power: x{s.AverageFirePower:0.00}\n" +
+                $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}   Backfires: {s.Backfires}   Swaps: {s.Swaps}\n" +
+                $"Health sacrificed: {LifeDisplay.Points(s.SecondsSacrificed)} ({s.UpgradesPaidFor} upgrade{(s.UpgradesPaidFor == 1 ? "" : "s")})   Most held: {s.MostUpgradesHeld}";
         }
 
         static string ReasonText(RunSummary s)

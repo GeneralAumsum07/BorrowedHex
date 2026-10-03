@@ -217,6 +217,18 @@ namespace BorrowedHex.Presentation
         public void Restart() => BeginRun();
 
         /// <summary>
+        /// D97 (R14): R restarts ONLY from the results screen. In combat it would throw runs away
+        /// by accident; the pause menu already has Restart. The profile was finalized inside the
+        /// tick that ended the run, before the results appeared, so restarting at once is safe.
+        /// </summary>
+        public bool HandleRestartKey(bool pressed)
+        {
+            if (!pressed || InMainMenu || Sim == null || Sim.State != RunState.Results) return false;
+            Restart();
+            return true;
+        }
+
+        /// <summary>
         /// Menu open == PauseReason.Menu on the clock AND gameplay input off. The reason is
         /// separate from FocusLost, so regaining focus never silently resumes an open menu.
         /// </summary>
@@ -255,6 +267,7 @@ namespace BorrowedHex.Presentation
         void Update()
         {
             bool pausePressed = Input.ConsumePause();
+            bool restartPressed = Input.ConsumeRestart();
             if (cam == null) cam = Camera.main;
             if (InMainMenu)
             {
@@ -276,6 +289,7 @@ namespace BorrowedHex.Presentation
                 else SetMenuOpen(!Menu.IsOpen);
             }
             SyncGameplayInput();
+            if (HandleRestartKey(restartPressed)) return;
             // The boss banner holds the frozen frame for a beat, then the fight starts.
             if (Sim.State == RunState.BossIntro && Flow.BannerDone) Sim.CompleteBossIntro();
 

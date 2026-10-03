@@ -21,7 +21,7 @@ namespace BorrowedHex.Player
         public InputActionMap Gameplay { get; private set; }
         public InputActionMap Ui { get; private set; }
 
-        InputAction move, aim, catchAction, dash, release, cycle, pause;
+        InputAction move, aim, catchAction, dash, release, cycle, pause, restart;
         public InputAction UiPoint { get; private set; }
         public InputAction UiClick { get; private set; }
         public InputAction UiNavigate { get; private set; }
@@ -29,7 +29,7 @@ namespace BorrowedHex.Player
         public InputAction UiCancel { get; private set; }
         public InputAction UiScroll { get; private set; }
 
-        bool catchLatched, dashLatched, releaseLatched, cycleLatched, pauseLatched;
+        bool catchLatched, dashLatched, releaseLatched, cycleLatched, pauseLatched, restartLatched;
 
         /// <summary>
         /// Count of catch presses accepted for gameplay (diagnostics/tests). Lets a test prove
@@ -74,6 +74,9 @@ namespace BorrowedHex.Player
             // Escape can also leave browser fullscreen, so P is a fallback on both platforms.
             pause = Ui.AddAction("Pause", InputActionType.Button, "<Keyboard>/escape");
             pause.AddBinding("<Keyboard>/p");
+            // D97: one key to retry from the results screen. Lives in the UI map because the
+            // gameplay map is off on the results screen. GameRoot decides when it counts.
+            restart = Ui.AddAction("Restart", InputActionType.Button, "<Keyboard>/r");
 
             Ui.Enable();
         }
@@ -91,6 +94,7 @@ namespace BorrowedHex.Player
         void Update()
         {
             if (pause.WasPressedThisFrame()) pauseLatched = true;
+            if (restart.WasPressedThisFrame()) restartLatched = true;
             if (!Gameplay.enabled) return;
             // A press that starts over a HUD button belongs to the UI, never to combat.
             if (catchAction.WasPressedThisFrame() && !PointerOverUi())
@@ -115,6 +119,13 @@ namespace BorrowedHex.Player
             bool p = pauseLatched;
             pauseLatched = false;
             return p;
+        }
+
+        public bool ConsumeRestart()
+        {
+            bool r = restartLatched;
+            restartLatched = false;
+            return r;
         }
 
         /// <summary>Build the command for one sim step; latched presses are cleared.</summary>
