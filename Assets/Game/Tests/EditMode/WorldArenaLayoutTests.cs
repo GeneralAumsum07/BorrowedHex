@@ -37,12 +37,13 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void FollowingCameraHasAShallowerPitchAndCannotSeeOutsideTheWorldTerrain()
+        public void FollowingCameraLooksDownAtFiftyDegreesAndCannotSeeOutsideTheWorldTerrain()
         {
             var type = typeof(ArenaSim).Assembly.GetType("BorrowedHex.Presentation.WorldArt.WorldCameraPolicy");
             Assert.That(type, Is.Not.Null);
             var rotation = (Quaternion)type.GetMethod("Rotation").Invoke(null, null);
-            Assert.That(rotation.eulerAngles.x, Is.InRange(25f, 35f));
+            // Spec 2026-10-04 raised the pitch to 50 so the enclosure, not a clip plane, hides the void.
+            Assert.That(rotation.eulerAngles.x, Is.EqualTo(50f).Within(.01f));
             var centre = (Vector2)type.GetMethod("ClampFocus").Invoke(null, new object[] { new Vector2(1000, 1000), Layout(0).bounds });
             Assert.That(Layout(0).bounds.Contains(centre), Is.True);
         }

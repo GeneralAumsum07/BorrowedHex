@@ -10,8 +10,15 @@ namespace BorrowedHex.Tests
     public class WorldPixelRevisionTests
     {
         [Test]
-        public void CameraUsesTheRequestedTwentyFiveDegreePitch()
-            => Assert.That(WorldCameraPolicy.Rotation().eulerAngles.x, Is.EqualTo(25).Within(.01));
+        public void CameraLooksDownAtFiftyDegreesFromTwentyUnits()
+        {
+            // Rogue's Odyssey reads as 2.5D because the camera looks DOWN onto the floor.
+            // At 25 degrees the frustum saw far past the north wall into the void.
+            Assert.That(WorldCameraPolicy.Rotation().eulerAngles.x, Is.EqualTo(50).Within(.01));
+            Assert.That(WorldCameraPolicy.Offset.magnitude, Is.EqualTo(20).Within(.01));
+            Assert.That(WorldCameraPolicy.Offset.y, Is.EqualTo(15.32f).Within(.01));
+            Assert.That(WorldCameraPolicy.Offset.z, Is.EqualTo(-12.86f).Within(.01));
+        }
 
         [Test]
         public void EveryOrdinaryStageHasTwoOrThreeDistinctCoverKinds()

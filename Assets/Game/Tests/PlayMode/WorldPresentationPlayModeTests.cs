@@ -174,7 +174,7 @@ namespace BorrowedHex.Tests
             root.Sim.Player.Position += Vector2.right * 8;
             yield return new WaitForSecondsRealtime(.3f);
             Assert.That(camera.transform.position.x, Is.GreaterThan(start.x + 3));
-            Assert.That(camera.transform.eulerAngles.x, Is.EqualTo(25).Within(.01));
+            Assert.That(camera.transform.eulerAngles.x, Is.EqualTo(50).Within(.01));
             Assert.That(camera.fieldOfView, Is.EqualTo(40));
             SelectStage(1);
             yield return null;
