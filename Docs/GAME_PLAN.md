@@ -1,5 +1,12 @@
 # Borrowed Hex — Game Design and Implementation Plan
 
+> **Rework of 3 Oct 2026.** Several rules below are superseded by [REWORK_PLAN.md](REWORK_PLAN.md)
+> (decisions D89-D102): the hand rule, priming, school resistance, the power curve and Overcharge,
+> Overflow/Fusion triggers, kill chains, upgrades that last the run and are bought with life, the results
+> screen / R restart, the Blood Price (lifesteal) branch, a fully unlockable skill tree, life shown x10,
+> and score/XP from Overcharge and chains.
+> Where a section below carries a "Superseded" note, REWORK_PLAN.md wins.
+
 > The shared design and implementation brief for Borrowed Hex. Checkboxes describe work to perform; they do not claim
 > that work is complete. Rulings made during implementation live in `Docs/DECISIONS.md` (D1–D64 so far), measured
 > results in `Docs/TEST_EVIDENCE.md`, and phase-by-phase progress in `Docs/IMPLEMENTATION_STATUS.md`. Where this
@@ -77,6 +84,8 @@ and how long to hold.
 
 ### Controls
 
+*Extended: see REWORK_PLAN.md D97 (R restarts from the results screen).*
+
 | Action | Binding | Rule |
 |---|---|---|
 | Move | WASD | Camera-relative on the arena plane; diagonals normalized |
@@ -115,6 +124,8 @@ This section is the heart of the rework. Items marked *new* change the implement
 
 ### Catching
 
+*Superseded in part: see REWORK_PLAN.md D89 (hand rule) and D90 (priming).*
+
 - A catch attempt costs recovery even if it catches nothing; an empty attempt uses no slot.
 - The first successful interception in a window creates a packet. Further eligible projectiles caught in the same
   window join it, within capacity, without resetting anything.
@@ -129,6 +140,8 @@ This section is the heart of the rework. Items marked *new* change the implement
   consumption (D15).
 
 ### Which slot a catch fills — *new*
+
+*Superseded in part: see REWORK_PLAN.md D89 (hand rule) and D90 (priming).*
 
 1. If the **selected** slot is empty, the new packet goes there and starts decaying at once.
 2. Otherwise, if the other slot is empty, the new packet goes there and arrives **frozen**.
@@ -148,6 +161,8 @@ and earns no seconds until the player commits to it.
 - Pause, upgrade choices, the boss intro and focus loss freeze every packet, as before.
 
 ### Power — *new*
+
+*Superseded: see REWORK_PLAN.md D93 (power curve and Overcharge).*
 
 A packet's power multiplier rises with its decaying time `d` (seconds, 0 to 3.0):
 
@@ -173,12 +188,16 @@ A frozen packet can never backfire, because only a decaying packet's lifetime ru
 
 ### Firing
 
+*Superseded in part: see REWORK_PLAN.md D90 (unprimed hexes cannot fire).*
+
 - Right mouse fires the selected packet from the player's current position along the current aim, keeping the
   payloads' relative spread. The slot frees immediately.
 - A release fires exactly once. Echo effects never keep a slot occupied.
 - Fired payloads carry their original source ID, so a hex can kill the enemy that cast it (Return Policy).
 
 ### Per-enemy hexes — *new*
+
+*Extended: see REWORK_PLAN.md D92 (school resistance).*
 
 Each source gives a borrowed hex its own character when fired, so what the player caught matters as much as when they
 fire it. Values are *proposals* (Q4).
@@ -291,6 +310,8 @@ pillars fall on their own schedule, so cover disappears mid-fight. A repeated en
 
 ## 5. Encounter upgrades
 
+*Superseded in part: see REWORK_PLAN.md D91 (Overflow/Fusion) and D96 (upgrades no longer expire; bought with life, up to four).*
+
 ### Rules — *new*
 
 - After each encounter is cleared, the game pauses and offers **three distinct upgrades**; the player picks one.
@@ -325,6 +346,9 @@ not a returned hit for combo purposes. Piercing payloads keep a set of hit actor
 
 ### The run clock is life — *new*
 
+*Extended: see REWORK_PLAN.md D100 (life shown x10).*
+*Extended: see REWORK_PLAN.md D95 (kill chains).*
+
 The clock that limits the run is also the magician's health (owner idea 7; replaces the hearts of D51, Q1).
 
 - A short run starts with **180 s** (D65; was 300 s, D56). The clock counts down in active gameplay time and is capped at 180 s.
@@ -351,6 +375,9 @@ The clock that limits the run is also the magician's health (owner idea 7; repla
 - At most 12 ordinary enemies at once; queued spawns wait rather than stacking pressure (D44).
 
 ### Score and records
+
+*Extended: see REWORK_PLAN.md D102 (score from Overcharge and chains; XP from score).*
+*Superseded in part: see REWORK_PLAN.md D97 (results screen, R restart).*
 
 Kill values: pursuer and acolyte 10, scatter caster 20, siege familiar 25, overstayed 1.5× base, boss 250. A victory
 adds 2 points per second left on the clock.
@@ -386,6 +413,9 @@ Same combat, enemies, boss, score and profile, under a different scheduler.
 
 ### Mastery and points
 
+*Superseded in part: see REWORK_PLAN.md D99 (Blood Price lifesteal branch) and D101 (no equip limit, mastery cap 13).*
+*Extended: see REWORK_PLAN.md D102 (score from Overcharge and chains; XP from score).*
+
 Account-wide mastery, capped at level 10. Level 1 starts with no points; each level gained gives one point (nine
 total). Advancing from level `L` costs `100 + 50 * (L - 1)` XP; excess carries over. At level 10, statistics keep
 counting without new points.
@@ -404,6 +434,8 @@ XP is awarded on every ending (victory, death, time expiry, retirement) and fina
 achievement awards points. Riposte capture XP remains an open question from D29.
 
 ### Nine-node skill tree
+
+*Superseded in part: see REWORK_PLAN.md D99 (Blood Price lifesteal branch) and D101 (no equip limit, mastery cap 13).*
 
 Each node costs one point. Tier one needs mastery 2; tier two needs mastery 4 and its branch's tier-one node; tier
 three needs mastery 7 and its branch's tier-two node. Owned (not equipped) prerequisites suffice. At most three nodes

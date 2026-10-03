@@ -221,9 +221,14 @@ namespace BorrowedHex.Tests
             Assert.AreEqual("already finalized", service.FinalizeRun(s, setup).SkippedBecause, "never twice");
             Assert.AreEqual(1, service.Profile.stats.runs);
             Assert.IsTrue(ProfileService.Validate(service.Profile, out var why), "the profile stays valid: " + why);
-            TestContext.WriteLine($"{mode}/{styleId}/{kind}: {s.Reason} at {s.Duration:F0}s, " +
-                                  $"kills {s.Kills}, waves {s.WavesCompleted}, bosses {s.BossesDefeated}, choices {choices}, " +
-                                  $"upgrades {upgradesSeen.Count}, paused ticks {pausedTicks}, xp {first.Xp?.Total}");
+            string line = $"{mode}/{styleId}/{kind}: {s.Reason} at {s.Duration:F0}s, " +
+                          $"kills {s.Kills}, waves {s.WavesCompleted}, bosses {s.BossesDefeated}, choices {choices}, " +
+                          $"upgrades {upgradesSeen.Count}, swaps {s.Swaps}, overcharges {s.Overcharges}, best chain {s.BestChain}, " +
+                          $"paused ticks {pausedTicks}, xp {first.Xp?.Total}";
+            TestContext.WriteLine(line);
+            // Also to the Editor log under a fixed tag: the CLI test runner's JSON drops
+            // TestContext output, and the soak numbers are recorded in TEST_EVIDENCE as bot evidence.
+            Debug.Log("[soak] " + line);
         }
     }
 }

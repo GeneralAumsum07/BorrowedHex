@@ -13,6 +13,35 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Rework (3 Oct 2026) — implemented (owner playtest pending)
+
+Plan: `Docs/REWORK_PLAN.md`. Each line: feature (decision) — the tests that pin it. 410/410 EditMode, 32/32 PlayMode
+(counts include the separate World* arena tests from 2419d9c).
+
+- Hand rule: a catch lands only in the selected hand; Q pockets the hex (D89) — `ReworkTests.HandRule_*`,
+  `Store_Create_UsesOnlyTheSelectedSlot`.
+- Priming: a fresh hex cannot fire for 0.4 s, also while pocketed; Overflow ignores it (D90) — `ReworkTests.Priming_*`.
+- Overflow on a full hand; Fusion needs both slots (D91) — `Overflow_TriggersOnAFullHand_WithThePocketEmpty`,
+  `Fusion_NeedsBothSlotsFull_AFullHandAloneIsRejected`.
+- School resistance x0.75 own / x1.33 other; boss exempt; ripostes count as another school; upgrade damage
+  neutral (D92) — `ReworkTests.School_*`.
+- Power curve and Overcharge zone; freeze, shake and gold feedback (D93, D94) — `ReworkTests.Curve_*`,
+  `Overcharge_*`, PlayMode `Overcharge_FreezesTheFrameBriefly_WithoutLosingGameplayTime`.
+- Kill chains buy back escalating time (D95) — `ReworkTests.Chain_*`.
+- Upgrades last the run: continue free, swap free, pay life to add or rank up (by exactly one step), four max
+  (D96) — `Continue_IsFree_AndTakesNothing`, `Swapping_IsFree_*`, `RankUp_*`, `FourHeld_*`, `MaxRankCards_*`,
+  `HeldUpgrades_EachUseTheirOwnRank`, `Upgrades_NeverExpire_BetweenEncounters`.
+- R restarts from the results; compact results (D97) — PlayMode `RestartKey_OnlyActsOnTheResultsScreen`, `RestartKey_ThroughTheKeyboard`, `LayoutTests.Results_*`.
+- Tutorial teaches pocketing and the unstable hex (D98) — `TutorialTests.SlotsLesson_TeachesPocketingWithQ`.
+- Blood Price lifesteal branch (D99) — `ReworkTests.Lifesteal_*`, `MasteryTests.BloodPrice_*`.
+- Life shown x10 (D100) — `LifeDisplay`, used by every pop, card price and results line (no test of its own).
+- Fully unlockable tree, no equip, mastery cap 13 (D101) — `MasteryTests.EveryNode_CanBeOwned_*`,
+  `MaxLevel_IsTheCap_*`, `CheatTests.UnlockAll_*`, `LayoutTests.SkillTree_FourBranches_*`.
+- Score from Overcharge and chains; XP from score (D102) — `Overcharge_AddsScore`, `Chains_AddScore_TimesTheCombo`,
+  `MasteryTests.Score_EarnsXp`.
+- HUD and run panels never overlap (owner report) — `LayoutTests` (4 tests).
+- Cheats menu: invincibility and unlock-all (D103) — `CheatTests`.
+- Not done: any of it played by hand; every new value is a placeholder (see `HANDOFF.md`, Open questions).
 ### Phase 14 — Tutorial — implemented (owner check pending, 3 Oct 2026)
 
 - 'Tutorial' on the main menu, under Play. Six lessons: move, dash, capture (Acolyte), two slots and Q

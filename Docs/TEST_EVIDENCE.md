@@ -636,3 +636,48 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - Live editor, EditMode: 402/402 pass. PlayMode: 29/29 pass.
 - Not verified: the tree and the stolen-health pops by eye at 1920x1080 (needs a human look); whether the lifesteal
   values feel right (placeholders, human playtest).
+
+## Rework Task 12: verification, soak, docs (3 Oct 2026)
+
+- Changed: `Docs/GAME_PLAN.md` (banner + per-section pointers to REWORK_PLAN.md), `IMPLEMENTATION_STATUS.md`,
+  `HANDOFF.md`, this file; `IntegrationTests` soak line gains swaps, Overcharges and best chain, and is mirrored
+  to the Editor log as `[soak] ...` (the CLI runner's JSON drops TestContext output).
+- Live editor, compile clean. EditMode: 410/410 pass. PlayMode: 32/32 pass. (Counts include the World* arena tests
+  from the separate commit 2419d9c.)
+- Soak, 18 seeded runs (**bot evidence, not player evidence**: the bot's Q use and firing are scripted, so its
+  swap count proves the hand rule is wired, not that players will swap; it fires as soon as a hex is primed, so it
+  never Overcharges):
+
+  | Run | End | Time | Kills | Swaps | Best chain | XP |
+  |---|---|---|---|---|---|---|
+  | Short/snatcher/fresh | TimeExpired | 152 s | 36 | 105 | 7 | 119 |
+  | Short/snatcher/advanced | Death | 141 s | 36 | 100 | 4 | 116 |
+  | Short/snatcher/assisted | Victory | 50 s | 36 | 32 | 5 | 146 |
+  | Short/collector/fresh | Death | 163 s | 35 | 100 | 4 | 116 |
+  | Short/collector/advanced | Death | 142 s | 36 | 83 | 5 | 112 |
+  | Short/collector/assisted | Victory | 49 s | 35 | 33 | 5 | 141 |
+  | Short/daredevil/fresh | Death | 54 s | 10 | 39 | 2 | 57 |
+  | Short/daredevil/advanced | TimeExpired | 76 s | 18 | 65 | 5 | 68 |
+  | Short/daredevil/assisted | Victory | 51 s | 36 | 37 | 5 | 145 |
+  | Endless/snatcher/fresh | TimeExpired | 206 s | 69 | 144 | 7 | 224 |
+  | Endless/snatcher/advanced | TimeExpired | 222 s | 77 | 192 | 9 | 292 |
+  | Endless/snatcher/assisted | Retired | 1255 s | 912 | 765 | 8 | 2586 |
+  | Endless/collector/fresh | Death | 195 s | 71 | 126 | 7 | 231 |
+  | Endless/collector/advanced | Death | 157 s | 60 | 138 | 10 | 190 |
+  | Endless/collector/assisted | Retired | 1255 s | 911 | 786 | 7 | 2581 |
+  | Endless/daredevil/fresh | Death | 39 s | 9 | 36 | 3 | 30 |
+  | Endless/daredevil/advanced | Death | 59 s | 14 | 51 | 6 | 57 |
+  | Endless/daredevil/assisted | Retired | 1257 s | 896 | 776 | 7 | 2555 |
+
+  Unassisted survival ranged 39-222 s (the last recorded soak: 37-194 s). No earlier soak recorded swaps, so there is
+  no before/after for them. Overcharges were 0 in every run.
+- **Not verified (needs a person):**
+  - feel of the 0.4 s priming;
+  - Overcharge values (curve, zone, x1.5) and the shake and freeze strength;
+  - the "readable in about 2 s" results target;
+  - the boss fight with school resistance off for the boss;
+  - the balance of four held upgrades and the upgrade prices;
+  - the lifesteal values and how dense the stolen-health pops get in a busy fight;
+  - the score/XP values;
+  - the four-column skill tree at 1920x1080 by eye (the layout test checks boxes, not looks);
+  - **manual check (Review Focus 4):** pressing Enter on a freshly opened upgrade choice continues for free.

@@ -38,6 +38,7 @@ Evidence: `Docs/TEST_EVIDENCE.md`.
 | Dash | Space |
 | Pause | Escape, or P (browser-safe) |
 | Menus | Mouse; arrow keys and Enter |
+| Play again (results screen) | R (D97) |
 
 ## Modes and debug tools
 
@@ -51,13 +52,25 @@ Evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Tests
 
-- EditMode: **319/319** (live editor, `bash .superpowers/rt.sh editor`).
-- PlayMode: **11/11** (`bash .superpowers/rtp.sh`).
+- EditMode: **410/410** (live editor, `bash .superpowers/rt.sh editor`).
+- PlayMode: **32/32** (`bash .superpowers/rtp.sh`).
 - `Tests/EditMode/IntegrationTests.cs` soaks 18 whole runs: {short, endless} × {Snatcher, Collector, Daredevil} ×
   {fresh, advanced loadout, assisted}, through random pauses and focus losses, checking the enemy cap, life bounds,
   the endless projectile budget and clock freezes every tick, then finalizing each run once.
 
 ## Known issues and TBDs
+
+- **Open questions — rework placeholders needing a play pass** (`Docs/REWORK_PLAN.md`, D89-D102). None of these was
+  set by play:
+  - Upgrade prices: 15% / 25% / 40% / 50% of current life by cards held (`upgrades.takeCostByHeld`), and whether four
+    held upgrades is too strong (D96).
+  - Lifesteal rates: Leech 0.10, Siphon +0.10, Blood Debt +0.15 life seconds per damage, and whether a pop on every
+    hit crowds busy fights (D99).
+  - Overcharge score 20 and chain score {0, 5, 10, 15}, both times the combo (D102).
+  - XP per score: 1 XP per 50 points, uncapped (D102). In the soak, an assisted 20-minute endless run earned about
+    2,580 XP; reaching mastery 13 takes 4,500 in total. That is bot evidence: is that rate acceptable?
+  - Also untuned: priming 0.4 s (D90), the Overcharge curve and zone (D93), freeze/shake strength (D94), chain
+    window and bonuses (D95).
 
 - **TBD — tuning.** No value has been tuned from real sessions. The soak bot is far weaker than a person
   (it never reaches a boss unassisted), so its run lengths say nothing about balance. Question for Rachit: who
