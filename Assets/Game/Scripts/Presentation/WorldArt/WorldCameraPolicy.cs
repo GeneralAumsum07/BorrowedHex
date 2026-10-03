@@ -5,10 +5,12 @@ namespace BorrowedHex.Presentation.WorldArt
     /// <summary>Closer, lower perspective. Extended terrain covers the full ground frustum.</summary>
     public static class WorldCameraPolicy
     {
-        // 50 degrees looks down onto the arena (the 2.5D read the owner asked for) and keeps
-        // the north edge of the frustum within ~9 units of the north wall, where the
-        // enclosure's statement wall blocks the line of sight. FOV stays 40.
-        public const float Pitch = 50, Distance = 20;
+        // 30 degrees: the owner lowered it from 50 after seeing it in game, for a more
+        // side-on view of the props. The top frustum ray is then only 10 degrees below the
+        // horizon, so the enclosure's north wall (not the pitch) is what hides the void;
+        // ArenaVisibilityPlayModeTests.NoVoidVisible proves it from every camera extreme.
+        // FOV stays 40.
+        public const float Pitch = 30, Distance = 20;
         public static Quaternion Rotation() => Quaternion.Euler(Pitch, 0, 0);
         // Derived from the pitch, not hand-typed, so the two can never drift apart.
         public static Vector3 Offset => Rotation() * Vector3.back * Distance;

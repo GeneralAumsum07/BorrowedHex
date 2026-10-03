@@ -13,12 +13,17 @@ namespace BorrowedHex.Tests
 {
     /// <summary>
     /// Spec 5: from every clamped camera extreme, plus the risen travel camera, at 16:9 and
-    /// 21:9, every ray meets arena geometry within 60 units. Only the layer that never
+    /// 21:9, every ray meets arena geometry within RayLimit units. Only the layer that never
     /// dissolves (floor, outer ground, ribbon) gets colliders, so the property holds even
     /// with every dressing prop mid-dissolve.
     /// </summary>
     public class ArenaVisibilityPlayModeTests
     {
+        // 150, not 60: at the 30-degree pitch the top of the frame looks only 10 degrees below
+        // the horizon, so even rays that stay over the arena floor meet it 60-70 units out. The
+        // real void criterion is "hits nothing before the far clip" (1000); 150 keeps a margin
+        // while still failing any ray that escapes past the outer ground.
+        const float RayLimit = 150;
         readonly List<Object> created = new List<Object>();
         WorldArtLibrary art;
 
@@ -59,7 +64,7 @@ namespace BorrowedHex.Tests
                                 for (int x = 0; x < columns; x++) for (int y = 0; y < 9; y++)
                                 {
                                     var ray = camera.ViewportPointToRay(new Vector3(x / (columns - 1f), y / 8f));
-                                    Assert.That(Physics.Raycast(ray, 60), Is.True,
+                                    Assert.That(Physics.Raycast(ray, RayLimit), Is.True,
                                         $"{arena.worldTheme} focus {extreme} rise {rise} aspect {aspect:0.00} viewport ({x},{y}) sees void");
                                 }
                             }

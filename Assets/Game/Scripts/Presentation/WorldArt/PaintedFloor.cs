@@ -12,7 +12,10 @@ namespace BorrowedHex.Presentation.WorldArt
     /// </summary>
     public sealed class PaintedFloor
     {
-        public const float OuterMargin = 40, OuterTile = 8;
+        // 80, not 40: at the 30-degree pitch the travel camera's 2-unit rise lets the top
+        // corners of a 21:9 view clear the side walls near the north corners, and those rays
+        // only meet the ground ~60-70 units past the bounds. The quad is one draw either way.
+        public const float OuterMargin = 80, OuterTile = 8;
         public const int SnapshotCap = 512;
         public Material Floor { get; }
         public Material Outer { get; }

@@ -10,14 +10,14 @@ namespace BorrowedHex.Tests
     public class WorldPixelRevisionTests
     {
         [Test]
-        public void CameraLooksDownAtFiftyDegreesFromTwentyUnits()
+        public void CameraLooksDownAtThirtyDegreesFromTwentyUnits()
         {
-            // Rogue's Odyssey reads as 2.5D because the camera looks DOWN onto the floor.
-            // At 25 degrees the frustum saw far past the north wall into the void.
-            Assert.That(WorldCameraPolicy.Rotation().eulerAngles.x, Is.EqualTo(50).Within(.01));
+            // The owner's chosen pitch. At this angle the north wall, not the pitch, hides the
+            // void; the PlayMode NoVoidVisible test guards that.
+            Assert.That(WorldCameraPolicy.Rotation().eulerAngles.x, Is.EqualTo(30).Within(.01));
             Assert.That(WorldCameraPolicy.Offset.magnitude, Is.EqualTo(20).Within(.01));
-            Assert.That(WorldCameraPolicy.Offset.y, Is.EqualTo(15.32f).Within(.01));
-            Assert.That(WorldCameraPolicy.Offset.z, Is.EqualTo(-12.86f).Within(.01));
+            Assert.That(WorldCameraPolicy.Offset.y, Is.EqualTo(10f).Within(.01));
+            Assert.That(WorldCameraPolicy.Offset.z, Is.EqualTo(-17.32f).Within(.01));
         }
 
         [Test]
