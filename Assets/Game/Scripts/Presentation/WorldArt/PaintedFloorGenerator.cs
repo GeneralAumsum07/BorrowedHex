@@ -248,20 +248,23 @@ namespace BorrowedHex.Presentation.WorldArt
             DecalSheet grass = Sheet(decals, "grass"), rocks = Sheet(decals, "rocks"), vegetation = Sheet(decals, "vegetation");
             switch (theme)
             {
-                case "Graveyard": // approved swatch e2_painted
-                    PaintBase(d, 21, .007f, new Color(.08f, .11f, .07f), new Color(.17f, .21f, .12f), new Color(.15f, .11f, .08f), .44f);
-                    Footpath(d, 25, 46, new Color(.13f, .10f, .08f), .7f);
+                case "Graveyard": // approved swatch e2_painted, lifted ~35% after the first in-game review
+                    PaintBase(d, 21, .007f, new Color(.11f, .15f, .10f), new Color(.23f, .28f, .17f), new Color(.19f, .15f, .11f), .44f);
+                    Footpath(d, 25, 46, new Color(.17f, .14f, .11f), .7f);
                     Scatter(d, grass, N(30), 22, .5f, new Color(.48f, .62f, .40f), .35f, .9f, 400);
                     Scatter(d, rocks, N(22), 23, .5f, new Color(.55f, .55f, .6f), .6f, .9f, 160);
                     Scatter(d, vegetation, N(16), 24, .5f, new Color(.9f, .88f, .95f), .9f, .9f, 60);
                     break;
-                case "Cave": // first pass: violet-grey rock, dark damp pools, mineral flecks
-                    PaintBase(d, 31, .006f, new Color(.10f, .09f, .13f), new Color(.20f, .18f, .24f), new Color(.03f, .03f, .05f), .40f);
-                    Flecks(d, 33, N(900), new Color(.45f, .5f, .75f));
+                case "Cave": // violet-grey rock, damp pools, sparse mineral flecks
+                    // Second pass: the first read as a starfield over a void. The rock is ~1.7x
+                    // lighter, the pools shallower (.40 -> .28) so they stop punching black holes,
+                    // and the flecks are fewer (900 -> 160) and greyer so they read as mineral, not stars.
+                    PaintBase(d, 31, .006f, new Color(.18f, .16f, .22f), new Color(.33f, .30f, .38f), new Color(.09f, .08f, .12f), .28f);
+                    Flecks(d, 33, N(160), new Color(.38f, .40f, .52f));
                     Scatter(d, rocks, N(18), 34, .5f, new Color(.5f, .48f, .62f), .6f, .9f, 160);
                     break;
                 case "Sanctum": // first pass: worn basalt tiles with faint inlaid lines
-                    Tiles(d, 41, 80, .04f, new Color(.14f, .13f, .16f), new Color(.03f, .025f, .04f), 4, new Color(.30f, .24f, .42f));
+                    Tiles(d, 41, 80, .04f, new Color(.20f, .18f, .23f), new Color(.03f, .025f, .04f), 4, new Color(.30f, .24f, .42f));
                     Scatter(d, rocks, N(10), 43, .5f, new Color(.5f, .5f, .58f), .6f, .8f, 160);
                     break;
                 default: // Courtyard, approved swatch e1_painted; also the fallback theme
@@ -279,9 +282,10 @@ namespace BorrowedHex.Presentation.WorldArt
         {
             switch (theme)
             {
-                case "Graveyard": return (new Color(.06f, .08f, .05f), new Color(.12f, .15f, .09f), new Color(.10f, .08f, .06f));
-                case "Cave": return (new Color(.08f, .07f, .10f), new Color(.16f, .14f, .19f), new Color(.03f, .03f, .05f));
-                case "Sanctum": return (new Color(.07f, .06f, .09f), new Color(.14f, .12f, .16f), new Color(.05f, .04f, .07f));
+                // Lifted with the floors so the walls do not read darker than the ground they ring.
+                case "Graveyard": return (new Color(.08f, .11f, .07f), new Color(.16f, .20f, .12f), new Color(.13f, .10f, .08f));
+                case "Cave": return (new Color(.14f, .12f, .17f), new Color(.26f, .23f, .30f), new Color(.07f, .06f, .09f));
+                case "Sanctum": return (new Color(.10f, .09f, .13f), new Color(.19f, .17f, .22f), new Color(.07f, .06f, .09f));
                 default: return (new Color(.08f, .08f, .09f), new Color(.15f, .15f, .17f), new Color(.06f, .07f, .05f));
             }
         }

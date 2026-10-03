@@ -321,7 +321,7 @@ namespace BorrowedHex.Tests
                     var enclosure = new ArenaEnclosure(root, arena, models, ribbonMaterial, owned);
                     var floor = root.Find("Floor"); var outer = root.Find("Outer ground"); var ribbon = root.Find(ArenaEnclosure.RibbonName);
                     Assert.That(floor.position.y, Is.EqualTo(0).Within(1e-4)); Assert.That(floor.localScale.x, Is.EqualTo(b.width).Within(1e-4));
-                    Assert.That(outer.position.y, Is.LessThan(0)); Assert.That(outer.localScale.x, Is.EqualTo(b.width + 80).Within(1e-3));
+                    Assert.That(outer.position.y, Is.LessThan(0)); Assert.That(outer.localScale.x, Is.EqualTo(b.width + PaintedFloor.OuterMargin * 2).Within(1e-3));
                     var ribbonBounds = ribbon.GetComponent<Renderer>().bounds;
                     // The ribbon closes all four sides of the arena and reaches the §1 north height.
                     Assert.That(ribbonBounds.min.x, Is.LessThan(b.xMin)); Assert.That(ribbonBounds.max.x, Is.GreaterThan(b.xMax));
@@ -371,9 +371,10 @@ namespace BorrowedHex.Tests
             foreach (var theme in Themes)
             {
                 var lighting = WorldLightingPolicy.For(theme);
-                Assert.That(lighting.Ambient.maxColorComponent, Is.LessThanOrEqualTo(.15f), theme);
-                Assert.That(lighting.Fog.maxColorComponent, Is.LessThanOrEqualTo(.06f), theme);
-                Assert.That(lighting.MoonIntensity, Is.InRange(.2f, .5f), theme);
+                // Bounds widened after the brightness review; still a night rig, not daylight.
+                Assert.That(lighting.Ambient.maxColorComponent, Is.LessThanOrEqualTo(.25f), theme);
+                Assert.That(lighting.Fog.maxColorComponent, Is.LessThanOrEqualTo(.09f), theme);
+                Assert.That(lighting.MoonIntensity, Is.InRange(.2f, .6f), theme);
             }
         }
 
