@@ -397,5 +397,49 @@ namespace BorrowedHex.Tests
             sim.DamageEnemy(e, 1f, DamageCategory.ReturnedProjectile, shot, 1);
             Assert.IsTrue(flagged);
         }
+
+        // ---- Kill chains (D95) -----------------------------------------------------------------
+
+        [Test]
+        public void Chain_BonusEscalates_ThenRepeatsTheLast()
+        {
+            var c = new KillChain(2.5f, new[] { 0f, 1f, 3f, 5f });
+            Assert.AreEqual(0f, c.Register(0.0));
+            Assert.AreEqual(1f, c.Register(1.0));
+            Assert.AreEqual(3f, c.Register(2.0));
+            Assert.AreEqual(5f, c.Register(3.0));
+            Assert.AreEqual(5f, c.Register(4.0));
+            Assert.AreEqual(5, c.Length);
+        }
+
+        [Test]
+        public void Chain_BreaksWhenTheWindowPasses()
+        {
+            var c = new KillChain(2.5f, new[] { 0f, 1f, 3f, 5f });
+            c.Register(0.0);
+            c.Register(2.5);           // exactly on the edge still chains
+            Assert.AreEqual(2, c.Length);
+            Assert.AreEqual(0f, c.Register(5.1));
+            Assert.AreEqual(1, c.Length);
+            Assert.AreEqual(2, c.Best);
+        }
+
+        [Test]
+        public void Chain_AcolyteKillsGiveThreeFourSix()
+        {
+            // The owner's example: +3, +4, +6 for consecutive Acolyte kills.
+            var sim = Sim();
+            sim.DebugSetLife(60.0);
+            var gains = new List<float>();
+            sim.Events.LifeClockChanged += (d, _) => { if (d > 0) gains.Add(d); };
+            for (int i = 0; i < 3; i++)
+            {
+                var e = Spawned(sim, ActorCategory.Acolyte);
+                sim.DamageEnemy(e, 1000f, DamageCategory.ReturnedProjectile, From(ActorCategory.SiegeFamiliar), 1);
+                Run(sim, 30);
+            }
+            CollectionAssert.AreEqual(new[] { 3f, 4f, 6f }, gains);
+            Assert.AreEqual(3, sim.Score.BestChain);
+        }
     }
 }

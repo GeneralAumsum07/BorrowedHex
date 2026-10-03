@@ -157,6 +157,12 @@ MonoBehaviour:
     ripostePierce: 1
     ownSchoolDamage: 0.75
     otherSchoolDamage: 1.33
+    chainWindow: 2.5
+    chainBonusSeconds:
+    - 0
+    - 1
+    - 3
+    - 5
   arena:
     bounds:
       serializedVersion: 2

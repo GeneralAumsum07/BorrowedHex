@@ -41,6 +41,8 @@ namespace BorrowedHex.Runs
         public int Backfires { get; private set; }
         /// <summary>D93: perfect releases (fired inside the Overcharge zone).</summary>
         public int Overcharges { get; private set; }
+        /// <summary>D95: the longest kill chain this run (owned by the sim's KillChain).</summary>
+        public int BestChain => sim.Chain?.Best ?? 0;
         public int Swaps { get; private set; }
         public int PillarsCrumbled { get; private set; }
         public int EnemiesOverstayed { get; private set; }
@@ -217,6 +219,7 @@ namespace BorrowedHex.Runs
         public readonly int Backfires;
         /// <summary>D93: releases fired inside the Overcharge zone.</summary>
         public readonly int Overcharges;
+        public readonly int BestChain;   // D95
         public readonly int Swaps;
         public readonly int PillarsCrumbled;
         public readonly int EnemiesOverstayed;
@@ -255,6 +258,7 @@ namespace BorrowedHex.Runs
             DamageTaken = s.DamageTaken;
             Backfires = s.Backfires;
             Overcharges = s.Overcharges;
+            BestChain = s.BestChain;
             Swaps = s.Swaps;
             PillarsCrumbled = s.PillarsCrumbled;
             EnemiesOverstayed = s.EnemiesOverstayed;

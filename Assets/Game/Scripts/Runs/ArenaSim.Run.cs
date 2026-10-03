@@ -46,6 +46,8 @@ namespace BorrowedHex.Runs
         // Kept separate from elapsed gameplay time: kills can buy life, never rewind AI timers.
         double lifeSeconds;
         public float LifeSeconds => (float)lifeSeconds;
+        /// <summary>D95: the current kill chain (driven by the gameplay clock).</summary>
+        public KillChain Chain { get; private set; }
 
         // Tolerance for schedule boundaries: 60 Hz steps accumulate double rounding, and a
         // transition must fire ON the 2400th tick, not one tick late.
@@ -55,6 +57,8 @@ namespace BorrowedHex.Runs
         {
             lifeSeconds = Stats.StartingSeconds;
             Score = new RunScore(this);
+            // Built before the kill subscription, so the very first kill already has a chain to register in.
+            Chain = new KillChain(Config.combat.chainWindow, Config.combat.chainBonusSeconds);
             Events.EnemyKilled += RewardKillTime;
             nextFormationAt = Config.shortMode.firstSpawnDelay;
             InitEndless();
@@ -229,15 +233,21 @@ namespace BorrowedHex.Runs
 
         void RewardKillTime(EnemyActor enemy, Combat.DamageEvent damage)
         {
-            // A kill cannot revive a clock already depleted by this tick's hit or ticking.
+            // A kill cannot revive a clock already depleted by this tick's hit or ticking. Boss
+            // kills neither extend nor break a chain (R15): their reward is the run's ending.
             if (Summary != null || !Player.Alive || lifeSeconds <= 0 || enemy.IsBoss) return;
-            float reward = Config.combat.For(enemy.Category).killSeconds * (enemy.Elite ? 1.5f : 1f);
+            float chainBonus = Chain.Register(Clock.Now);
+            Events.RaiseKillChainChanged(Chain.Length, chainBonus);
+            float reward = Config.combat.For(enemy.Category).killSeconds * (enemy.Elite ? 1.5f : 1f) + chainBonus;
             double before = lifeSeconds;
             lifeSeconds = System.Math.Min(Stats.StartingSeconds, lifeSeconds + reward);
             float gained = (float)(lifeSeconds - before);
             Score.RecordTimeGained(gained);
             if (gained > 0) Events.RaiseLifeClockChanged(gained, enemy.Position);
         }
+
+        /// <summary>Sandbox/test helper: set the life clock directly (capped like any gain).</summary>
+        public void DebugSetLife(double seconds) => lifeSeconds = System.Math.Max(0, System.Math.Min(Stats.StartingSeconds, seconds));
 
         // ---- Encounter director -----------------------------------------------------------
 

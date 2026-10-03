@@ -18,6 +18,10 @@ namespace BorrowedHex.Runs
         public event Action<int> EchoFired;
         /// <summary>Fusion merged the second packet into the first (the second no longer exists).</summary>
         public event Action<Combat.CapturedPacket, Combat.CapturedPacket> PacketsFused;
+        /// <summary>D95: a kill extended or started a chain: its length and the bonus seconds it earned.</summary>
+        public event Action<int, float> KillChainChanged;
+
+        internal void RaiseKillChainChanged(int length, float bonus) => KillChainChanged?.Invoke(length, bonus);
 
         internal void RaiseUpgradeChosen(UpgradeOffer o) => UpgradeChosen?.Invoke(o);
         internal void RaiseEchoFired(int root) => EchoFired?.Invoke(root);

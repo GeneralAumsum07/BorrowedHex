@@ -18,6 +18,7 @@ namespace BorrowedHex.UI
         Image lifeHeart, lifeBarBg, lifeBarFill;
         Text objectiveLabel;
         Text scoreLabel;
+        Text chainLabel;   // D95
         Image bossBarBg, bossBarFill;
         public Button PauseButton { get; private set; }
         public Button ResetButton { get; private set; }
@@ -55,6 +56,10 @@ namespace BorrowedHex.UI
             var lf = lifeBarFill.rectTransform;
             lf.anchorMin = Vector2.zero; lf.anchorMax = Vector2.one; lf.pivot = new Vector2(0, 0.5f);
             lf.offsetMin = lf.offsetMax = Vector2.zero;
+            // D95: the chain counter sits right of the life bar, because chains are life.
+            chainLabel = Ui.Label("Chain", root, "", 22, TextAnchor.MiddleLeft);
+            Ui.Place(chainLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(26 + 200 + 95, -38), new Vector2(170, 30));
+            chainLabel.color = Ui.Accent;
             // Section 6: "present the objective clearly from the start" — what phase this is.
             objectiveLabel = Ui.Label("Objective", root, "", 22);
             Ui.Place(objectiveLabel.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -90), new Vector2(800, 30));
@@ -166,7 +171,17 @@ namespace BorrowedHex.UI
             // a reminder, not gameplay). Below 1/6 of the cap = 30 s at 180, the old red-text threshold.
             float beat = frac < 1f / 6f && !DisplayOptions.ReduceFlashes ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
             lifeHeart.rectTransform.localScale = new Vector3(beat, beat, 1);
-            int n = sim.Config.shortMode.encounterCount;
+            // Shown from the 2nd kill (a "chain" of one is just a kill), fading out as the window
+            // runs down so the player can see how long they have to keep it going.
+            var chain = sim.Chain;
+            bool showChain = chain != null && chain.Length >= 2 && chain.IsActive(now);
+            chainLabel.text = showChain ? $"CHAIN x{chain.Length}  +{chain.BonusFor(chain.Length + 1):0.#} next" : "";
+            if (showChain)
+            {
+                float left = Mathf.Clamp01((float)((chain.ExpiresAt - now) / Mathf.Max(0.01f, sim.Config.combat.chainWindow)));
+                chainLabel.color = new Color(Ui.Accent.r, Ui.Accent.g, Ui.Accent.b, 0.35f + 0.65f * left);
+            }
+            int n =sim.Config.shortMode.encounterCount;
             objectiveLabel.text = sim.Tutorial != null
                     ? $"TUTORIAL   ·   LESSON {sim.Tutorial.LessonNumber}/{BorrowedHex.Runs.TutorialDirector.LessonCount}"
                 : sim.IsEndlessRun ? EndlessObjective()

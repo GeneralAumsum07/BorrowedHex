@@ -167,6 +167,10 @@ namespace BorrowedHex.Data
         public float ownSchoolDamage = 0.75f;
         [Tooltip("D92: damage multiplier from any other school, ripostes included; upgrade damage is neutral (owner value 1.33).")]
         public float otherSchoolDamage = 1.33f;
+        [Tooltip("D95: seconds after a kill during which the next kill extends the chain (placeholder).")]
+        public float chainWindow = 2.5f;
+        [Tooltip("D95: extra seconds for the 1st, 2nd, 3rd... kill of a chain; the last entry repeats (placeholder).")]
+        public float[] chainBonusSeconds = { 0f, 1f, 3f, 5f };
     }
 
     /// <summary>String IDs shared by data, snapshots, stats and save files.</summary>
