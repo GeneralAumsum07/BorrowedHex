@@ -167,7 +167,9 @@ namespace BorrowedHex.UI
             float beat = frac < 1f / 6f && !DisplayOptions.ReduceFlashes ? 1f + 0.12f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 6f)) : 1f;
             lifeHeart.rectTransform.localScale = new Vector3(beat, beat, 1);
             int n = sim.Config.shortMode.encounterCount;
-            objectiveLabel.text = sim.IsEndlessRun ? EndlessObjective()
+            objectiveLabel.text = sim.Tutorial != null
+                    ? $"TUTORIAL   ·   LESSON {sim.Tutorial.LessonNumber}/{BorrowedHex.Runs.TutorialDirector.LessonCount}"
+                : sim.IsEndlessRun ? EndlessObjective()
                 : !sim.IsShortRun ? "SANDBOX"
                 : sim.Encounter < n ? $"ENCOUNTER {sim.Encounter + 1}/{n} — KILL ALL ENEMIES ({sim.EnemiesLeftInEncounter()} LEFT)"
                 : $"DEFEAT {sim.Config.collector.displayName.ToUpperInvariant()}";

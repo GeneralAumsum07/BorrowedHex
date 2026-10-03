@@ -128,7 +128,9 @@ namespace BorrowedHex.Runs
             if (Summary != null || !Player.Alive || lifeSeconds <= 0 || amount <= 0
                 || (!bypassInvulnerability && Player.IsInvulnerable(now))) return false;
             double before = lifeSeconds;
-            lifeSeconds = Math.Max(0, lifeSeconds - amount);
+            // Tutorial (D86): the hit still lands (event, invulnerability window, flash on the
+            // player) so the player learns what a hit looks like, but it costs no time.
+            if (!Setup.Tutorial) lifeSeconds = Math.Max(0, lifeSeconds - amount);
             Player.InvulnerableUntil = now + (invulnerability >= 0f ? invulnerability : Stats.HitInvulnerability);
             Events.RaisePlayerHit(amount, sourceActorId);
             Events.RaiseLifeClockChanged((float)(lifeSeconds - before), Player.Position);

@@ -62,6 +62,9 @@ namespace BorrowedHex.Presentation
             // uGUI draws later siblings on top: the pause menu is raised above the flow panels
             // so pausing during an upgrade choice shows the menu, not the panel behind it.
             Flow = RunFlowPanels.Create(canvas, i => Sim.ChooseUpgrade(i), Restart, ShowMainMenu, () => Sim.RetireRun());
+            // Phase 14: built before the pause menu is raised, so Esc over the tutorial card
+            // still shows the pause menu on top.
+            BuildTutorial();
             Menu.transform.SetAsLastSibling();
             BuildDevPanel();
             BuildMenus();
@@ -108,7 +111,7 @@ namespace BorrowedHex.Presentation
         string AutoSpawnLabel => autoSpawn ? "Auto-spawn: ON" : "Auto-spawn: OFF";
 
         /// <summary>What the next BeginRun starts. Chosen on the main menu; Restart repeats it.</summary>
-        enum RunKind { Backdrop, Short, Sandbox, Endless, EndlessDebug }
+        enum RunKind { Backdrop, Short, Sandbox, Endless, EndlessDebug, Tutorial }
         RunKind kind = RunKind.Backdrop;
 
         /// <summary>Start a fresh run of the current kind: a new sim and view; the old ones are discarded whole.</summary>
@@ -130,6 +133,14 @@ namespace BorrowedHex.Presentation
                 // marked Debug up front, so nothing it does can reach the profile.
                 setup = new RunSetup { Mode = GameMode.Endless, Seed = System.Environment.TickCount ^ (runCounter * 7919),
                     Debug = kind == RunKind.EndlessDebug };
+                ApplyLoadout(setup);
+            }
+            else if (kind == RunKind.Tutorial)
+            {
+                // Phase 14 (D86): a sandbox with the lesson script and a frozen clock. The
+                // loadout still applies so the tutorial teaches the style the player picked
+                // (a Daredevil catches by dashing, and the prompts are read with that in mind).
+                setup = RunSetup.ForTutorial(runCounter);
                 ApplyLoadout(setup);
             }
             else
@@ -158,7 +169,10 @@ namespace BorrowedHex.Presentation
             View = ArenaView.Create(Sim);
             Hud.Bind(Sim);
             Flow.Bind(Sim);
-            Hud.SetResetVisible(Sim.Setup.Sandbox || Sim.Setup.Debug);
+            TutorialUi.Bind(Sim);
+            // The tutorial is a sandbox under the hood, but its dev panel would let a new player
+            // summon a boss into lesson one: hidden, like in a scored run.
+            Hud.SetResetVisible((Sim.Setup.Sandbox || Sim.Setup.Debug) && !Sim.Setup.Tutorial);
             Hud.gameObject.SetActive(kind != RunKind.Backdrop);
             accumulator = 0f;
             gameplayInput = null;
@@ -248,6 +262,7 @@ namespace BorrowedHex.Presentation
                 View.AfterStep();
                 accumulator -= Step;
             }
+            TickTutorialCard();
             View.Render(accumulator / Step);
         }
 

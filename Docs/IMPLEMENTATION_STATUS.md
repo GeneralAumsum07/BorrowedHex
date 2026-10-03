@@ -13,6 +13,17 @@ Test evidence: `Docs/TEST_EVIDENCE.md`.
 
 ## Phase log
 
+### Phase 14 — Tutorial — implemented (owner check pending, 3 Oct 2026)
+
+- 'Tutorial' on the main menu, under Play. Five lessons: move, dash, capture (Acolyte), two slots and Q
+  (Acolyte + Siege Familiar), parry (Pursuer). Lessons cannot be failed; the clock is frozen (D86).
+- `Runs/TutorialDirector.cs` (watches sim events, spawns each lesson's enemies, respawns them until the goal
+  is met), `Runs/ArenaSim.Tutorial.cs`, `RunSetup.ForTutorial`; `UI/TutorialPanel.cs` (prompt band and
+  completion card), `Presentation/GameRoot.Tutorial.cs`, the movement marker in `ArenaView`, and the HUD reads
+  'TUTORIAL · LESSON n/5'.
+- 315/315 EditMode, 11/11 PlayMode.
+- Not done: played by hand; the band and card layout and prompt wording are unseen by a person.
+
 ### Phase 13 — Integration and build handoff — partly done (3 Oct 2026)
 
 - Integration soak (`IntegrationTests`): 18 whole runs across modes, styles and loadouts, invariants every tick.

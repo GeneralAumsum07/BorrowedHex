@@ -579,3 +579,23 @@ Test report: EditMode 165/165, PlayMode 2/2.
 - Web release build: Succeeded, 0 errors, 1 warning, 6.2 min. Served over HTTP; main menu shows no dev buttons;
   Endless started, enemies spawned, wave clock counted down after the canvas was clicked; no console errors.
 - Not verified: 60 FPS at 1080p on the target machine; full human playthroughs in either build; tuning.
+
+## Phase 14 — Tutorial (3 Oct 2026)
+
+- Files: new `Runs/TutorialDirector.cs`, `Runs/ArenaSim.Tutorial.cs`, `UI/TutorialPanel.cs`, `Presentation/GameRoot.Tutorial.cs`,
+  `Tests/EditMode/TutorialTests.cs`; changed `RunSetup`, `ArenaSim` (hit cost), `ArenaSim.Run` (clock, tick), `GameRoot`,
+  `GameRoot.Menus`, `GameplayHud`, `ArenaView`, `Tests/PlayMode/GameRootPlayModeTests.cs` (D86).
+- Live editor, EditMode: 315/315 pass (6 new). PlayMode: 11/11 pass (1 new).
+- EditMode: a tutorial setup is a sandbox; 30 s pass and a 50-point hit lands (PlayerHit fires) without the clock moving,
+  while an ordinary sandbox still drains. Markers count only in order (standing on the third first does nothing), the
+  beat shows 'Nice!' and no marker, the dash lesson has no enemies, and 3 dashes start the capture lesson with one
+  Acolyte. Killing that Acolyte without a catch summons a fresh one. A scripted player that only sends PlayerCommands
+  (walk, dash, aim at and catch incoming shots, fire, Q, press catch as the Pursuer's rim opens) finishes all five
+  lessons in order with >= 3 captures, >= 1 swap and >= 2 parries, the clock unchanged, the run still in Combat, and
+  the arena empty at the end. The parry test checks that one parry shows 'parries 1/2' and that, if the riposte killed
+  the Pursuer, a live replacement exists.
+- PlayMode: the 'tutorial' entry starts a tutorial run with Reset hidden, the prompt band showing 'W A S D', the
+  marker drawn and gameplay input on; walking the markers advances the lesson in the real frame loop with the clock
+  frozen; Restart repeats the tutorial; Main menu hides the band; the profile records no run and no save is written.
+- Not verified: the completion card and its Play/Main menu buttons in the frame loop (the pause it sets is three lines,
+  unexercised by a test); the scripted player only ran the default Snatcher style; layout, wording and feel by eye.

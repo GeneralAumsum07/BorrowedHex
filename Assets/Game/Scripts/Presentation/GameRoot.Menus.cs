@@ -36,6 +36,8 @@ namespace BorrowedHex.Presentation
 
             Main = MainMenu.Create(canvas);
             Main.AddEntry("play_short", "Play", PlayShort);
+            // Phase 14: right under Play, where a first-time player looks first (D86).
+            Main.AddEntry("tutorial", "Tutorial", PlayTutorial);
             // Visibly disabled until their phase lands (Phase 8 checklist).
             Main.AddEntry("endless", "Endless", null, "later build");
             Main.AddEntry("practice", "Practice sandbox", PlaySandbox);

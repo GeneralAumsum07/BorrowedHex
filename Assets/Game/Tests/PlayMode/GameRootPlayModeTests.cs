@@ -144,6 +144,49 @@ namespace BorrowedHex.Tests
         }
 
         [UnityTest]
+        public IEnumerator Tutorial_FromTheMainMenu_ShowsItsPrompt_HidesTheDevPanel_AndSavesNothing()
+        {
+            root.Main.Press("tutorial");
+            root.SetFocus(true);
+            root.SetMenuOpen(false);
+            yield return null;
+            Assert.IsFalse(root.InMainMenu);
+            Assert.IsNotNull(root.Sim.Tutorial, "a tutorial run");
+            Assert.IsTrue(root.Sim.Setup.Sandbox);
+            Assert.IsFalse(root.Hud.ResetButton.gameObject.activeSelf, "no dev panel or Reset in the tutorial");
+            var band = GameObject.Find("Tutorial/PromptBand");
+            Assert.IsNotNull(band, "the prompt band is showing");
+            StringAssert.Contains("W A S D", band.GetComponentInChildren<UnityEngine.UI.Text>(true).transform.parent
+                .Find("Prompt").GetComponent<UnityEngine.UI.Text>().text);
+            Assert.IsNotNull(GameObject.Find("ArenaView/TutorialMarker"), "the movement marker is drawn");
+            Assert.IsTrue(root.Input.Gameplay.enabled, "the player can move");
+
+            // Walk the markers the quick way; the lesson advances inside the real frame loop.
+            float life = root.Sim.LifeSeconds;
+            foreach (var m in TutorialDirector.MarkerPositions)
+            {
+                root.Sim.Player.Position = m;
+                yield return new WaitForSecondsRealtime(0.05f);
+            }
+            Assert.IsTrue(root.Sim.Tutorial.Celebrating || root.Sim.Tutorial.Step == TutorialStep.Dash);
+            yield return new WaitForSecondsRealtime(0.3f);
+            Assert.AreEqual(life, root.Sim.LifeSeconds, "the clock is frozen in the tutorial");
+
+            // Restart repeats the tutorial, not some other run kind.
+            root.Restart();
+            yield return null;
+            Assert.IsNotNull(root.Sim.Tutorial);
+            Assert.AreEqual(TutorialStep.Move, root.Sim.Tutorial.Step);
+
+            root.ShowMainMenu();
+            yield return null;
+            Assert.IsTrue(root.InMainMenu);
+            Assert.IsNull(GameObject.Find("Tutorial/PromptBand"), "the band hides with the run");
+            Assert.AreEqual(0, root.Profile.Profile.stats.runs);
+            Assert.AreEqual(0, storage.Writes, "the tutorial never touches the save");
+        }
+
+        [UnityTest]
         public IEnumerator AFinishedRun_IsSavedOnce_AndTheResultsOfferTheMainMenu()
         {
             yield return StartShortRun();

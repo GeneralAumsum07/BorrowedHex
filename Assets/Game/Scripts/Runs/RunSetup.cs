@@ -29,6 +29,13 @@ namespace BorrowedHex.Runs
         /// </summary>
         public bool SandboxAutoSpawn;
 
+        /// <summary>
+        /// Phase 14: the scripted tutorial (D86). Always a sandbox too, so it inherits "never
+        /// saved, no encounter director"; on top of that the life clock is frozen.
+        /// </summary>
+        public bool Tutorial;
+
         public static RunSetup ForSandbox(int seed) => new RunSetup { Seed = seed, Sandbox = true };
+        public static RunSetup ForTutorial(int seed) => new RunSetup { Seed = seed, Sandbox = true, Tutorial = true };
     }
 }

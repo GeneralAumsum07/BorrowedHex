@@ -121,6 +121,13 @@ namespace BorrowedHex.Presentation
 
             aimMarker = FlatSprite("AimMarker", transform, PixelSprites.Disc(true), new Color(1f, 0.85f, 0.35f, 0.85f));
             aimMarker.transform.localScale = Vector3.one * 0.32f;
+            // Phase 14: the movement lesson's target, a gold ring at the true "close enough"
+            // radius (ring sprite: scale == radius), so standing inside it is exactly what counts.
+            if (sim.Tutorial != null)
+            {
+                tutorialMarker = FlatSprite("TutorialMarker", transform, PixelSprites.Disc(true), new Color(1f, 0.85f, 0.35f, 0.9f));
+                tutorialMarker.enabled = false;
+            }
 
             enemyRoot = new GameObject("Enemies").transform;
             enemyRoot.SetParent(transform, false);
@@ -197,6 +204,22 @@ namespace BorrowedHex.Presentation
             RenderCapture(alpha);
             RenderPops();
             RenderTimeNumbers();
+            RenderTutorialMarker();
+        }
+
+        SpriteRenderer tutorialMarker;
+
+        void RenderTutorialMarker()
+        {
+            if (tutorialMarker == null) return;
+            var m = sim.Tutorial.Marker;
+            tutorialMarker.enabled = m.HasValue;
+            if (!m.HasValue) return;
+            tutorialMarker.transform.position = Geometry2D.ToWorld(m.Value, 0.04f);
+            // A slow breathing pulse (unscaled: decoration, keeps moving while paused) that never
+            // shrinks below the real radius, so the visible ring never promises less than it gives.
+            float pulse = 1f + 0.08f * (0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f));
+            tutorialMarker.transform.localScale = Vector3.one * (BorrowedHex.Runs.TutorialDirector.MarkerRadius * pulse);
         }
 
         void RenderPlayer(float alpha)

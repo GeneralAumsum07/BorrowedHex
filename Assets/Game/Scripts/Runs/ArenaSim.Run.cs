@@ -58,6 +58,7 @@ namespace BorrowedHex.Runs
             Events.EnemyKilled += RewardKillTime;
             nextFormationAt = Config.shortMode.firstSpawnDelay;
             InitEndless();
+            InitTutorial();
         }
 
         void SetState(RunState s)
@@ -104,6 +105,8 @@ namespace BorrowedHex.Runs
             if (IsEndlessRun) { TickEndlessFlow(now); return; }
             if (!IsShortRun)
             {
+                // Phase 14: the tutorial script rides the sandbox branch (it is a sandbox run).
+                Tutorial?.Tick(now);
                 if (lifeSeconds <= Eps && Player.Alive)
                 {
                     Player.Alive = false;
@@ -214,7 +217,12 @@ namespace BorrowedHex.Runs
         /// <summary>Active seconds left on the shared run clock.</summary>
         public float SecondsLeftInRun() => LifeSeconds;
 
-        void TickLifeClock(float dt) => lifeSeconds = System.Math.Max(0, lifeSeconds - dt);
+        void TickLifeClock(float dt)
+        {
+            // The tutorial's clock is frozen (D86): a lesson must never end because time ran out.
+            if (Setup.Tutorial) return;
+            lifeSeconds = System.Math.Max(0, lifeSeconds - dt);
+        }
 
         void RewardKillTime(EnemyActor enemy, Combat.DamageEvent damage)
         {
