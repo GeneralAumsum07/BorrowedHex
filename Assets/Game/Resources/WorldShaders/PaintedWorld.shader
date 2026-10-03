@@ -78,8 +78,13 @@ Shader "BorrowedHex/PaintedWorld"
             return world;
         }
 
+        // Interleaved gradient noise: a stable per-pixel threshold, so a cut-out density reads
+        // as see-through rather than as separate pieces.
+        float PixelNoise(float2 pixel) { return frac(52.9829189 * frac(dot(pixel, float2(.06711056, .00583715)))); }
+
         // Wear, fill, ghost and actor cut-out for objects; returns the glitch glow to add.
-        float3 ClipObject(float3 world, bool includeOcclusion, bool includeGhost)
+        // `pixel` is the fragment's SV_POSITION.xy (unused by the shadow pass, which has no ghost).
+        float3 ClipObject(float3 world, float2 pixel, bool includeOcclusion, bool includeGhost)
         {
             float visible = _Visible * (includeOcclusion ? _Occlusion : 1);
             if (visible < 1)
@@ -93,18 +98,23 @@ Shader "BorrowedHex/PaintedWorld"
             float solid = 1;
             if (_Fill < .999)
             {
-                // Fill rises from the base when forming and sinks from the top when retiring,
-                // along a noisy edge; the 1.25 / .125 margin lets 0 and 1 clear the noise.
+                // Fill rises from the base when forming and sinks from the top when retiring.
+                // The edge wobble is kept small and slow next to the height gradient, so the
+                // solid part is always one piece joined to the base: a stronger, finer noise
+                // left islands floating above the edge, which read as broken geometry. The
+                // 1.1 / .05 margin lets 0 and 1 clear the wobble.
                 float h = saturate((world.y - _HeightRange.x) / max(.01, _HeightRange.y - _HeightRange.x));
-                solid = _Fill * 1.25 - .125 - (h + (Noise3(world * 2.2) - .5) * .25);
+                solid = _Fill * 1.1 - .05 - (h + (Noise3(world * 1.3) - .5) * .08);
                 glow += _SeamColor.rgb * smoothstep(.08, 0, abs(solid)) * 1.5 * step(.001, _Fill);
             }
             bool ghostShown = false;
             if (includeGhost && _Ghost > .001)
             {
-                // A shimmering scanline preview: bands scroll upward, broken up by drifting noise.
-                float bands = step(frac(world.y * 5 - _WorldTime * 1.3), .32 * _Ghost);
-                ghostShown = bands * step(.4, Noise3(world * 3 + _WorldTime * .7)) > .5;
+                // A see-through preview of the whole silhouette: a fine stipple whose density
+                // swells gently in bands drifting upward. Hard-edged bands used to cut the
+                // shape into floating slivers.
+                float scan = .5 + .5 * sin((world.y * 5 - _WorldTime * 1.3) * 6.2832);
+                ghostShown = PixelNoise(pixel) < _Ghost * .35 * (.65 + .35 * scan);
                 if (ghostShown && solid <= 0) glow += _SeamColor.rgb * .8 * _Ghost;
             }
             if (solid <= 0 && !ghostShown) clip(-1);
@@ -222,7 +232,7 @@ Shader "BorrowedHex/PaintedWorld"
 
             half4 Frag(Output input) : SV_Target
             {
-                float3 glow = ClipObject(input.world, true, true);
+                float3 glow = ClipObject(input.world, input.position.xy, true, true);
                 float3 seam;
                 half4 color = WorldColor(input.uv, input.world, seam) * input.color;
                 glow += seam;
@@ -284,7 +294,7 @@ Shader "BorrowedHex/PaintedWorld"
             half4 ShadowFrag(ShadowOutput input) : SV_Target
             {
                 // A dissolving prop must not cast a solid shadow (spec 2.1); a ghost casts none.
-                ClipObject(input.world, false, false);
+                ClipObject(input.world, 0, false, false);
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a * _BaseColor.a - .05);
                 return 0;
             }
@@ -312,7 +322,7 @@ Shader "BorrowedHex/PaintedWorld"
             half DepthFrag(DepthOutput input) : SV_Target
             {
                 // Ghosts stay in the depth prepass so depth priming can never hide them.
-                ClipObject(input.world, true, true);
+                ClipObject(input.world, input.position.xy, true, true);
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a * _BaseColor.a - .05);
                 return input.position.z;
             }
@@ -339,7 +349,7 @@ Shader "BorrowedHex/PaintedWorld"
             half4 NormalFrag(DepthOutput input) : SV_Target
             {
                 // Ghosts stay in the depth prepass so depth priming can never hide them.
-                ClipObject(input.world, true, true);
+                ClipObject(input.world, input.position.xy, true, true);
                 clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a * _BaseColor.a - .05);
                 float3 n = normalize(input.normal);
                 #if defined(_GBUFFER_NORMALS_OCT)

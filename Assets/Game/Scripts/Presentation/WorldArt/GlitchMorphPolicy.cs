@@ -100,13 +100,16 @@ namespace BorrowedHex.Presentation.WorldArt
         public const int MaxPatches = 32;
         // Untriggered patches start "in the far future", so the shader shows the old world.
         const float Never = 1e7f;
+        // One gain for every glitch glow (seam ring, fill edge, ghost, tear flicker). Owner
+        // asked for the glow "slightly less prominent" (2026-10-04); 1 was the first cut.
+        public const float SeamGain = .75f;
         static readonly Vector4[] seeds = new Vector4[MaxPatches];
 
         public static void Upload(MorphField field, double now, bool reduceFlashes, Color seam)
         {
             Shader.SetGlobalFloat("_WorldTime", (float)now);
             Shader.SetGlobalFloat("_GlitchStrength", reduceFlashes ? 0 : 1);
-            Shader.SetGlobalColor("_SeamColor", seam);
+            Shader.SetGlobalColor("_SeamColor", seam * SeamGain);
             Shader.SetGlobalFloat("_PatchActive", field != null ? 1 : 0);
             if (field == null) return;
             Shader.SetGlobalVector("_PatchGrid", new Vector4(field.Origin.x, field.Origin.y, field.Cell.x, field.Cell.y));
