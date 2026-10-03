@@ -168,7 +168,7 @@ namespace BorrowedHex.Progression
             Profile.generation++;
             try
             {
-                storage.Write(ToJson(Profile), Profile.generation);
+                storage.Write(SaveJson(Profile), Profile.generation);
                 return true;
             }
             catch (Exception e)
@@ -211,6 +211,22 @@ namespace BorrowedHex.Progression
             result.Applied = true;
             result.Saved = Save();
             return result;
+        }
+
+        /// <summary>
+        /// The JSON that goes to disk. Normally just <see cref="ToJson"/>; but with the
+        /// unlock-all cheat on, the session can have nodes equipped that were never bought, and
+        /// Validate rejects "equipped but not owned" - writing that would cost the player the
+        /// whole save on the next launch. Those ids are left out of the written copy only; the
+        /// live session keeps them equipped while the cheat is on.
+        /// </summary>
+        static string SaveJson(PlayerProfile p)
+        {
+            if (p.equippedNodes.TrueForAll(p.ownedNodes.Contains)) return ToJson(p);
+            var live = p.equippedNodes;
+            p.equippedNodes = live.FindAll(p.ownedNodes.Contains);
+            try { return ToJson(p); }
+            finally { p.equippedNodes = live; }
         }
 
         // Mastery (Phase 9), achievements and records (Phase 10) plug in here, inside the same

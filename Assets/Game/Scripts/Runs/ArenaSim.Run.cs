@@ -222,7 +222,8 @@ namespace BorrowedHex.Runs
         void TickLifeClock(float dt)
         {
             // The tutorial's clock is frozen (D86): a lesson must never end because time ran out.
-            if (Setup.Tutorial) return;
+            // The invincibility cheat freezes it the same way.
+            if (Setup.LifeLocked) return;
             lifeSeconds = System.Math.Max(0, lifeSeconds - dt);
         }
 

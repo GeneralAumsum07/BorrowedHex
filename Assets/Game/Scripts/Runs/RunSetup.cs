@@ -36,6 +36,14 @@ namespace BorrowedHex.Runs
         public bool Tutorial;
         /// <summary>Opt-in larger stage layouts. Tutorial and old headless fixtures keep their authored arena.</summary>
         public bool WorldArenas;
+        /// <summary>
+        /// Main-menu cheat (Progression.Cheats): like the tutorial's frozen clock, hits land but
+        /// cost no life and time does not drain. Cheated runs are also marked Debug.
+        /// </summary>
+        public bool Invincible;
+
+        /// <summary>True when nothing may take life away: the tutorial (D86) or the invincibility cheat.</summary>
+        public bool LifeLocked => Tutorial || Invincible;
 
         public static RunSetup ForSandbox(int seed) => new RunSetup { Seed = seed, Sandbox = true };
         public static RunSetup ForTutorial(int seed) => new RunSetup { Seed = seed, Sandbox = true, Tutorial = true };

@@ -232,6 +232,7 @@ namespace BorrowedHex.Presentation
                 if (pausePressed)
                 {
                     if (Settings.IsOpen) CloseSettings();
+                    else if (CheatPanel.IsOpen) CloseCheats();
                     else CloseSubMenus();
                 }
                 SyncGameplayInput();

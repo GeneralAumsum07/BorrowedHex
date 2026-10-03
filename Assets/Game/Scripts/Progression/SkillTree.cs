@@ -89,12 +89,20 @@ namespace BorrowedHex.Progression
             }
         }
 
+        /// <summary>
+        /// Owned for play purposes: bought, or unlocked by the main-menu cheat. Buying, equipping
+        /// and the panel ask this; <see cref="Validate"/> and the save still read the real
+        /// <c>ownedNodes</c>, so the cheat never reaches the file (D73's strict validator).
+        /// </summary>
+        public static bool IsOwned(PlayerProfile p, string id)
+            => p.ownedNodes.Contains(id) || (Cheats.UnlockAllNodes && Find(id) != null);
+
         /// <summary>Why <paramref name="id"/> cannot be bought right now, or null if it can.</summary>
         public static string WhyCannotBuy(PlayerProfile p, string id)
         {
             var n = Find(id);
             if (n == null) return "unknown node";
-            if (p.ownedNodes.Contains(id)) return "already owned";
+            if (IsOwned(p, id)) return "already owned";
             if (p.mastery.level < TierLevel[n.Tier]) return $"needs mastery {TierLevel[n.Tier]}";
             var pre = Prerequisite(n);
             // Owned, not equipped, is enough (section 7).
@@ -115,7 +123,7 @@ namespace BorrowedHex.Progression
         public static string WhyCannotEquip(PlayerProfile p, string id)
         {
             if (Find(id) == null) return "unknown node";
-            if (!p.ownedNodes.Contains(id)) return "not owned";
+            if (!IsOwned(p, id)) return "not owned";
             if (p.equippedNodes.Contains(id)) return "already equipped";
             if (p.equippedNodes.Count >= Mastery.MaxEquipped) return $"{Mastery.MaxEquipped} already equipped";
             return null;

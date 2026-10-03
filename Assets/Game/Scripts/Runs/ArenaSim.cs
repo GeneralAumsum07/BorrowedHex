@@ -133,8 +133,9 @@ namespace BorrowedHex.Runs
                 || (!bypassInvulnerability && Player.IsInvulnerable(now))) return false;
             double before = lifeSeconds;
             // Tutorial (D86): the hit still lands (event, invulnerability window, flash on the
-            // player) so the player learns what a hit looks like, but it costs no time.
-            if (!Setup.Tutorial) lifeSeconds = Math.Max(0, lifeSeconds - amount);
+            // player) so the player learns what a hit looks like, but it costs no time. The
+            // invincibility cheat reuses the same rule (RunSetup.LifeLocked).
+            if (!Setup.LifeLocked) lifeSeconds = Math.Max(0, lifeSeconds - amount);
             Player.InvulnerableUntil = now + (invulnerability >= 0f ? invulnerability : Stats.HitInvulnerability);
             Events.RaisePlayerHit(amount, sourceActorId);
             Events.RaiseLifeClockChanged((float)(lifeSeconds - before), Player.Position);

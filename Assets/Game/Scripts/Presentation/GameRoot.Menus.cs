@@ -45,8 +45,11 @@ namespace BorrowedHex.Presentation
             Main.AddEntry("style", "Capture style", null, "later build");
             Main.AddEntry("records", "Achievements & records", null, "later build");
             Main.AddEntry("settings", "Settings", OpenSettingsFromMain);
+            // Owner request (3 Oct 2026); GameRoot.Cheats.cs. Above Quit so Quit stays last.
+            Main.AddEntry("cheats", "Cheats", OpenCheats);
             if (!IsWeb) Main.AddEntry("quit", "Quit", Application.Quit);
             Settings = SettingsPanel.Create(canvas, allowWindowed: !IsWeb);
+            CheatPanel = CheatsPanel.Create(canvas);
             BuildProgressionMenus();
             ApplySettings();
         }
@@ -64,6 +67,8 @@ namespace BorrowedHex.Presentation
             setup.MasteryLevel = Profile.Profile.mastery.level;
             setup.BuildVersion = Application.version;
             ApplyLoadoutExtra(setup);
+            // Last, so a cheat's Debug mark covers the passives the tree just resolved.
+            Cheats.ApplyTo(setup);
         }
 
         public GameConfig Config => config;
@@ -87,6 +92,7 @@ namespace BorrowedHex.Presentation
         {
             Menu.Show(false);
             Settings.Hide();
+            CheatPanel.Hide();
             CloseSubMenus();
             kind = RunKind.Backdrop;
             BeginRun();
@@ -101,7 +107,10 @@ namespace BorrowedHex.Presentation
         void RefreshMainMenu()
         {
             Main.SetProfileLine(ProfileLine());
-            Main.SetWarning(Profile.Warning);
+            // A cheated run never counts, so say so where the player presses Play.
+            string cheat = CheatsWarning();
+            Main.SetWarning(string.IsNullOrEmpty(Profile.Warning) ? cheat
+                : cheat == null ? Profile.Warning : Profile.Warning + "\n" + cheat);
         }
 
         // Replaced by a mastery line in Phase 9.

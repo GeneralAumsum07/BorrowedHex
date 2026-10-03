@@ -55,7 +55,9 @@ namespace BorrowedHex.UI
             panel = p.rectTransform;
             Ui.Place(panel, new Vector2(0.5f, 0.5f), new Vector2(0, -70), new Vector2(560, 0));
             p.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            var col = Ui.Column(panel, 12);
+            // 58 px rows, 10 apart: ten entries (Cheats was the tenth) still clear the profile
+            // line above and the warning line below at 1080p.
+            var col = Ui.Column(panel, 10);
             col.padding = new RectOffset(36, 36, 28, 28);
         }
 
@@ -63,7 +65,7 @@ namespace BorrowedHex.UI
         public Button AddEntry(string key, string label, Action onClick, string disabledReason = null)
         {
             actions[key] = onClick;
-            var b = Ui.Sized(Ui.Button(key, panel, label, () => { if (actions.TryGetValue(key, out var a)) a?.Invoke(); }, 30), 64);
+            var b = Ui.Sized(Ui.Button(key, panel, label, () => { if (actions.TryGetValue(key, out var a)) a?.Invoke(); }, 30), 58);
             entries[key] = b;
             baseLabels[key] = label;
             if (first == null) first = b;

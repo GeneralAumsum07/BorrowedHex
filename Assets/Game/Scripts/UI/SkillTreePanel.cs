@@ -112,7 +112,8 @@ namespace BorrowedHex.UI
                 SkillTree.Unequip(profile, id);
                 why = null;
             }
-            else if (profile.ownedNodes.Contains(id)) SkillTree.TryEquip(profile, id, out why);
+            // IsOwned, not ownedNodes: the unlock-all cheat makes an unbought node equippable.
+            else if (SkillTree.IsOwned(profile, id)) SkillTree.TryEquip(profile, id, out why);
             else SkillTree.TryBuy(profile, id, out why);
             status.text = why == null ? "" : "Cannot: " + why;
             if (why == null) onChanged?.Invoke();
@@ -136,10 +137,13 @@ namespace BorrowedHex.UI
                           $"{profile.equippedNodes.Count} / {Mastery.MaxEquipped} equipped";
             foreach (var n in SkillTree.Nodes)
             {
-                bool owned = profile.ownedNodes.Contains(n.Id);
+                bool owned = SkillTree.IsOwned(profile, n.Id);
+                // Only unlocked by the cheat: said on the card, so nobody mistakes it for progress.
+                bool cheatOnly = owned && !profile.ownedNodes.Contains(n.Id);
                 bool equipped = profile.equippedNodes.Contains(n.Id);
                 string state;
                 if (equipped) state = "<color=#8CF0A8>EQUIPPED</color> - click to unequip";
+                else if (cheatOnly) state = "<color=#FF8C73>Unlocked (cheat)</color> - click to equip";
                 else if (owned) state = "Owned - click to equip";
                 else
                 {
