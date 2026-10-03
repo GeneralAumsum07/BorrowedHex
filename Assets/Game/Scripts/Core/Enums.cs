@@ -18,7 +18,7 @@ namespace BorrowedHex.Core
     // Every reason the gameplay clock may be frozen. Using a set of reasons instead of a
     // single bool means overlapping pauses (focus loss during an upgrade choice) cannot
     // accidentally resume combat when only one of them clears.
-    public enum PauseReason { Menu, UpgradeChoice, Results, FocusLost, BossIntro, Manual }
+    public enum PauseReason { Menu, UpgradeChoice, Results, FocusLost, BossIntro, Manual, WorldTransition }
 
     // High-level run flow from Phase 5.
     public enum RunState { Ready, Combat, UpgradeChoice, BossIntro, BossCombat, Paused, Results }

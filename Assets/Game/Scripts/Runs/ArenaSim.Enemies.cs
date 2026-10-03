@@ -60,8 +60,9 @@ namespace BorrowedHex.Runs
         /// variation, the wider fan. Set before the spawn event so views see the final boss.</param>
         public EnemyActor SpawnBoss(int completedCycles = 0)
         {
+            if (SelectWorldArena(3)) { ClearArena(); RestorePillars(); }
             var t = Config.collector;
-            var b = Config.arena.bounds;
+            var b = Arena.bounds;
             float y = Player.Position.y > b.center.y ? b.yMin + 3.5f : b.yMax - 3.5f;
             var pos = new Vector2(b.center.x, y);
             var e = new EnemyActor
@@ -267,7 +268,7 @@ namespace BorrowedHex.Runs
         /// </summary>
         public Vector2 FindSpawnPoint(float radius)
         {
-            var b = Config.arena.bounds;
+            var b = Arena.bounds;
             float margin = radius + 0.8f;
             float minDist = Config.combat.minSpawnDistance;
             Vector2 best = new Vector2(b.center.x, b.yMax - margin);

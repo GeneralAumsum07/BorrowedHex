@@ -86,7 +86,7 @@ namespace BorrowedHex.Enemies
 
             // Node 0 = here, 1 = target, then four padded corners per pillar. Boundary walls
             // are skipped: their corners lie outside the arena and could never be reached.
-            var b = sim.Config.arena.bounds;
+            var b = sim.Arena.bounds;
             float pad = e.Radius + CornerPad;
             int n = 0;
             Ensure(2 + 4 * sim.Walls.Count);
@@ -185,7 +185,7 @@ namespace BorrowedHex.Enemies
         {
             Vector2 fromPlayer = e.Position - sim.Player.Position;
             float baseAngle = Mathf.Atan2(fromPlayer.y, fromPlayer.x) * Mathf.Rad2Deg;
-            var b = sim.Config.arena.bounds;
+            var b = sim.Arena.bounds;
             float margin = e.Radius + 0.6f;
             Vector2 best = e.Position;
             for (int i = 0; i < 12; i++)

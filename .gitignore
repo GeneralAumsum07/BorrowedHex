@@ -117,3 +117,7 @@ InitTestScene*.unity*
 .remember/
 .superpowers/
 /[Tt]est[Rr]esults/
+
+# Local licensed art: recreate from the owner's downloads with WorldArtImporter.
+/Assets/Game/Resources/WorldArt/
+/Assets/Game/Resources/WorldArt.meta

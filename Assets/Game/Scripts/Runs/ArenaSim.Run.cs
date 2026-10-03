@@ -162,6 +162,7 @@ namespace BorrowedHex.Runs
             Offers.Clear();
             if (IsEndlessRun) { ContinueEndless(); return true; }
             Encounter++;
+            SelectWorldArena(UnityEngine.Mathf.Clamp(Encounter, 0, 3));
             RestorePillars();
             if (TransitionsReached >= Config.shortMode.encounterCount) BeginBossIntro();
             else SetState(RunState.Combat);
@@ -178,6 +179,7 @@ namespace BorrowedHex.Runs
         void BeginBossIntro(int completedCycles = 0)
         {
             ClearArena();
+            if (SelectWorldArena(3)) RestorePillars();
             spawnQueue.Clear();
             Boss = SpawnBoss(completedCycles);
             Clock.SetPauseReason(PauseReason.BossIntro, true);

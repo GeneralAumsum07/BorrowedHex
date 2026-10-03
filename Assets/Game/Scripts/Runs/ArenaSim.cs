@@ -37,6 +37,9 @@ namespace BorrowedHex.Runs
         public readonly List<Rect> Walls;
         public readonly PlayerActor Player;
         public readonly string RunId;
+        public ArenaLayout Arena { get; private set; }
+        public int ArenaStage { get; private set; }
+        public int ArenaRevision { get; private set; }
 
         public ArenaSim(GameConfig config, RunSetup setup)
         {
@@ -45,12 +48,13 @@ namespace BorrowedHex.Runs
             Stats = Setup.Stats ?? PlayerStats.FromConfig(config);
             Random = new SeededRandom(Setup.Seed);
             RunId = RunIdFactory.Create();
-            Walls = config.arena.BuildObstacles();
+            Arena = Setup.WorldArenas && !Setup.Tutorial ? WorldArenaLayouts.Create(0) : config.arena;
+            Walls = Arena.BuildObstacles();
 
             Player = new PlayerActor
             {
                 ActorId = Ids.Next(),
-                Position = config.arena.playerSpawn,
+                Position = Arena.playerSpawn,
                 Radius = Stats.BodyRadius,
             };
             InitCombat();

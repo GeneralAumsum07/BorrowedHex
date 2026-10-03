@@ -280,7 +280,7 @@ namespace BorrowedHex.Enemies
         {
             var p = sim.Player;
             Vector2 behind = p.AimDirection.sqrMagnitude > 1e-6f ? -p.AimDirection.normalized : Vector2.down;
-            var bounds = sim.Config.arena.bounds;
+            var bounds = sim.Arena.bounds;
             float m = e.Radius + 0.4f;
             foreach (float off in TeleportAngles)
             {
@@ -329,7 +329,7 @@ namespace BorrowedHex.Enemies
 
         static Vector2 Clamped(ArenaSim sim, EnemyActor e, Vector2 spot)
         {
-            var bounds = sim.Config.arena.bounds;
+            var bounds = sim.Arena.bounds;
             float m = e.Radius + 0.6f;
             spot.x = Mathf.Clamp(spot.x, bounds.xMin + m, bounds.xMax - m);
             spot.y = Mathf.Clamp(spot.y, bounds.yMin + m, bounds.yMax - m);

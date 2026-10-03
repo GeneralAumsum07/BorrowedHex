@@ -15,6 +15,8 @@ namespace BorrowedHex.Core
         public double RestoredAt { get; private set; }
         public float DecayInterval { get; private set; }
         public bool Crumbled => Durability == 0;
+        // Stage replacement is time-driven too; projectile impacts still never wear cover.
+        internal void Crumble() => Durability = 0;
 
         public DecayObstacle(Rect bounds) => Bounds = bounds;
 

@@ -121,6 +121,7 @@ namespace BorrowedHex.Runs
         {
             Wave = Wave >= Config.endless.wavesPerCycle ? 1 : Wave + 1;
             StartWave();
+            SelectWorldArena(Mathf.Clamp((Wave - 1) / 2, 0, 2));
             RestorePillars();
             SetState(RunState.Combat);
         }

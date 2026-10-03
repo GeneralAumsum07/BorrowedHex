@@ -34,6 +34,8 @@ namespace BorrowedHex.Runs
         /// saved, no encounter director"; on top of that the life clock is frozen.
         /// </summary>
         public bool Tutorial;
+        /// <summary>Opt-in larger stage layouts. Tutorial and old headless fixtures keep their authored arena.</summary>
+        public bool WorldArenas;
 
         public static RunSetup ForSandbox(int seed) => new RunSetup { Seed = seed, Sandbox = true };
         public static RunSetup ForTutorial(int seed) => new RunSetup { Seed = seed, Sandbox = true, Tutorial = true };

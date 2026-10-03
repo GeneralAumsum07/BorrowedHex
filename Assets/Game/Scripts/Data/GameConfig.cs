@@ -28,6 +28,10 @@ namespace BorrowedHex.Data
             new Rect(5.4f, -4.1f, 1.2f, 1.2f),
         };
         public Vector2 playerSpawn = new Vector2(0f, -4f);
+        // Optional world metadata. Legacy layouts retain their four-column behaviour;
+        // new stages use the same rectangles for different kinds of destructible cover.
+        public string worldTheme = "Courtyard";
+        public List<DecayPropKind> propKinds = new List<DecayPropKind>();
 
         /// <summary>Every solid box: the four border walls plus pillars.</summary>
         public List<Rect> BuildObstacles()

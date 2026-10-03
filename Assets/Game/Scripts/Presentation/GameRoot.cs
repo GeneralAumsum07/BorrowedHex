@@ -20,6 +20,7 @@ namespace BorrowedHex.Presentation
     public sealed partial class GameRoot : MonoBehaviour
     {
         public GameConfig config;
+        public bool useWorldArenas;
 
         /// <summary>Fixed sim step. Fixed rather than per-frame so outcomes do not depend on frame rate.</summary>
         public const float Step = 1f / 60f;
@@ -151,6 +152,8 @@ namespace BorrowedHex.Presentation
                 setup.SandboxAutoSpawn = kind == RunKind.Sandbox && autoSpawn;
                 if (kind == RunKind.Sandbox) ApplyLoadout(setup);
             }
+            setup.WorldArenas = useWorldArenas && !setup.Tutorial
+                && FindFirstObjectByType<WorldArt.WorldPresentation>() != null;
             Sim = new ArenaSim(config, setup);
             // The sandbox upgrade picked on the dev button survives Reset, like auto-spawn.
             if (kind == RunKind.Sandbox && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
@@ -211,6 +214,7 @@ namespace BorrowedHex.Presentation
         {
             var s = Sim.State;
             bool on = !InMainMenu && !Menu.IsOpen && !Settings.IsOpen
+                && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition)
                 && (s == RunState.Ready || s == RunState.Combat || s == RunState.BossCombat);
             if (gameplayInput == on) return;
             gameplayInput = on;
