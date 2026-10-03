@@ -69,6 +69,15 @@ namespace BorrowedHex.Tests
                 }
                 if (rng.NextDouble() < 0.01) cmd = cmd.WithCycle();
                 if (bestEnemy < 4f && rng.NextDouble() < 0.05) cmd = cmd.WithDash();
+                var held = sim.Packets.ReleaseCandidate();
+                if (held != null && !sim.IsPrimed(held))
+                {
+                    // D90: too fresh to fire — swap to the pocketed hex if that one is ready.
+                    int other = (sim.Packets.SelectedSlot + 1) % sim.Packets.SlotCount;
+                    var pocket = sim.Packets.InSlot(other);
+                    if (pocket != null && sim.IsPrimed(pocket)) return cmd.WithAim(target).WithCycle();
+                    return cmd.WithAim(target);
+                }
                 return cmd.WithAim(target).WithRelease();
             }
         }

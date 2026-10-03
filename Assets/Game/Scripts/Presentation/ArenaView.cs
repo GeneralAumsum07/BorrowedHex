@@ -162,6 +162,9 @@ namespace BorrowedHex.Presentation
             // at the shot, so "why did that hit me?" has a visible answer (packet/slots full).
             sim.Events.ShotCaptured += (_, __, at, ___) => SpawnPop(at, ReturnedColor, 0.5f, 0.1f, 0.18f);
             sim.Events.CaptureRejected += (at, _) => SpawnPop(at, RejectColor, 0.15f, 0.7f, 0.3f);
+            // D90: a refused fire gets a small grey fizzle at the player, so "I clicked and
+            // nothing happened" reads as "too fresh", not as a dropped input.
+            sim.Events.ReleaseRefused += _ => SpawnPop(sim.Player.Position, new Color(0.7f, 0.7f, 0.75f), 0.2f, 0.6f, 0.15f);
             sim.Events.PacketReleased += (_, __) => SpawnPop(sim.Player.Position, ReturnedColor, 0.4f, 1.4f, 0.25f);
             // Rocket burst drawn at its true damage radius (ring scale == radius), so the
             // player learns how far a returned rocket reaches.

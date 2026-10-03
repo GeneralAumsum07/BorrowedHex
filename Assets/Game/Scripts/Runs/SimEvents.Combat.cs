@@ -28,6 +28,8 @@ namespace BorrowedHex.Runs
         public event Action<UnityEngine.Vector2, CaptureResult> CaptureRejected;
         public event Action<CapturedPacket, int> PacketReleased;
         public event Action<CapturedPacket> PacketBackfired;
+        /// <summary>D90: fire was pressed on an unprimed (fresh) hex; nothing was fired.</summary>
+        public event Action<CapturedPacket> ReleaseRefused;
         public event Action<int> SlotSwapped;
         public event Action<EnemyActor> EnemyOverstayed;
         /// <summary>Clock wear changed cover: pillar and actual durability lost this tick.</summary>
@@ -49,6 +51,7 @@ namespace BorrowedHex.Runs
         internal void RaiseCaptureRejected(UnityEngine.Vector2 at, CaptureResult r) => CaptureRejected?.Invoke(at, r);
         internal void RaisePacketReleased(CapturedPacket p, int root) => PacketReleased?.Invoke(p, root);
         internal void RaisePacketBackfired(CapturedPacket p) => PacketBackfired?.Invoke(p);
+        internal void RaiseReleaseRefused(CapturedPacket p) => ReleaseRefused?.Invoke(p);
         internal void RaiseSlotSwapped(int slot) => SlotSwapped?.Invoke(slot);
         internal void RaiseEnemyOverstayed(EnemyActor enemy) => EnemyOverstayed?.Invoke(enemy);
         internal void RaisePillarDamaged(DecayObstacle pillar, int lost) => PillarDamaged?.Invoke(pillar, lost);

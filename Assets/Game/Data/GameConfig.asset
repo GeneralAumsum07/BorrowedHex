@@ -216,6 +216,7 @@ MonoBehaviour:
     packetCapacity: 12
     packetLifetime: 3
     packetSlots: 2
+    primeSeconds: 0.4
     powerPerSecond: 0.35
     backfireSeconds: 10
     perfectWindow: 0.1

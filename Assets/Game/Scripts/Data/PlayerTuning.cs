@@ -32,6 +32,8 @@ namespace BorrowedHex.Data
         public int packetCapacity = 12;
         public float packetLifetime = 3f;
         public int packetSlots = 2;
+        [Tooltip("Rule B (D90): seconds after capture before a hex can be fired. Owner value 0.4.")]
+        public float primeSeconds = 0.4f;
         [Tooltip("Damage power gained per selected second; frozen packets gain nothing.")]
         public float powerPerSecond = 0.35f;
         [Tooltip("Life-clock seconds lost when a selected packet expires unfired.")]

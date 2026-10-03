@@ -210,6 +210,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(1, sim.Packets.Packets.Count);
             Assert.AreEqual(2, sim.Packets.Packets[0].Payloads.Count, "second shot appended in the same window");
             Assert.AreEqual(0, sim.Score.DamageTaken);
+            Run(sim, 15); // D90: 25 ticks (~0.42 s) since the catch, so the hex is primed
 
             int releases = 0, root = 0;
             sim.Events.PacketReleased += (_, r) => { releases++; root = r; };
@@ -228,6 +229,7 @@ namespace BorrowedHex.Tests
             var sim = Sim();
             ShotFrom(sim, new Vector2(2f, 0f));
             sim.Tick(Catch, Dt);
+            Run(sim, 25); // D90: let the hex prime (~0.42 s)
             // Turn to face north before expiry: the volley goes north, not back east.
             var north = PlayerCommand.Moving(Vector2.zero).WithAim(new Vector2(0f, 5f));
             sim.Tick(north.WithRelease(), Dt);
@@ -302,6 +304,7 @@ namespace BorrowedHex.Tests
             e.ActiveAt = 0; e.Phase = EnemyPhase.Idle; e.PhaseEndsAt = double.MaxValue;
             ShotFrom(sim, new Vector2(2f, 0f), source: e.ActorId);
             sim.Tick(Catch, Dt);
+            Run(sim, 25); // D90: let the hex prime (~0.42 s)
             sim.Enemies.Clear(); // the shooter is gone entirely
             Assert.DoesNotThrow(() => sim.Tick(Hold.WithRelease(), Dt));
             Assert.AreEqual(1, sim.CountProjectiles(AttackFaction.Returned));

@@ -157,17 +157,18 @@ namespace BorrowedHex.Tests
         /// against the old auto-banking keep their meaning. Tests that need "two packets held"
         /// use this; tests about WHICH slot a catch fills must go through a real catch (or
         /// PacketStore.Create) instead.
+        ///
+        /// A seeded hex stands for one caught long ago, so it is already primed (D90): its
+        /// CapturedAt is pushed an hour back. Decay is unaffected — that runs from AdvancedAt,
+        /// which stays at <paramref name="now"/>. Tests about priming catch for real instead.
         /// </summary>
         public static CapturedPacket Seed(PacketStore store, int packetId, int activationId, double now, float lifetime, int capacity)
         {
-            var inHand = store.CreateInSlot(store.SelectedSlot, packetId, activationId, now, lifetime, capacity);
-            if (inHand != null) return inHand;
-            for (int slot = 0; slot < store.SlotCount; slot++)
-            {
-                var p = store.CreateInSlot(slot, packetId, activationId, now, lifetime, capacity);
-                if (p != null) return p;
-            }
-            return null;
+            var p = store.CreateInSlot(store.SelectedSlot, packetId, activationId, now, lifetime, capacity);
+            for (int slot = 0; p == null && slot < store.SlotCount; slot++)
+                p = store.CreateInSlot(slot, packetId, activationId, now, lifetime, capacity);
+            if (p != null) p.CapturedAt = now - 3600.0;
+            return p;
         }
 
         /// <summary>Rule A (D89): one tick with Q pressed, pocketing the held hex so the hand is free.</summary>

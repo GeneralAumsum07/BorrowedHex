@@ -137,9 +137,13 @@ namespace BorrowedHex.UI
                     p.Back.color = UsedBack;
                     p.Fill.enabled = true;
                     p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
-                    p.Fill.color = selected && left < 0.5f ? UrgentColor : FillColor;
+                    // D90: an unprimed hex is drawn dimmed and labelled UNSTABLE until it can fire.
+                    bool primed = sim.IsPrimed(pk);
+                    var fill = selected && left < 0.5f ? UrgentColor : FillColor;
+                    if (!primed) fill.a = 0.5f;
+                    p.Fill.color = fill;
                     // FirePower, not Power: a fused packet shows the +25% it will actually fire with.
-                    string state = (handFullFlash ? "HAND FULL — Q" : selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
+                    string state = (handFullFlash ? "HAND FULL — Q" : !primed ? "UNSTABLE" : selected ? "DECAYING" : "FROZEN") + (pk.PowerScale > 1f ? "  FUSED" : "");
                     p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.PowerPerSecond):0.00}   {left:0.0}s\n{state}";
                 }
                 else

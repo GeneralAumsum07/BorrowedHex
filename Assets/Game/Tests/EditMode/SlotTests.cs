@@ -167,22 +167,19 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void ReleasingDuringItsOwnWindow_LaterCatchesInThatWindowStartAFreshSlot()
+        public void ReleaseDuringItsOwnWindow_IsRefused_HexIsStillUnstable()
         {
+            // Before D90 a hex could be fired inside its own catch window and the window then
+            // started a fresh slot. The 0.4 s priming outlasts the 0.25 s window, so now the
+            // press is simply refused and the hex stays put.
             var sim = Sim();
             Shot(sim, new Vector2(1.2f, 0f));
-            sim.Tick(Hold.WithCatch(), Dt);              // caught into slot 0, window still open
+            sim.Tick(Hold.WithCatch(), Dt);
             var first = sim.Packets.InSlot(0);
-            Assert.IsNotNull(first);
             Assert.IsTrue(sim.Capture.IsWindowOpen(sim.Clock.Now));
-            sim.Tick(Hold.WithRelease(), Dt);            // fired early, inside the window
-            Assert.AreEqual(PacketStatus.Released, first.Status);
-            Shot(sim, new Vector2(1.2f, 0f));
-            sim.Tick(Hold, Dt);                          // same window: caught again
-            var next = sim.Packets.InSlot(0);
-            Assert.IsNotNull(next, "window still catches after an early release");
-            Assert.AreNotSame(first, next, "never appended to a released packet");
-            Assert.AreEqual(1, next.Payloads.Count);
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(PacketStatus.Collecting, first.Status, "0.4 s priming outlasts the 0.25 s window (D90)");
+            Assert.AreSame(first, sim.Packets.InSlot(0));
         }
 
         [Test]

@@ -27,6 +27,8 @@ namespace BorrowedHex.Player
         public int PacketCapacity;
         public float PacketLifetime;
         public int PacketSlots;
+        /// <summary>Rule B (D90): gameplay seconds after capture before a hex can be fired.</summary>
+        public float PrimeSeconds;
         public float PowerPerSecond;
         public int BackfireSeconds;
         public float PerfectWindow;
@@ -74,6 +76,7 @@ namespace BorrowedHex.Player
                 PacketCapacity = c.packetCapacity,
                 PacketLifetime = c.packetLifetime,
                 PacketSlots = c.packetSlots,
+                PrimeSeconds = c.primeSeconds,
                 PowerPerSecond = c.powerPerSecond,
                 BackfireSeconds = c.backfireSeconds,
                 PerfectWindow = c.perfectWindow,

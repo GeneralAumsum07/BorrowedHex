@@ -152,5 +152,69 @@ namespace BorrowedHex.Tests
             sim.Tick(Hold.WithCatch(), Dt);
             Assert.AreEqual(CaptureResult.HandFull, got);
         }
+
+        // ---- Rule B: priming (D90) ------------------------------------------------------------
+
+        [Test]
+        public void Priming_UnprimedRelease_IsRefusedOnce_ThenFiresWhenPrimed()
+        {
+            // Review Focus 2: the refused press keeps the hex, raises ONE refusal, fires nothing.
+            var sim = Sim();
+            Shot(sim, new Vector2(1.2f, 0f));
+            sim.Tick(Hold.WithCatch(), Dt);
+            var p = sim.Packets.InSlot(0);
+            Assert.IsNotNull(p);
+            int refused = 0, released = 0;
+            sim.Events.ReleaseRefused += _ => refused++;
+            sim.Events.PacketReleased += (_, __) => released++;
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, refused);
+            Assert.AreEqual(0, released);
+            Assert.AreSame(p, sim.Packets.InSlot(0));
+            // 0.4 s after capture it fires.
+            while (sim.Clock.Now - p.CapturedAt < 0.4 - 1e-6) sim.Tick(Hold, Dt);
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, released);
+            Assert.AreEqual(1, refused, "no refusal for the primed press");
+        }
+
+        [Test]
+        public void Priming_ContinuesWhilePocketed()
+        {
+            // R1: priming is time since capture, so the juggle (catch, pocket, fire the other,
+            // swap back, fire) never pays the 0.4 s twice.
+            var sim = Sim();
+            Shot(sim, new Vector2(1.2f, 0f));
+            sim.Tick(Hold.WithCatch(), Dt);
+            var p = sim.Packets.InSlot(0);
+            TestSims.Pocket(sim);
+            Run(sim, 30);   // 0.5 s pocketed: DecayedTime barely moved
+            Assert.Less(p.DecayedTime, 0.1);
+            Assert.IsTrue(sim.IsPrimed(p));
+            TestSims.Pocket(sim);   // back to slot 0
+            int released = 0;
+            sim.Events.PacketReleased += (_, __) => released++;
+            sim.Tick(Hold.WithRelease(), Dt);
+            Assert.AreEqual(1, released);
+        }
+
+        [Test]
+        public void Priming_OverflowForcedRelease_IgnoresIt()
+        {
+            var sim = Sim();
+            sim.ForceUpgrade(UpgradeId.Overflow);
+            Shot(sim, new Vector2(1.2f, 0f));
+            sim.Tick(Hold.WithCatch(), Dt);
+            var first = sim.Packets.InSlot(0);
+            Run(sim, Mathf.CeilToInt(sim.Stats.CaptureRecovery / Dt) + 2);
+            // Still inside 0.4 s? Recovery is 0.65 s, so force freshness for the check:
+            first.CapturedAt = sim.Clock.Now;
+            Assert.IsFalse(sim.IsPrimed(first));
+            CapturedPacket released = null;
+            sim.Events.PacketReleased += (pk, _) => released = pk;
+            Shot(sim, new Vector2(1.2f, 0f));
+            sim.Tick(Hold.WithCatch(), Dt);
+            Assert.AreSame(first, released, "Overflow fires an unprimed hex (D91)");
+        }
     }
 }

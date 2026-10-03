@@ -39,6 +39,14 @@ namespace BorrowedHex.Runs
         }
 
         /// <summary>
+        /// Rule B (D90): a fresh hex is unstable for PrimeSeconds after its capture. Measured on
+        /// the gameplay clock since capture, NOT selected time (R1): a pocketed hex keeps priming,
+        /// so catching, pocketing, firing the other hex and swapping back is a fluid rhythm.
+        /// The clock freezes in menus and choices, so priming does too.
+        /// </summary>
+        public bool IsPrimed(CapturedPacket p) => p != null && Clock.Now - p.CapturedAt >= Stats.PrimeSeconds - 1e-6;
+
+        /// <summary>
         /// Right mouse (D32): fire the selected packet now, from the current position along the
         /// current aim at its accumulated power. Selection stays put when the slot empties.
         /// </summary>
@@ -46,6 +54,10 @@ namespace BorrowedHex.Runs
         {
             var packet = Packets.ReleaseCandidate();
             if (packet == null) return false;
+            // An unstable hex refuses the fire command and stays in the hand: with Rule A that
+            // means a second incoming shot can only be answered by Q (D89/D90). Overflow's
+            // forced release does not come through here, so it ignores priming (D91).
+            if (!IsPrimed(packet)) { Events.RaiseReleaseRefused(packet); return false; }
             Packets.Remove(packet);
             Capture.Detach(packet);
             ReleaseService.Release(this, packet, Player.Position, Player.AimDirection,
