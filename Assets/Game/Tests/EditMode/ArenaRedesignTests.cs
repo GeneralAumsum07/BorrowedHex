@@ -97,5 +97,28 @@ namespace BorrowedHex.Tests
             PaintedFloorGenerator.Scatter(floor, decals, 50, 1, 1f, Color.white, 0, 1, 64);
             Assert.That(floor.R.Any(v => v > .5f), Is.True);
         }
+
+        [Test]
+        public void BakedFloorsExistAtFortyPixelsPerUnitAndAreReadable()
+        {
+            for (int stage = 0; stage < 4; stage++)
+            {
+                var arena = WorldArenaLayouts.Create(stage); string theme = arena.worldTheme;
+                var floor = Resources.Load<Texture2D>("WorldFloors/" + theme + "Floor");
+                Assert.That(floor, Is.Not.Null, theme + "Floor");
+                Assert.That(floor.width, Is.EqualTo(Mathf.RoundToInt(arena.bounds.width * PaintedFloorGenerator.PixelsPerUnit)));
+                Assert.That(floor.height, Is.EqualTo(Mathf.RoundToInt(arena.bounds.height * PaintedFloorGenerator.PixelsPerUnit)));
+                // The interrupted-morph snapshot samples pixels on the CPU.
+                Assert.That(floor.isReadable, Is.True);
+                Assert.That(floor.wrapMode, Is.EqualTo(TextureWrapMode.Clamp));
+                foreach (var suffix in new[] { "Outer", "Ribbon" })
+                {
+                    var tile = Resources.Load<Texture2D>("WorldFloors/" + theme + suffix);
+                    Assert.That(tile, Is.Not.Null, theme + suffix);
+                    Assert.That(tile.wrapMode, Is.EqualTo(TextureWrapMode.Repeat));
+                    Assert.That(tile.isReadable, Is.True);
+                }
+            }
+        }
     }
 }
