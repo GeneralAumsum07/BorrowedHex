@@ -1,6 +1,6 @@
 # Arena Visual Redesign: Design Spec
 
-Date: 2026-10-04 · Status: **DRAFT**. Section 1 is approved; sections 2–5 await review.
+Date: 2026-10-04 · Status: **APPROVED** (2026-10-04). The owner answered the open questions and requested no changes.
 
 ## 0. Intent
 
@@ -56,7 +56,8 @@ Computed by hand for a 16:9 screen; the test in §5 is the authority.
 | South | about 2 units past the south wall | A low edge is enough. |
 
 ### Enclosure ring
-A visual band 4–8 units deep, just outside `bounds`, with no collision. It is graded by height:
+A visual band just outside `bounds`, with no collision: about 9 units deep on the north, **about
+16 deep on the east and west** (amendment A2, below), and about 6 on the south. It is graded by height:
 
 | Band | Height | Content |
 |---|---|---|
@@ -75,7 +76,7 @@ remaining gap reads as darkness, never as grey void.
 
 ---
 
-## 2. Floors, materials and lighting (DRAFT, needs review)
+## 2. Floors, materials and lighting (approved)
 
 ### 2.1 Shader `BorrowedHex/PaintedWorld`
 A new URP forward shader. It **keeps PixelWorld's entire property interface**, so that
@@ -110,9 +111,9 @@ not migrated). It is not deleted in this work.
 - **Baking.** An editor tool, `PaintedFloorBaker` (menu *BorrowedHex → Bake Painted Floors*),
   ports the approved swatch generator (fbm value noise, domain-warped Voronoi flagstones,
   bilinear decals). It writes **one PNG per theme**.
-- **Size.** Each PNG covers the arena once, with no tiling or repetition: roughly 40 px per unit,
-  so about 2048×1536 for 48×36. The images are generated from our own code, so they are
-  committed.
+- **Size.** Each image covers the arena once, with no tiling or repetition: 40 px per unit,
+  so 1920×1440 for 48×36. The images are generated from our own code, so they are
+  committed, as **JPG at quality 92** (amendment A3, below).
 - **Import settings.** Bilinear, mipmaps, Read/Write enabled, because the morph snapshot reads
   pixels.
 - **Look per theme.**
@@ -122,10 +123,8 @@ not migrated). It is not deleted in this work.
   - **Sanctum:** worn basalt tiles with faint inlaid lines. The existing ritual seal stays on top.
 - **Outer ground.** The darker ground under and past the ring is a small tiling texture of the
   same style.
-- **Floor chunks.** The floor mesh is split into **4×3 chunks**. Both URP assets cap
-  `m_AdditionalLightsPerObjectLimit` at 4, so one floor mesh would receive only 4 point lights.
-  With chunks, each one gets its own nearest four (verified in `PC_RPAsset` and
-  `Mobile_RPAsset`, 2026-10-04).
+- **One floor mesh** (amendment A1, below). `PC_Renderer.asset` uses Forward+
+  (`m_RenderingMode: 2`), which has no per-object light limit, so the floor is a single quad.
 - **Morph snapshot cost.** Today `Snapshot()` runs `GetPixels32` and a per-pixel lerp on the CPU.
   On a 2048² texture that is about 3M pixels, a visible hitch. Instead:
   - when the outgoing `_Morph >= 1`, the snapshot **is** the outgoing `_BaseMap`, with no CPU
@@ -145,7 +144,7 @@ not migrated). It is not deleted in this work.
   The pitch is chosen so props cast readable shadows toward the camera's side.
 - **Fire.** Warm, flickering point lights on Kenney `fire-basket`, `lantern-candle` and
   `lightpost` props, about 8 per arena.
-  - **Placement rule:** no floor chunk is touched by more than 4 of them.
+  - **Placement:** at the eight `FlameAnchor` points, just outside the play rect.
   - **Flicker:** Perlin noise on intensity, in unscaled time, so it holds under pause.
 - **Ambient.** Very dark and per theme; the fog colour is near-black and per theme.
 - **Boss reveal.** The Sanctum keeps the existing reveal, which drives `sun.intensity` and the
@@ -153,7 +152,7 @@ not migrated). It is not deleted in this work.
 
 ---
 
-## 3. Props and dressing (DRAFT, needs review)
+## 3. Props and dressing (approved)
 
 ### 3.1 Model import
 - **Import tool.** `WorldModelImporter` (an editor menu) copies the **subset of FBX files the
@@ -214,7 +213,7 @@ cactus and palm variants.
 
 ---
 
-## 4. Integration (DRAFT, needs review)
+## 4. Integration (approved)
 
 ### 4.1 Public API stays fixed
 `WorldGeometry`'s public API is unchanged:
@@ -233,7 +232,7 @@ The 361-line file is split by responsibility:
 | Unit | Responsibility |
 |---|---|
 | `WorldGeometry` | Orchestration and the effect API (as today) |
-| `PaintedFloor` | Floor chunks, outer ground, snapshot short-circuit |
+| `PaintedFloor` | Floor mesh, outer ground, snapshot short-circuit |
 | `ArenaEnclosure` | Backing ribbon and band placement from recipes |
 | `ArenaDressing` | Recipes and deterministic placement (pure, no Unity objects) |
 | `WorldModelLibrary` | Loads FBX prefabs from Resources, assigns PaintedWorld materials, caches them |
@@ -253,11 +252,11 @@ The 361-line file is split by responsibility:
 - **Performance.** A few hundred low-poly renderers per arena, plus property blocks (which
   already exist today and opt out of the SRP Batcher).
   - **Target:** 60 fps on the PC quality level during the gate run.
-  - **Mobile:** not measured in this work (TBD below).
+  - **Mobile:** not a release target (resolved below).
 
 ---
 
-## 5. Testing (DRAFT, needs review)
+## 5. Testing (approved)
 
 **EditMode**
 - **`ArenaDressing` placement**
@@ -267,7 +266,6 @@ The 361-line file is split by responsibility:
   - Every recipe model name resolves in `Resources/WorldModels`.
 - **`CoverModels` fit.** Every DecayPropKind's model footprint lies within its collision rect,
   and covers at least 80% of it.
-- **Light budget.** No floor chunk receives more than 4 point lights for any theme's recipe.
 
 **PlayMode**
 - **`NoVoidVisible`**
@@ -284,10 +282,23 @@ the visual companion before the work is called done.
 
 ---
 
-## Open questions (TBD)
-1. **Mobile.** Is mobile a release target for this build? If yes, a mobile performance budget
-   and a device to test on are needed. Shadows and fire lights may need a cheaper path on the
-   `Mobile` quality level.
-2. **Committing the kit models.** Do you want the CC0 kit models committed, as §3.1 proposes, or
-   kept local like WorldArt with an importer? Committing them makes a fresh checkout look right;
-   keeping them local keeps the repo lighter (size unmeasured, estimated a few MB for the subset).
+## Resolved questions (2026-10-04)
+1. **Mobile:** not a release target. Performance is budgeted for the PC quality level only; the `Mobile` quality level only needs to not break. No mobile-specific light or shadow path is built.
+2. **Kit models:** **committed** to git (CC0), under `Assets/Game/Resources/WorldModels/`, with each kit's `License.txt`.
+
+## Amendments (2026-10-04, approved by the owner)
+- **A1. No floor chunks.** The chunk split assumed the Forward path's 4-lights-per-object cap.
+  Evidence: `Assets/Settings/PC_Renderer.asset` has `m_RenderingMode: 2` (Forward+), which has
+  no per-object cap; the cap applies only to the Mobile renderer (Forward, not a target). The
+  floor is one mesh and the per-chunk light-budget test is dropped.
+- **A2. Deeper side dressing; camera margins unchanged.** A ray simulation at pitch 50°,
+  distance 20, FOV 40 with the spec's `ClampFocus` margins showed the screen's side edges reach
+  well past an 8-deep ring. Every ray still meets the ground within about 31 units, so the
+  §5 rule is met by a large outer ground plane. To make those views show dressing rather than
+  bare ground, the east/west dressing runs about 16 units deep.
+- **A3. JPG floor textures.** Painted noise survives JPG; quality 92 is about 1 MB per arena
+  against roughly 5–7 MB as PNG (estimate), which matters for committed assets.
+- **Implementation note.** This URP (Unity 6000.3) names the Forward+ keyword
+  `_CLUSTER_LIGHT_LOOP` and iterates lights with `LIGHT_LOOP_BEGIN`/`LIGHT_LOOP_END`. Ambient
+  reaches the shader as a global `_WorldAmbient` set from the same colour as
+  `RenderSettings.ambientLight`, so it does not depend on the scene's ambient mode.
