@@ -176,5 +176,65 @@ namespace BorrowedHex.Tests
             Assert.That(WorldModelLibrary.NightColor("Rock (Instance)"), Is.EqualTo(WorldModelLibrary.NightColor("Rock")));
             Assert.That(WorldModelLibrary.NightColor("Something"), Is.EqualTo(new Color(.12f, .12f, .14f)));
         }
+
+        [Test]
+        public void DressingIsDeterministicPerTheme()
+        {
+            for (int stage = 0; stage < 4; stage++)
+            {
+                var a = ArenaDressing.Place(WorldArenaLayouts.Create(stage));
+                var b = ArenaDressing.Place(WorldArenaLayouts.Create(stage));
+                Assert.That(b.Count, Is.EqualTo(a.Count));
+                for (int i = 0; i < a.Count; i++)
+                {
+                    Assert.That(b[i].Model, Is.EqualTo(a[i].Model)); Assert.That(b[i].Position, Is.EqualTo(a[i].Position));
+                    Assert.That(b[i].Yaw, Is.EqualTo(a[i].Yaw)); Assert.That(b[i].Height, Is.EqualTo(a[i].Height));
+                }
+            }
+        }
+
+        [Test]
+        public void DressingFollowsTheHeightGrade()
+        {
+            for (int stage = 0; stage < 4; stage++)
+            {
+                var arena = WorldArenaLayouts.Create(stage); var b = arena.bounds;
+                var placements = ArenaDressing.Place(arena);
+                Assert.That(placements.Count, Is.GreaterThan(40), arena.worldTheme);
+                float north = 0;
+                foreach (var p in placements)
+                {
+                    var ground = new Vector2(p.Position.x, p.Position.z);
+                    Assert.That(p.Band, Is.Not.EqualTo(DressingBand.Sides));
+                    // Anything tall inside the play rect would read as cover that does not collide.
+                    if (b.Contains(ground)) Assert.That(p.Height, Is.LessThanOrEqualTo(ArenaDressing.InsideLimit), p.Model);
+                    // The camera looks north over the south edge; it must never hide the fight.
+                    if (p.Band == DressingBand.South || p.Position.z < b.yMin && p.Position.x >= b.xMin && p.Position.x <= b.xMax)
+                        Assert.That(p.Height, Is.LessThanOrEqualTo(ArenaDressing.SouthLimit), p.Model);
+                    if (p.Band == DressingBand.North) north = Mathf.Max(north, p.Height);
+                }
+                Assert.That(north, Is.GreaterThanOrEqualTo(ArenaDressing.NorthMinimum), arena.worldTheme);
+                Assert.That(ArenaDressing.RibbonHeight(b, DressingBand.North, b.yMax), Is.GreaterThanOrEqualTo(ArenaDressing.NorthMinimum));
+                Assert.That(ArenaDressing.RibbonHeight(b, DressingBand.South, b.yMin), Is.LessThanOrEqualTo(ArenaDressing.SouthLimit));
+                Assert.That(ArenaDressing.RibbonHeight(b, DressingBand.East, b.yMin), Is.LessThan(ArenaDressing.RibbonHeight(b, DressingBand.East, b.yMax)));
+            }
+        }
+
+        [Test]
+        public void EveryDressingModelResolves()
+        {
+            for (int stage = 0; stage < 4; stage++)
+                foreach (var p in ArenaDressing.Place(WorldArenaLayouts.Create(stage)))
+                    Assert.That(WorldModelCatalog.Exists(p.Model), Is.True, p.Model);
+        }
+
+        [Test]
+        public void UnknownDressingThemeUsesTheCourtyardRecipe()
+        {
+            var odd = WorldArenaLayouts.Create(0); odd.worldTheme = "Tutorial";
+            Assert.That(ArenaDressing.Known("Tutorial"), Is.EqualTo("Courtyard"));
+            Assert.That(ArenaDressing.Known(null), Is.EqualTo("Courtyard"));
+            Assert.That(ArenaDressing.Place(odd).Count, Is.EqualTo(ArenaDressing.Place(WorldArenaLayouts.Create(0)).Count));
+        }
     }
 }
