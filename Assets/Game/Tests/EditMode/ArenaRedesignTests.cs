@@ -275,5 +275,63 @@ namespace BorrowedHex.Tests
                 }
                 finally { Object.DestroyImmediate(parent.gameObject); }
         }
+
+        static Texture2D Solid(Color color, int width, int height)
+        {
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            var pixels = new Color32[width * height]; for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
+            texture.SetPixels32(pixels); texture.Apply(); return texture;
+        }
+
+        [Test]
+        public void InterruptedMorphSnapshotsWhatWasOnScreen()
+        {
+            Texture2D black = Solid(Color.black, 64, 48), white = Solid(Color.white, 64, 48), shot = null;
+            var material = PaintedMaterials.Create("probe", white, Color.white);
+            try
+            {
+                material.SetTexture("_FromMap", black);
+                // A finished morph needs no CPU work: the snapshot IS the texture on screen.
+                material.SetFloat("_Morph", 1);
+                Assert.That(PaintedFloor.Snapshot(material, 512, out bool baked), Is.SameAs(white)); Assert.That(baked, Is.False);
+                // Interrupted at 60%: every pixel matches the shader's patch mix at that moment.
+                material.SetFloat("_Morph", .6f);
+                shot = PaintedFloor.Snapshot(material, 32, out baked);
+                Assert.That(baked, Is.True); Assert.That(shot.width, Is.EqualTo(32)); Assert.That(shot.height, Is.EqualTo(24));
+                var pixels = shot.GetPixels();
+                for (int y = 0; y < shot.height; y++) for (int x = 0; x < shot.width; x++)
+                {
+                    float expected = Mathf.Clamp01(.6f * 1.65f - PaintedFloor.PatchNoise((x + .5f) / shot.width, (y + .5f) / shot.height) * .65f);
+                    Assert.That(pixels[y * shot.width + x].r, Is.EqualTo(expected).Within(2.5f / 255), $"({x},{y})");
+                }
+            }
+            finally { Object.DestroyImmediate(material); Object.DestroyImmediate(black); Object.DestroyImmediate(white); if (shot != null) Object.DestroyImmediate(shot); }
+        }
+
+        [Test]
+        public void FloorGroundAndRibbonFormASolidLayer()
+        {
+            var root = new GameObject("probe").transform; var owned = new List<Object>();
+            var arena = WorldArenaLayouts.Create(0); var b = arena.bounds;
+            using (var models = new WorldModelLibrary(Color.white))
+                try
+                {
+                    new PaintedFloor(root, arena, arena.worldTheme, owned);
+                    var ribbonMaterial = PaintedMaterials.Create("Wall", PaintedFloor.Texture(arena.worldTheme, "Ribbon"), Color.white); owned.Add(ribbonMaterial);
+                    var enclosure = new ArenaEnclosure(root, arena, models, ribbonMaterial, owned);
+                    var floor = root.Find("Floor"); var outer = root.Find("Outer ground"); var ribbon = root.Find(ArenaEnclosure.RibbonName);
+                    Assert.That(floor.position.y, Is.EqualTo(0).Within(1e-4)); Assert.That(floor.localScale.x, Is.EqualTo(b.width).Within(1e-4));
+                    Assert.That(outer.position.y, Is.LessThan(0)); Assert.That(outer.localScale.x, Is.EqualTo(b.width + 80).Within(1e-3));
+                    var ribbonBounds = ribbon.GetComponent<Renderer>().bounds;
+                    // The ribbon closes all four sides of the arena and reaches the §1 north height.
+                    Assert.That(ribbonBounds.min.x, Is.LessThan(b.xMin)); Assert.That(ribbonBounds.max.x, Is.GreaterThan(b.xMax));
+                    Assert.That(ribbonBounds.min.z, Is.LessThan(b.yMin)); Assert.That(ribbonBounds.max.z, Is.GreaterThan(b.yMax));
+                    Assert.That(ribbonBounds.max.y, Is.GreaterThanOrEqualTo(ArenaDressing.NorthMinimum));
+                    Assert.That(enclosure.Scenery.Count, Is.GreaterThan(40));
+                    foreach (var renderer in enclosure.Scenery) Assert.That(renderer.sharedMaterial.shader.name, Is.EqualTo(PaintedMaterials.ShaderName));
+                    Assert.That(root.GetComponentsInChildren<Collider>(true), Is.Empty);
+                }
+                finally { Object.DestroyImmediate(root.gameObject); foreach (var item in owned) Object.DestroyImmediate(item); }
+        }
     }
 }
