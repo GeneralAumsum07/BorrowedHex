@@ -71,6 +71,18 @@ namespace BorrowedHex.Runs
         void InitUpgrades() => upgradeRandom = new SeededRandom(Setup.Seed ^ 0x55504752);
 
         /// <summary>
+        /// The rank an offer of <paramref name="id"/> carries. A held card is offered one step up,
+        /// never more (owner, 3 Oct 2026: "only rank x+1 of that card can appear, not x+2"), even
+        /// in an endless cycle whose fresh cards are higher; capped at maxRank. A card not held
+        /// carries <paramref name="cycleRank"/> (1 in short mode, the cycle's rank in endless).
+        /// </summary>
+        public int OfferRankFor(UpgradeId id, int cycleRank)
+        {
+            int r = RankOf(id);
+            return r > 0 ? Mathf.Min(Mathf.Max(1, UT.maxRank), r + 1) : Mathf.Max(1, cycleRank);
+        }
+
+        /// <summary>
         /// The encounter was cleared: distinct offers are drawn from upgrades that can still
         /// improve. Nothing expires (R13a). Rank is passed in so endless can offer its cycle's rank.
         /// </summary>
@@ -92,9 +104,7 @@ namespace BorrowedHex.Runs
             {
                 int k = upgradeRandom.NextInt(0, pool.Count);
                 var id = pool[k];
-                // R13b: a rank-up is never weaker than a fresh card of this cycle would be.
-                int r = Has(id) ? Mathf.Min(UT.maxRank, Mathf.Max(RankOf(id) + 1, rank)) : rank;
-                Offers.Add(new UpgradeOffer(id, r));
+                Offers.Add(new UpgradeOffer(id, OfferRankFor(id, rank)));
                 pool.RemoveAt(k);
             }
         }
@@ -124,10 +134,10 @@ namespace BorrowedHex.Runs
 
             if (rankUp)
             {
-                // Resolved here, not trusted from the offer: a rank-up ALWAYS raises the rank by
-                // at least one (capped at maxRank), however the offer was built (R13b).
+                // Resolved here, not trusted from the offer: a rank-up is ALWAYS exactly one step
+                // (owner), however the offer was built (tests, sandbox offers).
                 int k = held.FindIndex(o => o.Id == pick.Id);
-                pick = new UpgradeOffer(pick.Id, Mathf.Min(UT.maxRank, Mathf.Max(held[k].Rank + 1, pick.Rank)));
+                pick = new UpgradeOffer(pick.Id, OfferRankFor(pick.Id, pick.Rank));
                 held[k] = pick;
             }
             else if (swap)

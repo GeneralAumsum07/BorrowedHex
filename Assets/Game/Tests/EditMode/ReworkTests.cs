@@ -613,6 +613,24 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void RankUp_IsAlwaysExactlyOneStep()
+        {
+            // Owner, 3 Oct 2026: a rank-x card is only ever offered as rank x+1, never x+2, even
+            // in an endless cycle whose fresh cards are rank 3. x+2 appears only after x+1 is taken.
+            var sim = Sim();
+            sim.ForceUpgrade(UpgradeId.EchoVolley, 1);
+            Assert.AreEqual(2, sim.OfferRankFor(UpgradeId.EchoVolley, 3), "held rank 1: offered as rank 2");
+            Assert.AreEqual(3, sim.OfferRankFor(UpgradeId.Overflow, 3), "a fresh card keeps the cycle's rank");
+            Assert.AreEqual(1, sim.OfferRankFor(UpgradeId.Overflow, 1));
+
+            // Even an offer built with a bigger rank only raises the held card one step.
+            sim.DebugOpenChoice(new UpgradeOffer(UpgradeId.EchoVolley, 3));
+            Assert.IsTrue(sim.ChooseUpgrade(0));
+            Assert.AreEqual(2, sim.RankOf(UpgradeId.EchoVolley));
+            Assert.AreEqual(3, sim.OfferRankFor(UpgradeId.EchoVolley, 3), "rank 3 appears once rank 2 is held");
+        }
+
+        [Test]
         public void HeldUpgrades_EachUseTheirOwnRank()
         {
             var sim = Sim();
