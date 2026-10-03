@@ -129,5 +129,52 @@ namespace BorrowedHex.Tests
             Assert.That(Resources.Load<Texture2D>("WorldModels/Kenney/colormap_night"), Is.Not.Null);
             Assert.That(WorldModelCatalog.Exists(WorldModelCatalog.Crystal), Is.True, "Built in code, never loaded");
         }
+
+        [Test]
+        public void SpawnedModelsUsePaintedMaterialsWithAGroundedPivot()
+        {
+            var parent = new GameObject("probe").transform;
+            using (var library = new WorldModelLibrary(Color.white))
+                try
+                {
+                    foreach (var name in new[] { "crypt-small", "Rock_Moss_1", WorldModelCatalog.Crystal })
+                    {
+                        var model = library.Spawn(name, parent, out var size);
+                        Assert.That(model, Is.Not.Null, name);
+                        Assert.That(size.y, Is.GreaterThan(.05f), name);
+                        var bounds = model.GetComponentsInChildren<Renderer>().Select(r => r.bounds)
+                            .Aggregate((a, b) => { a.Encapsulate(b); return a; });
+                        // Bottom-centre pivot: recipes place models ON the ground at a point.
+                        Assert.That(bounds.min.y, Is.EqualTo(0).Within(.01f), name);
+                        Assert.That(bounds.center.x, Is.EqualTo(0).Within(.05f * Mathf.Max(1, size.x)), name);
+                        Assert.That(model.GetComponentsInChildren<Collider>(true), Is.Empty, name);
+                        foreach (var renderer in model.GetComponentsInChildren<Renderer>())
+                            foreach (var material in renderer.sharedMaterials)
+                                Assert.That(material.shader.name, Is.EqualTo(PaintedMaterials.ShaderName), name);
+                    }
+                }
+                finally { Object.DestroyImmediate(parent.gameObject); }
+        }
+
+        [Test]
+        public void MissingModelLogsAndSkips()
+        {
+            var parent = new GameObject("probe").transform;
+            using (var library = new WorldModelLibrary(Color.white))
+                try
+                {
+                    UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("no-such-model"));
+                    Assert.That(library.Spawn("no-such-model", parent, out _), Is.Null);
+                }
+                finally { Object.DestroyImmediate(parent.gameObject); }
+        }
+
+        [Test]
+        public void QuaterniusMaterialNamesMapToNightColours()
+        {
+            Assert.That(WorldModelLibrary.NightColor("Wood").maxColorComponent, Is.LessThan(.15f));
+            Assert.That(WorldModelLibrary.NightColor("Rock (Instance)"), Is.EqualTo(WorldModelLibrary.NightColor("Rock")));
+            Assert.That(WorldModelLibrary.NightColor("Something"), Is.EqualTo(new Color(.12f, .12f, .14f)));
+        }
     }
 }
