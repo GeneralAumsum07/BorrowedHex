@@ -233,6 +233,9 @@ namespace BorrowedHex.Runs
             float r = UpgradeTuning.ByRank(UT.partingGiftRadius, RankOf(UpgradeId.PartingGift));
             float dmg = UpgradeTuning.ByRank(UT.partingGiftDamage, RankOf(UpgradeId.PartingGift));
             Vector2 at = Player.Position;
+            // Announce the gift first: its Explosion follows on every release, and presentation
+            // must not give it the rocket's camera shake (spec section 5.1).
+            Events.RaisePartingGiftBurst(at, r);
             Events.RaiseExplosion(at, r, AttackFaction.Returned);
             var shot = new AttackSnapshot { DefinitionId = "parting_gift", Kind = AttackKind.Rocket };
             for (int i = 0; i < Enemies.Count; i++)
@@ -303,6 +306,9 @@ namespace BorrowedHex.Runs
                 Packets.Remove(selected);
                 Capture.Detach(selected);
                 ReleaseService.Release(this, selected, Player.Position, Player.AimDirection, selected.FirePower(Stats.Power));   // R9: the Overcharge zone counts here too
+                // Overflow's release otherwise looks like any release (PacketReleased) and the
+                // catch after it like any catch; this is the only signal that names it.
+                Events.RaiseOverflowFired(Player.Position);
                 return null;
             }
 

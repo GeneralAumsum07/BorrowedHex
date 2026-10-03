@@ -75,5 +75,7 @@ namespace BorrowedHex.Combat
         public bool Perfect;
         /// <summary>D93: the hit came from an overcharged release.</summary>
         public bool Overcharged;
+        /// <summary>The school of the shot behind the hit (copied from AttackSnapshot), for the hit spark's tint.</summary>
+        public ActorCategory SourceCategory;
     }
 }

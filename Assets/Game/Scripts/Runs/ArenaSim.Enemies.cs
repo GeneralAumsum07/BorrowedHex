@@ -239,6 +239,7 @@ namespace BorrowedHex.Runs
                 Category = category,
                 Perfect = shot.Perfect,
                 Overcharged = shot.Overcharged,
+                SourceCategory = shot.SourceCategory,
             };
             // D99: lifesteal counts only damage that lands (R17c); a huge hit on a nearly dead
             // enemy heals for what was left, not for the hit. School resistance is already in

@@ -60,9 +60,12 @@ namespace BorrowedHex.Runs
             if (!IsPrimed(packet)) { Events.RaiseReleaseRefused(packet); return false; }
             Packets.Remove(packet);
             Capture.Detach(packet);
+            float quickDraw = QuickDrawMultiplier(Clock.Now);
             ReleaseService.Release(this, packet, Player.Position, Player.AimDirection,
                 // Quick Draw stacks with Overcharge (R9): both are multipliers on the same fire.
-                packet.FirePower(Stats.Power) * QuickDrawMultiplier(Clock.Now));
+                packet.FirePower(Stats.Power) * quickDraw);
+            // Presentation's spark at the muzzle: only a release that actually got the bonus.
+            if (quickDraw > 1f) Events.RaiseQuickDrawFired(Player.Position);
             return true;
         }
 

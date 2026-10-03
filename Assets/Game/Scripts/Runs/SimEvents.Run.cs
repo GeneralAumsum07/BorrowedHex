@@ -32,6 +32,25 @@ namespace BorrowedHex.Runs
         public event Action<float, Vector2> LifeStolen;
         internal void RaiseLifeStolen(float seconds, Vector2 at) => LifeStolen?.Invoke(seconds, at);
 
+        // VFX pass (spec 2026-10-04 section 2): three moments the sim already decides but never
+        // announced. Separate events, not flags on PacketReleased/Explosion, so every existing
+        // subscriber of those events sees exactly what it saw before.
+
+        /// <summary>A release earned the Quick Draw bonus; the player's position at the release.</summary>
+        public event Action<Vector2> QuickDrawFired;
+        internal void RaiseQuickDrawFired(Vector2 at) => QuickDrawFired?.Invoke(at);
+
+        /// <summary>Overflow force-fired the held hex to make room for a catch; the player's position.</summary>
+        public event Action<Vector2> OverflowFired;
+        internal void RaiseOverflowFired(Vector2 at) => OverflowFired?.Invoke(at);
+
+        /// <summary>
+        /// Parting Gift burst around the player (every release). Raised IMMEDIATELY before the
+        /// gift's own Explosion, so presentation can tell that explosion from a rocket's.
+        /// </summary>
+        public event Action<Vector2, float> PartingGiftBurst;
+        internal void RaisePartingGiftBurst(Vector2 at, float radius) => PartingGiftBurst?.Invoke(at, radius);
+
         internal void RaiseUpgradeChosen(UpgradeOffer o) => UpgradeChosen?.Invoke(o);
         internal void RaiseEchoFired(int root) => EchoFired?.Invoke(root);
         internal void RaisePacketsFused(Combat.CapturedPacket into, Combat.CapturedPacket from) => PacketsFused?.Invoke(into, from);
