@@ -396,8 +396,13 @@ namespace BorrowedHex.UI
             int secs = Mathf.FloorToInt(s.Duration);
             resultsHeadline.text = $"{s.Score}   ·   {secs / 60}:{secs % 60:00}   ·   {s.Kills} kill{(s.Kills == 1 ? "" : "s")}";
             string bonus = s.VictoryBonus > 0 ? $"   (time bonus +{s.VictoryBonus})" : "";
+            // D102: where the skill-shot score came from, only when there is any, so a quiet
+            // run does not grow a line of zeros.
+            string skillScore = s.ScoreFromOvercharges > 0 || s.ScoreFromChains > 0
+                ? $"Overcharge +{s.ScoreFromOvercharges}   Chains +{s.ScoreFromChains}\n" : "";
             resultsBody.text =
                 $"{ReasonText(s)}{bonus}\n" +
+                skillScore +
                 $"Best volley: {s.BestVolleyKills}   Best chain: x{s.BestChain}   Overcharges: {s.Overcharges}\n" +
                 $"Hit rate: {Mathf.RoundToInt(s.HitRate * 100f)}%  ({s.PacketsHit}/{s.PacketsReleased})   Average power: x{s.AverageFirePower:0.00}\n" +
                 $"Health lost to hits: {LifeDisplay.Points(s.DamageTaken)}   Health gained: {LifeDisplay.Points(s.SecondsGained)}   Health stolen: {LifeDisplay.Points(s.LifeStolen)}   Backfires: {s.Backfires}   Swaps: {s.Swaps}\n" +

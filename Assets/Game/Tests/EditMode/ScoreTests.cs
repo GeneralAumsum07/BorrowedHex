@@ -30,24 +30,30 @@ namespace BorrowedHex.Tests
             return e;
         }
 
+        /// <summary>
+        /// Score from kill values alone. These kills follow each other inside one chain window, so
+        /// since D102 each also scores a chain bonus; that has its own test (ReworkTests).
+        /// </summary>
+        static int KillScore(ArenaSim sim) => sim.Score.Score - sim.Score.ScoreFromChains;
+
         [Test]
         public void KillValues_MatchSection6()
         {
             var sim = Sim();
             P5.Kill(sim, Enemy(sim, ActorCategory.Pursuer, -6f));
-            Assert.AreEqual(10, sim.Score.Score);
+            Assert.AreEqual(10, KillScore(sim));
             P5.Kill(sim, Enemy(sim, ActorCategory.Acolyte, -3f));
-            Assert.AreEqual(20, sim.Score.Score);
+            Assert.AreEqual(20, KillScore(sim));
             P5.Kill(sim, Enemy(sim, ActorCategory.ScatterCaster, 0f));
-            Assert.AreEqual(40, sim.Score.Score);
+            Assert.AreEqual(40, KillScore(sim));
             P5.Kill(sim, Enemy(sim, ActorCategory.SiegeFamiliar, 3f));
-            Assert.AreEqual(65, sim.Score.Score);
+            Assert.AreEqual(65, KillScore(sim));
             P5.Kill(sim, Enemy(sim, ActorCategory.Pursuer, 6f, elite: true));
-            Assert.AreEqual(80, sim.Score.Score, "elite = 1.5x");
+            Assert.AreEqual(80, KillScore(sim), "elite = 1.5x");
             var boss = sim.SpawnBoss();
             boss.ActiveAt = 0;
             P5.Kill(sim, boss);
-            Assert.AreEqual(330, sim.Score.Score);
+            Assert.AreEqual(330, KillScore(sim));
             Assert.AreEqual(1, sim.Score.BossesDefeated);
         }
 

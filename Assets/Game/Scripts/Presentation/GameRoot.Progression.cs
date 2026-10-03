@@ -75,6 +75,7 @@ namespace BorrowedHex.Presentation
             if (x.BossKills > 0) parts.Add($"boss {x.BossKills * Mastery.XpPerBossKill}");
             if (x.Encounters > 0) parts.Add($"encounters {x.Encounters * Mastery.XpPerEncounter}");
             if (x.PerfectHits > 0) parts.Add($"perfect {x.PerfectHits}");
+            if (x.ScoreXp > 0) parts.Add($"score {x.ScoreXp}");   // D102
             sb.Append($"+{x.Total} XP");
             if (parts.Count > 0) sb.Append("  (").Append(string.Join(", ", parts)).Append(')');
             var m = Profile.Profile.mastery;

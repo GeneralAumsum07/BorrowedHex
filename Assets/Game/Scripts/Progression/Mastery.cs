@@ -6,6 +6,8 @@ namespace BorrowedHex.Progression
     public sealed class XpBreakdown
     {
         public int NormalKills, OverstayedKills, BossKills, Encounters, PerfectHits;
+        /// <summary>D102: score / <see cref="Mastery.ScorePerXp"/>, uncapped.</summary>
+        public int ScoreXp;
         public int Total;
     }
 
@@ -20,12 +22,14 @@ namespace BorrowedHex.Progression
         public const int XpPerBossKill = 35;
         public const int XpPerEncounter = 5;
         public const int PerfectHitXpCap = 20;
+        /// <summary>D102 (owner): every this-many points of score is 1 XP. A rule, not tuning (see the class note).</summary>
+        public const int ScorePerXp = 50;
 
         /// <summary>XP needed to advance FROM <paramref name="level"/> to the next: 100 + 50 (L - 1).</summary>
         public static int CostToAdvance(int level) => 100 + 50 * (level - 1);
 
         /// <summary>The section 7 formula on raw counts (the summary overload feeds it).</summary>
-        public static XpBreakdown RunXp(int normalKills, int overstayedKills, int bossKills, int encounters, int perfectHits)
+        public static XpBreakdown RunXp(int normalKills, int overstayedKills, int bossKills, int encounters, int perfectHits, int score = 0)
         {
             var b = new XpBreakdown
             {
@@ -35,9 +39,12 @@ namespace BorrowedHex.Progression
                 Encounters = encounters,
                 // The cap is on the XP term, which is 1 XP per perfect hit, so capping the count is the same thing.
                 PerfectHits = System.Math.Min(PerfectHitXpCap, perfectHits),
+                // Integer division floors: 49 points is 0 XP. A negative score cannot occur,
+                // but is clamped so a bad summary can never take XP away.
+                ScoreXp = System.Math.Max(0, score) / ScorePerXp,
             };
             b.Total = XpPerNormalKill * normalKills + XpPerOverstayedKill * overstayedKills + XpPerBossKill * bossKills
-                      + XpPerEncounter * encounters + b.PerfectHits;
+                      + XpPerEncounter * encounters + b.PerfectHits + b.ScoreXp;
             return b;
         }
 
@@ -48,7 +55,7 @@ namespace BorrowedHex.Progression
         public static XpBreakdown RunXp(RunSummary s)
         {
             int normal = System.Math.Max(0, s.Kills - s.BossesDefeated - s.OverstayedKills);
-            return RunXp(normal, s.OverstayedKills, s.BossesDefeated, s.EncountersCompleted, s.PerfectHits);
+            return RunXp(normal, s.OverstayedKills, s.BossesDefeated, s.EncountersCompleted, s.PerfectHits, s.Score);
         }
 
         /// <summary>

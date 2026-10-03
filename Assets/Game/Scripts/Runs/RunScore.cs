@@ -97,6 +97,33 @@ namespace BorrowedHex.Runs
             ev.PillarCrumbled += _ => PillarsCrumbled++;
             ev.EnemyOverstayed += _ => EnemiesOverstayed++;
             ev.RunStateChanged += OnRunStateChanged;
+            // D102 (owner): the skill shots score, and the combo multiplies them like it does kills.
+            // Overcharge: once per release (an echo is not a release, so it raises nothing here).
+            ev.PacketOvercharged += (_, __) => AddBonus(sim.Config.shortMode.overchargeScore, ref scoreFromOvercharges);
+            // Chains: KillChainChanged is raised from the kill's own time reward, after this
+            // class's EnemyKilled handler bumped the combo, so the bonus uses the same combo the
+            // kill was scored at. Boss kills never raise it (R15), so they never score a chain.
+            ev.KillChainChanged += (length, _) =>
+            {
+                var t = sim.Config.shortMode.chainScore;
+                if (t == null || t.Length == 0 || length < 1) return;
+                AddBonus(t[Mathf.Min(length, t.Length) - 1], ref scoreFromChains);
+            };
+        }
+
+        int scoreFromOvercharges, scoreFromChains;
+        /// <summary>D102: score earned by Overcharged releases (already inside <see cref="Score"/>).</summary>
+        public int ScoreFromOvercharges => scoreFromOvercharges;
+        /// <summary>D102: score earned by chain kills beyond the first (already inside <see cref="Score"/>).</summary>
+        public int ScoreFromChains => scoreFromChains;
+
+        /// <summary>Add a bonus at the current combo, into the total and into its own bucket for the results.</summary>
+        void AddBonus(int basePoints, ref int bucket)
+        {
+            if (basePoints <= 0) return;
+            int pts = Mathf.RoundToInt(basePoints * Multiplier);
+            Score += pts;
+            bucket += pts;
         }
 
         /// <summary>
@@ -233,6 +260,8 @@ namespace BorrowedHex.Runs
         public readonly int BestChain;   // D95
         public readonly float SecondsSacrificed;   // D96
         public readonly float LifeStolen;          // D99
+        public readonly int ScoreFromOvercharges;  // D102
+        public readonly int ScoreFromChains;       // D102
         public readonly int UpgradesPaidFor;
         public readonly int MostUpgradesHeld;
         public readonly int Swaps;
@@ -276,6 +305,8 @@ namespace BorrowedHex.Runs
             BestChain = s.BestChain;
             SecondsSacrificed = s.SecondsSacrificed;
             LifeStolen = s.LifeStolen;
+            ScoreFromOvercharges = s.ScoreFromOvercharges;
+            ScoreFromChains = s.ScoreFromChains;
             UpgradesPaidFor = s.UpgradesPaidFor;
             MostUpgradesHeld = s.MostUpgradesHeld;
             Swaps = s.Swaps;

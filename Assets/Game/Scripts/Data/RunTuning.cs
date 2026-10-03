@@ -145,6 +145,10 @@ namespace BorrowedHex.Data
         public float comboStep = 0.25f;
         public float comboMax = 3f;
         public float comboTimer = 5f;
+        [Tooltip("D102: score for an Overcharged release, times the combo multiplier (placeholder).")]
+        public int overchargeScore = 20;
+        [Tooltip("D102: score for the Nth kill of a chain (index N-1), times the combo; the last repeats. Mirrors combat.chainBonusSeconds (placeholder).")]
+        public int[] chainScore = { 0, 5, 10, 15 };
         [Tooltip("Points per unused active second on a victory.")]
         public int victoryBonusPerSecond = 2;
 

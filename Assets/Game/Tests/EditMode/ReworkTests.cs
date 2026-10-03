@@ -712,5 +712,39 @@ namespace BorrowedHex.Tests
             sim.DamageEnemy(e, 10f, DamageCategory.ReturnedProjectile, From(ActorCategory.Acolyte), 1);
             Assert.AreEqual(60f, sim.LifeSeconds, 1e-4f);
         }
+
+        // ---- Score and XP (D102) ---------------------------------------------------------------
+
+        [Test]
+        public void Overcharge_AddsScore()
+        {
+            var sim = Sim();
+            Held(sim, 2.75);
+            int before = sim.Score.Score;
+            float combo = sim.Score.Multiplier;   // nothing hit yet: 1
+            sim.Tick(Hold.WithRelease(), Dt);
+            int expected = Mathf.RoundToInt(sim.Config.shortMode.overchargeScore * combo);
+            Assert.AreEqual(expected, sim.Score.ScoreFromOvercharges);
+            Assert.AreEqual(before + expected, sim.Score.Score);
+        }
+
+        [Test]
+        public void Chains_AddScore_TimesTheCombo()
+        {
+            var sim = Sim();
+            sim.DebugSetLife(60.0);
+            var t = sim.Config.shortMode.chainScore;
+            int expected = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                var e = Spawned(sim, ActorCategory.Acolyte);
+                sim.DamageEnemy(e, 1000f, DamageCategory.ReturnedProjectile, From(ActorCategory.SiegeFamiliar), 1);
+                // Read the combo AFTER the hit: the kill (and its chain step) is scored at it.
+                expected += Mathf.RoundToInt(t[Mathf.Min(i, t.Length - 1)] * sim.Score.Multiplier);
+                Run(sim, 30);
+            }
+            Assert.AreEqual(expected, sim.Score.ScoreFromChains);
+            Assert.Greater(sim.Score.ScoreFromChains, 0);
+        }
     }
 }

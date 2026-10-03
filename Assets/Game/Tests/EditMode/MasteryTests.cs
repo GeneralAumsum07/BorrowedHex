@@ -96,7 +96,9 @@ namespace BorrowedHex.Tests
             var storage = new MemoryProfileStorage();
             var service = ProfileService.Load(storage);
             var r = service.FinalizeRun(sim.Summary, sim.Setup);
-            int expected = 2 * kills + 5 * 1;   // no overstays or perfect shots in this scripted clear
+            // No overstays or perfect shots in this scripted clear. D102: the run's score also
+            // earns score / ScorePerXp, so it is part of the sum.
+            int expected = 2 * kills + 5 * 1 + sim.Summary.Score / Mastery.ScorePerXp;
             Assert.AreEqual(expected, r.Xp.Total);
             Assert.AreEqual(expected, service.Profile.mastery.xp);
             // And only once.
@@ -295,6 +297,16 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(baseline * 1.3f, PowerAfter(true, 3), 1e-4f, "0.067 s after the swap");
             // 0.3 s = 18 ticks; the release tick is one more, so 19 waiting ticks is past the window.
             Assert.AreEqual(PowerAfter(false, 19), PowerAfter(true, 19), 1e-4f, "too late for the bonus");
+        }
+
+        [Test]
+        public void Score_EarnsXp()
+        {
+            // D102 (owner): a higher score earns more XP.
+            var none = Mastery.RunXp(10, 2, 1, 3, 50);
+            var some = Mastery.RunXp(10, 2, 1, 3, 50, score: 1234);
+            Assert.AreEqual(1234 / Mastery.ScorePerXp, some.ScoreXp);
+            Assert.AreEqual(none.Total + some.ScoreXp, some.Total);
         }
     }
 }
