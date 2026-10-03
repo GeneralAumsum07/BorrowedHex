@@ -34,5 +34,68 @@ namespace BorrowedHex.Tests
             }
             finally { Object.DestroyImmediate(material); }
         }
+
+        [Test]
+        public void FloorGenerationIsDeterministic()
+        {
+            var a = PaintedFloorGenerator.Floor("Graveyard", 96, 72, null);
+            var b = PaintedFloorGenerator.Floor("Graveyard", 96, 72, null);
+            Assert.That(a.R, Is.EqualTo(b.R)); Assert.That(a.G, Is.EqualTo(b.G)); Assert.That(a.B, Is.EqualTo(b.B));
+        }
+
+        [Test]
+        public void EveryThemeFloorIsNightDark()
+        {
+            // Real lighting brightens later; the albedo itself must stay in the nightmare range
+            // or the moonlit arena reads as daytime.
+            foreach (var theme in Themes)
+                Assert.That(PaintedFloorGenerator.Floor(theme, 160, 120, null).MeanLuminance(), Is.InRange(.02f, .30f), theme);
+        }
+
+        [Test]
+        public void TiledNoiseWrapsExactlyOnItsPeriod()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                float u = i * .37f, v = i * .53f;
+                float at = PaintedFloorGenerator.FbmTiled(u, v, 9, 4, 8, 4);
+                Assert.That(PaintedFloorGenerator.FbmTiled(u + 8, v, 9, 4, 8, 4), Is.EqualTo(at).Within(1e-5));
+                Assert.That(PaintedFloorGenerator.FbmTiled(u, v + 4, 9, 4, 8, 4), Is.EqualTo(at).Within(1e-5));
+            }
+        }
+
+        [Test]
+        public void OuterAndRibbonTexturesTileWithoutVisibleSeams()
+        {
+            foreach (var theme in Themes)
+                foreach (var image in new[] { PaintedFloorGenerator.Outer(theme, 64), PaintedFloorGenerator.Ribbon(theme, 64, 32) })
+                {
+                    // The wrap pair (last column, first column) must differ no more than an
+                    // ordinary neighbouring pair does, or the repeat shows as a line.
+                    float seam = 0, interior = 0;
+                    for (int y = 0; y < image.Height; y++)
+                    {
+                        seam += Mathf.Abs(image.Luminance(image.Width - 1, y) - image.Luminance(0, y));
+                        interior += Mathf.Abs(image.Luminance(image.Width / 2, y) - image.Luminance(image.Width / 2 - 1, y));
+                    }
+                    Assert.That(seam, Is.LessThanOrEqualTo(interior * 3 + .05f * image.Height), theme);
+                }
+        }
+
+        [Test]
+        public void DecalsAreFoundAsBlobsAndScatterStaysInsideTheImage()
+        {
+            var sheet = new PaintedImage(64, 64);
+            for (int i = 0; i < sheet.A.Length; i++) sheet.A[i] = 0;
+            foreach (var (x0, y0) in new[] { (4, 4), (40, 36) })
+                for (int y = y0; y < y0 + 16; y++) for (int x = x0; x < x0 + 16; x++)
+                { int i = y * 64 + x; sheet.A[i] = 1; sheet.R[i] = sheet.G[i] = sheet.B[i] = 1; }
+            var decals = new DecalSheet(sheet, 8);
+            Assert.That(decals.Sprites.Count, Is.EqualTo(2));
+            var floor = new PaintedImage(20, 20);
+            // Stamps that start off-image must clip, not throw.
+            PaintedFloorGenerator.Scatter(floor, decals, 50, 1, 1f, Color.white, 0, 1, 64);
+            Assert.That(floor.R.Any(v => v > .5f), Is.True);
+        }
     }
 }
