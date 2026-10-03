@@ -222,7 +222,9 @@ namespace BorrowedHex.Tests
                 if (incoming != null && wantCatch && sim.Capture.IsReady(now) && now - lastCatch > 0.3)
                 {
                     lastCatch = now;
-                    return PlayerCommand.Moving(move).WithAim(incoming.Position).WithCatch();
+                    var c = PlayerCommand.Moving(move).WithAim(incoming.Position).WithCatch();
+                    // D89: a full hand cannot catch; Q on the same tick pockets first.
+                    return slots.HandFree ? c : c.WithCycle();
                 }
 
                 var cmd = PlayerCommand.Moving(move).WithAim(target != null ? target.Position : p.Position + Vector2.up);
@@ -230,22 +232,27 @@ namespace BorrowedHex.Tests
                 {
                     // Fill both, then swap once, then fire from each slot with a swap in between.
                     bool full = slots.Packets.Count >= 2;
-                    if (t.Prompt.Contains("Press Q") && now - lastSwap > 0.3) { lastSwap = now; return cmd.WithCycle(); }
+                    // "Q to swap", not "Press Q": the fill prompt also says "Press Q" (to pocket),
+                    // and cycling there would only shuffle the hand instead of catching.
+                    if (t.Prompt.Contains("Q to swap") && now - lastSwap > 0.3) { lastSwap = now; return cmd.WithCycle(); }
                     if (t.Prompt.Contains("fire from both") && holding && now - lastRelease > 0.4)
                     {
                         if (slots.InSlot(slots.SelectedSlot) == null) { lastSwap = now; return cmd.WithCycle(); }
+                        if (!sim.IsPrimed(slots.InSlot(slots.SelectedSlot))) return cmd;   // D90
                         lastRelease = now;
                         return cmd.WithRelease();
                     }
-                    if (!full && !t.Prompt.Contains("Press Q") && !t.Prompt.Contains("fire from both") && t.Prompt.Contains("defeat") && holding && now - lastRelease > 0.4)
+                    if (!full && !t.Prompt.Contains("Q to swap") && !t.Prompt.Contains("fire from both") && t.Prompt.Contains("defeat") && holding && now - lastRelease > 0.4)
                     {
                         if (slots.InSlot(slots.SelectedSlot) == null) return cmd.WithCycle();
+                        if (!sim.IsPrimed(slots.InSlot(slots.SelectedSlot))) return cmd;   // D90
                         lastRelease = now;
                         return cmd.WithRelease();
                     }
                     return cmd;
                 }
-                if (holding && target != null && now - lastRelease > 0.4 && now - lastCatch > 0.35)
+                if (holding && target != null && now - lastRelease > 0.4 && now - lastCatch > 0.35
+                    && sim.IsPrimed(slots.ReleaseCandidate()))
                 {
                     lastRelease = now;
                     return cmd.WithRelease();
@@ -334,6 +341,17 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(life, sim.LifeSeconds, "the clock never moved");
             Assert.AreEqual(RunState.Combat, sim.State, "a tutorial never reaches Results");
             Assert.AreEqual(0, sim.Enemies.Count, "the arena is quiet at the end");
+        }
+
+        [Test]
+        public void SlotsLesson_TeachesPocketingWithQ()
+        {
+            var sim = new ArenaSim(TestSims.Config, RunSetup.ForTutorial(1));
+            var bot = new TutorialBot();
+            for (int i = 0; i < 60 * 240 && sim.Tutorial.Step != TutorialStep.Slots; i++) sim.Tick(bot.Next(sim), Dt);
+            Assert.AreEqual(TutorialStep.Slots, sim.Tutorial.Step);
+            StringAssert.Contains("Q", sim.Tutorial.Prompt);
+            StringAssert.Contains("pocket", sim.Tutorial.Prompt.ToLowerInvariant());
         }
     }
 }

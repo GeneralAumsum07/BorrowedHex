@@ -227,15 +227,17 @@ namespace BorrowedHex.Runs
                     Prompt = !captured
                         ? "An Acolyte! Aim at its bolt with the mouse and press LEFT MOUSE as it reaches you to catch it."
                         : releases == 0
-                            ? "Caught! The spell is now yours, stored in a slot. Aim at the Acolyte and press RIGHT MOUSE to fire it back."
+                            ? "Caught! The spell is yours now. A fresh hex is unstable for a moment — then aim at the Acolyte and press RIGHT MOUSE to fire it back."
                             : "Keep catching and firing until the Acolyte falls.";
                     Progress = "";
                     break;
                 case TutorialStep.Slots:
+                    // D98: under the hand rule (D89) the second slot only fills if the player
+                    // pockets the first hex with Q, so the lesson teaches that verb by name.
                     Prompt = !bothSlotsHeld
-                        ? "You have TWO slots. Catch shots until both slots are filled (shown at the bottom)."
+                        ? "You can only catch with an EMPTY hand. Holding a hex? Press Q to pocket it (it freezes), then catch again. Fill both slots."
                         : !swapped
-                            ? "Both slots full. RIGHT MOUSE fires the selected slot. Press Q to swap to the other one."
+                            ? "Both slots full. RIGHT MOUSE fires the hex in your hand. Press Q to swap to the other one."
                             : slotsFiredFrom.Count < 2
                                 ? "Now fire from both slots: RIGHT MOUSE, then Q, then RIGHT MOUSE again."
                                 : "Use everything you have learned to defeat both enemies.";
