@@ -181,8 +181,8 @@ Sheets are copied from the local packs into `Assets/Game/Resources/WorldArt` and
 |---|---|
 | Free Pixel Effects Pack | Public domain |
 | Foozle Pixel Magic Effects | CC0 |
-| Pixel VFX Essentials | **TBD: no licence file in its folder.** Where was it obtained, and what are its terms? (The project already ships sheets from it.) |
-| m5x7 | **TBD: the font's terms are unverified.** Where was it obtained? |
+| Pixel VFX Essentials | [IceMaan on itch.io](https://icemaan.itch.io/pixel-vfx-essentials): any project, commercial included; modification allowed; attribution welcome, not required; no resale or redistribution as an asset pack, no other asset stores, no AI training. Sheets stay git-ignored |
+| m5x7 | [Daniel Linssen on itch.io](https://managore.itch.io/m5x7): "free to use but attribution appreciated". File redistribution is not addressed, so it stays git-ignored |
 
 ## 7. Testing
 

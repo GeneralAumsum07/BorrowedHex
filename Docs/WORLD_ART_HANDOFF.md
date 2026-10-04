@@ -27,7 +27,8 @@ geometry and the existing boss placeholder until its owner imports the downloads
 | Szadi art World and Dungeon | Cracked ground, cave ground/walls, dead tree, rock, obelisk, tomb and damaged tomb states | `OpenWorldandcavedung_1.0/public-license.txt`: personal/commercial use and edits permitted; asset-pack sale prohibited |
 | Anokolisa Graveyard | Sky, silhouettes, tiles, brush | `Graveyard scenery and backgrounds/Final/Social/Autor_note.txt`: commercial use permitted; credits optional, with a special request not to credit modified shapes/colours |
 | Ruined Temple background | Distant ruined temple | `RTB_v1.0/_license.txt`: commercial games and modification permitted; asset resale prohibited |
-| Pixel VFX Essentials | Seventeen selected fire, dust, ambient, slash, hit, magic and explosion sheets | Keep purchased/downloaded source local; original package remains in Downloads |
+| Pixel VFX Essentials (IceMaan) | Seventeen selected fire, dust, ambient, slash, hit, magic and explosion sheets, plus the VFX pass's projectile and feedback sheets | [Creator page](https://icemaan.itch.io/pixel-vfx-essentials) (no licence file in the download): personal/commercial use and modification permitted; attribution welcome, not required; may not be resold or redistributed as an asset pack, uploaded to another asset store, or used for AI training. Keep the sheets local |
+| m5x7 font (Daniel Linssen) | Callout text | [Creator page](https://managore.itch.io/m5x7): "free to use but attribution appreciated"; redistributing the .ttf itself is not addressed, so keep it local beside the sheets |
 | CodeManu Free Pixel Effects | Vortex, Midnight, Casting | [Creator page](https://codemanu.itch.io/pixelart-effect-pack); downloaded README states public-domain use and 100×100 cells |
 
 The importer uses point filtering, no mipmaps, uncompressed RGBA, a 4096 maximum
