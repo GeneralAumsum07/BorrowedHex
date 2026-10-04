@@ -94,5 +94,71 @@ namespace BorrowedHex.Tests
                 Assert.Less(Vector2.Distance(new Vector2(pt.x, pt.z), new Vector2(bWorld.x, bWorld.z)), 1.5f,
                     "no trail point from A's flight on the far side of the arena");
         }
+
+        // The original bug the ProjectileId keying fixed: with views indexed by list position,
+        // a shot ending earlier in the list shifted every later shot onto its neighbour's view,
+        // and the survivor's trail jumped across the arena (final review minor: not pinned).
+        [UnityTest]
+        public IEnumerator ASurvivorKeepsItsOwnTrailWhenAnEarlierShotEnds()
+        {
+            var a = Fire(new Vector2(-8f, 5f), Vector2.right, 1.5f);    // short: ends first
+            int aId = a.ProjectileId;
+            var b = Fire(new Vector2(-8f, -5f), Vector2.right, 30f);    // long: still flying
+            int bId = b.ProjectileId;
+            float giveUp = Time.realtimeSinceStartup + 5f;
+            while (a.Active && a.ProjectileId == aId && Time.realtimeSinceStartup < giveUp) yield return null;
+            yield return null;
+            yield return null;
+            Assert.IsTrue(b.Active && b.ProjectileId == bId, "B is still flying");
+            var trail = root.View.TrailFor(bId);
+            var points = new Vector3[trail.positionCount];
+            trail.GetPositions(points);
+            float bz = Geometry2D.ToWorld(b.Position).z;
+            foreach (var pt in points)
+                Assert.Less(Mathf.Abs(pt.z - bz), 0.5f, "every point of B's trail is on B's own line, none on A's");
+        }
+
+        // One shot ending and another starting in the same frame must hand the view over,
+        // not grow the pool (final review minor: release before acquire).
+        [UnityTest]
+        public IEnumerator AShotEndingAndOneStartingInOneFrameShareAView()
+        {
+            Fire(new Vector2(-8f, 5f), Vector2.right, 30f);
+            yield return null;
+            Assert.AreEqual(1, root.View.ShotViewCount);
+            root.Sim.ClearArena();                                      // A ends ...
+            Fire(new Vector2(8f, -5f), Vector2.left, 30f);              // ... and B starts, before one render
+            yield return null;
+            Assert.AreEqual(1, root.View.ShotViewCount, "B took A's released view");
+        }
+
+        // Playtest: the halo is a faint outline, not a filled disc.
+        [UnityTest]
+        public IEnumerator TheHaloIsAnOutline()
+        {
+            var a = Fire(new Vector2(-8f, 5f), Vector2.right, 30f);
+            yield return null;
+            var halo = root.View.HaloFor(a.ProjectileId);
+            Assert.AreSame(PixelSprites.Disc(true), halo.sprite, "the ring sprite, not the disc");
+            Assert.AreEqual(BorrowedHex.Presentation.Feedback.ProjectileSkins.HaloAlpha, halo.color.a, 1e-4);
+        }
+
+        // Playtest: shots orbiting the player wore the default dot, not the caught shot's shape.
+        [UnityTest]
+        public IEnumerator OrbitingShotsWearTheCaughtShotsSprite()
+        {
+            if (!root.View.Art.HasBoss) Assert.Ignore("Local licensed art is optional in a public checkout.");
+            var sim = root.Sim;
+            var p = sim.Packets.CreateInSlot(sim.Packets.SelectedSlot, sim.Ids.Next(), 0, sim.Clock.Now, 30f, 12);
+            var shot = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 999, sim.Ids.Next(), 0f);
+            shot.SourceCategory = ActorCategory.SiegeFamiliar;
+            p.Payloads.Add(shot);
+            p.CapacityUsed = 1;
+            p.Status = PacketStatus.Stored;
+            yield return null;
+            var dot = root.View.OrbitDots[0];
+            Assert.IsTrue(dot.gameObject.activeSelf);
+            Assert.AreEqual("Fireball Shot", dot.sprite.texture.name, "a caught Siege shot orbits as a fireball");
+        }
     }
 }

@@ -22,6 +22,9 @@ namespace BorrowedHex.Tests
             "Overload", "Big Boom", "Zap Ring",
             // Skill nodes and passives (5.2, 5.3)
             "Spark Burst", "Charge Up", "Heal", "Notify Ping", "Shield Bubble",
+            // Playtest pass: the Collector's stream (a recoloured Plasma Shot), the slam's dust,
+            // the sweep's slash.
+            "Collector Plasma", "Landing Dust", "Dirt Kick", "Wide Cleave",
         };
 
         // Casting is the one 100-pixel sheet (already imported for the boss); the rest are 32.
@@ -59,8 +62,28 @@ namespace BorrowedHex.Tests
         public void TheImporterRecreatesEverySheetAndTheFont()
         {
             var sources = WorldArtImporter.Sources();
-            foreach (var sheet in Sheets) Assert.IsTrue(sources.ContainsKey(sheet + ".png"), sheet);
+            var recolours = WorldArtImporter.Recolours();
+            foreach (var sheet in Sheets)
+                Assert.IsTrue(sources.ContainsKey(sheet + ".png") || recolours.ContainsKey(sheet + ".png"), sheet);
+            // A recolour is made from a copied sheet, so its source must be on the copy list.
+            foreach (var r in recolours.Values) Assert.IsTrue(sources.ContainsKey(r.From), r.From);
             Assert.IsTrue(sources.ContainsKey("m5x7.ttf"));
+        }
+
+        // The Collector's stream is Plasma Shot hue-shifted from teal into the Collector's
+        // magenta. A hue rotation keeps each pixel's brightness and saturation, so the shading
+        // survives; a multiply tint would only darken the teal.
+        [Test]
+        public void TheHueShiftMovesTealToMagentaAndKeepsShadingAndAlpha()
+        {
+            var teal = new Color32(40, 200, 190, 255);
+            var shifted = WorldArtImporter.ShiftHue(teal, WorldArtImporter.Recolours()["Collector Plasma.png"].Degrees);
+            Color.RGBToHSV(shifted, out var h, out var sat, out var v);
+            Color.RGBToHSV(teal, out _, out var sat0, out var v0);
+            Assert.That(h * 360f, Is.InRange(280f, 320f), "magenta, the Homing Orb hue");
+            Assert.AreEqual(sat0, sat, 0.02f); Assert.AreEqual(v0, v, 0.02f);
+            var clear = new Color32(40, 200, 190, 0);
+            Assert.AreEqual(0, WorldArtImporter.ShiftHue(clear, 120f).a, "transparency is untouched");
         }
     }
 }

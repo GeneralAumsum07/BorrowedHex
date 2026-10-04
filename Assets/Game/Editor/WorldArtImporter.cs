@@ -69,7 +69,10 @@ namespace BorrowedHex.EditorTools
                 "Hit Sparks/Hit Spark", "Hit Sparks/Pierce Spark", "Hit Sparks/Critical Star", "Hit Sparks/Weak Hit",
                 "Hit Sparks/Block Spark", "Hit Sparks/Shock Hit",
                 "Explosions/Small Pop", "Explosions/Smoke Burst", "Explosions/Big Boom", "Explosions/Blast",
-                "Pickups and UI/Star Burst", "Pickups and UI/Notify Ping" })
+                "Pickups and UI/Star Burst", "Pickups and UI/Notify Ping",
+                // Playtest pass: the Collector stream's source sheet (recoloured below), the
+                // slam's ground dust and the sweep's kicked-up dirt.
+                "Projectiles/Plasma Shot", "Smoke and Dust/Landing Dust", "Smoke and Dust/Dirt Kick" })
                 files[Path.GetFileName(pair)] = Essentials + pair + ".png";
             // Keys gain their extension here: the callout font is not a texture.
             var withExtension = new Dictionary<string, string>();
@@ -77,6 +80,44 @@ namespace BorrowedHex.EditorTools
             // The callout font (spec 4.2.4): third-party like the sheets, so it lives beside them.
             withExtension["m5x7.ttf"] = "m5x7.ttf";
             return withExtension;
+        }
+
+        /// <summary>A sheet made from another imported sheet by rotating its hue.</summary>
+        public struct Recolour { public string From; public float Degrees; }
+
+        /// <summary>
+        /// Derived sheets, keyed by destination file name. They are generated from a copied
+        /// sheet rather than downloaded, so like Sources() this list is the committed recipe.
+        /// Plasma Shot is teal; +120 degrees lands on the Collector's magenta (the Homing Orb's
+        /// hue). A sprite tint could not do this: tints multiply, so teal would only go dark.
+        /// </summary>
+        public static Dictionary<string, Recolour> Recolours() => new Dictionary<string, Recolour> {
+            ["Collector Plasma.png"] = new Recolour { From = "Plasma Shot.png", Degrees = 120f },
+        };
+
+        /// <summary>Rotate one pixel's hue, keeping saturation, brightness and alpha (so shading survives).</summary>
+        public static Color32 ShiftHue(Color32 c, float degrees)
+        {
+            Color.RGBToHSV(c, out var h, out var s, out var v);
+            var shifted = (Color32)Color.HSVToRGB(Mathf.Repeat(h + degrees / 360f, 1f), s, v);
+            shifted.a = c.a;
+            return shifted;
+        }
+
+        static void WriteRecolour(string to, Recolour r)
+        {
+            // Read the copied PNG's bytes, not the imported asset: the importer settings below
+            // have not run yet, and the bytes are the untouched source either way.
+            var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                tex.LoadImage(File.ReadAllBytes(Destination + "/" + r.From));
+                var px = tex.GetPixels32();
+                for (int i = 0; i < px.Length; i++) px[i] = ShiftHue(px[i], r.Degrees);
+                tex.SetPixels32(px);
+                File.WriteAllBytes(Destination + "/" + to, tex.EncodeToPNG());
+            }
+            finally { UnityEngine.Object.DestroyImmediate(tex); }
         }
 
         public static int Import(string source)
@@ -89,13 +130,19 @@ namespace BorrowedHex.EditorTools
                 if (!File.Exists(Path.Combine(source, pair.Value))) throw new FileNotFoundException(pair.Value);
             Directory.CreateDirectory(Destination);
             AssetDatabase.StartAssetEditing();
-            try { foreach (var pair in files) File.Copy(Path.Combine(source, pair.Value), Destination + "/" + pair.Key, true); }
+            try
+            {
+                foreach (var pair in files) File.Copy(Path.Combine(source, pair.Value), Destination + "/" + pair.Key, true);
+                foreach (var pair in Recolours()) WriteRecolour(pair.Key, pair.Value);
+            }
             finally { AssetDatabase.StopAssetEditing(); }
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            foreach (var pair in files)
+            var textures = new List<string>(files.Keys);
+            textures.AddRange(Recolours().Keys);   // derived sheets need the same pixel-art import
+            foreach (var name in textures)
             {
-                if (!pair.Key.EndsWith(".png")) continue;   // the font keeps Unity's default font import
-                var importer = (TextureImporter)AssetImporter.GetAtPath(Destination + "/" + pair.Key);
+                if (!name.EndsWith(".png")) continue;   // the font keeps Unity's default font import
+                var importer = (TextureImporter)AssetImporter.GetAtPath(Destination + "/" + name);
                 importer.textureType = TextureImporterType.Default;
                 importer.filterMode = FilterMode.Point;
                 importer.mipmapEnabled = false;
@@ -109,7 +156,7 @@ namespace BorrowedHex.EditorTools
                 importer.maxTextureSize = 4096; // Necromancer is 2720px wide; never shrink its cells
                 importer.SaveAndReimport();
             }
-            return files.Count;
+            return files.Count + Recolours().Count;
         }
 
         [MenuItem("Borrowed Hex/Art/Install World Presentation")]

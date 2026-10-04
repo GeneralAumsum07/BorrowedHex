@@ -88,6 +88,8 @@ namespace BorrowedHex.Presentation
         Material trailMaterial;
         public int ShotViewCount => shots.Count;
         internal TrailRenderer TrailFor(int projectileId) => liveShots.TryGetValue(projectileId, out var v) ? v.Trail : null;
+        internal SpriteRenderer HaloFor(int projectileId) => liveShots.TryGetValue(projectileId, out var v) ? v.Glow : null;
+        internal IReadOnlyList<SpriteRenderer> OrbitDots => orbitDots;
         Transform shotRoot, enemyRoot;
 
         // Phase 3 capture visuals. The cone is drawn only while the window is open, so its
@@ -560,12 +562,27 @@ namespace BorrowedHex.Presentation
 
         void RenderProjectiles(float alpha)
         {
+            // Release before acquire: hand back the views of shots that ended BEFORE giving
+            // views to new shots, so a shot ending and another starting in the same frame share
+            // one view instead of growing the pool past the peak live count (final review minor).
             seenShots.Clear();
+            foreach (var p in sim.Projectiles) if (p.Active) seenShots.Add(p.ProjectileId);
+            endedShots.Clear();
+            foreach (var id in liveShots.Keys) if (!seenShots.Contains(id)) endedShots.Add(id);
+            foreach (var id in endedShots)
+            {
+                var v = liveShots[id];
+                liveShots.Remove(id);
+                v.Trail.emitting = false;
+                v.Trail.Clear();
+                v.Root.gameObject.SetActive(false);
+                freeShots.Push(v);
+            }
+
             double now = sim.Clock.Now;
             foreach (var p in sim.Projectiles)
             {
                 if (!p.Active) continue;
-                seenShots.Add(p.ProjectileId);
                 Vector2 pos = Vector2.Lerp(p.PrevPosition, p.Position, alpha);
                 if (!liveShots.TryGetValue(p.ProjectileId, out var v))
                 {
@@ -584,19 +601,19 @@ namespace BorrowedHex.Presentation
                     v.NextPuff = now;
                 }
                 v.Root.position = Geometry2D.ToWorld(pos);
-                // The halo is the honest hitbox (Disc sprites are 2 units across, so scale ==
-                // radius is true size; 1.3 is the slight halo beyond it), now translucent so the
-                // school sprite reads on top of it.
+                // The halo is the honest hitbox: a faint ring (Disc sprites are 2 units across, so
+                // scale == radius is true size) whose outer edge sits just outside the hitbox.
                 v.Glow.color = ProjectileSkins.Halo(p.Faction, p.Shot.Kind, p.Shot.Overcharged);
                 v.Glow.transform.localScale = Vector3.one * (p.Radius * ProjectileSkins.HaloScale);
                 v.Shadow.transform.localScale = Vector3.one * (p.Radius * 2f);
-                var frames = art.Effect(ProjectileSkins.Sheet(p.Shot.SourceCategory, p.Shot.Kind));
+                string sheet = ProjectileSkins.Sheet(p.Shot.SourceCategory, p.Shot.Kind, p.Shot.SourceSpreadHalfAngle);
+                var frames = art.Effect(sheet);
                 // A checkout without the packs draws the halo alone: still every shot, still honest.
                 v.Sprite.enabled = frames.Length > 0;
                 if (frames.Length > 0)
                     v.Sprite.sprite = frames[WorldArtPolicy.Frame(now - p.SpawnedAt, frames.Length, ProjectileSkins.Fps, true)];
                 v.Sprite.color = new Color(1f, 1f, 1f, ProjectileSkins.SpriteAlpha(p.IsEcho));
-                v.Sprite.transform.localScale = Vector3.one * (p.Radius * ProjectileSkins.SpriteScale);
+                v.Sprite.transform.localScale = Vector3.one * (p.Radius * ProjectileSkins.SpriteScaleFor(sheet));
                 if (cam != null)
                 {
                     v.Glow.transform.rotation = cam.transform.rotation;
@@ -609,24 +626,13 @@ namespace BorrowedHex.Presentation
                     v.NextPuff = now + 0.06;   // sim time: puffs pause with the game
                 }
             }
-            endedShots.Clear();
-            foreach (var id in liveShots.Keys) if (!seenShots.Contains(id)) endedShots.Add(id);
-            foreach (var id in endedShots)
-            {
-                var v = liveShots[id];
-                liveShots.Remove(id);
-                v.Trail.emitting = false;
-                v.Trail.Clear();
-                v.Root.gameObject.SetActive(false);
-                freeShots.Push(v);
-            }
             shotPuffs.Render(now, cam);
         }
 
         /// <summary>
         /// The on-screen angle of a ground direction, so a sheet drawn facing right points along
-        /// the shot's flight. That the sheets face right is an assumption from viewing them; the
-        /// Task 10 capture checks it.
+        /// the shot's flight. The sheets face right: confirmed in the VFX pass's visual check, so
+        /// no extra angle offset is applied.
         /// </summary>
         float ScreenAngle(Vector3 world, Vector2 dir)
         {
@@ -642,7 +648,7 @@ namespace BorrowedHex.Presentation
             glowGo.transform.SetParent(root, false);
             glowGo.transform.localPosition = new Vector3(0f, ProjectileHeight, 0f);
             var glow = glowGo.AddComponent<SpriteRenderer>();
-            glow.sprite = PixelSprites.Disc(false);
+            glow.sprite = PixelSprites.Disc(true);   // playtest: an outline, not a filled disc
             glow.sortingOrder = 5;
             var spriteGo = new GameObject("Sprite");
             spriteGo.transform.SetParent(root, false);
@@ -692,7 +698,7 @@ namespace BorrowedHex.Presentation
                 parryBand.transform.localScale = Vector3.one * parryBandOuter;
             }
 
-            // Orbit placeholders: one dot per stored shot, each SLOT on its own ring radius and
+            // Orbiting shots: one per stored shot, each SLOT on its own ring radius and
             // spin direction so two slots read as two separate bundles (keyed by the fixed slot
             // index, so a bundle keeps its ring when the other one fires). The selected slot's
             // dots are larger: that is what right mouse will throw. Spin speeds up as
@@ -716,15 +722,46 @@ namespace BorrowedHex.Presentation
                     float a = spin + i * Mathf.PI * 2f / count;
                     Vector2 off = new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * radius;
                     dot.gameObject.SetActive(true);
-                    dot.transform.localScale = Vector3.one * (selected ? 0.17f : 0.12f);
                     dot.transform.position = Geometry2D.ToWorld(pos + off, 0.7f);
+                    // Playtest: each orbiting shot wears the shape of the shot actually caught
+                    // (the same school mapping as flying shots), so the bundle says what it holds.
+                    // Without the local packs it stays the plain dot.
+                    var payload = pk.Payloads[i];
+                    string sheet = ProjectileSkins.Sheet(payload.SourceCategory, payload.Kind, payload.SourceSpreadHalfAngle);
+                    var frames = art.Effect(sheet);
+                    bool shaped = frames.Length > 0;
+                    if (shaped)
+                    {
+                        dot.sprite = frames[WorldArtPolicy.Frame(now, frames.Length, ProjectileSkins.Fps, true)];
+                        // 32-px cell = 1 unit at scale 1 and the shapes fill ~40% of it, so 1.0
+                        // draws a shape about the old dot's size; the selected bundle is larger.
+                        float fill = ProjectileSkins.SpriteScaleFor(sheet) / ProjectileSkins.SpriteScale;
+                        dot.transform.localScale = Vector3.one * ((selected ? 1.3f : 0.95f) * fill);
+                    }
+                    else
+                    {
+                        dot.sprite = PixelSprites.Disc(false);
+                        dot.transform.localScale = Vector3.one * (selected ? 0.17f : 0.12f);
+                    }
                     // Blink during the final half second: the release is about to happen.
                     bool blink = selected && left < 0.5f && Mathf.Repeat((float)now * 10f, 1f) < 0.5f;
                     // D94: inside the Overcharge zone the dots go solid gold instead of the red
                     // blink, matching the HUD: there it means "fire now", not "about to lose it".
                     bool zone = pk.IsOvercharged(sim.Stats.Power);
-                    dot.color = zone ? OverchargeGold : blink ? RejectColor : selected ? ReturnedColor : new Color(0.4f, 0.55f, 0.7f);
-                    if (cam != null) dot.transform.rotation = cam.transform.rotation;
+                    // On a shaped sprite the state is a tint over its own colours (white = as
+                    // drawn); the plain dot keeps the original flat state colours.
+                    dot.color = zone ? OverchargeGold : blink ? RejectColor
+                        : shaped ? (selected ? Color.white : new Color(0.75f, 0.8f, 0.9f, 0.85f))
+                        : selected ? ReturnedColor : new Color(0.4f, 0.55f, 0.7f);
+                    if (cam != null)
+                    {
+                        // A shaped shot points along its orbit, the way a flying shot points along its flight.
+                        float dirSign = slot % 2 == 0 ? 1f : -1f;
+                        Vector2 tangent = new Vector2(-Mathf.Sin(a), Mathf.Cos(a)) * dirSign;
+                        dot.transform.rotation = shaped
+                            ? cam.transform.rotation * Quaternion.Euler(0f, 0f, ScreenAngle(dot.transform.position, tangent))
+                            : cam.transform.rotation;
+                    }
                 }
             }
             for (int i = used; i < orbitDots.Count; i++) orbitDots[i].gameObject.SetActive(false);
