@@ -348,7 +348,10 @@ namespace BorrowedHex.Tests
             root.DebugFireSelected();
             // A short frame can run zero 60 Hz steps, so wait for the step that fires, not
             // for exactly one frame. Coroutines resume after Update, i.e. after that step.
-            for (int i = 0; i < 30 && overcharges == 0; i++) yield return null;
+            // Capped in REAL time, not frames: in the full batchmode suite frames ran ~2.7 ms,
+            // so 30 frames was ~11 ms and fewer than one 16.7 ms step, and the test flaked.
+            float giveUp = Time.realtimeSinceStartup + 2f;
+            while (overcharges == 0 && Time.realtimeSinceStartup < giveUp) yield return null;
             Assert.AreEqual(1, overcharges, "the release was a perfect one");
             Assert.IsTrue(root.HitStopActive || BorrowedHex.UI.DisplayOptions.ReduceFlashes);
             double frozenAt = sim.Clock.Now;

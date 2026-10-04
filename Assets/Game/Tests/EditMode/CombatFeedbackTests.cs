@@ -149,6 +149,90 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(0, fx.PierceKeys);
         }
 
+        EnemyActor BossIn(BossPattern pattern)
+        {
+            var boss = sim.SpawnBoss();
+            boss.Boss.Pattern = pattern;
+            boss.Boss.Stage = BossStage.Active;
+            return boss;
+        }
+
+        // Playtest: the Collector's slam raised the hostile Explosion and was drawn as a Blast.
+        [Test]
+        public void TheCollectorsSlamShakesLikeASlamNotARocket()
+        {
+            var boss = BossIn(BossPattern.Slam);
+            sim.Events.RaiseExplosion(boss.Position, sim.Config.collector.slamRadius, AttackFaction.Hostile);
+            CollectionAssert.AreEqual(new[] { FeedbackPolicy.For(CueEvent.BossSlam, default).ShakeAmp }, host.Shakes);
+            if (Sheets) Assert.AreEqual(2, fx.LiveEffects, "dust and dirt");
+            host.Shakes.Clear();
+            sim.Events.RaiseExplosion(boss.Position + new Vector2(4f, 0f), 1.6f, AttackFaction.Hostile);
+            CollectionAssert.AreEqual(new[] { .1f }, host.Shakes, "a rocket elsewhere is still a rocket");
+        }
+
+        // Playtest: the sweep had no effect while the blade moved.
+        [Test]
+        public void TheSweepShakesOnceAndKicksDirtAlongTheBlade()
+        {
+            var boss = BossIn(BossPattern.Sweep);
+            fx.Render(null, 1f / 60);
+            fx.Render(null, 1f / 60);
+            CollectionAssert.AreEqual(new[] { FeedbackPolicy.For(CueEvent.BossSweep, default).ShakeAmp }, host.Shakes, "once per swing");
+            if (Sheets) Assert.Greater(fx.LiveEffects, 0, "dirt at the blade tip");
+            boss.Boss.Stage = BossStage.Recover;
+            fx.Render(null, 1f / 60);
+            boss.Boss.Stage = BossStage.Active;
+            fx.Render(null, 1f / 60);
+            Assert.AreEqual(2, host.Shakes.Count, "a new swing shakes again");
+        }
+
+        // Final review minor: the dash copies were laid out ahead of the player at the dash's start.
+        [Test]
+        public void DashGhostsAreDroppedWhereThePlayerIsDuringTheDash()
+        {
+            var p = sim.Player;
+            p.Position = new Vector2(3f, 1f);
+            p.Dashing = true;
+            sim.Events.RaiseDash(p.Position, Vector2.right);
+            fx.Render(null, 1f / 60);
+            Assert.AreEqual(1, fx.LiveGhosts, "one copy now, the rest as the dash goes on");
+            foreach (var g in fx.LiveGhostRenderers)
+            {
+                var at = Geometry2D.ToWorld(p.Position);
+                Assert.AreEqual(at.x, g.transform.position.x, 1e-4);
+                Assert.AreEqual(at.z, g.transform.position.z, 1e-4);
+                Assert.AreSame(CharacterView.SilhouetteMaterial, g.sharedMaterial, "a silhouette of the player");
+            }
+            p.Dashing = false;
+
+            fx.Render(null, 0f);
+            Assert.AreEqual(1, fx.LiveGhosts, "an ended dash leaves no stragglers");
+        }
+
+        // Final review minor: recoil always pushed away from the player.
+        [Test]
+        public void RecoilFollowsTheShotOrTheBlast()
+        {
+            var e = Enemy(new Vector2(2f, 0f));
+            var s = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 999, sim.Ids.Next(), 0f);
+            var shot = sim.SpawnProjectile(s, AttackFaction.Returned, new Vector2(2f, 3f), Vector2.down);
+            var along = fx.RecoilDirection(e, new DamageEvent { ShotId = shot.Shot.ShotId, Category = DamageCategory.ReturnedProjectile });
+            Assert.Less(Vector2.Angle(along, Vector2.down), 1f, "pushed along the shot, not away from the player");
+            sim.Events.RaiseExplosion(new Vector2(2f, -2f), 3f, AttackFaction.Returned);
+            var blast = fx.RecoilDirection(e, new DamageEvent { Category = DamageCategory.Explosion });
+            Assert.Less(Vector2.Angle(blast, Vector2.up), 1f, "pushed away from the blast");
+        }
+
+        // Final review minor: a disposed director still reacted to its sim.
+        [Test]
+        public void ADisposedDirectorStopsListening()
+        {
+            fx.Dispose();
+            sim.Events.RaisePlayerHit(1, 0);
+            Assert.IsEmpty(host.Shakes);
+            fx = new CombatFeedback(sim, parent.transform, art, host, _ => null, player);   // for TearDown
+        }
+
         [Test]
         public void FiveMomentsInARowNeverShowMoreThanThreeWords()
         {

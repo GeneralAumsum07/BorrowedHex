@@ -52,7 +52,11 @@ namespace BorrowedHex.Presentation.WorldArt
 
         public Sprite[] Effect(string name, int cell = 32)
         {
-            if (sheets.TryGetValue(name, out var cached)) return cached;
+            // The cell size is part of the key (final review minor): one sheet cut at two cell
+            // sizes is two different frame lists, and caching by name alone returned whichever
+            // was asked for first. The 32 default keeps the bare name, as before.
+            string key = cell == 32 ? name : name + "@" + cell;
+            if (sheets.TryGetValue(key, out var cached)) return cached;
             var tex = Texture(name);
             var frames = new List<Sprite>();
             if (tex != null && tex.width % cell == 0 && tex.height % cell == 0)
@@ -67,7 +71,7 @@ namespace BorrowedHex.Presentation.WorldArt
                 while (frames.Count > 0 && Empty(pixels, tex.width, frames[frames.Count - 1].rect))
                 { DestroyOwned(frames[frames.Count - 1]); frames.RemoveAt(frames.Count - 1); }
             }
-            return sheets[name] = frames.ToArray();
+            return sheets[key] = frames.ToArray();
         }
 
         static bool Empty(Color32[] pixels, int width, Rect r)

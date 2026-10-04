@@ -22,6 +22,18 @@ namespace BorrowedHex.Tests
             CollectionAssert.DoesNotContain(callouts.LiveTexts, "A!");
         }
 
+        // Final review minor: two words at one moment printed on top of each other.
+        [Test]
+        public void TwoWordsAtOneSpotStackInsteadOfOverlapping()
+        {
+            callouts.Show("Parry!", Color.white, Vector3.zero);
+            callouts.Show("Perfect!", Color.white, Vector3.zero);
+            var o = callouts.LiveOrigins;
+            Assert.GreaterOrEqual(Mathf.Abs(o[0].y - o[1].y), CalloutText.StackStep - 1e-4f);
+            callouts.Show("Far away", Color.white, new Vector3(10f, 0f, 0f));
+            Assert.AreEqual(o[0].y, callouts.LiveOrigins[2].y, 1e-4, "a word elsewhere keeps its own height");
+        }
+
         [Test]
         public void ARepeatRefreshesInsteadOfStacking()
         {

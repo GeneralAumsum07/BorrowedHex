@@ -34,8 +34,13 @@ namespace BorrowedHex.Presentation
         // every view for the app's lifetime.
         static Material silhouetteMaterial;
         Material normalMaterial;
-        Color colorBeforeSilhouette;
+        // The tint callers asked for (ArenaView fades and telegraphs with alpha). Kept apart
+        // from body.color because drawing white overrides the colour and must hand it back.
+        Color tint = Color.white;
         public bool Silhouette { get; private set; }
+        // True while the body is drawn through the silhouette material, for EITHER reason: an
+        // impact frame or a hit flash. One flag for both so neither can switch off the other.
+        internal bool DrawnWhite { get; private set; }
         public Sprite CurrentSprite => body.sprite;
         internal Vector3 BillboardOffset => billboard.localPosition;
 
@@ -74,13 +79,33 @@ namespace BorrowedHex.Presentation
 
         public void SetSprite(Sprite s) => body.sprite = s != null ? s : PixelSprites.Get(PixelSprites.Kind.Magician);
 
-        public void SetTint(Color c) => body.color = c;
+        public void SetTint(Color c) { tint = c; body.color = Silhouette ? Color.white : tint; }
         public void SetVisualScale(float scale) { visualScale = scale; body.transform.localScale = Vector3.one * scale; }
 
         /// <summary>Face left/right toward the aim; purely cosmetic.</summary>
         public void SetFacing(float x)
         {
             if (Mathf.Abs(x) > 0.05f) body.flipX = x < 0f;
+        }
+
+        /// <summary>Which way the sprite faces, so afterimages can copy it.</summary>
+        public bool FlipX => body.flipX;
+
+        /// <summary>
+        /// The shared white-silhouette material, or null where the shader was stripped. Shared
+        /// with the dash afterimages, which are silhouettes of the player too.
+        /// </summary>
+        internal static Material SilhouetteMaterial
+        {
+            get
+            {
+                if (silhouetteMaterial == null)
+                {
+                    var shader = Shader.Find("GUI/Text Shader");
+                    if (shader != null) silhouetteMaterial = new Material(shader) { name = "ImpactSilhouette" };
+                }
+                return silhouetteMaterial;
+            }
         }
 
         public void Flash(float seconds) => flashUntil = Time.unscaledTime + seconds;
@@ -106,25 +131,33 @@ namespace BorrowedHex.Presentation
         public void SetSilhouette(bool on)
         {
             if (on == Silhouette) return;
-            if (on && silhouetteMaterial == null)
-            {
-                var shader = Shader.Find("GUI/Text Shader");
-                if (shader == null) { Flash(0.05f); return; }   // stripped shader: fall back to the plain flash
-                silhouetteMaterial = new Material(shader) { name = "ImpactSilhouette" };
-            }
-            if (on)
-            {
-                normalMaterial = body.sharedMaterial;
-                colorBeforeSilhouette = body.color;
-                body.sharedMaterial = silhouetteMaterial;
-                body.color = Color.white;
-            }
-            else
-            {
-                body.sharedMaterial = normalMaterial;
-                body.color = colorBeforeSilhouette;
-            }
             Silhouette = on;
+            ApplyFlash(Time.unscaledTime);   // swap now: an impact frame lasts only two frames
+        }
+
+        /// <summary>
+        /// Draws the body white while an impact silhouette is on or a hit flash is running, and
+        /// restores its own material otherwise. A pure function of state and <paramref name="now"/>
+        /// so tests can step it without frames.
+        /// </summary>
+        /// <remarks>
+        /// Playtest fix: the flash used to lerp body.color toward white. SpriteRenderer.color is a
+        /// MULTIPLY tint, so it can only darken the texture, and over the usual white tint the
+        /// lerp changed nothing at all. Only a different shader can draw the sprite brighter
+        /// than itself, so the flash now uses the impact frame's silhouette material.
+        /// </remarks>
+        internal void ApplyFlash(float now)
+        {
+            bool want = (Silhouette || now < flashUntil) && SilhouetteMaterial != null;
+            if (want != DrawnWhite)
+            {
+                if (want) { normalMaterial = body.sharedMaterial; body.sharedMaterial = SilhouetteMaterial; }
+                else body.sharedMaterial = normalMaterial;
+                DrawnWhite = want;
+            }
+            // The silhouette shader draws texture alpha x vertex colour, so the tint's alpha
+            // still applies: a faded enemy flashes faded. An impact frame is always solid.
+            body.color = Silhouette ? Color.white : tint;
         }
 
         void LateUpdate()
@@ -132,10 +165,12 @@ namespace BorrowedHex.Presentation
             if (cam == null) cam = Camera.main;
             if (cam != null) billboard.rotation = cam.transform.rotation;
             ApplyRecoil(Time.unscaledTime);
+            ApplyFlash(Time.unscaledTime);
             bool hidden = blink && Mathf.Repeat(Time.unscaledTime * 12f, 1f) < 0.4f;
+            // Stripped shader (no white to draw): the flash shows as a brief blink instead,
+            // which still reads as "hit" where the old no-op tint read as nothing.
+            if (SilhouetteMaterial == null && Time.unscaledTime < flashUntil) hidden = true;
             body.enabled = !hidden;
-            // A silhouette is already pure white; the flash must not touch its colour.
-            if (!Silhouette && Time.unscaledTime < flashUntil) body.color = Color.Lerp(body.color, Color.white, 0.5f);
         }
     }
 }

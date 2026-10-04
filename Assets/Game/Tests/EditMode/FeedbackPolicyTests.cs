@@ -128,6 +128,21 @@ namespace BorrowedHex.Tests
             }
         }
 
+        // Playtest: the slam read as an explosion. It is dust and dirt at its true reach, with
+        // the heaviest Tier 1 shake, and never the Blast sheet or a freeze.
+        [Test]
+        public void TheSlamIsDustNotABlast()
+        {
+            var c = Full; c.Radius = 2.5f;
+            var slam = FeedbackPolicy.For(CueEvent.BossSlam, c);
+            Assert.AreEqual("Landing Dust", slam.Sheet);
+            Assert.AreEqual(5f, slam.Size, 1e-5, "the dust reaches as far as the slam does");
+            Assert.AreNotEqual("Blast", slam.Sheet2);
+            Assert.AreEqual(1, slam.Tier);
+            Assert.Zero(slam.HitStop);
+            Assert.Greater(slam.ShakeAmp, FeedbackPolicy.For(CueEvent.Explosion, c).ShakeAmp, "the floor itself is hit");
+        }
+
         [Test]
         public void HitSparksTakeTheSchoolsColour()
         {

@@ -36,7 +36,7 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void ADashLeavesThreeGhostsThatFade()
+        public void ADashLeavesThreeGhostsAlongItsPathThatFade()
         {
             var sim = TestSims.Sandbox();
             var parent = new GameObject("PassiveTest");
@@ -45,8 +45,24 @@ namespace BorrowedHex.Tests
             var fx = new CombatFeedback(sim, parent.transform, art, null, _ => null, player);
             try
             {
-                sim.Events.RaiseDash(Vector2.zero, Vector2.right);
+                // A real dash through the sim: the copies are dropped while it runs, at the
+                // player's position at the time, so they trail behind instead of appearing ahead.
+                // Rendered with dt 0 so no copy ages out while the dash is still laying them.
+                var go = BorrowedHex.Player.PlayerCommand.Moving(Vector2.right);
+                sim.Tick(go.WithDash(), 1f / 60);
+                fx.Render(null, 0f);
+                Assert.AreEqual(1, fx.LiveGhosts, "the first copy at once");
+                var xs = new System.Collections.Generic.List<float>();
+                for (int i = 0; i < 30; i++)
+                {
+                    int before = fx.LiveGhosts;
+                    sim.Tick(go, 1f / 60);
+                    fx.Render(null, 0f);
+                    if (fx.LiveGhosts > before) xs.Add(sim.Player.Position.x);
+                }
                 Assert.AreEqual(CombatFeedback.DashGhosts, fx.LiveGhosts);
+                Assert.AreEqual(CombatFeedback.DashGhosts - 1, xs.Count);
+                Assert.Less(xs[0], xs[1], "each later copy is further along the dash");
                 fx.Render(null, CombatFeedback.GhostSeconds + .01f);
                 Assert.AreEqual(0, fx.LiveGhosts);
             }

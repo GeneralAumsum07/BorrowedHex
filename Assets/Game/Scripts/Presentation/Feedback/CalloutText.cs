@@ -15,6 +15,10 @@ namespace BorrowedHex.Presentation.Feedback
     {
         public const float Life = 0.6f, Rise = 0.6f, PopIn = 0.08f, Height = 1.6f;
         const float PopScale = 1.5f;
+        // Two words at one moment (Parry! and Perfect! off the same catch) used to print on
+        // top of each other (final review minor). A word lands one line above any live word
+        // near the same spot; StackRadius is how near counts, on the floor plane.
+        public const float StackStep = 0.45f, StackRadius = 1.5f;
 
         sealed class Item { public TextMesh Text; public Vector3 Origin; public float Age; public bool Live; }
         readonly List<Item> items = new List<Item>();
@@ -42,6 +46,7 @@ namespace BorrowedHex.Presentation.Feedback
 
         public int LiveCount { get { int n = 0; foreach (var i in items) if (i.Live) n++; return n; } }
         public List<string> LiveTexts { get { var l = new List<string>(); foreach (var i in items) if (i.Live) l.Add(i.Text.text); return l; } }
+        public List<Vector3> LiveOrigins { get { var l = new List<Vector3>(); foreach (var i in items) if (i.Live) l.Add(i.Origin); return l; } }
 
         public void Show(string text, Color color, Vector3 at)
         {
@@ -52,10 +57,28 @@ namespace BorrowedHex.Presentation.Feedback
             if (item == null)   // full: the oldest gives way
                 foreach (var i in items) if (item == null || i.Age > item.Age) item = i;
             item.Live = true; item.Age = 0f;
-            item.Origin = at + Vector3.up * Height;
+            item.Origin = Stacked(item, at + Vector3.up * Height);
             item.Text.text = text; item.Text.color = color;
             item.Text.gameObject.SetActive(true);
             Apply(item, null);
+        }
+
+        Vector3 Stacked(Item self, Vector3 origin)
+        {
+            // At most MaxCallouts steps: there are never more live words than that to clear.
+            for (int step = 0; step < FeedbackPolicy.MaxCallouts; step++)
+            {
+                bool clash = false;
+                foreach (var i in items)
+                {
+                    if (i == self || !i.Live) continue;
+                    var flat = new Vector2(i.Origin.x - origin.x, i.Origin.z - origin.z);
+                    if (flat.magnitude < StackRadius && Mathf.Abs(i.Origin.y - origin.y) < StackStep) { clash = true; break; }
+                }
+                if (!clash) break;
+                origin += Vector3.up * StackStep;
+            }
+            return origin;
         }
 
         Item Create()

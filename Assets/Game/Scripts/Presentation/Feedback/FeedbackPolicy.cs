@@ -11,6 +11,7 @@ namespace BorrowedHex.Presentation.Feedback
         Parry, PerfectCatch, Overcharge, Backfire, Fusion, Chain,
         PartingGift, Overflow, QuickDraw, LifeStolen,
         ShotExpired, ShotHitWall, ShotCaptured, Muzzle, DashReady,
+        BossSlam, BossSweep, SweepDust,
     }
 
     /// <summary>
@@ -76,6 +77,9 @@ namespace BorrowedHex.Presentation.Feedback
                 case CueEvent.ShotCaptured: return Sprite("Star Burst", 0.6f, FeedbackColors.Returned);
                 case CueEvent.Muzzle: return new Cue { Sheet = "Casting", Size = 0.8f, Color = Color.white, Cell = 100 };
                 case CueEvent.DashReady: return Sprite("Notify Ping", 0.8f, Color.white);
+                // The sweep's blade tip scuffing the floor. The dust sheets are drawn in their own
+                // earth colours, so no tint.
+                case CueEvent.SweepDust: return Sprite("Dirt Kick", 0.9f, Color.white);
 
                 // ---- Tier 1: kills, getting hit, explosions, boss hits. Plus a small shake.
                 case CueEvent.Kill:
@@ -86,6 +90,16 @@ namespace BorrowedHex.Presentation.Feedback
                     return new Cue { Tier = 1, Sheet = "Heavy Hit", Size = 1.2f, Color = FeedbackColors.Danger, ShakeAmp = 0.12f, ShakeDuration = 0.20f };
                 case CueEvent.Explosion:
                     return new Cue { Tier = 1, Sheet = "Blast", Size = c.Radius * 2f, Color = FeedbackColors.Rocket, ShakeAmp = 0.10f, ShakeDuration = 0.20f };
+                case CueEvent.BossSlam:
+                    // Playtest: the slam was drawn as a fiery Blast and read as an explosion. It is a
+                    // blow to the ground: dust thrown out to the slam's true reach, dirt kicked up at
+                    // the centre, and the heaviest Tier 1 shake, since the floor itself is hit. Tier 1,
+                    // so no freeze: the player needs the next instant to get clear.
+                    return new Cue { Tier = 1, Sheet = "Landing Dust", Size = c.Radius * 2f, Color = Color.white,
+                        Sheet2 = "Dirt Kick", Size2 = 2f, Color2 = Color.white, ShakeAmp = 0.20f, ShakeDuration = 0.30f };
+                case CueEvent.BossSweep:
+                    // The swing starting: a short shove. The blade's dirt trail is SweepDust.
+                    return new Cue { Tier = 1, ShakeAmp = 0.08f, ShakeDuration = 0.15f };
                 case CueEvent.BossHit:
                     // The boss's Heavy Hit and hurt pose already live in WorldPresentation.
                     return new Cue { Tier = 1, ShakeAmp = 0.06f, ShakeDuration = 0.10f };

@@ -40,5 +40,57 @@ namespace BorrowedHex.Tests
             Assert.AreSame(normal, view.transform.Find("Billboard/Sprite").GetComponent<SpriteRenderer>().sharedMaterial);
             Assert.NotNull(body);
         }
+
+        SpriteRenderer Body => view.transform.Find("Billboard/Sprite").GetComponent<SpriteRenderer>();
+
+        // Playtest: enemies showed no white flash when hit. The old flash lerped a multiply tint
+        // toward white, and the tint was already white, so it changed nothing. A real white
+        // flash draws the sprite through the silhouette material for the flash's length.
+        [Test]
+        public void AHitFlashDrawsTheSpriteWhiteAndThenRestoresIt()
+        {
+            var normal = Body.sharedMaterial;
+            float t0 = Time.unscaledTime;
+            view.Flash(0.1f);
+            view.ApplyFlash(t0);
+            Assert.IsTrue(view.DrawnWhite);
+            Assert.AreNotSame(normal, Body.sharedMaterial, "drawn through the silhouette material");
+            view.ApplyFlash(t0 + 1f);
+            Assert.IsFalse(view.DrawnWhite);
+            Assert.AreSame(normal, Body.sharedMaterial, "the sprite's own material is back");
+        }
+
+        // The flash and the impact silhouette share the material: whichever ends first must not
+        // turn the other off.
+        [Test]
+        public void AFlashEndingDuringAnImpactKeepsTheSilhouette()
+        {
+            var normal = Body.sharedMaterial;
+            float t0 = Time.unscaledTime;
+            view.Flash(0.05f);
+            view.SetSilhouette(true);
+            view.ApplyFlash(t0 + 1f);                       // the flash is over, the impact is not
+            Assert.IsTrue(view.DrawnWhite);
+            view.SetSilhouette(false);
+            // SetSilhouette applies at the real clock, which an EditMode test cannot move, so
+            // the 0.05 s flash may still be "running" there; step past it explicitly.
+            view.ApplyFlash(t0 + 1f);
+            Assert.IsFalse(view.DrawnWhite);
+            Assert.AreSame(normal, Body.sharedMaterial);
+        }
+
+        // A faded or telegraphing enemy (ArenaView tints it translucent) flashes translucent,
+        // not as a sudden opaque block, and keeps that tint after.
+        [Test]
+        public void TheFlashKeepsTheTintsAlpha()
+        {
+            float t0 = Time.unscaledTime;
+            view.SetTint(new Color(1f, 1f, 1f, 0.45f));
+            view.Flash(0.1f);
+            view.ApplyFlash(t0);
+            Assert.AreEqual(0.45f, Body.color.a, 1e-4);
+            view.ApplyFlash(t0 + 1f);
+            Assert.AreEqual(0.45f, Body.color.a, 1e-4);
+        }
     }
 }
