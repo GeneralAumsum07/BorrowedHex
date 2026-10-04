@@ -1136,7 +1136,7 @@
         "Collector/collector_manifest_v01.wav",
         "Collector/collector_manifest_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H2",
@@ -1152,7 +1152,7 @@
         "Collector/collector_footstep_v05.wav",
         "Collector/collector_footstep_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H3",
@@ -1165,7 +1165,7 @@
         "Collector/collector_stream_windup_v02.wav",
         "Collector/collector_stream_windup_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H5",
@@ -1178,7 +1178,7 @@
         "Collector/collector_fan_windup_v02.wav",
         "Collector/collector_fan_windup_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H6",
@@ -1192,7 +1192,7 @@
         "Collector/collector_fan_release_v03.wav",
         "Collector/collector_fan_release_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H7",
@@ -1205,7 +1205,7 @@
         "Collector/collector_sweep_windup_v02.wav",
         "Collector/collector_sweep_windup_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H8",
@@ -1219,7 +1219,7 @@
         "Collector/collector_sweep_v03.wav",
         "Collector/collector_sweep_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H9",
@@ -1233,7 +1233,7 @@
         "Collector/collector_sweep_ground_v03.wav",
         "Collector/collector_sweep_ground_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H10",
@@ -1246,7 +1246,7 @@
         "Collector/collector_slam_warning_v02.wav",
         "Collector/collector_slam_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H11",
@@ -1260,7 +1260,7 @@
         "Collector/collector_slam_v03.wav",
         "Collector/collector_slam_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H12",
@@ -1273,7 +1273,7 @@
         "Collector/collector_summon_windup_v02.wav",
         "Collector/collector_summon_windup_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H13",
@@ -1286,7 +1286,7 @@
         "Collector/collector_summon_release_v02.wav",
         "Collector/collector_summon_release_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H14",
@@ -1300,7 +1300,7 @@
         "Collector/collector_summon_arrival_v03.wav",
         "Collector/collector_summon_arrival_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H15",
@@ -1313,7 +1313,7 @@
         "Collector/collector_teleport_warning_v02.wav",
         "Collector/collector_teleport_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H16",
@@ -1327,7 +1327,7 @@
         "Collector/collector_teleport_depart_v03.wav",
         "Collector/collector_teleport_depart_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H17",
@@ -1341,7 +1341,7 @@
         "Collector/collector_teleport_arrive_v03.wav",
         "Collector/collector_teleport_arrive_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H18",
@@ -1357,7 +1357,7 @@
         "Collector/collector_hurt_v05.wav",
         "Collector/collector_hurt_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H19",
@@ -1370,7 +1370,7 @@
         "Collector/collector_stagger_v02.wav",
         "Collector/collector_stagger_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H20",
@@ -1382,7 +1382,7 @@
         "Collector/collector_death_rupture_v01.wav",
         "Collector/collector_death_rupture_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H20",
@@ -1394,7 +1394,7 @@
         "Collector/collector_death_collapse_v01.wav",
         "Collector/collector_death_collapse_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H20",
@@ -1405,7 +1405,7 @@
       "paths": [
         "Collector/collector_death_binding_tail_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H21",
@@ -1417,7 +1417,7 @@
         "Collector/collector_encore_entrance_v01.wav",
         "Collector/collector_encore_entrance_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B1",
@@ -1428,7 +1428,7 @@
       "paths": [
         "Stingers/run_start_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B2",
@@ -1439,7 +1439,7 @@
       "paths": [
         "Stingers/encounter_clear_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B3",
@@ -1450,7 +1450,7 @@
       "paths": [
         "Stingers/encounter_begin_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B4",
@@ -1461,7 +1461,7 @@
       "paths": [
         "Stingers/boss_reveal_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B5",
@@ -1472,7 +1472,7 @@
       "paths": [
         "Stingers/boss_combat_start_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B6",
@@ -1483,7 +1483,7 @@
       "paths": [
         "Stingers/collector_defeated_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B7",
@@ -1494,7 +1494,7 @@
       "paths": [
         "Stingers/short_run_victory_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B8",
@@ -1505,7 +1505,7 @@
       "paths": [
         "Stingers/death_defeat_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B9",
@@ -1516,7 +1516,7 @@
       "paths": [
         "Stingers/time_expiry_defeat_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D1",
@@ -3312,7 +3312,7 @@
       "paths": [
         "Music/main_menu.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A2",
@@ -3323,7 +3323,7 @@
       "paths": [
         "Music/courtyard_combat.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A3",
@@ -3334,7 +3334,7 @@
       "paths": [
         "Music/graveyard_combat.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A4",
@@ -3345,7 +3345,7 @@
       "paths": [
         "Music/cave_combat.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A5",
@@ -3356,7 +3356,7 @@
       "paths": [
         "Music/sanctum_intro.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A6",
@@ -3367,7 +3367,7 @@
       "paths": [
         "Music/collector_battle.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A7",
