@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "tick": "Narrative/dialogue_tick_v01.wav",
+  "sample_rate_hz": 22050,
+  "frames": 551,
+  "duration_ms": 24.988662,
+  "frequency_hz": 640,
+  "channels": 1,
+  "peak_amplitude": 0.07999992370605469,
+  "ramp_ms_nominal": 5,
+  "shared_assets_checked": 17,
+  "runtime_playback_checked": false,
+  "runtime_integration": "None"
+}

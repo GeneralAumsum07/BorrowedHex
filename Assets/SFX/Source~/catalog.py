@@ -316,7 +316,7 @@ K4|tutorial_complete|stinger_victory|1.80|1|293.665|-14
 ''')
 ALIASES['K5'] = ['UI/confirm']
 add('L1','Narrative','dialogue_tick','dialogue',.025,1,6,640,-21.94,False,
-    'Planned story asset: 25 ms 640 Hz sine, 5 ms attack/release, amplitude 0.08. Fixed pitch across speakers; integration caps rate to one tick per 0.06 s.')
+    'Lore Task 5: mono 22050 Hz source, nominal 25 ms (551 frames), 640 Hz sine, 5 ms attack/release, amplitude 0.08. Fixed pitch across speakers; saved playback volume defaults to 35%, and integration caps rate to one tick per 0.06 s.')
 ALIASES['L2'] = ['UI/confirm']
 ALIASES['L3'] = ['UI/button_press','UI/back_cancel']
 

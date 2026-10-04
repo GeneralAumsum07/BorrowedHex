@@ -20,7 +20,8 @@ all variations. Music filenames do not carry a variation suffix.
 
 ## Masters and import
 
-- WAV, 48 kHz, 24-bit PCM masters.
+- WAV, 48 kHz, 24-bit PCM masters; the dialogue tick uses 22,050 Hz as required
+  by Lore Implementation Plan Task 5.
 - Gameplay effects are mono for future spatial placement. Music and arena
   ambient beds are stereo. Fire emitters and mechanical texture loops are mono.
 - One-shots include their designed tails and have silent endpoint samples.
@@ -61,8 +62,10 @@ each moment; stacking every accent would be excessive.
   warning, ready and Overcharge are distinct cues for state-driven playback.
 - Swap/bank/resume layers form one action; do not play all three at full volume.
 - Preserve the narrative's silent black lore pages and silent combat captions.
-  Dialogue has one 25 ms, 640 Hz tick with 5 ms ramps and amplitude 0.08, at
-  fixed pitch across speakers. Its later caller limits ticks to one per 0.06 s.
+  Dialogue has one mono 22,050 Hz, nominal 25 ms, 640 Hz tick with 5 ms ramps and
+  amplitude 0.08, at fixed pitch across speakers. Its later caller uses a saved
+  dialogue volume (default 35%) and limits ticks to one per 0.06 s. See
+  `Narrative/LORE_AUDIO_READINESS.md` for the complete lore asset handoff.
 - Provide independent volume/mute control for repetitive danger/heartbeat cues.
 - Boss rupture, collapse, tail, victory stinger and results theme form a sequence;
   avoid playing all of them at the same moment.

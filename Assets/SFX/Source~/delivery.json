@@ -6652,20 +6652,20 @@
   },
   {
     "path": "Narrative/dialogue_tick_v01.wav",
-    "sample_rate": 48000,
-    "frames": 1200,
-    "duration_seconds": 0.025,
+    "sample_rate": 22050,
+    "frames": 551,
+    "duration_seconds": 0.024989,
     "channels": 1,
     "format": "PCM_24",
     "loop": false,
-    "peak_dbfs": -21.94,
+    "peak_dbfs": -21.938,
     "approval_id": "L1",
     "priority": 6,
     "recipe": "dialogue",
     "variant": 1,
-    "sha256": "c75ff7a4132693f624c269988b7489d7dff65447e324dc42f0fe600e11ae66d0",
-    "true_peak_dbtp": -21.935,
-    "rms_dbfs": -26.197
+    "sha256": "b5d628384e29b01cad552a59b0b701c92fc46df10f4580c0a6c9e9e1367d0652",
+    "true_peak_dbtp": -21.93,
+    "rms_dbfs": -26.193
   },
   {
     "path": "Player/borrowed_life_exhausted_v01.wav",

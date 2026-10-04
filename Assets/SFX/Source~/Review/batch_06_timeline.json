@@ -1,15 +1,15 @@
 [
   {
     "seconds": 0,
-    "cue": "Stingers/endless_wave_clear_v01.wav"
+    "cue": "Stingers/endless_boss_clear_v01.wav"
   },
   {
-    "seconds": 2.27,
+    "seconds": 3.27,
     "cue": "Stingers/endless_cycle_escalates_v01.wav"
   },
   {
-    "seconds": 5.04,
-    "cue": "Stingers/endless_boss_clear_v01.wav"
+    "seconds": 6.04,
+    "cue": "Stingers/endless_wave_clear_v01.wav"
   },
   {
     "seconds": 8.31,
@@ -17,15 +17,15 @@
   },
   {
     "seconds": 10.93,
+    "cue": "Training/lesson_complete_v01.wav"
+  },
+  {
+    "seconds": 12.95,
     "cue": "Training/lesson_prompt_v01.wav"
   },
   {
-    "seconds": 11.73,
+    "seconds": 13.75,
     "cue": "Training/objective_progress_v01.wav"
-  },
-  {
-    "seconds": 12.48,
-    "cue": "Training/lesson_complete_v01.wav"
   },
   {
     "seconds": 14.5,

@@ -28,6 +28,7 @@ from catalog import ALIASES, CUES, MUSIC
 
 ROOT = Path(__file__).resolve().parents[1]
 SR = 48_000
+DIALOGUE_SR = 22_050  # Lore Task 5 deliberately specifies a lower source rate.
 TAU = 2 * np.pi
 NAMESPACE = uuid.UUID('8ea36c76-4eed-4ea9-8394-8bc8f8b4f201')
 REPORT = ROOT / 'Source~' / 'delivery.json'
@@ -46,11 +47,11 @@ def db(value):
     return 20 * np.log10(max(float(value), 1e-12))
 
 
-def ramp(x, attack=.004, release=.025):
+def ramp(x, attack=.004, release=.025, sample_rate=SR):
     """Raised-cosine endpoints prevent hard gates, including very short UI ticks."""
     x = x.copy()
-    a = min(round(attack*SR), len(x)//2)
-    r = min(round(release*SR), len(x)//2)
+    a = min(round(attack*sample_rate), len(x)//2)
+    r = min(round(release*sample_rate), len(x)//2)
     if a:
         w = np.sin(np.linspace(0,np.pi/2,a))**2
         x[:a] *= w[:,None] if x.ndim == 2 else w
@@ -154,7 +155,10 @@ def short_sound(cue,variant):
     r = cue.recipe
     if r == 'dialogue':
         # Preserve the authored lore specification exactly: no variation or reverb.
-        return ramp(.08*np.sin(TAU*640*t),.005,.005)
+        # Generate at its native rate rather than resampling the library's 48 kHz
+        # master: the envelope's five milliseconds must use this same timebase.
+        t = np.arange(round(.025*DIALOGUE_SR),dtype=np.float64)/DIALOGUE_SR
+        return ramp(.08*np.sin(TAU*640*t),.005,.005,sample_rate=DIALOGUE_SR)
     if r.startswith('stinger'):
         return stinger(r,dur,root,rng)
 
@@ -632,13 +636,13 @@ AudioImporter:
     meta.write_text(body,encoding='utf-8')
 
 
-def export(path,x,loop,details):
+def export(path,x,loop,details,sample_rate=SR):
     path.parent.mkdir(parents=True,exist_ok=True)
     metadata(path.parent)
-    sf.write(path,x,SR,subtype='PCM_24')
+    sf.write(path,x,sample_rate,subtype='PCM_24')
     metadata(path,loop)
-    record = {'path':path.relative_to(ROOT).as_posix(),'sample_rate':SR,
-        'frames':len(x),'duration_seconds':round(len(x)/SR,6),'channels':1 if x.ndim==1 else x.shape[1],
+    record = {'path':path.relative_to(ROOT).as_posix(),'sample_rate':sample_rate,
+        'frames':len(x),'duration_seconds':round(len(x)/sample_rate,6),'channels':1 if x.ndim==1 else x.shape[1],
         'format':'PCM_24','loop':loop,'peak_dbfs':round(db(np.max(np.abs(x))),3),
         **details}
     return record
@@ -668,7 +672,8 @@ def save_reports(records):
     records = sorted(records,key=lambda r:r['path'])
     REPORT.write_text(json.dumps(records,indent=2)+'\n',encoding='utf-8')
     manifest = ROOT/'manifest.json'
-    manifest.write_text(json.dumps({'schema_version':1,'sample_rate':SR,'master_format':'24-bit PCM WAV',
+    manifest.write_text(json.dumps({'schema_version':1,'default_sample_rate':SR,
+        'sample_rate_overrides':{'Narrative/dialogue_tick_v01.wav':DIALOGUE_SR},'master_format':'24-bit PCM WAV',
         'provenance':'Original procedural synthesis and composition; no external audio samples, voices, or model outputs.',
         'runtime_integration':'None. Audio assets and offline source only.',
         'auditory_review':'Not yet approved through human listening. Technical QA is separate from artistic approval.',
@@ -676,7 +681,7 @@ def save_reports(records):
     metadata(manifest)
     metadata(ROOT/'README.md')
     with (ROOT/'Source~'/'asset_measurements.csv').open('w',newline='',encoding='utf-8') as f:
-        keys = ['approval_id','priority','path','duration_seconds','channels','loop','peak_dbfs']
+        keys = ['approval_id','priority','path','sample_rate','duration_seconds','channels','loop','peak_dbfs']
         writer = csv.DictWriter(f,fieldnames=keys,extrasaction='ignore')
         writer.writeheader()
         writer.writerows(records)
@@ -698,7 +703,12 @@ def preview(batch,records):
     clips = []
     at = 0
     for r in examples:
-        x,_ = sf.read(ROOT/r['path'],dtype='float32',always_2d=True)
+        x,source_rate = sf.read(ROOT/r['path'],dtype='float32',always_2d=True)
+        if source_rate != SR:
+            # Review montages share a 48 kHz clock. Conversion here prevents the
+            # 22.05 kHz tick from playing at the wrong pitch in that montage only.
+            divisor = math.gcd(SR,source_rate)
+            x = signal.resample_poly(x,SR//divisor,source_rate//divisor,axis=0)
         if x.shape[1] == 1:
             x = np.repeat(x,2,axis=1)*.707
         timeline_rows.append({'seconds':round(at,3),'cue':r['path']})
@@ -744,7 +754,8 @@ def verify(partial=False):
             x,sr = sf.read(path,dtype='float32',always_2d=True)
             peak = float(np.max(np.abs(x)))
             truepeak = float(np.max(np.abs(signal.resample_poly(x,4,1,axis=0))))
-            assert sr == SR and info.subtype == 'PCM_24' and info.frames == r['frames']
+            expected_rate = DIALOGUE_SR if r['recipe'] == 'dialogue' else SR
+            assert sr == expected_rate == r['sample_rate'] and info.subtype == 'PCM_24' and info.frames == r['frames']
             assert np.isfinite(x).all() and peak > .0001 and truepeak < .795
             assert np.max(np.abs(np.mean(x,axis=0))) < .004
             if r['loop']:
@@ -785,7 +796,7 @@ def verify(partial=False):
     summary = {'assets':len(records),'approved_ids':len({item['approval_id'] for item in inventory(records)}),
         'pending_inventory_entries':len(missing),'failures':failures,
         'size_mib':round(sum((ROOT/r['path']).stat().st_size for r in records)/2**20,2),
-        'checks':'Decode, 48 kHz PCM24, channel/frame counts, finite data, non-silence, DC, four-times true peak, one-shot endpoints, loop seam, SHA256 uniqueness, catalog coverage, metadata GUID uniqueness.',
+        'checks':'Decode, specified PCM24 source rate (48 kHz; dialogue tick 22.05 kHz), channel/frame counts, finite data, non-silence, DC, four-times true peak, one-shot endpoints, loop seam, SHA256 uniqueness, catalog coverage, metadata GUID uniqueness.',
         'limitation':'No human listening approval or in-engine playback verification. No audio integration was performed.'}
     (ROOT/'Source~'/'qa_report.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
     save_reports(records)
@@ -815,7 +826,8 @@ def main():
             x = loop_sound(c) if c.loop else short_sound(c,v)
             x = master(x,c.peak_db,c.loop,dialogue=c.recipe=='dialogue')
             path = ROOT/c.group/f'{c.name}_v{v:02d}.wav'
-            new.append(export(path,x,c.loop,{'approval_id':c.id,'priority':c.priority,'recipe':c.recipe,'variant':v}))
+            source_rate = DIALOGUE_SR if c.recipe == 'dialogue' else SR
+            new.append(export(path,x,c.loop,{'approval_id':c.id,'priority':c.priority,'recipe':c.recipe,'variant':v},source_rate))
         print(f'{c.id:3s} {c.group}/{c.name}: {c.variants} variations',flush=True)
     for m in MUSIC:
         if m[5] != args.batch or (args.only and m[1] != args.only):

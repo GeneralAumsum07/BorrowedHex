@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
-  "sample_rate": 48000,
+  "default_sample_rate": 48000,
+  "sample_rate_overrides": {
+    "Narrative/dialogue_tick_v01.wav": 22050
+  },
   "master_format": "24-bit PCM WAV",
   "provenance": "Original procedural synthesis and composition; no external audio samples, voices, or model outputs.",
   "runtime_integration": "None. Audio assets and offline source only.",
@@ -3297,7 +3300,7 @@
       "name": "dialogue_tick",
       "priority": 6,
       "loop": false,
-      "note": "Planned story asset: 25 ms 640 Hz sine, 5 ms attack/release, amplitude 0.08. Fixed pitch across speakers; integration caps rate to one tick per 0.06 s.",
+      "note": "Lore Task 5: mono 22050 Hz source, nominal 25 ms (551 frames), 640 Hz sine, 5 ms attack/release, amplitude 0.08. Fixed pitch across speakers; saved playback volume defaults to 35%, and integration caps rate to one tick per 0.06 s.",
       "paths": [
         "Narrative/dialogue_tick_v01.wav"
       ],
