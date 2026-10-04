@@ -22,7 +22,12 @@ namespace BorrowedHex.EditorTools
         [MenuItem("Borrowed Hex/Art/Import Local Downloads")]
         public static void ImportDefault() => Import(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads/itch_downloads"));
 
-        public static int Import(string source)
+        /// <summary>
+        /// Every local file the game loads from Resources/WorldArt, keyed by its destination file
+        /// name (with extension), valued by its path under the downloads folder. That folder is
+        /// git-ignored (licensed packs), so this list is the committed record of how to rebuild it.
+        /// </summary>
+        public static Dictionary<string, string> Sources()
         {
             var files = new Dictionary<string, string> {
                 ["Necromancer"] = "Necromancer_creativekind-Sheet.png",
@@ -55,8 +60,28 @@ namespace BorrowedHex.EditorTools
             foreach (var pair in new[] { "Smoke and Dust/Fog Drift", "Smoke and Dust/Ash Fall", "Smoke and Dust/Dust Cloud",
                 "Smoke and Dust/Footstep", "Ambient/Dust Motes", "Ambient/Embers Ambient", "Fire/Torch", "Fire/Blue Flame",
                 "Explosions/Rock Burst", "Explosions/Shockwave", "Magic/Teleport", "Magic/Dark Curse",
-                "Slashes/Wide Cleave", "Slashes/Dark Slash", "Hit Sparks/Parry Flash", "Hit Sparks/Heavy Hit", "Projectiles/Magic Missile" })
+                "Slashes/Wide Cleave", "Slashes/Dark Slash", "Hit Sparks/Parry Flash", "Hit Sparks/Heavy Hit", "Projectiles/Magic Missile",
+                // VFX pass (spec 2026-10-04 section 6): shot shapes, trails, hits, moments, passives.
+                "Projectiles/Ice Shard Shot", "Projectiles/Fireball Shot", "Projectiles/Homing Orb",
+                "Magic/Arcane Orb", "Magic/Heal", "Magic/Shield Bubble", "Fire/Fire Trail",
+                "Lightning/Spark Trail", "Lightning/Chain Lightning", "Lightning/Overload", "Lightning/Charge Up",
+                "Lightning/Spark Burst", "Lightning/Zap Ring",
+                "Hit Sparks/Hit Spark", "Hit Sparks/Pierce Spark", "Hit Sparks/Critical Star", "Hit Sparks/Weak Hit",
+                "Hit Sparks/Block Spark", "Hit Sparks/Shock Hit",
+                "Explosions/Small Pop", "Explosions/Smoke Burst", "Explosions/Big Boom", "Explosions/Blast",
+                "Pickups and UI/Star Burst", "Pickups and UI/Notify Ping" })
                 files[Path.GetFileName(pair)] = Essentials + pair + ".png";
+            // Keys gain their extension here: the callout font is not a texture.
+            var withExtension = new Dictionary<string, string>();
+            foreach (var pair in files) withExtension[pair.Key + ".png"] = pair.Value;
+            // The callout font (spec 4.2.4): third-party like the sheets, so it lives beside them.
+            withExtension["m5x7.ttf"] = "m5x7.ttf";
+            return withExtension;
+        }
+
+        public static int Import(string source)
+        {
+            var files = Sources();
 
             // Validate all inputs before creating anything: a misspelled source folder must
             // not leave a half-updated library that silently changes the running game.
@@ -64,12 +89,13 @@ namespace BorrowedHex.EditorTools
                 if (!File.Exists(Path.Combine(source, pair.Value))) throw new FileNotFoundException(pair.Value);
             Directory.CreateDirectory(Destination);
             AssetDatabase.StartAssetEditing();
-            try { foreach (var pair in files) File.Copy(Path.Combine(source, pair.Value), Destination + "/" + pair.Key + ".png", true); }
+            try { foreach (var pair in files) File.Copy(Path.Combine(source, pair.Value), Destination + "/" + pair.Key, true); }
             finally { AssetDatabase.StopAssetEditing(); }
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             foreach (var pair in files)
             {
-                var importer = (TextureImporter)AssetImporter.GetAtPath(Destination + "/" + pair.Key + ".png");
+                if (!pair.Key.EndsWith(".png")) continue;   // the font keeps Unity's default font import
+                var importer = (TextureImporter)AssetImporter.GetAtPath(Destination + "/" + pair.Key);
                 importer.textureType = TextureImporterType.Default;
                 importer.filterMode = FilterMode.Point;
                 importer.mipmapEnabled = false;

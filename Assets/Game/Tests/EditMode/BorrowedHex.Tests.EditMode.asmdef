@@ -3,6 +3,7 @@
     "rootNamespace": "BorrowedHex.Tests",
     "references": [
         "BorrowedHex",
+        "BorrowedHex.Editor",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
