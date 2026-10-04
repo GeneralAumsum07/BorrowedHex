@@ -1,9 +1,9 @@
 {
-  "assets": 791,
+  "assets": 809,
   "approved_ids": 192,
-  "pending_inventory_entries": 15,
+  "pending_inventory_entries": 0,
   "failures": [],
-  "size_mib": 185.9,
+  "size_mib": 274.37,
   "checks": "Decode, 48 kHz PCM24, channel/frame counts, finite data, non-silence, DC, four-times true peak, one-shot endpoints, loop seam, SHA256 uniqueness, catalog coverage, metadata GUID uniqueness.",
   "limitation": "No human listening approval or in-engine playback verification. No audio integration was performed."
 }

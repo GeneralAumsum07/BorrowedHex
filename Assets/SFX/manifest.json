@@ -3210,7 +3210,7 @@
       "paths": [
         "Stingers/endless_wave_clear_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B11",
@@ -3221,7 +3221,7 @@
       "paths": [
         "Stingers/endless_cycle_escalates_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B12",
@@ -3232,7 +3232,7 @@
       "paths": [
         "Stingers/endless_boss_clear_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B13",
@@ -3243,7 +3243,7 @@
       "paths": [
         "Stingers/run_retired_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "K1",
@@ -3255,7 +3255,7 @@
         "Training/lesson_prompt_v01.wav",
         "Training/lesson_prompt_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "K2",
@@ -3268,7 +3268,7 @@
         "Training/objective_progress_v02.wav",
         "Training/objective_progress_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "K3",
@@ -3279,7 +3279,7 @@
       "paths": [
         "Training/lesson_complete_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "K4",
@@ -3290,7 +3290,7 @@
       "paths": [
         "Training/tutorial_complete_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "L1",
@@ -3301,7 +3301,7 @@
       "paths": [
         "Narrative/dialogue_tick_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A1",
@@ -3378,7 +3378,7 @@
       "paths": [
         "Music/endless_arena_escalation.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A7",
@@ -3389,7 +3389,7 @@
       "paths": [
         "Music/endless_collector_escalation.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A8",
@@ -3400,7 +3400,7 @@
       "paths": [
         "Music/training.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A9",
@@ -3411,7 +3411,7 @@
       "paths": [
         "Music/upgrade_selection.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A10",
@@ -3422,7 +3422,7 @@
       "paths": [
         "Music/victory_results.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "A11",
@@ -3433,7 +3433,7 @@
       "paths": [
         "Music/failure_results.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "H4",

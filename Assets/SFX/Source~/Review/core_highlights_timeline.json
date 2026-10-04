@@ -1,0 +1,42 @@
+[
+  {
+    "seconds": 0,
+    "cue": "CoreMagic/catch_snatcher_v01.wav"
+  },
+  {
+    "seconds": 0.955,
+    "cue": "CoreMagic/capture_success_v01.wav"
+  },
+  {
+    "seconds": 1.87,
+    "cue": "CoreMagic/capture_perfect_v01.wav"
+  },
+  {
+    "seconds": 2.896,
+    "cue": "CoreMagic/slot_swap_v01.wav"
+  },
+  {
+    "seconds": 3.782,
+    "cue": "Projectiles/parry_pursuer_v01.wav"
+  },
+  {
+    "seconds": 4.738,
+    "cue": "CoreMagic/overcharge_release_v01.wav"
+  },
+  {
+    "seconds": 5.865,
+    "cue": "CoreMagic/packet_backfire_v01.wav"
+  },
+  {
+    "seconds": 7.127,
+    "cue": "Projectiles/siege_rocket_launch_v01.wav"
+  },
+  {
+    "seconds": 8.211,
+    "cue": "Projectiles/siege_rocket_explosion_v01.wav"
+  },
+  {
+    "seconds": 9.809,
+    "cue": "UI/button_press_v01.wav"
+  }
+]

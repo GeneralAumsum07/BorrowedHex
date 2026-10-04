@@ -711,6 +711,28 @@ def preview(batch,records):
         (directory/f'batch_{batch:02d}_timeline.json').write_text(json.dumps(timeline_rows,indent=2)+'\n',encoding='utf-8')
 
 
+def review_highlights():
+    """Short listening-review reel, separate from the importable master library."""
+    paths = ['CoreMagic/catch_snatcher_v01.wav','CoreMagic/capture_success_v01.wav',
+        'CoreMagic/capture_perfect_v01.wav','CoreMagic/slot_swap_v01.wav',
+        'Projectiles/parry_pursuer_v01.wav','CoreMagic/overcharge_release_v01.wav',
+        'CoreMagic/packet_backfire_v01.wav','Projectiles/siege_rocket_launch_v01.wav',
+        'Projectiles/siege_rocket_explosion_v01.wav','UI/button_press_v01.wav']
+    clips,times = [],[]
+    at = 0
+    for path in paths:
+        x,_ = sf.read(ROOT/path,dtype='float32',always_2d=True)
+        if x.shape[1] == 1:
+            x = np.repeat(x,2,axis=1)*.707
+        times.append({'seconds':round(at,3),'cue':path})
+        clips.extend([x,np.zeros((round(.45*SR),2),dtype=np.float32)])
+        at += len(x)/SR+.45
+    directory = ROOT/'Source~'/'Review'
+    directory.mkdir(exist_ok=True)
+    sf.write(directory/'core_highlights.wav',np.concatenate(clips),SR,subtype='PCM_24')
+    (directory/'core_highlights_timeline.json').write_text(json.dumps(times,indent=2)+'\n',encoding='utf-8')
+
+
 def verify(partial=False):
     records = json.loads(REPORT.read_text(encoding='utf-8'))
     failures = []
@@ -735,6 +757,7 @@ def verify(partial=False):
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             assert digest not in hashes, f'Duplicate PCM file: {hashes.get(digest)}'
             hashes[digest] = r['path']
+            r['sha256'] = digest
             assert Path(str(path)+'.meta').exists(), 'Missing Unity GUID'
             r['true_peak_dbtp'] = round(db(truepeak),3)
             r['rms_dbfs'] = round(db(np.sqrt(np.mean(x*x))),3)
@@ -766,6 +789,8 @@ def verify(partial=False):
         'limitation':'No human listening approval or in-engine playback verification. No audio integration was performed.'}
     (ROOT/'Source~'/'qa_report.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
     save_reports(records)
+    if not partial and not failures and not missing:
+        review_highlights()
     print(json.dumps(summary,indent=2),flush=True)
     return 1 if failures or (missing and not partial) else 0
 

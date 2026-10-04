@@ -1,0 +1,38 @@
+[
+  {
+    "seconds": 0,
+    "cue": "Stingers/endless_wave_clear_v01.wav"
+  },
+  {
+    "seconds": 2.27,
+    "cue": "Stingers/endless_cycle_escalates_v01.wav"
+  },
+  {
+    "seconds": 5.04,
+    "cue": "Stingers/endless_boss_clear_v01.wav"
+  },
+  {
+    "seconds": 8.31,
+    "cue": "Stingers/run_retired_v01.wav"
+  },
+  {
+    "seconds": 10.93,
+    "cue": "Training/lesson_prompt_v01.wav"
+  },
+  {
+    "seconds": 11.73,
+    "cue": "Training/objective_progress_v01.wav"
+  },
+  {
+    "seconds": 12.48,
+    "cue": "Training/lesson_complete_v01.wav"
+  },
+  {
+    "seconds": 14.5,
+    "cue": "Training/tutorial_complete_v01.wav"
+  },
+  {
+    "seconds": 17.42,
+    "cue": "Narrative/dialogue_tick_v01.wav"
+  }
+]
