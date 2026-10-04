@@ -1534,7 +1534,7 @@
         "Player/footstep_courtyard_stone_v07.wav",
         "Player/footstep_courtyard_stone_v08.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D2",
@@ -1552,7 +1552,7 @@
         "Player/footstep_graveyard_ground_v07.wav",
         "Player/footstep_graveyard_ground_v08.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D3",
@@ -1570,7 +1570,7 @@
         "Player/footstep_cave_rock_v07.wav",
         "Player/footstep_cave_rock_v08.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D4",
@@ -1588,7 +1588,7 @@
         "Player/footstep_sanctum_stone_v07.wav",
         "Player/footstep_sanctum_stone_v08.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D8",
@@ -1600,7 +1600,7 @@
         "Player/dash_unavailable_v01.wav",
         "Player/dash_unavailable_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D12",
@@ -1613,7 +1613,7 @@
         "Player/grace_protection_v02.wav",
         "Player/grace_protection_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D15",
@@ -1627,7 +1627,7 @@
         "Player/life_restored_kill_v03.wav",
         "Player/life_restored_kill_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D16",
@@ -1641,7 +1641,7 @@
         "Player/life_stolen_v03.wav",
         "Player/life_stolen_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "D14",
@@ -1652,7 +1652,7 @@
       "paths": [
         "Player/low_life_heartbeat_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C1",
@@ -1665,7 +1665,7 @@
         "UI/focus_hover_v02.wav",
         "UI/focus_hover_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C2",
@@ -1678,7 +1678,7 @@
         "UI/button_press_v02.wav",
         "UI/button_press_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C3",
@@ -1691,7 +1691,7 @@
         "UI/confirm_v02.wav",
         "UI/confirm_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C4",
@@ -1704,7 +1704,7 @@
         "UI/back_cancel_v02.wav",
         "UI/back_cancel_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C5",
@@ -1717,7 +1717,7 @@
         "UI/panel_open_v02.wav",
         "UI/panel_open_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C6",
@@ -1730,7 +1730,7 @@
         "UI/panel_close_v02.wav",
         "UI/panel_close_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C7",
@@ -1743,7 +1743,7 @@
         "UI/tab_change_v02.wav",
         "UI/tab_change_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C8",
@@ -1756,7 +1756,7 @@
         "UI/card_node_select_v02.wav",
         "UI/card_node_select_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C9",
@@ -1768,7 +1768,7 @@
         "UI/toggle_on_v01.wav",
         "UI/toggle_on_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C10",
@@ -1780,7 +1780,7 @@
         "UI/toggle_off_v01.wav",
         "UI/toggle_off_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C11",
@@ -1792,7 +1792,7 @@
         "UI/setting_increase_v01.wav",
         "UI/setting_increase_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C12",
@@ -1804,7 +1804,7 @@
         "UI/setting_decrease_v01.wav",
         "UI/setting_decrease_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C13",
@@ -1817,7 +1817,7 @@
         "UI/action_rejected_v02.wav",
         "UI/action_rejected_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C14",
@@ -1829,7 +1829,7 @@
         "UI/confirmation_open_v01.wav",
         "UI/confirmation_open_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C15",
@@ -1841,7 +1841,7 @@
         "UI/destructive_confirm_v01.wav",
         "UI/destructive_confirm_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C16",
@@ -1854,7 +1854,7 @@
         "UI/style_equipped_v02.wav",
         "UI/style_equipped_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C17",
@@ -1866,7 +1866,7 @@
         "UI/details_open_v01.wav",
         "UI/details_open_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C17",
@@ -1878,7 +1878,7 @@
         "UI/details_close_v01.wav",
         "UI/details_close_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C18",
@@ -1891,7 +1891,7 @@
         "UI/scroll_tick_v02.wav",
         "UI/scroll_tick_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "C19",
@@ -1904,7 +1904,7 @@
         "UI/notification_v02.wav",
         "UI/notification_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G1",
@@ -1917,7 +1917,7 @@
         "Enemies/acolyte_spawn_warning_v02.wav",
         "Enemies/acolyte_spawn_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G1",
@@ -1931,7 +1931,7 @@
         "Enemies/acolyte_materialize_v03.wav",
         "Enemies/acolyte_materialize_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G1",
@@ -1947,7 +1947,7 @@
         "Enemies/acolyte_movement_v05.wav",
         "Enemies/acolyte_movement_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G1",
@@ -1963,7 +1963,7 @@
         "Enemies/acolyte_hurt_v05.wav",
         "Enemies/acolyte_hurt_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G1",
@@ -1979,7 +1979,7 @@
         "Enemies/acolyte_death_v05.wav",
         "Enemies/acolyte_death_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G2",
@@ -1992,7 +1992,7 @@
         "Enemies/pursuer_spawn_warning_v02.wav",
         "Enemies/pursuer_spawn_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G2",
@@ -2006,7 +2006,7 @@
         "Enemies/pursuer_materialize_v03.wav",
         "Enemies/pursuer_materialize_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G2",
@@ -2022,7 +2022,7 @@
         "Enemies/pursuer_movement_v05.wav",
         "Enemies/pursuer_movement_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G2",
@@ -2038,7 +2038,7 @@
         "Enemies/pursuer_hurt_v05.wav",
         "Enemies/pursuer_hurt_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G2",
@@ -2054,7 +2054,7 @@
         "Enemies/pursuer_death_v05.wav",
         "Enemies/pursuer_death_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G3",
@@ -2067,7 +2067,7 @@
         "Enemies/scatter_caster_spawn_warning_v02.wav",
         "Enemies/scatter_caster_spawn_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G3",
@@ -2081,7 +2081,7 @@
         "Enemies/scatter_caster_materialize_v03.wav",
         "Enemies/scatter_caster_materialize_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G3",
@@ -2097,7 +2097,7 @@
         "Enemies/scatter_caster_movement_v05.wav",
         "Enemies/scatter_caster_movement_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G3",
@@ -2113,7 +2113,7 @@
         "Enemies/scatter_caster_hurt_v05.wav",
         "Enemies/scatter_caster_hurt_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G3",
@@ -2129,7 +2129,7 @@
         "Enemies/scatter_caster_death_v05.wav",
         "Enemies/scatter_caster_death_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G4",
@@ -2142,7 +2142,7 @@
         "Enemies/siege_familiar_spawn_warning_v02.wav",
         "Enemies/siege_familiar_spawn_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G4",
@@ -2156,7 +2156,7 @@
         "Enemies/siege_familiar_materialize_v03.wav",
         "Enemies/siege_familiar_materialize_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G4",
@@ -2172,7 +2172,7 @@
         "Enemies/siege_familiar_movement_v05.wav",
         "Enemies/siege_familiar_movement_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G4",
@@ -2188,7 +2188,7 @@
         "Enemies/siege_familiar_hurt_v05.wav",
         "Enemies/siege_familiar_hurt_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G4",
@@ -2204,7 +2204,7 @@
         "Enemies/siege_familiar_death_v05.wav",
         "Enemies/siege_familiar_death_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G10",
@@ -2217,7 +2217,7 @@
         "Enemies/overstay_warning_v02.wav",
         "Enemies/overstay_warning_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G11",
@@ -2231,7 +2231,7 @@
         "Enemies/elite_evolution_v03.wav",
         "Enemies/elite_evolution_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G12",
@@ -2245,7 +2245,7 @@
         "Enemies/elite_attack_layer_v03.wav",
         "Enemies/elite_attack_layer_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G12",
@@ -2259,7 +2259,7 @@
         "Enemies/elite_movement_layer_v03.wav",
         "Enemies/elite_movement_layer_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G13",
@@ -2273,7 +2273,7 @@
         "Enemies/elite_hurt_layer_v03.wav",
         "Enemies/elite_hurt_layer_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "G14",
@@ -2287,7 +2287,7 @@
         "Enemies/elite_death_accent_v03.wav",
         "Enemies/elite_death_accent_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I1",
@@ -3455,8 +3455,12 @@
       "priority": 0,
       "loop": false,
       "note": "Explicit shared cue; no new recording needed.",
-      "paths": [],
-      "status": "pending"
+      "paths": [
+        "UI/confirm_v01.wav",
+        "UI/confirm_v02.wav",
+        "UI/confirm_v03.wav"
+      ],
+      "status": "rendered"
     },
     {
       "approval_id": "K5",
@@ -3464,8 +3468,12 @@
       "priority": 0,
       "loop": false,
       "note": "Explicit shared cue; no new recording needed.",
-      "paths": [],
-      "status": "pending"
+      "paths": [
+        "UI/confirm_v01.wav",
+        "UI/confirm_v02.wav",
+        "UI/confirm_v03.wav"
+      ],
+      "status": "rendered"
     },
     {
       "approval_id": "L2",
@@ -3473,8 +3481,12 @@
       "priority": 0,
       "loop": false,
       "note": "Explicit shared cue; no new recording needed.",
-      "paths": [],
-      "status": "pending"
+      "paths": [
+        "UI/confirm_v01.wav",
+        "UI/confirm_v02.wav",
+        "UI/confirm_v03.wav"
+      ],
+      "status": "rendered"
     },
     {
       "approval_id": "L3",
@@ -3482,8 +3494,15 @@
       "priority": 0,
       "loop": false,
       "note": "Explicit shared cue; no new recording needed.",
-      "paths": [],
-      "status": "pending"
+      "paths": [
+        "UI/back_cancel_v01.wav",
+        "UI/back_cancel_v02.wav",
+        "UI/back_cancel_v03.wav",
+        "UI/button_press_v01.wav",
+        "UI/button_press_v02.wav",
+        "UI/button_press_v03.wav"
+      ],
+      "status": "rendered"
     }
   ]
 }

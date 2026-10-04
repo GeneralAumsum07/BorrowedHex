@@ -1,0 +1,218 @@
+[
+  {
+    "seconds": 0,
+    "cue": "Player/footstep_courtyard_stone_v01.wav"
+  },
+  {
+    "seconds": 0.758,
+    "cue": "Player/footstep_graveyard_ground_v01.wav"
+  },
+  {
+    "seconds": 1.514,
+    "cue": "Player/footstep_cave_rock_v01.wav"
+  },
+  {
+    "seconds": 2.269,
+    "cue": "Player/footstep_sanctum_stone_v01.wav"
+  },
+  {
+    "seconds": 3.025,
+    "cue": "Player/dash_unavailable_v01.wav"
+  },
+  {
+    "seconds": 3.713,
+    "cue": "Player/grace_protection_v01.wav"
+  },
+  {
+    "seconds": 4.547,
+    "cue": "Player/life_restored_kill_v01.wav"
+  },
+  {
+    "seconds": 5.394,
+    "cue": "Player/life_stolen_v01.wav"
+  },
+  {
+    "seconds": 6.25,
+    "cue": "UI/focus_hover_v01.wav"
+  },
+  {
+    "seconds": 6.615,
+    "cue": "UI/button_press_v01.wav"
+  },
+  {
+    "seconds": 6.995,
+    "cue": "UI/confirm_v01.wav"
+  },
+  {
+    "seconds": 7.475,
+    "cue": "UI/back_cancel_v01.wav"
+  },
+  {
+    "seconds": 7.915,
+    "cue": "UI/panel_open_v01.wav"
+  },
+  {
+    "seconds": 8.465,
+    "cue": "UI/panel_close_v01.wav"
+  },
+  {
+    "seconds": 8.965,
+    "cue": "UI/tab_change_v01.wav"
+  },
+  {
+    "seconds": 9.365,
+    "cue": "UI/card_node_select_v01.wav"
+  },
+  {
+    "seconds": 9.795,
+    "cue": "UI/toggle_on_v01.wav"
+  },
+  {
+    "seconds": 10.205,
+    "cue": "UI/toggle_off_v01.wav"
+  },
+  {
+    "seconds": 10.605,
+    "cue": "UI/setting_increase_v01.wav"
+  },
+  {
+    "seconds": 10.98,
+    "cue": "UI/setting_decrease_v01.wav"
+  },
+  {
+    "seconds": 11.355,
+    "cue": "UI/action_rejected_v01.wav"
+  },
+  {
+    "seconds": 11.805,
+    "cue": "UI/confirmation_open_v01.wav"
+  },
+  {
+    "seconds": 12.405,
+    "cue": "UI/destructive_confirm_v01.wav"
+  },
+  {
+    "seconds": 13.005,
+    "cue": "UI/style_equipped_v01.wav"
+  },
+  {
+    "seconds": 13.625,
+    "cue": "UI/details_open_v01.wav"
+  },
+  {
+    "seconds": 14.155,
+    "cue": "UI/details_close_v01.wav"
+  },
+  {
+    "seconds": 14.645,
+    "cue": "UI/scroll_tick_v01.wav"
+  },
+  {
+    "seconds": 15.0,
+    "cue": "UI/notification_v01.wav"
+  },
+  {
+    "seconds": 15.59,
+    "cue": "Enemies/acolyte_spawn_warning_v01.wav"
+  },
+  {
+    "seconds": 16.56,
+    "cue": "Enemies/acolyte_materialize_v01.wav"
+  },
+  {
+    "seconds": 17.574,
+    "cue": "Enemies/acolyte_movement_v01.wav"
+  },
+  {
+    "seconds": 18.319,
+    "cue": "Enemies/acolyte_hurt_v01.wav"
+  },
+  {
+    "seconds": 19.123,
+    "cue": "Enemies/acolyte_death_v01.wav"
+  },
+  {
+    "seconds": 20.377,
+    "cue": "Enemies/pursuer_spawn_warning_v01.wav"
+  },
+  {
+    "seconds": 21.344,
+    "cue": "Enemies/pursuer_materialize_v01.wav"
+  },
+  {
+    "seconds": 22.335,
+    "cue": "Enemies/pursuer_movement_v01.wav"
+  },
+  {
+    "seconds": 23.09,
+    "cue": "Enemies/pursuer_hurt_v01.wav"
+  },
+  {
+    "seconds": 23.895,
+    "cue": "Enemies/pursuer_death_v01.wav"
+  },
+  {
+    "seconds": 25.136,
+    "cue": "Enemies/scatter_caster_spawn_warning_v01.wav"
+  },
+  {
+    "seconds": 26.098,
+    "cue": "Enemies/scatter_caster_materialize_v01.wav"
+  },
+  {
+    "seconds": 27.097,
+    "cue": "Enemies/scatter_caster_movement_v01.wav"
+  },
+  {
+    "seconds": 27.847,
+    "cue": "Enemies/scatter_caster_hurt_v01.wav"
+  },
+  {
+    "seconds": 28.652,
+    "cue": "Enemies/scatter_caster_death_v01.wav"
+  },
+  {
+    "seconds": 29.909,
+    "cue": "Enemies/siege_familiar_spawn_warning_v01.wav"
+  },
+  {
+    "seconds": 30.866,
+    "cue": "Enemies/siege_familiar_materialize_v01.wav"
+  },
+  {
+    "seconds": 31.864,
+    "cue": "Enemies/siege_familiar_movement_v01.wav"
+  },
+  {
+    "seconds": 32.611,
+    "cue": "Enemies/siege_familiar_hurt_v01.wav"
+  },
+  {
+    "seconds": 33.408,
+    "cue": "Enemies/siege_familiar_death_v01.wav"
+  },
+  {
+    "seconds": 34.679,
+    "cue": "Enemies/overstay_warning_v01.wav"
+  },
+  {
+    "seconds": 35.861,
+    "cue": "Enemies/elite_evolution_v01.wav"
+  },
+  {
+    "seconds": 37.396,
+    "cue": "Enemies/elite_attack_layer_v01.wav"
+  },
+  {
+    "seconds": 38.166,
+    "cue": "Enemies/elite_movement_layer_v01.wav"
+  },
+  {
+    "seconds": 38.902,
+    "cue": "Enemies/elite_hurt_layer_v01.wav"
+  },
+  {
+    "seconds": 39.756,
+    "cue": "Enemies/elite_death_accent_v01.wav"
+  }
+]

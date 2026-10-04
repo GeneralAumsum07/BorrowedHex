@@ -195,8 +195,11 @@ def short_sound(cue,variant):
             if r == 'paper_close':
                 x *= np.exp(-u*3)
         elif r == 'deny':
-            x = .45*np.sin(TAU*root*t)+.16*np.sin(TAU*root*1.05946*t)
-            x *= np.exp(-u*4)*(.55+.45*np.cos(TAU*24*t))
+            # Preserve fixed UI pitch, but vary the beating/upper-partial texture.
+            # Without these seeded parameters every UI rejection variation was
+            # byte-identical because the stable-pitch path consumed no randomness.
+            x = .45*np.sin(TAU*root*t)+rng.uniform(.14,.18)*np.sin(TAU*root*1.05946*t)
+            x *= np.exp(-u*4)*(.55+.45*np.cos(TAU*rng.uniform(22,26)*t))
         elif r in ['ui_confirm','ui_back']:
             x = np.zeros(len(t),dtype=np.float32)
             for i,f in enumerate([root,root*(1.5 if r == 'ui_confirm' else .75)]):
