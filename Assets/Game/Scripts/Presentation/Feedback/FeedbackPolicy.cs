@@ -99,7 +99,9 @@ namespace BorrowedHex.Presentation.Feedback
                     // Keeps the multiplier ArenaView's old "OVERCHARGE xP" label showed (spec 4.1).
                     return Moment("Overload", 1.6f, FeedbackColors.Overcharge, $"Overcharge! x{c.Power:0.0}", 0.18f, 0.25f, 0.07f, true);
                 case CueEvent.Backfire:
-                    return Moment("Big Boom", 2f, FeedbackColors.Danger, "Backfire!", 0.20f, 0.25f, 0f, false);
+                    // 1.3, tuned from the capture: at 2 the boom covered the player whole, and the
+                    // player is exactly who needs to be seen right after a backfire.
+                    return Moment("Big Boom", 1.3f, FeedbackColors.Danger, "Backfire!", 0.20f, 0.25f, 0f, false);
                 case CueEvent.Fusion:
                 {
                     var cue = Moment("Star Burst", 1.2f, FeedbackColors.Fusion, "Fusion!", 0f, 0f, 0f, false);

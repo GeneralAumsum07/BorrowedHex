@@ -11,9 +11,13 @@ namespace BorrowedHex.Presentation.Feedback
     /// </summary>
     public static class ProjectileSkins
     {
-        public const float HaloAlpha = 0.45f;
+        // Tuned from the capture: at .45 the halo read as a solid disc on the dark floor and
+        // drowned the school shape. .3 still marks the hitbox.
+        public const float HaloAlpha = 0.3f;
         public const float HaloScale = 1.3f;     // x radius: the old glow disc, the true hitbox plus a hint
-        public const float SpriteScale = 2.6f;   // x radius: a 32-pixel cell spans 1 unit at scale 1
+        // x radius: a 32-pixel cell spans 1 unit at scale 1. Tuned from the capture: the sheets
+        // draw in about 40% of their cell, so 2.6 left the shape a third of the halo's width.
+        public const float SpriteScale = 5f;
         public const float EchoAlpha = 0.6f;
         public const float Fps = 12f;
 

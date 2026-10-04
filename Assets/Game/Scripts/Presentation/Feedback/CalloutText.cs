@@ -65,7 +65,8 @@ namespace BorrowedHex.Presentation.Feedback
             var text = go.AddComponent<TextMesh>();
             text.font = font;
             text.GetComponent<MeshRenderer>().sharedMaterial = font.material;
-            text.fontSize = 64; text.characterSize = 0.05f;   // first pass; checked in the Task 10 capture
+            // 0.08, tuned from the capture: at 0.05 a word was ~60 px wide at the gameplay camera.
+            text.fontSize = 64; text.characterSize = 0.08f;
             text.anchor = TextAnchor.MiddleCenter;
             var item = new Item { Text = text };
             items.Add(item);
