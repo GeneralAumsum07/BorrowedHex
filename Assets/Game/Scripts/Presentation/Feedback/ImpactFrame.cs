@@ -22,7 +22,9 @@ namespace BorrowedHex.Presentation.Feedback
         readonly List<CharacterView> lit = new List<CharacterView>();
         int framesLeft;
 
-        public bool Active => flash.enabled;
+        // `flash != null` is Unity's fake-null check, not a C# one: the canvas is its own root
+        // object, so on play-mode exit Unity may destroy it before ArenaView disposes this frame.
+        public bool Active => flash != null && flash.enabled;
 
         public ImpactFrame()
         {
@@ -58,7 +60,7 @@ namespace BorrowedHex.Presentation.Feedback
 
         void End()
         {
-            flash.enabled = false;
+            if (flash != null) flash.enabled = false;   // already gone at teardown: nothing to hide
             foreach (var a in lit) if (a != null) a.SetSilhouette(false);
             lit.Clear();
             framesLeft = 0;

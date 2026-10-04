@@ -26,5 +26,20 @@ namespace BorrowedHex.Tests
             }
             finally { impact.Dispose(); Object.DestroyImmediate(parent); }
         }
+
+        // The flash canvas is its own root object, so on play-mode exit (or a test teardown that
+        // sweeps every Canvas) Unity can destroy it before ArenaView.OnDestroy disposes the frame.
+        // Dispose must then be a quiet no-op, not a MissingReferenceException.
+        [Test]
+        public void DisposeAfterTheCanvasIsGoneDoesNotThrow()
+        {
+            var impact = new ImpactFrame();
+            impact.Begin(Color.yellow);
+            foreach (var c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+                if (c.name == "ImpactFlash") Object.DestroyImmediate(c.gameObject);
+            Assert.DoesNotThrow(() => impact.Tick());
+            Assert.DoesNotThrow(() => impact.Dispose());
+            Assert.IsFalse(impact.Active);
+        }
     }
 }
