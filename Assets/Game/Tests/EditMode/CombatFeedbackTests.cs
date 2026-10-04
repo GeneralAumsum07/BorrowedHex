@@ -50,6 +50,12 @@ namespace BorrowedHex.Tests
 
         EnemyActor Enemy(Vector2 at) => P4.Parked(sim, ActorCategory.Acolyte, at);
 
+        // Effect sheets are licensed local art (git-ignored). Without them WorldEffects.Spawn
+        // correctly draws nothing, so effect counts are only checked where the sheets exist;
+        // every other assertion (callouts, shake, hit-stop, pierce keys) still runs. HasBoss is
+        // the repo's existing "local packs present" probe: the packs arrive together.
+        bool Sheets => art.HasBoss;
+
         [Test]
         public void AParryCallsOutShakesFreezesAndFlashes()
         {
@@ -57,7 +63,7 @@ namespace BorrowedHex.Tests
             CollectionAssert.Contains(fx.Callouts.LiveTexts, "Parry!");
             CollectionAssert.Contains(host.Stops, .09f);
             CollectionAssert.Contains(host.Shakes, .15f);
-            Assert.Greater(fx.LiveEffects, 0);
+            if (Sheets) Assert.Greater(fx.LiveEffects, 0);
             Assert.IsTrue(fx.Impact.Active); Assert.IsTrue(player.Silhouette);
             for (int i = 0; i < 3; i++) fx.Render(null, 1f / 60);
             Assert.IsFalse(player.Silhouette, "the silhouette lasts two frames");
@@ -105,7 +111,7 @@ namespace BorrowedHex.Tests
             sim.Events.RaiseEnemyDamaged(Enemy(new Vector2(2, 0)), hit);
             int afterFirst = fx.LiveEffects;
             sim.Events.RaiseEnemyDamaged(Enemy(new Vector2(4, 0)), hit);
-            Assert.AreEqual(afterFirst + 2, fx.LiveEffects, "pierce spark plus the chain arc");
+            if (Sheets) Assert.AreEqual(afterFirst + 2, fx.LiveEffects, "pierce spark plus the chain arc");
             Assert.IsEmpty(host.Shakes, "hits are Tier 0");
         }
 
@@ -136,9 +142,10 @@ namespace BorrowedHex.Tests
             var s = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), 999, sim.Ids.Next(), 0f);
             var p = sim.SpawnProjectile(s, AttackFaction.Hostile, new Vector2(3, 3), Vector2.right);
             sim.Events.RaiseProjectileEnded(p, ProjectileEndReason.Expired);
-            Assert.AreEqual(1, fx.LiveEffects, "a fizzle where it ran out");
+            int fizzle = Sheets ? 1 : 0;
+            Assert.AreEqual(fizzle, fx.LiveEffects, "a fizzle where it ran out");
             sim.Events.RaiseProjectileEnded(p, ProjectileEndReason.Cleared);
-            Assert.AreEqual(1, fx.LiveEffects, "a cleared arena shows nothing");
+            Assert.AreEqual(fizzle, fx.LiveEffects, "a cleared arena shows nothing");
             Assert.AreEqual(0, fx.PierceKeys);
         }
 
