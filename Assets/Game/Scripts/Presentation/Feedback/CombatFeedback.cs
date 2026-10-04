@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Enemies;
+using BorrowedHex.Player;
 using BorrowedHex.Presentation.WorldArt;
 using BorrowedHex.Runs;
 using BorrowedHex.UI;
@@ -43,6 +45,32 @@ namespace BorrowedHex.Presentation.Feedback
         public ImpactFrame Impact => impact;
         public int PierceKeys => pierce.Count;
 
+        // ---- Passive cues (D3): only while their action is happening, never permanent.
+        public const float GhostSeconds = 0.25f;
+        public const int DashGhosts = 3;
+        // Grace windows are fractions of a second. Anything this long is god mode or a test
+        // rig, and a permanent shimmer would be noise, not information.
+        public const double ShimmerHorizon = 5.0;
+
+        sealed class Ghost { public SpriteRenderer Renderer; public float Age, Life, Alpha; }
+        readonly List<Ghost> ghosts = new List<Ghost>();
+        SpriteRenderer shimmer, glint;
+        double lastNow;
+
+        public int LiveGhosts { get { int n = 0; foreach (var g in ghosts) if (g.Renderer.enabled) n++; return n; } }
+        public bool ShimmerVisible => shimmer.enabled;
+        public bool GlintVisible => glint.enabled;
+
+        /// <summary>Dash recovery: true only on the frame the cooldown ends (never at run start).</summary>
+        public static bool DashReadyCrossed(double before, double now, double readyAt) => before < readyAt && now >= readyAt;
+
+        public static bool ShowsShimmer(PlayerActor p, double now) =>
+            p.IsInvulnerable(now) && Math.Max(p.InvulnerableUntil, p.DashInvulnerableUntil) - now < ShimmerHorizon;
+
+        /// <summary>Quick Draw's post-swap window is open (the same test the sim's multiplier uses).</summary>
+        public static bool QuickDrawOpen(ArenaSim sim) =>
+            sim.Stats.QuickDrawBonus > 0f && sim.Clock.Now - sim.LastSwapAt <= sim.Stats.QuickDrawWindow + 1e-6;
+
         public CombatFeedback(ArenaSim sim, Transform parent, WorldArtLibrary art, IFeedbackHost host,
             Func<int, CharacterView> enemyView, CharacterView player)
         {
@@ -53,6 +81,9 @@ namespace BorrowedHex.Presentation.Feedback
             callouts = new CalloutText(root);
             impact = new ImpactFrame();
             Subscribe();
+            lastNow = sim.Clock.Now;
+            shimmer = Overlay("GraceShimmer", 7);
+            glint = Overlay("QuickDrawGlint", 8);
         }
 
         void Subscribe()
@@ -79,6 +110,13 @@ namespace BorrowedHex.Presentation.Feedback
             // The spark sits at the muzzle, half a unit along the aim.
             ev.QuickDrawFired += at => Play(CueEvent.QuickDraw, at + sim.Player.AimDirection * 0.5f);
             ev.LifeStolen += (_, __) => Play(CueEvent.LifeStolen, sim.Player.Position);
+            ev.Dashed += OnDashed;
+            // Echo: a faint copy of the release at the muzzle, so the echo reads as "again".
+            ev.EchoFired += _ =>
+            {
+                var orb = art.Effect("Arcane Orb");
+                if (orb.Length > 0) AddGhost(orb[0], Geometry2D.ToWorld(sim.Player.Position, AirHeight), 0.6f, FeedbackColors.Returned, 0.5f, 0.2f);
+            };
         }
 
         CharacterView Enemy(EnemyActor e) => e != null ? enemyView(e.ActorId) : null;
@@ -159,6 +197,80 @@ namespace BorrowedHex.Presentation.Feedback
             effects.Render(sim.Clock.Now, cam);
             callouts.Tick(unscaledDt, cam);
             impact.Tick();
+            RenderPassives(cam, unscaledDt);
+        }
+
+        SpriteRenderer Overlay(string name, int order)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(root, false);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = order;
+            sr.enabled = false;
+            return sr;
+        }
+
+        void OnDashed(Vector2 from, Vector2 dir)
+        {
+            // Three fading copies along the dash: a longer dash (Mobility node) spreads them
+            // further, which is the whole cue for that passive.
+            var sprite = player != null ? player.CurrentSprite : null;
+            if (sprite == null) return;
+            float length = sim.Stats.DashDistance;
+            for (int i = 0; i < DashGhosts; i++)
+            {
+                Vector2 at = from + dir.normalized * (length * i / DashGhosts);
+                AddGhost(sprite, Geometry2D.ToWorld(at), player.Scale, new Color(0.6f, 0.9f, 1f), 0.5f - 0.12f * i, GhostSeconds);
+            }
+        }
+
+        void AddGhost(Sprite sprite, Vector3 at, float scale, Color color, float alpha, float life)
+        {
+            Ghost ghost = null;
+            foreach (var g in ghosts) if (!g.Renderer.enabled) { ghost = g; break; }
+            if (ghost == null)
+            {
+                if (ghosts.Count >= 16) return;   // a bounded pool, like WorldEffects
+                ghost = new Ghost { Renderer = Overlay("Ghost", 0) };
+                ghosts.Add(ghost);
+            }
+            ghost.Renderer.sprite = sprite;
+            ghost.Renderer.transform.position = at;
+            ghost.Renderer.transform.localScale = Vector3.one * scale;
+            ghost.Age = 0f; ghost.Life = life; ghost.Alpha = alpha;
+            color.a = alpha;
+            ghost.Renderer.color = color;
+            ghost.Renderer.enabled = true;
+        }
+
+        void RenderPassives(Camera cam, float dt)
+        {
+            double now = sim.Clock.Now;
+            var p = sim.Player;
+            if (DashReadyCrossed(lastNow, now, p.DashReadyAt)) Play(CueEvent.DashReady, p.Position);
+            lastNow = now;
+            Loop(shimmer, ShowsShimmer(p, now), "Shield Bubble", Geometry2D.ToWorld(p.Position, 0.6f), 1.4f, new Color(0.6f, 0.9f, 1f, 0.35f), now, cam);
+            Loop(glint, QuickDrawOpen(sim), "Charge Up", Geometry2D.ToWorld(p.Position + p.AimDirection * 0.4f, 0.7f), 0.6f, FeedbackColors.Riposte, now, cam);
+            foreach (var g in ghosts)
+            {
+                if (!g.Renderer.enabled) continue;
+                g.Age += dt;   // real time: ghosts are a trace of motion, gone even if the game pauses
+                if (g.Age >= g.Life) { g.Renderer.enabled = false; continue; }
+                var c = g.Renderer.color; c.a = g.Alpha * (1f - g.Age / g.Life); g.Renderer.color = c;
+                if (cam != null) g.Renderer.transform.rotation = cam.transform.rotation;
+            }
+        }
+
+        void Loop(SpriteRenderer sr, bool on, string sheet, Vector3 at, float scale, Color color, double now, Camera cam)
+        {
+            var frames = on ? art.Effect(sheet) : null;
+            sr.enabled = on && frames.Length > 0;
+            if (!sr.enabled) return;
+            sr.sprite = frames[WorldArtPolicy.Frame(now, frames.Length, 12f, true)];
+            sr.transform.position = at;
+            sr.transform.localScale = Vector3.one * scale;
+            sr.color = color;
+            if (cam != null) sr.transform.rotation = cam.transform.rotation;
         }
 
         public void Dispose()
