@@ -17,7 +17,7 @@ namespace BorrowedHex.Presentation
     /// consumed by this frame's sim steps instead of waiting a frame.
     /// </summary>
     [DefaultExecutionOrder(100)]
-    public sealed partial class GameRoot : MonoBehaviour
+    public sealed partial class GameRoot : MonoBehaviour, Feedback.IFeedbackHost
     {
         public GameConfig config;
         public bool useWorldArenas;
@@ -43,26 +43,26 @@ namespace BorrowedHex.Presentation
         float accumulator;
         int runCounter;
 
-        // D94: Overcharge freeze-frame. Real (unscaled) time during which no sim step runs. The
-        // sim clock simply does not advance, so nothing about gameplay changes: it is the same
-        // run, shown with a 70 ms beat on the perfect release.
-        const float HitStopSeconds = 0.07f;
+        // Hit-stop (D94, spec 4.2.3): real (unscaled) time during which no sim step runs. The sim
+        // clock simply does not advance, so nothing about gameplay changes: it is the same run,
+        // shown with a short beat. CombatFeedback decides when and how long (and honours Reduce
+        // flashes); this only owns the clock it must not step.
         float hitStopUntil;
         CameraShake shake;
         public bool HitStopActive => Time.unscaledTime < hitStopUntil;
 
-        void OnOvercharged(BorrowedHex.Combat.CapturedPacket p, int root)
+        public void HitStop(float seconds) =>
+            hitStopUntil = (float)Feedback.FeedbackPolicy.ExtendHitStop(hitStopUntil, Time.unscaledTime, seconds);
+
+        public void Shake(float amp, float duration)
         {
-            // R12: both effects honour Reduce flashes, the existing motion/flash accessibility switch.
-            if (DisplayOptions.ReduceFlashes) return;
-            hitStopUntil = Time.unscaledTime + HitStopSeconds;
             // Not "?? AddComponent": Unity's destroyed-object null is invisible to ??.
             if (shake == null && cam != null)
             {
                 shake = cam.GetComponent<CameraShake>();
                 if (shake == null) shake = cam.gameObject.AddComponent<CameraShake>();
             }
-            if (shake != null) shake.Kick(0.18f, 0.25f);
+            if (shake != null) shake.Kick(amp, duration);
         }
 
         bool debugFire;
@@ -186,9 +186,7 @@ namespace BorrowedHex.Presentation
             if (kind == RunKind.Sandbox && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
             // The one path into the profile: finalized exactly once per run ID (section 8).
             Sim.Events.RunEnded += OnRunEnded;
-            // The old sim is discarded with its subscriptions, so nothing leaks across runs;
-            // a freeze from the previous run must not carry into the new one.
-            Sim.Events.PacketOvercharged += OnOvercharged;
+            // A freeze from the previous run must not carry into the new one.
             hitStopUntil = 0f;
             // Keep the authored arena meshes and bind their disposable state to each run.
             // Tests without an arena and future layouts with fewer pillars simply skip them.
@@ -200,7 +198,7 @@ namespace BorrowedHex.Presentation
                 if (view == null) view = pillar.AddComponent<DecayingPillarView>();
                 view.Bind(Sim, i);
             }
-            View = ArenaView.Create(Sim);
+            View = ArenaView.Create(Sim, this);
             Hud.Bind(Sim);
             Flow.Bind(Sim);
             TutorialUi.Bind(Sim);

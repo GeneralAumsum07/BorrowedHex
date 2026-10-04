@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Enemies;
+using BorrowedHex.Presentation.Feedback;
+using BorrowedHex.Presentation.WorldArt;
 using BorrowedHex.Runs;
 using UnityEngine;
 
@@ -25,15 +27,16 @@ namespace BorrowedHex.Presentation
         // height is separate from the hit position; the shadow marks where it really is).
         const float ProjectileHeight = 0.55f;
 
-        static readonly Color HostileColor = new Color(1f, 0.38f, 0.28f);
+        // State colours live in FeedbackColors (one source of truth for halo, trail and feedback).
+        static readonly Color HostileColor = FeedbackColors.Hostile;
         // Riposte: gold, so a parried strike reads as different from a packet release.
-        static readonly Color RiposteColor = new Color(1f, 0.85f, 0.35f);
-        static readonly Color ReturnedColor = new Color(0.45f, 0.95f, 1f);
+        static readonly Color RiposteColor = FeedbackColors.Riposte;
+        static readonly Color ReturnedColor = FeedbackColors.Returned;
         static readonly Color TelegraphColor = new Color(1f, 0.25f, 0.2f);
         static readonly Color TeleportColor = new Color(0.75f, 0.45f, 1f);
-        static readonly Color RocketColor = new Color(1f, 0.55f, 0.1f);
+        static readonly Color RocketColor = FeedbackColors.Rocket;
         // D94: the perfect-release colour, shared with the hand HUD's Overcharge fill.
-        static readonly Color OverchargeGold = new Color(1f, 0.84f, 0.2f);
+        static readonly Color OverchargeGold = FeedbackColors.Overcharge;
 
         ArenaSim sim;
         CharacterView player;
@@ -77,7 +80,7 @@ namespace BorrowedHex.Presentation
         // appearance IS the timing feedback; orbit dots stand in for stored shots until real
         // packet art exists; pops are short-lived rings for capture/rejection flourishes.
         static readonly Color ConeColor = new Color(0.55f, 0.95f, 1f, 0.55f);
-        static readonly Color RejectColor = new Color(1f, 0.3f, 0.3f);
+        static readonly Color RejectColor = FeedbackColors.Danger;
         SpriteRenderer cone;
         // D36: the parry band, drawn inside the cone only while the parry window is open.
         // When it disappears the cone is exactly the plain catch cone again, so the band's
@@ -105,19 +108,29 @@ namespace BorrowedHex.Presentation
         Camera cam;
 
         public CharacterView PlayerView => player;
+
+        // The VFX pass: this view owns the run's art library and feedback director, so both die
+        // with the run exactly like every other visual here.
+        WorldArtLibrary art;
+        CombatFeedback feedback;
+        public CombatFeedback Feedback => feedback;
+        public WorldArtLibrary Art => art;
         SpriteRenderer heavyOrbitRing;
 
-        public static ArenaView Create(ArenaSim sim)
+        /// <param name="host">Owner of the frame loop and camera (GameRoot). Null in tests and
+        /// tools: feedback then skips shake and hit-stop and still draws everything else.</param>
+        public static ArenaView Create(ArenaSim sim, IFeedbackHost host = null)
         {
             var go = new GameObject("ArenaView");
             var view = go.AddComponent<ArenaView>();
-            view.Bind(sim);
+            view.Bind(sim, host);
             return view;
         }
 
-        void Bind(ArenaSim s)
+        void Bind(ArenaSim s, IFeedbackHost host)
         {
             sim = s;
+            art = new WorldArtLibrary();
             player = CharacterView.Create(transform, "Player", PixelSprites.Kind.Magician, 1f, 0.45f);
             prevPlayer = currPlayer = sim.Player.Position;
 
@@ -169,12 +182,8 @@ namespace BorrowedHex.Presentation
             // nothing happened" reads as "too fresh", not as a dropped input.
             sim.Events.ReleaseRefused += _ => SpawnPop(sim.Player.Position, new Color(0.7f, 0.7f, 0.75f), 0.2f, 0.6f, 0.15f);
             sim.Events.PacketReleased += (_, __) => SpawnPop(sim.Player.Position, ReturnedColor, 0.4f, 1.4f, 0.25f);
-            // D94: the perfect release - a big gold label at the player and a wide gold ring.
-            sim.Events.PacketOvercharged += (pk, _) =>
-            {
-                SpawnPop(sim.Player.Position, OverchargeGold, 0.4f, 2.2f, 0.3f);
-                SpawnNumber($"OVERCHARGE x{pk.FirePower(sim.Stats.Power):0.0}", OverchargeGold, sim.Player.Position);
-            };
+            // D94: the perfect release - a wide gold ring; the callout carries the multiplier now.
+            sim.Events.PacketOvercharged += (pk, _) => SpawnPop(sim.Player.Position, OverchargeGold, 0.4f, 2.2f, 0.3f);
             // R11: gold damage numbers, only for overcharged hits (the game shows no others).
             sim.Events.EnemyDamaged += (e, d) => { if (d.Overcharged) SpawnNumber($"{d.Amount:0.#}", OverchargeGold, e.Position); };
             // Rocket burst drawn at its true damage radius (ring scale == radius), so the
@@ -187,6 +196,9 @@ namespace BorrowedHex.Presentation
                 SpawnPop(at, RiposteColor, sim.Config.combat.pursuer.strikeRadius * 1.4f, 0.15f, 0.22f);
                 if (enemies.TryGetValue(e.ActorId, out var v)) v.Body.Flash(0.15f);
             };
+            // Subscribed last, so every handler above has drawn its part of a moment first.
+            feedback = new CombatFeedback(sim, transform, art, host,
+                id => enemies.TryGetValue(id, out var v) ? v.Body : null, player);
         }
 
         /// <summary>A sprite lying flat on the ground (y slightly above the floor to avoid z-fighting).</summary>
@@ -219,6 +231,14 @@ namespace BorrowedHex.Presentation
             RenderPops();
             RenderTimeNumbers();
             RenderTutorialMarker();
+            feedback.Render(cam, Time.unscaledDeltaTime);
+        }
+
+        void OnDestroy()
+        {
+            // The feedback director first: its effects borrow textures from the art library.
+            feedback?.Dispose();
+            art?.Dispose();
         }
 
         SpriteRenderer tutorialMarker;
