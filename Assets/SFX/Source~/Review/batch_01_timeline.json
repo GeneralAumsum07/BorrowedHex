@@ -1,0 +1,306 @@
+[
+  {
+    "seconds": 0,
+    "cue": "CoreMagic/catch_snatcher_v01.wav"
+  },
+  {
+    "seconds": 0.825,
+    "cue": "CoreMagic/catch_collector_style_v01.wav"
+  },
+  {
+    "seconds": 1.85,
+    "cue": "CoreMagic/catch_daredevil_v01.wav"
+  },
+  {
+    "seconds": 2.635,
+    "cue": "CoreMagic/catch_window_empty_v01.wav"
+  },
+  {
+    "seconds": 3.381,
+    "cue": "CoreMagic/capture_success_v01.wav"
+  },
+  {
+    "seconds": 4.165,
+    "cue": "CoreMagic/capture_append_v01.wav"
+  },
+  {
+    "seconds": 4.874,
+    "cue": "CoreMagic/capture_perfect_v01.wav"
+  },
+  {
+    "seconds": 5.771,
+    "cue": "CoreMagic/packet_capacity_full_v01.wav"
+  },
+  {
+    "seconds": 6.527,
+    "cue": "CoreMagic/catch_hand_occupied_v01.wav"
+  },
+  {
+    "seconds": 7.259,
+    "cue": "CoreMagic/catch_slots_occupied_v01.wav"
+  },
+  {
+    "seconds": 8.042,
+    "cue": "CoreMagic/catch_capacity_rejected_v01.wav"
+  },
+  {
+    "seconds": 8.75,
+    "cue": "CoreMagic/catch_recovery_unavailable_v01.wav"
+  },
+  {
+    "seconds": 9.442,
+    "cue": "CoreMagic/packet_forms_v01.wav"
+  },
+  {
+    "seconds": 10.263,
+    "cue": "CoreMagic/packet_primed_v01.wav"
+  },
+  {
+    "seconds": 11.011,
+    "cue": "CoreMagic/release_unprimed_v01.wav"
+  },
+  {
+    "seconds": 11.734,
+    "cue": "CoreMagic/release_empty_v01.wav"
+  },
+  {
+    "seconds": 12.403,
+    "cue": "CoreMagic/packet_expiry_warning_v01.wav"
+  },
+  {
+    "seconds": 13.314,
+    "cue": "CoreMagic/overcharge_window_enter_v01.wav"
+  },
+  {
+    "seconds": 14.051,
+    "cue": "CoreMagic/overcharge_release_v01.wav"
+  },
+  {
+    "seconds": 15.048,
+    "cue": "CoreMagic/packet_backfire_v01.wav"
+  },
+  {
+    "seconds": 16.18,
+    "cue": "CoreMagic/slot_swap_v01.wav"
+  },
+  {
+    "seconds": 16.936,
+    "cue": "CoreMagic/packet_bank_freeze_v01.wav"
+  },
+  {
+    "seconds": 17.74,
+    "cue": "CoreMagic/packet_bank_resume_v01.wav"
+  },
+  {
+    "seconds": 18.518,
+    "cue": "CoreMagic/fusion_slot_lock_v01.wav"
+  },
+  {
+    "seconds": 19.294,
+    "cue": "CoreMagic/fusion_slot_unlock_v01.wav"
+  },
+  {
+    "seconds": 20.054,
+    "cue": "Projectiles/acolyte_bolt_launch_v01.wav"
+  },
+  {
+    "seconds": 20.847,
+    "cue": "Projectiles/acolyte_bolt_returned_launch_v01.wav"
+  },
+  {
+    "seconds": 21.639,
+    "cue": "Projectiles/acolyte_bolt_impact_v01.wav"
+  },
+  {
+    "seconds": 22.486,
+    "cue": "Projectiles/acolyte_bolt_wall_impact_v01.wav"
+  },
+  {
+    "seconds": 23.318,
+    "cue": "Projectiles/acolyte_bolt_dissipate_v01.wav"
+  },
+  {
+    "seconds": 24.124,
+    "cue": "Projectiles/scatter_volley_launch_v01.wav"
+  },
+  {
+    "seconds": 24.874,
+    "cue": "Projectiles/scatter_volley_returned_launch_v01.wav"
+  },
+  {
+    "seconds": 25.628,
+    "cue": "Projectiles/scatter_volley_impact_v01.wav"
+  },
+  {
+    "seconds": 26.467,
+    "cue": "Projectiles/scatter_volley_wall_impact_v01.wav"
+  },
+  {
+    "seconds": 27.309,
+    "cue": "Projectiles/scatter_volley_dissipate_v01.wav"
+  },
+  {
+    "seconds": 28.105,
+    "cue": "Projectiles/siege_rocket_launch_v01.wav"
+  },
+  {
+    "seconds": 29.059,
+    "cue": "Projectiles/siege_rocket_returned_launch_v01.wav"
+  },
+  {
+    "seconds": 30.009,
+    "cue": "Projectiles/siege_rocket_impact_v01.wav"
+  },
+  {
+    "seconds": 30.845,
+    "cue": "Projectiles/siege_rocket_wall_impact_v01.wav"
+  },
+  {
+    "seconds": 31.683,
+    "cue": "Projectiles/siege_rocket_dissipate_v01.wav"
+  },
+  {
+    "seconds": 32.483,
+    "cue": "Projectiles/collector_bolt_launch_v01.wav"
+  },
+  {
+    "seconds": 33.328,
+    "cue": "Projectiles/collector_bolt_returned_launch_v01.wav"
+  },
+  {
+    "seconds": 34.175,
+    "cue": "Projectiles/collector_bolt_impact_v01.wav"
+  },
+  {
+    "seconds": 35.01,
+    "cue": "Projectiles/collector_bolt_wall_impact_v01.wav"
+  },
+  {
+    "seconds": 35.857,
+    "cue": "Projectiles/collector_bolt_dissipate_v01.wav"
+  },
+  {
+    "seconds": 36.656,
+    "cue": "Projectiles/riposte_launch_v01.wav"
+  },
+  {
+    "seconds": 37.42,
+    "cue": "Projectiles/riposte_impact_v01.wav"
+  },
+  {
+    "seconds": 38.262,
+    "cue": "Projectiles/riposte_wall_impact_v01.wav"
+  },
+  {
+    "seconds": 39.102,
+    "cue": "Projectiles/riposte_dissipate_v01.wav"
+  },
+  {
+    "seconds": 39.897,
+    "cue": "Projectiles/siege_rocket_explosion_v01.wav"
+  },
+  {
+    "seconds": 41.365,
+    "cue": "Projectiles/siege_rocket_debris_tail_v01.wav"
+  },
+  {
+    "seconds": 43.172,
+    "cue": "Projectiles/riposte_pierce_v01.wav"
+  },
+  {
+    "seconds": 43.912,
+    "cue": "Projectiles/parry_pursuer_v01.wav"
+  },
+  {
+    "seconds": 44.737,
+    "cue": "Projectiles/parry_collector_v01.wav"
+  },
+  {
+    "seconds": 45.674,
+    "cue": "Projectiles/parry_stagger_v01.wav"
+  },
+  {
+    "seconds": 46.52,
+    "cue": "Projectiles/parry_opportunity_v01.wav"
+  },
+  {
+    "seconds": 47.188,
+    "cue": "Projectiles/projectile_pierce_v01.wav"
+  },
+  {
+    "seconds": 47.925,
+    "cue": "Projectiles/impact_school_resisted_v01.wav"
+  },
+  {
+    "seconds": 48.688,
+    "cue": "Projectiles/impact_school_amplified_v01.wav"
+  },
+  {
+    "seconds": 49.484,
+    "cue": "Projectiles/impact_overcharge_layer_v01.wav"
+  },
+  {
+    "seconds": 50.326,
+    "cue": "Projectiles/explosion_overcharge_layer_v01.wav"
+  },
+  {
+    "seconds": 51.519,
+    "cue": "Projectiles/mixed_packet_release_v01.wav"
+  },
+  {
+    "seconds": 52.337,
+    "cue": "Player/dash_launch_v01.wav"
+  },
+  {
+    "seconds": 53.121,
+    "cue": "Player/dash_end_v01.wav"
+  },
+  {
+    "seconds": 53.842,
+    "cue": "Player/dash_ready_v01.wav"
+  },
+  {
+    "seconds": 54.555,
+    "cue": "Player/player_hit_projectile_v01.wav"
+  },
+  {
+    "seconds": 55.396,
+    "cue": "Player/player_hit_melee_v01.wav"
+  },
+  {
+    "seconds": 56.298,
+    "cue": "Player/player_hit_contact_v01.wav"
+  },
+  {
+    "seconds": 57.044,
+    "cue": "Player/life_danger_enter_v01.wav"
+  },
+  {
+    "seconds": 58.11,
+    "cue": "Player/player_death_v01.wav"
+  },
+  {
+    "seconds": 59.943,
+    "cue": "Player/borrowed_life_exhausted_v01.wav"
+  },
+  {
+    "seconds": 62.16,
+    "cue": "Enemies/acolyte_windup_v01.wav"
+  },
+  {
+    "seconds": 63.428,
+    "cue": "Enemies/scatter_windup_v01.wav"
+  },
+  {
+    "seconds": 64.813,
+    "cue": "Enemies/siege_windup_v01.wav"
+  },
+  {
+    "seconds": 66.838,
+    "cue": "Enemies/pursuer_windup_v01.wav"
+  },
+  {
+    "seconds": 68.006,
+    "cue": "Enemies/pursuer_strike_v01.wav"
+  }
+]

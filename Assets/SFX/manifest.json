@@ -1,0 +1,3489 @@
+{
+  "schema_version": 1,
+  "sample_rate": 48000,
+  "master_format": "24-bit PCM WAV",
+  "provenance": "Original procedural synthesis and composition; no external audio samples, voices, or model outputs.",
+  "runtime_integration": "None. Audio assets and offline source only.",
+  "auditory_review": "Not yet approved through human listening. Technical QA is separate from artistic approval.",
+  "inventory": [
+    {
+      "approval_id": "E1",
+      "name": "catch_snatcher",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_snatcher_v01.wav",
+        "CoreMagic/catch_snatcher_v02.wav",
+        "CoreMagic/catch_snatcher_v03.wav",
+        "CoreMagic/catch_snatcher_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E2",
+      "name": "catch_collector_style",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_collector_style_v01.wav",
+        "CoreMagic/catch_collector_style_v02.wav",
+        "CoreMagic/catch_collector_style_v03.wav",
+        "CoreMagic/catch_collector_style_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E3",
+      "name": "catch_daredevil",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_daredevil_v01.wav",
+        "CoreMagic/catch_daredevil_v02.wav",
+        "CoreMagic/catch_daredevil_v03.wav",
+        "CoreMagic/catch_daredevil_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E4",
+      "name": "catch_window_empty",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_window_empty_v01.wav",
+        "CoreMagic/catch_window_empty_v02.wav",
+        "CoreMagic/catch_window_empty_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E5",
+      "name": "capture_success",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/capture_success_v01.wav",
+        "CoreMagic/capture_success_v02.wav",
+        "CoreMagic/capture_success_v03.wav",
+        "CoreMagic/capture_success_v04.wav",
+        "CoreMagic/capture_success_v05.wav",
+        "CoreMagic/capture_success_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E6",
+      "name": "capture_append",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/capture_append_v01.wav",
+        "CoreMagic/capture_append_v02.wav",
+        "CoreMagic/capture_append_v03.wav",
+        "CoreMagic/capture_append_v04.wav",
+        "CoreMagic/capture_append_v05.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E7",
+      "name": "capture_perfect",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/capture_perfect_v01.wav",
+        "CoreMagic/capture_perfect_v02.wav",
+        "CoreMagic/capture_perfect_v03.wav",
+        "CoreMagic/capture_perfect_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E8",
+      "name": "packet_capacity_full",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_capacity_full_v01.wav",
+        "CoreMagic/packet_capacity_full_v02.wav",
+        "CoreMagic/packet_capacity_full_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E9",
+      "name": "catch_hand_occupied",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_hand_occupied_v01.wav",
+        "CoreMagic/catch_hand_occupied_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E10",
+      "name": "catch_slots_occupied",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_slots_occupied_v01.wav",
+        "CoreMagic/catch_slots_occupied_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E11",
+      "name": "catch_capacity_rejected",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_capacity_rejected_v01.wav",
+        "CoreMagic/catch_capacity_rejected_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E12",
+      "name": "catch_recovery_unavailable",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/catch_recovery_unavailable_v01.wav",
+        "CoreMagic/catch_recovery_unavailable_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E13",
+      "name": "packet_forms",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_forms_v01.wav",
+        "CoreMagic/packet_forms_v02.wav",
+        "CoreMagic/packet_forms_v03.wav",
+        "CoreMagic/packet_forms_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E14",
+      "name": "packet_primed",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_primed_v01.wav",
+        "CoreMagic/packet_primed_v02.wav",
+        "CoreMagic/packet_primed_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E15",
+      "name": "release_unprimed",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/release_unprimed_v01.wav",
+        "CoreMagic/release_unprimed_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E16",
+      "name": "release_empty",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/release_empty_v01.wav",
+        "CoreMagic/release_empty_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E18",
+      "name": "packet_expiry_warning",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_expiry_warning_v01.wav",
+        "CoreMagic/packet_expiry_warning_v02.wav",
+        "CoreMagic/packet_expiry_warning_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E19",
+      "name": "overcharge_window_enter",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/overcharge_window_enter_v01.wav",
+        "CoreMagic/overcharge_window_enter_v02.wav",
+        "CoreMagic/overcharge_window_enter_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E20",
+      "name": "overcharge_release",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/overcharge_release_v01.wav",
+        "CoreMagic/overcharge_release_v02.wav",
+        "CoreMagic/overcharge_release_v03.wav",
+        "CoreMagic/overcharge_release_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E21",
+      "name": "packet_backfire",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_backfire_v01.wav",
+        "CoreMagic/packet_backfire_v02.wav",
+        "CoreMagic/packet_backfire_v03.wav",
+        "CoreMagic/packet_backfire_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E22",
+      "name": "slot_swap",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/slot_swap_v01.wav",
+        "CoreMagic/slot_swap_v02.wav",
+        "CoreMagic/slot_swap_v03.wav",
+        "CoreMagic/slot_swap_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E23",
+      "name": "packet_bank_freeze",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_bank_freeze_v01.wav",
+        "CoreMagic/packet_bank_freeze_v02.wav",
+        "CoreMagic/packet_bank_freeze_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E24",
+      "name": "packet_bank_resume",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/packet_bank_resume_v01.wav",
+        "CoreMagic/packet_bank_resume_v02.wav",
+        "CoreMagic/packet_bank_resume_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E25",
+      "name": "fusion_slot_lock",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/fusion_slot_lock_v01.wav",
+        "CoreMagic/fusion_slot_lock_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E26",
+      "name": "fusion_slot_unlock",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "CoreMagic/fusion_slot_unlock_v01.wav",
+        "CoreMagic/fusion_slot_unlock_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "E17",
+      "name": "packet_charge",
+      "priority": 1,
+      "loop": true,
+      "note": "Steady periodic texture: later integration may crossfade this with warning and Overcharge layers. Freeze stops playback; this WAV does not encode the timer.",
+      "paths": [
+        "CoreMagic/packet_charge_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/acolyte_bolt_launch_v01.wav",
+        "Projectiles/acolyte_bolt_launch_v02.wav",
+        "Projectiles/acolyte_bolt_launch_v03.wav",
+        "Projectiles/acolyte_bolt_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_returned_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "Returned variation adds a clean harmonic answer to the hostile timbre.",
+      "paths": [
+        "Projectiles/acolyte_bolt_returned_launch_v01.wav",
+        "Projectiles/acolyte_bolt_returned_launch_v02.wav",
+        "Projectiles/acolyte_bolt_returned_launch_v03.wav",
+        "Projectiles/acolyte_bolt_returned_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/acolyte_bolt_impact_v01.wav",
+        "Projectiles/acolyte_bolt_impact_v02.wav",
+        "Projectiles/acolyte_bolt_impact_v03.wav",
+        "Projectiles/acolyte_bolt_impact_v04.wav",
+        "Projectiles/acolyte_bolt_impact_v05.wav",
+        "Projectiles/acolyte_bolt_impact_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_wall_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/acolyte_bolt_wall_impact_v01.wav",
+        "Projectiles/acolyte_bolt_wall_impact_v02.wav",
+        "Projectiles/acolyte_bolt_wall_impact_v03.wav",
+        "Projectiles/acolyte_bolt_wall_impact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_dissipate",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/acolyte_bolt_dissipate_v01.wav",
+        "Projectiles/acolyte_bolt_dissipate_v02.wav",
+        "Projectiles/acolyte_bolt_dissipate_v03.wav",
+        "Projectiles/acolyte_bolt_dissipate_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F1",
+      "name": "acolyte_bolt_flight",
+      "priority": 1,
+      "loop": true,
+      "note": "Spatial mono loop. Limit simultaneous flight voices in future integration.",
+      "paths": [
+        "Projectiles/acolyte_bolt_flight_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/scatter_volley_launch_v01.wav",
+        "Projectiles/scatter_volley_launch_v02.wav",
+        "Projectiles/scatter_volley_launch_v03.wav",
+        "Projectiles/scatter_volley_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_returned_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "Returned variation adds a clean harmonic answer to the hostile timbre.",
+      "paths": [
+        "Projectiles/scatter_volley_returned_launch_v01.wav",
+        "Projectiles/scatter_volley_returned_launch_v02.wav",
+        "Projectiles/scatter_volley_returned_launch_v03.wav",
+        "Projectiles/scatter_volley_returned_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/scatter_volley_impact_v01.wav",
+        "Projectiles/scatter_volley_impact_v02.wav",
+        "Projectiles/scatter_volley_impact_v03.wav",
+        "Projectiles/scatter_volley_impact_v04.wav",
+        "Projectiles/scatter_volley_impact_v05.wav",
+        "Projectiles/scatter_volley_impact_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_wall_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/scatter_volley_wall_impact_v01.wav",
+        "Projectiles/scatter_volley_wall_impact_v02.wav",
+        "Projectiles/scatter_volley_wall_impact_v03.wav",
+        "Projectiles/scatter_volley_wall_impact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_dissipate",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/scatter_volley_dissipate_v01.wav",
+        "Projectiles/scatter_volley_dissipate_v02.wav",
+        "Projectiles/scatter_volley_dissipate_v03.wav",
+        "Projectiles/scatter_volley_dissipate_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F2",
+      "name": "scatter_volley_flight",
+      "priority": 1,
+      "loop": true,
+      "note": "Spatial mono loop. Limit simultaneous flight voices in future integration.",
+      "paths": [
+        "Projectiles/scatter_volley_flight_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_launch_v01.wav",
+        "Projectiles/siege_rocket_launch_v02.wav",
+        "Projectiles/siege_rocket_launch_v03.wav",
+        "Projectiles/siege_rocket_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_returned_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "Returned variation adds a clean harmonic answer to the hostile timbre.",
+      "paths": [
+        "Projectiles/siege_rocket_returned_launch_v01.wav",
+        "Projectiles/siege_rocket_returned_launch_v02.wav",
+        "Projectiles/siege_rocket_returned_launch_v03.wav",
+        "Projectiles/siege_rocket_returned_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_impact_v01.wav",
+        "Projectiles/siege_rocket_impact_v02.wav",
+        "Projectiles/siege_rocket_impact_v03.wav",
+        "Projectiles/siege_rocket_impact_v04.wav",
+        "Projectiles/siege_rocket_impact_v05.wav",
+        "Projectiles/siege_rocket_impact_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_wall_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_wall_impact_v01.wav",
+        "Projectiles/siege_rocket_wall_impact_v02.wav",
+        "Projectiles/siege_rocket_wall_impact_v03.wav",
+        "Projectiles/siege_rocket_wall_impact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_dissipate",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_dissipate_v01.wav",
+        "Projectiles/siege_rocket_dissipate_v02.wav",
+        "Projectiles/siege_rocket_dissipate_v03.wav",
+        "Projectiles/siege_rocket_dissipate_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_flight",
+      "priority": 1,
+      "loop": true,
+      "note": "Spatial mono loop. Limit simultaneous flight voices in future integration.",
+      "paths": [
+        "Projectiles/siege_rocket_flight_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/collector_bolt_launch_v01.wav",
+        "Projectiles/collector_bolt_launch_v02.wav",
+        "Projectiles/collector_bolt_launch_v03.wav",
+        "Projectiles/collector_bolt_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_returned_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "Returned variation adds a clean harmonic answer to the hostile timbre.",
+      "paths": [
+        "Projectiles/collector_bolt_returned_launch_v01.wav",
+        "Projectiles/collector_bolt_returned_launch_v02.wav",
+        "Projectiles/collector_bolt_returned_launch_v03.wav",
+        "Projectiles/collector_bolt_returned_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/collector_bolt_impact_v01.wav",
+        "Projectiles/collector_bolt_impact_v02.wav",
+        "Projectiles/collector_bolt_impact_v03.wav",
+        "Projectiles/collector_bolt_impact_v04.wav",
+        "Projectiles/collector_bolt_impact_v05.wav",
+        "Projectiles/collector_bolt_impact_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_wall_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/collector_bolt_wall_impact_v01.wav",
+        "Projectiles/collector_bolt_wall_impact_v02.wav",
+        "Projectiles/collector_bolt_wall_impact_v03.wav",
+        "Projectiles/collector_bolt_wall_impact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_dissipate",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/collector_bolt_dissipate_v01.wav",
+        "Projectiles/collector_bolt_dissipate_v02.wav",
+        "Projectiles/collector_bolt_dissipate_v03.wav",
+        "Projectiles/collector_bolt_dissipate_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F4",
+      "name": "collector_bolt_flight",
+      "priority": 1,
+      "loop": true,
+      "note": "Spatial mono loop. Limit simultaneous flight voices in future integration.",
+      "paths": [
+        "Projectiles/collector_bolt_flight_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/riposte_launch_v01.wav",
+        "Projectiles/riposte_launch_v02.wav",
+        "Projectiles/riposte_launch_v03.wav",
+        "Projectiles/riposte_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/riposte_impact_v01.wav",
+        "Projectiles/riposte_impact_v02.wav",
+        "Projectiles/riposte_impact_v03.wav",
+        "Projectiles/riposte_impact_v04.wav",
+        "Projectiles/riposte_impact_v05.wav",
+        "Projectiles/riposte_impact_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_wall_impact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/riposte_wall_impact_v01.wav",
+        "Projectiles/riposte_wall_impact_v02.wav",
+        "Projectiles/riposte_wall_impact_v03.wav",
+        "Projectiles/riposte_wall_impact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_dissipate",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/riposte_dissipate_v01.wav",
+        "Projectiles/riposte_dissipate_v02.wav",
+        "Projectiles/riposte_dissipate_v03.wav",
+        "Projectiles/riposte_dissipate_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_flight",
+      "priority": 1,
+      "loop": true,
+      "note": "Spatial mono loop. Limit simultaneous flight voices in future integration.",
+      "paths": [
+        "Projectiles/riposte_flight_v01.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_explosion",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_explosion_v01.wav",
+        "Projectiles/siege_rocket_explosion_v02.wav",
+        "Projectiles/siege_rocket_explosion_v03.wav",
+        "Projectiles/siege_rocket_explosion_v04.wav",
+        "Projectiles/siege_rocket_explosion_v05.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F3",
+      "name": "siege_rocket_debris_tail",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/siege_rocket_debris_tail_v01.wav",
+        "Projectiles/siege_rocket_debris_tail_v02.wav",
+        "Projectiles/siege_rocket_debris_tail_v03.wav",
+        "Projectiles/siege_rocket_debris_tail_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F5",
+      "name": "riposte_pierce",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/riposte_pierce_v01.wav",
+        "Projectiles/riposte_pierce_v02.wav",
+        "Projectiles/riposte_pierce_v03.wav",
+        "Projectiles/riposte_pierce_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F6",
+      "name": "parry_pursuer",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/parry_pursuer_v01.wav",
+        "Projectiles/parry_pursuer_v02.wav",
+        "Projectiles/parry_pursuer_v03.wav",
+        "Projectiles/parry_pursuer_v04.wav",
+        "Projectiles/parry_pursuer_v05.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F7",
+      "name": "parry_collector",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/parry_collector_v01.wav",
+        "Projectiles/parry_collector_v02.wav",
+        "Projectiles/parry_collector_v03.wav",
+        "Projectiles/parry_collector_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F8",
+      "name": "parry_stagger",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/parry_stagger_v01.wav",
+        "Projectiles/parry_stagger_v02.wav",
+        "Projectiles/parry_stagger_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F9",
+      "name": "parry_opportunity",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/parry_opportunity_v01.wav",
+        "Projectiles/parry_opportunity_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F10",
+      "name": "projectile_pierce",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/projectile_pierce_v01.wav",
+        "Projectiles/projectile_pierce_v02.wav",
+        "Projectiles/projectile_pierce_v03.wav",
+        "Projectiles/projectile_pierce_v04.wav",
+        "Projectiles/projectile_pierce_v05.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F11",
+      "name": "impact_school_resisted",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/impact_school_resisted_v01.wav",
+        "Projectiles/impact_school_resisted_v02.wav",
+        "Projectiles/impact_school_resisted_v03.wav",
+        "Projectiles/impact_school_resisted_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F12",
+      "name": "impact_school_amplified",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/impact_school_amplified_v01.wav",
+        "Projectiles/impact_school_amplified_v02.wav",
+        "Projectiles/impact_school_amplified_v03.wav",
+        "Projectiles/impact_school_amplified_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F13",
+      "name": "impact_overcharge_layer",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/impact_overcharge_layer_v01.wav",
+        "Projectiles/impact_overcharge_layer_v02.wav",
+        "Projectiles/impact_overcharge_layer_v03.wav",
+        "Projectiles/impact_overcharge_layer_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F14",
+      "name": "explosion_overcharge_layer",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/explosion_overcharge_layer_v01.wav",
+        "Projectiles/explosion_overcharge_layer_v02.wav",
+        "Projectiles/explosion_overcharge_layer_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "F15",
+      "name": "mixed_packet_release",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Projectiles/mixed_packet_release_v01.wav",
+        "Projectiles/mixed_packet_release_v02.wav",
+        "Projectiles/mixed_packet_release_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D5",
+      "name": "dash_launch",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/dash_launch_v01.wav",
+        "Player/dash_launch_v02.wav",
+        "Player/dash_launch_v03.wav",
+        "Player/dash_launch_v04.wav",
+        "Player/dash_launch_v05.wav",
+        "Player/dash_launch_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D6",
+      "name": "dash_end",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/dash_end_v01.wav",
+        "Player/dash_end_v02.wav",
+        "Player/dash_end_v03.wav",
+        "Player/dash_end_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D7",
+      "name": "dash_ready",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/dash_ready_v01.wav",
+        "Player/dash_ready_v02.wav",
+        "Player/dash_ready_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D9",
+      "name": "player_hit_projectile",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/player_hit_projectile_v01.wav",
+        "Player/player_hit_projectile_v02.wav",
+        "Player/player_hit_projectile_v03.wav",
+        "Player/player_hit_projectile_v04.wav",
+        "Player/player_hit_projectile_v05.wav",
+        "Player/player_hit_projectile_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D10",
+      "name": "player_hit_melee",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/player_hit_melee_v01.wav",
+        "Player/player_hit_melee_v02.wav",
+        "Player/player_hit_melee_v03.wav",
+        "Player/player_hit_melee_v04.wav",
+        "Player/player_hit_melee_v05.wav",
+        "Player/player_hit_melee_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D11",
+      "name": "player_hit_contact",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/player_hit_contact_v01.wav",
+        "Player/player_hit_contact_v02.wav",
+        "Player/player_hit_contact_v03.wav",
+        "Player/player_hit_contact_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D13",
+      "name": "life_danger_enter",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/life_danger_enter_v01.wav",
+        "Player/life_danger_enter_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D17",
+      "name": "player_death",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/player_death_v01.wav",
+        "Player/player_death_v02.wav",
+        "Player/player_death_v03.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "D18",
+      "name": "borrowed_life_exhausted",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/borrowed_life_exhausted_v01.wav",
+        "Player/borrowed_life_exhausted_v02.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "G5",
+      "name": "acolyte_windup",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_windup_v01.wav",
+        "Enemies/acolyte_windup_v02.wav",
+        "Enemies/acolyte_windup_v03.wav",
+        "Enemies/acolyte_windup_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "G6",
+      "name": "scatter_windup",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_windup_v01.wav",
+        "Enemies/scatter_windup_v02.wav",
+        "Enemies/scatter_windup_v03.wav",
+        "Enemies/scatter_windup_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "G7",
+      "name": "siege_windup",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_windup_v01.wav",
+        "Enemies/siege_windup_v02.wav",
+        "Enemies/siege_windup_v03.wav",
+        "Enemies/siege_windup_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "G8",
+      "name": "pursuer_windup",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_windup_v01.wav",
+        "Enemies/pursuer_windup_v02.wav",
+        "Enemies/pursuer_windup_v03.wav",
+        "Enemies/pursuer_windup_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "G9",
+      "name": "pursuer_strike",
+      "priority": 1,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_strike_v01.wav",
+        "Enemies/pursuer_strike_v02.wav",
+        "Enemies/pursuer_strike_v03.wav",
+        "Enemies/pursuer_strike_v04.wav",
+        "Enemies/pursuer_strike_v05.wav",
+        "Enemies/pursuer_strike_v06.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "H1",
+      "name": "collector_manifest",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_manifest_v01.wav",
+        "Collector/collector_manifest_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H2",
+      "name": "collector_footstep",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_footstep_v01.wav",
+        "Collector/collector_footstep_v02.wav",
+        "Collector/collector_footstep_v03.wav",
+        "Collector/collector_footstep_v04.wav",
+        "Collector/collector_footstep_v05.wav",
+        "Collector/collector_footstep_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H3",
+      "name": "collector_stream_windup",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_stream_windup_v01.wav",
+        "Collector/collector_stream_windup_v02.wav",
+        "Collector/collector_stream_windup_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H5",
+      "name": "collector_fan_windup",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_fan_windup_v01.wav",
+        "Collector/collector_fan_windup_v02.wav",
+        "Collector/collector_fan_windup_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H6",
+      "name": "collector_fan_release",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_fan_release_v01.wav",
+        "Collector/collector_fan_release_v02.wav",
+        "Collector/collector_fan_release_v03.wav",
+        "Collector/collector_fan_release_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H7",
+      "name": "collector_sweep_windup",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_sweep_windup_v01.wav",
+        "Collector/collector_sweep_windup_v02.wav",
+        "Collector/collector_sweep_windup_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H8",
+      "name": "collector_sweep",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_sweep_v01.wav",
+        "Collector/collector_sweep_v02.wav",
+        "Collector/collector_sweep_v03.wav",
+        "Collector/collector_sweep_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H9",
+      "name": "collector_sweep_ground",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_sweep_ground_v01.wav",
+        "Collector/collector_sweep_ground_v02.wav",
+        "Collector/collector_sweep_ground_v03.wav",
+        "Collector/collector_sweep_ground_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H10",
+      "name": "collector_slam_warning",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_slam_warning_v01.wav",
+        "Collector/collector_slam_warning_v02.wav",
+        "Collector/collector_slam_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H11",
+      "name": "collector_slam",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_slam_v01.wav",
+        "Collector/collector_slam_v02.wav",
+        "Collector/collector_slam_v03.wav",
+        "Collector/collector_slam_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H12",
+      "name": "collector_summon_windup",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_summon_windup_v01.wav",
+        "Collector/collector_summon_windup_v02.wav",
+        "Collector/collector_summon_windup_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H13",
+      "name": "collector_summon_release",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_summon_release_v01.wav",
+        "Collector/collector_summon_release_v02.wav",
+        "Collector/collector_summon_release_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H14",
+      "name": "collector_summon_arrival",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_summon_arrival_v01.wav",
+        "Collector/collector_summon_arrival_v02.wav",
+        "Collector/collector_summon_arrival_v03.wav",
+        "Collector/collector_summon_arrival_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H15",
+      "name": "collector_teleport_warning",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_teleport_warning_v01.wav",
+        "Collector/collector_teleport_warning_v02.wav",
+        "Collector/collector_teleport_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H16",
+      "name": "collector_teleport_depart",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_teleport_depart_v01.wav",
+        "Collector/collector_teleport_depart_v02.wav",
+        "Collector/collector_teleport_depart_v03.wav",
+        "Collector/collector_teleport_depart_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H17",
+      "name": "collector_teleport_arrive",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_teleport_arrive_v01.wav",
+        "Collector/collector_teleport_arrive_v02.wav",
+        "Collector/collector_teleport_arrive_v03.wav",
+        "Collector/collector_teleport_arrive_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H18",
+      "name": "collector_hurt",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_hurt_v01.wav",
+        "Collector/collector_hurt_v02.wav",
+        "Collector/collector_hurt_v03.wav",
+        "Collector/collector_hurt_v04.wav",
+        "Collector/collector_hurt_v05.wav",
+        "Collector/collector_hurt_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H19",
+      "name": "collector_stagger",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_stagger_v01.wav",
+        "Collector/collector_stagger_v02.wav",
+        "Collector/collector_stagger_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H20",
+      "name": "collector_death_rupture",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_death_rupture_v01.wav",
+        "Collector/collector_death_rupture_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H20",
+      "name": "collector_death_collapse",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_death_collapse_v01.wav",
+        "Collector/collector_death_collapse_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H20",
+      "name": "collector_death_binding_tail",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_death_binding_tail_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H21",
+      "name": "collector_encore_entrance",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Collector/collector_encore_entrance_v01.wav",
+        "Collector/collector_encore_entrance_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B1",
+      "name": "run_start",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/run_start_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B2",
+      "name": "encounter_clear",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/encounter_clear_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B3",
+      "name": "encounter_begin",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/encounter_begin_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B4",
+      "name": "boss_reveal",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/boss_reveal_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B5",
+      "name": "boss_combat_start",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/boss_combat_start_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B6",
+      "name": "collector_defeated",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/collector_defeated_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B7",
+      "name": "short_run_victory",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/short_run_victory_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B8",
+      "name": "death_defeat",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/death_defeat_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B9",
+      "name": "time_expiry_defeat",
+      "priority": 2,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/time_expiry_defeat_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D1",
+      "name": "footstep_courtyard_stone",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/footstep_courtyard_stone_v01.wav",
+        "Player/footstep_courtyard_stone_v02.wav",
+        "Player/footstep_courtyard_stone_v03.wav",
+        "Player/footstep_courtyard_stone_v04.wav",
+        "Player/footstep_courtyard_stone_v05.wav",
+        "Player/footstep_courtyard_stone_v06.wav",
+        "Player/footstep_courtyard_stone_v07.wav",
+        "Player/footstep_courtyard_stone_v08.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D2",
+      "name": "footstep_graveyard_ground",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/footstep_graveyard_ground_v01.wav",
+        "Player/footstep_graveyard_ground_v02.wav",
+        "Player/footstep_graveyard_ground_v03.wav",
+        "Player/footstep_graveyard_ground_v04.wav",
+        "Player/footstep_graveyard_ground_v05.wav",
+        "Player/footstep_graveyard_ground_v06.wav",
+        "Player/footstep_graveyard_ground_v07.wav",
+        "Player/footstep_graveyard_ground_v08.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D3",
+      "name": "footstep_cave_rock",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/footstep_cave_rock_v01.wav",
+        "Player/footstep_cave_rock_v02.wav",
+        "Player/footstep_cave_rock_v03.wav",
+        "Player/footstep_cave_rock_v04.wav",
+        "Player/footstep_cave_rock_v05.wav",
+        "Player/footstep_cave_rock_v06.wav",
+        "Player/footstep_cave_rock_v07.wav",
+        "Player/footstep_cave_rock_v08.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D4",
+      "name": "footstep_sanctum_stone",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/footstep_sanctum_stone_v01.wav",
+        "Player/footstep_sanctum_stone_v02.wav",
+        "Player/footstep_sanctum_stone_v03.wav",
+        "Player/footstep_sanctum_stone_v04.wav",
+        "Player/footstep_sanctum_stone_v05.wav",
+        "Player/footstep_sanctum_stone_v06.wav",
+        "Player/footstep_sanctum_stone_v07.wav",
+        "Player/footstep_sanctum_stone_v08.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D8",
+      "name": "dash_unavailable",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/dash_unavailable_v01.wav",
+        "Player/dash_unavailable_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D12",
+      "name": "grace_protection",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/grace_protection_v01.wav",
+        "Player/grace_protection_v02.wav",
+        "Player/grace_protection_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D15",
+      "name": "life_restored_kill",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/life_restored_kill_v01.wav",
+        "Player/life_restored_kill_v02.wav",
+        "Player/life_restored_kill_v03.wav",
+        "Player/life_restored_kill_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D16",
+      "name": "life_stolen",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Player/life_stolen_v01.wav",
+        "Player/life_stolen_v02.wav",
+        "Player/life_stolen_v03.wav",
+        "Player/life_stolen_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "D14",
+      "name": "low_life_heartbeat",
+      "priority": 3,
+      "loop": true,
+      "note": "One double beat per two seconds. Independently muteable in future integration; do not accelerate with frame rate.",
+      "paths": [
+        "Player/low_life_heartbeat_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C1",
+      "name": "focus_hover",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/focus_hover_v01.wav",
+        "UI/focus_hover_v02.wav",
+        "UI/focus_hover_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C2",
+      "name": "button_press",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/button_press_v01.wav",
+        "UI/button_press_v02.wav",
+        "UI/button_press_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C3",
+      "name": "confirm",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/confirm_v01.wav",
+        "UI/confirm_v02.wav",
+        "UI/confirm_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C4",
+      "name": "back_cancel",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/back_cancel_v01.wav",
+        "UI/back_cancel_v02.wav",
+        "UI/back_cancel_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C5",
+      "name": "panel_open",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/panel_open_v01.wav",
+        "UI/panel_open_v02.wav",
+        "UI/panel_open_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C6",
+      "name": "panel_close",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/panel_close_v01.wav",
+        "UI/panel_close_v02.wav",
+        "UI/panel_close_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C7",
+      "name": "tab_change",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/tab_change_v01.wav",
+        "UI/tab_change_v02.wav",
+        "UI/tab_change_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C8",
+      "name": "card_node_select",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/card_node_select_v01.wav",
+        "UI/card_node_select_v02.wav",
+        "UI/card_node_select_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C9",
+      "name": "toggle_on",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/toggle_on_v01.wav",
+        "UI/toggle_on_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C10",
+      "name": "toggle_off",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/toggle_off_v01.wav",
+        "UI/toggle_off_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C11",
+      "name": "setting_increase",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/setting_increase_v01.wav",
+        "UI/setting_increase_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C12",
+      "name": "setting_decrease",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/setting_decrease_v01.wav",
+        "UI/setting_decrease_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C13",
+      "name": "action_rejected",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/action_rejected_v01.wav",
+        "UI/action_rejected_v02.wav",
+        "UI/action_rejected_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C14",
+      "name": "confirmation_open",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/confirmation_open_v01.wav",
+        "UI/confirmation_open_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C15",
+      "name": "destructive_confirm",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/destructive_confirm_v01.wav",
+        "UI/destructive_confirm_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C16",
+      "name": "style_equipped",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/style_equipped_v01.wav",
+        "UI/style_equipped_v02.wav",
+        "UI/style_equipped_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C17",
+      "name": "details_open",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/details_open_v01.wav",
+        "UI/details_open_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C17",
+      "name": "details_close",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/details_close_v01.wav",
+        "UI/details_close_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C18",
+      "name": "scroll_tick",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/scroll_tick_v01.wav",
+        "UI/scroll_tick_v02.wav",
+        "UI/scroll_tick_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "C19",
+      "name": "notification",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "UI/notification_v01.wav",
+        "UI/notification_v02.wav",
+        "UI/notification_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G1",
+      "name": "acolyte_spawn_warning",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_spawn_warning_v01.wav",
+        "Enemies/acolyte_spawn_warning_v02.wav",
+        "Enemies/acolyte_spawn_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G1",
+      "name": "acolyte_materialize",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_materialize_v01.wav",
+        "Enemies/acolyte_materialize_v02.wav",
+        "Enemies/acolyte_materialize_v03.wav",
+        "Enemies/acolyte_materialize_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G1",
+      "name": "acolyte_movement",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_movement_v01.wav",
+        "Enemies/acolyte_movement_v02.wav",
+        "Enemies/acolyte_movement_v03.wav",
+        "Enemies/acolyte_movement_v04.wav",
+        "Enemies/acolyte_movement_v05.wav",
+        "Enemies/acolyte_movement_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G1",
+      "name": "acolyte_hurt",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_hurt_v01.wav",
+        "Enemies/acolyte_hurt_v02.wav",
+        "Enemies/acolyte_hurt_v03.wav",
+        "Enemies/acolyte_hurt_v04.wav",
+        "Enemies/acolyte_hurt_v05.wav",
+        "Enemies/acolyte_hurt_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G1",
+      "name": "acolyte_death",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/acolyte_death_v01.wav",
+        "Enemies/acolyte_death_v02.wav",
+        "Enemies/acolyte_death_v03.wav",
+        "Enemies/acolyte_death_v04.wav",
+        "Enemies/acolyte_death_v05.wav",
+        "Enemies/acolyte_death_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G2",
+      "name": "pursuer_spawn_warning",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_spawn_warning_v01.wav",
+        "Enemies/pursuer_spawn_warning_v02.wav",
+        "Enemies/pursuer_spawn_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G2",
+      "name": "pursuer_materialize",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_materialize_v01.wav",
+        "Enemies/pursuer_materialize_v02.wav",
+        "Enemies/pursuer_materialize_v03.wav",
+        "Enemies/pursuer_materialize_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G2",
+      "name": "pursuer_movement",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_movement_v01.wav",
+        "Enemies/pursuer_movement_v02.wav",
+        "Enemies/pursuer_movement_v03.wav",
+        "Enemies/pursuer_movement_v04.wav",
+        "Enemies/pursuer_movement_v05.wav",
+        "Enemies/pursuer_movement_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G2",
+      "name": "pursuer_hurt",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_hurt_v01.wav",
+        "Enemies/pursuer_hurt_v02.wav",
+        "Enemies/pursuer_hurt_v03.wav",
+        "Enemies/pursuer_hurt_v04.wav",
+        "Enemies/pursuer_hurt_v05.wav",
+        "Enemies/pursuer_hurt_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G2",
+      "name": "pursuer_death",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/pursuer_death_v01.wav",
+        "Enemies/pursuer_death_v02.wav",
+        "Enemies/pursuer_death_v03.wav",
+        "Enemies/pursuer_death_v04.wav",
+        "Enemies/pursuer_death_v05.wav",
+        "Enemies/pursuer_death_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G3",
+      "name": "scatter_caster_spawn_warning",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_caster_spawn_warning_v01.wav",
+        "Enemies/scatter_caster_spawn_warning_v02.wav",
+        "Enemies/scatter_caster_spawn_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G3",
+      "name": "scatter_caster_materialize",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_caster_materialize_v01.wav",
+        "Enemies/scatter_caster_materialize_v02.wav",
+        "Enemies/scatter_caster_materialize_v03.wav",
+        "Enemies/scatter_caster_materialize_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G3",
+      "name": "scatter_caster_movement",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_caster_movement_v01.wav",
+        "Enemies/scatter_caster_movement_v02.wav",
+        "Enemies/scatter_caster_movement_v03.wav",
+        "Enemies/scatter_caster_movement_v04.wav",
+        "Enemies/scatter_caster_movement_v05.wav",
+        "Enemies/scatter_caster_movement_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G3",
+      "name": "scatter_caster_hurt",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_caster_hurt_v01.wav",
+        "Enemies/scatter_caster_hurt_v02.wav",
+        "Enemies/scatter_caster_hurt_v03.wav",
+        "Enemies/scatter_caster_hurt_v04.wav",
+        "Enemies/scatter_caster_hurt_v05.wav",
+        "Enemies/scatter_caster_hurt_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G3",
+      "name": "scatter_caster_death",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/scatter_caster_death_v01.wav",
+        "Enemies/scatter_caster_death_v02.wav",
+        "Enemies/scatter_caster_death_v03.wav",
+        "Enemies/scatter_caster_death_v04.wav",
+        "Enemies/scatter_caster_death_v05.wav",
+        "Enemies/scatter_caster_death_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G4",
+      "name": "siege_familiar_spawn_warning",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_familiar_spawn_warning_v01.wav",
+        "Enemies/siege_familiar_spawn_warning_v02.wav",
+        "Enemies/siege_familiar_spawn_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G4",
+      "name": "siege_familiar_materialize",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_familiar_materialize_v01.wav",
+        "Enemies/siege_familiar_materialize_v02.wav",
+        "Enemies/siege_familiar_materialize_v03.wav",
+        "Enemies/siege_familiar_materialize_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G4",
+      "name": "siege_familiar_movement",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_familiar_movement_v01.wav",
+        "Enemies/siege_familiar_movement_v02.wav",
+        "Enemies/siege_familiar_movement_v03.wav",
+        "Enemies/siege_familiar_movement_v04.wav",
+        "Enemies/siege_familiar_movement_v05.wav",
+        "Enemies/siege_familiar_movement_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G4",
+      "name": "siege_familiar_hurt",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_familiar_hurt_v01.wav",
+        "Enemies/siege_familiar_hurt_v02.wav",
+        "Enemies/siege_familiar_hurt_v03.wav",
+        "Enemies/siege_familiar_hurt_v04.wav",
+        "Enemies/siege_familiar_hurt_v05.wav",
+        "Enemies/siege_familiar_hurt_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G4",
+      "name": "siege_familiar_death",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/siege_familiar_death_v01.wav",
+        "Enemies/siege_familiar_death_v02.wav",
+        "Enemies/siege_familiar_death_v03.wav",
+        "Enemies/siege_familiar_death_v04.wav",
+        "Enemies/siege_familiar_death_v05.wav",
+        "Enemies/siege_familiar_death_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G10",
+      "name": "overstay_warning",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/overstay_warning_v01.wav",
+        "Enemies/overstay_warning_v02.wav",
+        "Enemies/overstay_warning_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G11",
+      "name": "elite_evolution",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/elite_evolution_v01.wav",
+        "Enemies/elite_evolution_v02.wav",
+        "Enemies/elite_evolution_v03.wav",
+        "Enemies/elite_evolution_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G12",
+      "name": "elite_attack_layer",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/elite_attack_layer_v01.wav",
+        "Enemies/elite_attack_layer_v02.wav",
+        "Enemies/elite_attack_layer_v03.wav",
+        "Enemies/elite_attack_layer_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G12",
+      "name": "elite_movement_layer",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/elite_movement_layer_v01.wav",
+        "Enemies/elite_movement_layer_v02.wav",
+        "Enemies/elite_movement_layer_v03.wav",
+        "Enemies/elite_movement_layer_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G13",
+      "name": "elite_hurt_layer",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/elite_hurt_layer_v01.wav",
+        "Enemies/elite_hurt_layer_v02.wav",
+        "Enemies/elite_hurt_layer_v03.wav",
+        "Enemies/elite_hurt_layer_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "G14",
+      "name": "elite_death_accent",
+      "priority": 3,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Enemies/elite_death_accent_v01.wav",
+        "Enemies/elite_death_accent_v02.wav",
+        "Enemies/elite_death_accent_v03.wav",
+        "Enemies/elite_death_accent_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I1",
+      "name": "upgrade_offers",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/upgrade_offers_v01.wav",
+        "Upgrades/upgrade_offers_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I2",
+      "name": "upgrade_buy_life_payment",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/upgrade_buy_life_payment_v01.wav",
+        "Upgrades/upgrade_buy_life_payment_v02.wav",
+        "Upgrades/upgrade_buy_life_payment_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I3",
+      "name": "upgrade_rank_up",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/upgrade_rank_up_v01.wav",
+        "Upgrades/upgrade_rank_up_v02.wav",
+        "Upgrades/upgrade_rank_up_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I4",
+      "name": "upgrade_life_insufficient",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/upgrade_life_insufficient_v01.wav",
+        "Upgrades/upgrade_life_insufficient_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I6",
+      "name": "piercing_return_layer",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/piercing_return_layer_v01.wav",
+        "Upgrades/piercing_return_layer_v02.wav",
+        "Upgrades/piercing_return_layer_v03.wav",
+        "Upgrades/piercing_return_layer_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I7",
+      "name": "echo_volley_release",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/echo_volley_release_v01.wav",
+        "Upgrades/echo_volley_release_v02.wav",
+        "Upgrades/echo_volley_release_v03.wav",
+        "Upgrades/echo_volley_release_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I8",
+      "name": "heavy_orbit_hit",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/heavy_orbit_hit_v01.wav",
+        "Upgrades/heavy_orbit_hit_v02.wav",
+        "Upgrades/heavy_orbit_hit_v03.wav",
+        "Upgrades/heavy_orbit_hit_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I9",
+      "name": "parting_gift",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/parting_gift_v01.wav",
+        "Upgrades/parting_gift_v02.wav",
+        "Upgrades/parting_gift_v03.wav",
+        "Upgrades/parting_gift_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I10",
+      "name": "final_second_perfect",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/final_second_perfect_v01.wav",
+        "Upgrades/final_second_perfect_v02.wav",
+        "Upgrades/final_second_perfect_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I11",
+      "name": "overflow_replace",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/overflow_replace_v01.wav",
+        "Upgrades/overflow_replace_v02.wav",
+        "Upgrades/overflow_replace_v03.wav",
+        "Upgrades/overflow_replace_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I12",
+      "name": "fusion_merge",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/fusion_merge_v01.wav",
+        "Upgrades/fusion_merge_v02.wav",
+        "Upgrades/fusion_merge_v03.wav",
+        "Upgrades/fusion_merge_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I13",
+      "name": "quick_draw",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/quick_draw_v01.wav",
+        "Upgrades/quick_draw_v02.wav",
+        "Upgrades/quick_draw_v03.wav",
+        "Upgrades/quick_draw_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I14",
+      "name": "chain_start",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_start_v01.wav",
+        "Upgrades/chain_start_v02.wav",
+        "Upgrades/chain_start_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I15",
+      "name": "chain_advance_02",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_advance_02_v01.wav",
+        "Upgrades/chain_advance_02_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I15",
+      "name": "chain_advance_03",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_advance_03_v01.wav",
+        "Upgrades/chain_advance_03_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I15",
+      "name": "chain_advance_04",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_advance_04_v01.wav",
+        "Upgrades/chain_advance_04_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I15",
+      "name": "chain_advance_05",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_advance_05_v01.wav",
+        "Upgrades/chain_advance_05_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I16",
+      "name": "chain_milestone",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_milestone_v01.wav",
+        "Upgrades/chain_milestone_v02.wav",
+        "Upgrades/chain_milestone_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I17",
+      "name": "chain_break",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/chain_break_v01.wav",
+        "Upgrades/chain_break_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I18",
+      "name": "xp_tally_tick",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/xp_tally_tick_v01.wav",
+        "Upgrades/xp_tally_tick_v02.wav",
+        "Upgrades/xp_tally_tick_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I18",
+      "name": "xp_tally_complete",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/xp_tally_complete_v01.wav",
+        "Upgrades/xp_tally_complete_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I19",
+      "name": "mastery_level_up",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/mastery_level_up_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I20",
+      "name": "mastery_point_awarded",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/mastery_point_awarded_v01.wav",
+        "Upgrades/mastery_point_awarded_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I21",
+      "name": "skill_unlock",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/skill_unlock_v01.wav",
+        "Upgrades/skill_unlock_v02.wav",
+        "Upgrades/skill_unlock_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I22",
+      "name": "skill_respec",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/skill_respec_v01.wav",
+        "Upgrades/skill_respec_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I23",
+      "name": "achievement_unlock",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/achievement_unlock_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I24",
+      "name": "record_best_score",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/record_best_score_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I25",
+      "name": "record_longest_run",
+      "priority": 4,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Upgrades/record_longest_run_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "I8",
+      "name": "heavy_orbit_active",
+      "priority": 4,
+      "loop": true,
+      "note": "Play only while holding a packet with Heavy Orbit. Short contact pulse is a separate asset.",
+      "paths": [
+        "Upgrades/heavy_orbit_active_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J1",
+      "name": "courtyard",
+      "priority": 5,
+      "loop": true,
+      "note": "Stereo environmental bed.",
+      "paths": [
+        "Ambience/courtyard_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J2",
+      "name": "graveyard",
+      "priority": 5,
+      "loop": true,
+      "note": "Stereo environmental bed.",
+      "paths": [
+        "Ambience/graveyard_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J3",
+      "name": "cave",
+      "priority": 5,
+      "loop": true,
+      "note": "Stereo environmental bed.",
+      "paths": [
+        "Ambience/cave_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J4",
+      "name": "sanctum",
+      "priority": 5,
+      "loop": true,
+      "note": "Stereo environmental bed.",
+      "paths": [
+        "Ambience/sanctum_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J5",
+      "name": "brazier",
+      "priority": 5,
+      "loop": true,
+      "note": "Mono emitter loop; quieter than attack cues.",
+      "paths": [
+        "Ambience/brazier_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J6",
+      "name": "blue_flame",
+      "priority": 5,
+      "loop": true,
+      "note": "Mono emitter loop; quieter than attack cues.",
+      "paths": [
+        "Ambience/blue_flame_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J7",
+      "name": "candle",
+      "priority": 5,
+      "loop": true,
+      "note": "Mono emitter loop; quieter than attack cues.",
+      "paths": [
+        "Ambience/candle_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J8",
+      "name": "stone_wear",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/stone_wear_v01.wav",
+        "Environment/stone_wear_v02.wav",
+        "Environment/stone_wear_v03.wav",
+        "Environment/stone_wear_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J8",
+      "name": "stone_collapse",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/stone_collapse_v01.wav",
+        "Environment/stone_collapse_v02.wav",
+        "Environment/stone_collapse_v03.wav",
+        "Environment/stone_collapse_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J8",
+      "name": "stone_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/stone_settle_v01.wav",
+        "Environment/stone_settle_v02.wav",
+        "Environment/stone_settle_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J8",
+      "name": "stone_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/stone_form_v01.wav",
+        "Environment/stone_form_v02.wav",
+        "Environment/stone_form_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J9",
+      "name": "ceramic_wear",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/ceramic_wear_v01.wav",
+        "Environment/ceramic_wear_v02.wav",
+        "Environment/ceramic_wear_v03.wav",
+        "Environment/ceramic_wear_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J9",
+      "name": "ceramic_collapse",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/ceramic_collapse_v01.wav",
+        "Environment/ceramic_collapse_v02.wav",
+        "Environment/ceramic_collapse_v03.wav",
+        "Environment/ceramic_collapse_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J9",
+      "name": "ceramic_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/ceramic_settle_v01.wav",
+        "Environment/ceramic_settle_v02.wav",
+        "Environment/ceramic_settle_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J9",
+      "name": "ceramic_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/ceramic_form_v01.wav",
+        "Environment/ceramic_form_v02.wav",
+        "Environment/ceramic_form_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J10",
+      "name": "rock_wear",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/rock_wear_v01.wav",
+        "Environment/rock_wear_v02.wav",
+        "Environment/rock_wear_v03.wav",
+        "Environment/rock_wear_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J10",
+      "name": "rock_collapse",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/rock_collapse_v01.wav",
+        "Environment/rock_collapse_v02.wav",
+        "Environment/rock_collapse_v03.wav",
+        "Environment/rock_collapse_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J10",
+      "name": "rock_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/rock_settle_v01.wav",
+        "Environment/rock_settle_v02.wav",
+        "Environment/rock_settle_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J10",
+      "name": "rock_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/rock_form_v01.wav",
+        "Environment/rock_form_v02.wav",
+        "Environment/rock_form_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J11",
+      "name": "wood_wear",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/wood_wear_v01.wav",
+        "Environment/wood_wear_v02.wav",
+        "Environment/wood_wear_v03.wav",
+        "Environment/wood_wear_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J11",
+      "name": "wood_collapse",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/wood_collapse_v01.wav",
+        "Environment/wood_collapse_v02.wav",
+        "Environment/wood_collapse_v03.wav",
+        "Environment/wood_collapse_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J11",
+      "name": "wood_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/wood_settle_v01.wav",
+        "Environment/wood_settle_v02.wav",
+        "Environment/wood_settle_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J11",
+      "name": "wood_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/wood_form_v01.wav",
+        "Environment/wood_form_v02.wav",
+        "Environment/wood_form_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J12",
+      "name": "crystal_wear",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/crystal_wear_v01.wav",
+        "Environment/crystal_wear_v02.wav",
+        "Environment/crystal_wear_v03.wav",
+        "Environment/crystal_wear_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J12",
+      "name": "crystal_collapse",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/crystal_collapse_v01.wav",
+        "Environment/crystal_collapse_v02.wav",
+        "Environment/crystal_collapse_v03.wav",
+        "Environment/crystal_collapse_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J12",
+      "name": "crystal_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/crystal_settle_v01.wav",
+        "Environment/crystal_settle_v02.wav",
+        "Environment/crystal_settle_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J12",
+      "name": "crystal_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Environment/crystal_form_v01.wav",
+        "Environment/crystal_form_v02.wav",
+        "Environment/crystal_form_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J13",
+      "name": "morph_begin",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/morph_begin_v01.wav",
+        "World/morph_begin_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J14",
+      "name": "morph_patch",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/morph_patch_v01.wav",
+        "World/morph_patch_v02.wav",
+        "World/morph_patch_v03.wav",
+        "World/morph_patch_v04.wav",
+        "World/morph_patch_v05.wav",
+        "World/morph_patch_v06.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J15",
+      "name": "scenery_dissolve",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/scenery_dissolve_v01.wav",
+        "World/scenery_dissolve_v02.wav",
+        "World/scenery_dissolve_v03.wav",
+        "World/scenery_dissolve_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J16",
+      "name": "scenery_form",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/scenery_form_v01.wav",
+        "World/scenery_form_v02.wav",
+        "World/scenery_form_v03.wav",
+        "World/scenery_form_v04.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J17",
+      "name": "morph_settle",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/morph_settle_v01.wav",
+        "World/morph_settle_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J18",
+      "name": "sanctum_pull_begin",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_pull_begin_v01.wav",
+        "World/sanctum_pull_begin_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J19",
+      "name": "sanctum_rising_transport",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_rising_transport_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J20",
+      "name": "sanctum_darkness",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_darkness_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_01",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_01_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_02",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_02_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_03",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_03_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_04",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_04_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_05",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_05_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_06",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_06_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_07",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_07_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J21",
+      "name": "sanctum_light_08",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_light_08_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "J22",
+      "name": "sanctum_reveal_resolve",
+      "priority": 5,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "World/sanctum_reveal_resolve_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B10",
+      "name": "endless_wave_clear",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/endless_wave_clear_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B11",
+      "name": "endless_cycle_escalates",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/endless_cycle_escalates_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B12",
+      "name": "endless_boss_clear",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/endless_boss_clear_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "B13",
+      "name": "run_retired",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Stingers/run_retired_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "K1",
+      "name": "lesson_prompt",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Training/lesson_prompt_v01.wav",
+        "Training/lesson_prompt_v02.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "K2",
+      "name": "objective_progress",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Training/objective_progress_v01.wav",
+        "Training/objective_progress_v02.wav",
+        "Training/objective_progress_v03.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "K3",
+      "name": "lesson_complete",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Training/lesson_complete_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "K4",
+      "name": "tutorial_complete",
+      "priority": 6,
+      "loop": false,
+      "note": "",
+      "paths": [
+        "Training/tutorial_complete_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "L1",
+      "name": "dialogue_tick",
+      "priority": 6,
+      "loop": false,
+      "note": "Planned story asset: 25 ms 640 Hz sine, 5 ms attack/release, amplitude 0.08. Fixed pitch across speakers; integration caps rate to one tick per 0.06 s.",
+      "paths": [
+        "Narrative/dialogue_tick_v01.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A1",
+      "name": "main_menu",
+      "priority": 2,
+      "loop": true,
+      "note": "D minor; fragile celesta motif, bowed pad, low bells. Three eight-bar movements.",
+      "paths": [
+        "Music/main_menu.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A2",
+      "name": "courtyard_combat",
+      "priority": 2,
+      "loop": true,
+      "note": "D minor; hand-drum pulse, pizzicato ostinato, motif enters after eight bars.",
+      "paths": [
+        "Music/courtyard_combat.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A3",
+      "name": "graveyard_combat",
+      "priority": 2,
+      "loop": true,
+      "note": "D minor; darker chords, hollow bells, syncopated low strings. Shares transition tempo with Courtyard.",
+      "paths": [
+        "Music/graveyard_combat.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A4",
+      "name": "cave_combat",
+      "priority": 2,
+      "loop": true,
+      "note": "D minor with Phrygian colour; metallic plucks and driving percussion. Shared arena tempo.",
+      "paths": [
+        "Music/cave_combat.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A5",
+      "name": "sanctum_intro",
+      "priority": 2,
+      "loop": false,
+      "note": "Fixed 7.8-second reveal: rise at 0, darkness at 1.6, eight lights from 2.2 to 5.0, title at 5.4.",
+      "paths": [
+        "Music/sanctum_intro.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A6",
+      "name": "collector_battle",
+      "priority": 2,
+      "loop": true,
+      "note": "D harmonic minor; inverted borrowing motif, low string pulse, ritual drums. Four eight-bar movements.",
+      "paths": [
+        "Music/collector_battle.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A7",
+      "name": "endless_arena_escalation",
+      "priority": 6,
+      "loop": true,
+      "note": "Percussion and ostinato only; beat-aligned with A2-A4. Do not add a second full mix.",
+      "paths": [
+        "Music/endless_arena_escalation.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A7",
+      "name": "endless_collector_escalation",
+      "priority": 6,
+      "loop": true,
+      "note": "Additional drums and dissonant pulse only; beat-aligned with A6.",
+      "paths": [
+        "Music/endless_collector_escalation.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A8",
+      "name": "training",
+      "priority": 6,
+      "loop": true,
+      "note": "Gentle D minor; sparse plucked motif and soft pad.",
+      "paths": [
+        "Music/training.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A9",
+      "name": "upgrade_selection",
+      "priority": 6,
+      "loop": true,
+      "note": "D minor; suspended harmony and restrained clockwork plucks.",
+      "paths": [
+        "Music/upgrade_selection.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A10",
+      "name": "victory_results",
+      "priority": 6,
+      "loop": true,
+      "note": "D major/modal resolution; returning motif with an open final phrase.",
+      "paths": [
+        "Music/victory_results.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "A11",
+      "name": "failure_results",
+      "priority": 6,
+      "loop": true,
+      "note": "D minor; slow low piano-like plucks and unresolved motif.",
+      "paths": [
+        "Music/failure_results.wav"
+      ],
+      "status": "pending"
+    },
+    {
+      "approval_id": "H4",
+      "name": "reuse_existing_cues",
+      "priority": 0,
+      "loop": false,
+      "note": "Explicit shared cue; no new recording needed.",
+      "paths": [
+        "Projectiles/collector_bolt_launch_v01.wav",
+        "Projectiles/collector_bolt_launch_v02.wav",
+        "Projectiles/collector_bolt_launch_v03.wav",
+        "Projectiles/collector_bolt_launch_v04.wav"
+      ],
+      "status": "rendered"
+    },
+    {
+      "approval_id": "I5",
+      "name": "reuse_existing_cues",
+      "priority": 0,
+      "loop": false,
+      "note": "Explicit shared cue; no new recording needed.",
+      "paths": [],
+      "status": "pending"
+    },
+    {
+      "approval_id": "K5",
+      "name": "reuse_existing_cues",
+      "priority": 0,
+      "loop": false,
+      "note": "Explicit shared cue; no new recording needed.",
+      "paths": [],
+      "status": "pending"
+    },
+    {
+      "approval_id": "L2",
+      "name": "reuse_existing_cues",
+      "priority": 0,
+      "loop": false,
+      "note": "Explicit shared cue; no new recording needed.",
+      "paths": [],
+      "status": "pending"
+    },
+    {
+      "approval_id": "L3",
+      "name": "reuse_existing_cues",
+      "priority": 0,
+      "loop": false,
+      "note": "Explicit shared cue; no new recording needed.",
+      "paths": [],
+      "status": "pending"
+    }
+  ]
+}

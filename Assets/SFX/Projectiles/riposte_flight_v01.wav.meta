@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 34938f2c6f1f581180cb107760a9ba16
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 48000
+    compressionFormat: 0
+    quality: 0.8
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 0
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: Loop entire clip; no embedded leading/trailing silence.
+  assetBundleName: 
+  assetBundleVariant: 
