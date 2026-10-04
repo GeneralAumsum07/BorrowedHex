@@ -2299,7 +2299,7 @@
         "Upgrades/upgrade_offers_v01.wav",
         "Upgrades/upgrade_offers_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I2",
@@ -2312,7 +2312,7 @@
         "Upgrades/upgrade_buy_life_payment_v02.wav",
         "Upgrades/upgrade_buy_life_payment_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I3",
@@ -2325,7 +2325,7 @@
         "Upgrades/upgrade_rank_up_v02.wav",
         "Upgrades/upgrade_rank_up_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I4",
@@ -2337,7 +2337,7 @@
         "Upgrades/upgrade_life_insufficient_v01.wav",
         "Upgrades/upgrade_life_insufficient_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I6",
@@ -2351,7 +2351,7 @@
         "Upgrades/piercing_return_layer_v03.wav",
         "Upgrades/piercing_return_layer_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I7",
@@ -2365,7 +2365,7 @@
         "Upgrades/echo_volley_release_v03.wav",
         "Upgrades/echo_volley_release_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I8",
@@ -2379,7 +2379,7 @@
         "Upgrades/heavy_orbit_hit_v03.wav",
         "Upgrades/heavy_orbit_hit_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I9",
@@ -2393,7 +2393,7 @@
         "Upgrades/parting_gift_v03.wav",
         "Upgrades/parting_gift_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I10",
@@ -2406,7 +2406,7 @@
         "Upgrades/final_second_perfect_v02.wav",
         "Upgrades/final_second_perfect_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I11",
@@ -2420,7 +2420,7 @@
         "Upgrades/overflow_replace_v03.wav",
         "Upgrades/overflow_replace_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I12",
@@ -2434,7 +2434,7 @@
         "Upgrades/fusion_merge_v03.wav",
         "Upgrades/fusion_merge_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I13",
@@ -2448,7 +2448,7 @@
         "Upgrades/quick_draw_v03.wav",
         "Upgrades/quick_draw_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I14",
@@ -2461,7 +2461,7 @@
         "Upgrades/chain_start_v02.wav",
         "Upgrades/chain_start_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I15",
@@ -2473,7 +2473,7 @@
         "Upgrades/chain_advance_02_v01.wav",
         "Upgrades/chain_advance_02_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I15",
@@ -2485,7 +2485,7 @@
         "Upgrades/chain_advance_03_v01.wav",
         "Upgrades/chain_advance_03_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I15",
@@ -2497,7 +2497,7 @@
         "Upgrades/chain_advance_04_v01.wav",
         "Upgrades/chain_advance_04_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I15",
@@ -2509,7 +2509,7 @@
         "Upgrades/chain_advance_05_v01.wav",
         "Upgrades/chain_advance_05_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I16",
@@ -2522,7 +2522,7 @@
         "Upgrades/chain_milestone_v02.wav",
         "Upgrades/chain_milestone_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I17",
@@ -2534,7 +2534,7 @@
         "Upgrades/chain_break_v01.wav",
         "Upgrades/chain_break_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I18",
@@ -2547,7 +2547,7 @@
         "Upgrades/xp_tally_tick_v02.wav",
         "Upgrades/xp_tally_tick_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I18",
@@ -2559,7 +2559,7 @@
         "Upgrades/xp_tally_complete_v01.wav",
         "Upgrades/xp_tally_complete_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I19",
@@ -2570,7 +2570,7 @@
       "paths": [
         "Upgrades/mastery_level_up_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I20",
@@ -2582,7 +2582,7 @@
         "Upgrades/mastery_point_awarded_v01.wav",
         "Upgrades/mastery_point_awarded_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I21",
@@ -2595,7 +2595,7 @@
         "Upgrades/skill_unlock_v02.wav",
         "Upgrades/skill_unlock_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I22",
@@ -2607,7 +2607,7 @@
         "Upgrades/skill_respec_v01.wav",
         "Upgrades/skill_respec_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I23",
@@ -2618,7 +2618,7 @@
       "paths": [
         "Upgrades/achievement_unlock_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I24",
@@ -2629,7 +2629,7 @@
       "paths": [
         "Upgrades/record_best_score_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I25",
@@ -2640,7 +2640,7 @@
       "paths": [
         "Upgrades/record_longest_run_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "I8",
@@ -2651,7 +2651,7 @@
       "paths": [
         "Upgrades/heavy_orbit_active_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J1",

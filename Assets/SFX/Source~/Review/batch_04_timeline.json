@@ -1,0 +1,114 @@
+[
+  {
+    "seconds": 0,
+    "cue": "Upgrades/upgrade_offers_v01.wav"
+  },
+  {
+    "seconds": 1.074,
+    "cue": "Upgrades/upgrade_buy_life_payment_v01.wav"
+  },
+  {
+    "seconds": 2.221,
+    "cue": "Upgrades/upgrade_rank_up_v01.wav"
+  },
+  {
+    "seconds": 3.224,
+    "cue": "Upgrades/upgrade_life_insufficient_v01.wav"
+  },
+  {
+    "seconds": 4.005,
+    "cue": "Upgrades/piercing_return_layer_v01.wav"
+  },
+  {
+    "seconds": 4.791,
+    "cue": "Upgrades/echo_volley_release_v01.wav"
+  },
+  {
+    "seconds": 5.639,
+    "cue": "Upgrades/heavy_orbit_hit_v01.wav"
+  },
+  {
+    "seconds": 6.441,
+    "cue": "Upgrades/parting_gift_v01.wav"
+  },
+  {
+    "seconds": 7.519,
+    "cue": "Upgrades/final_second_perfect_v01.wav"
+  },
+  {
+    "seconds": 8.36,
+    "cue": "Upgrades/overflow_replace_v01.wav"
+  },
+  {
+    "seconds": 9.289,
+    "cue": "Upgrades/fusion_merge_v01.wav"
+  },
+  {
+    "seconds": 10.477,
+    "cue": "Upgrades/quick_draw_v01.wav"
+  },
+  {
+    "seconds": 11.226,
+    "cue": "Upgrades/chain_start_v01.wav"
+  },
+  {
+    "seconds": 11.977,
+    "cue": "Upgrades/chain_advance_02_v01.wav"
+  },
+  {
+    "seconds": 12.726,
+    "cue": "Upgrades/chain_advance_03_v01.wav"
+  },
+  {
+    "seconds": 13.485,
+    "cue": "Upgrades/chain_advance_04_v01.wav"
+  },
+  {
+    "seconds": 14.252,
+    "cue": "Upgrades/chain_advance_05_v01.wav"
+  },
+  {
+    "seconds": 15.033,
+    "cue": "Upgrades/chain_milestone_v01.wav"
+  },
+  {
+    "seconds": 15.974,
+    "cue": "Upgrades/chain_break_v01.wav"
+  },
+  {
+    "seconds": 16.697,
+    "cue": "Upgrades/xp_tally_tick_v01.wav"
+  },
+  {
+    "seconds": 17.348,
+    "cue": "Upgrades/xp_tally_complete_v01.wav"
+  },
+  {
+    "seconds": 18.238,
+    "cue": "Upgrades/mastery_level_up_v01.wav"
+  },
+  {
+    "seconds": 20.658,
+    "cue": "Upgrades/mastery_point_awarded_v01.wav"
+  },
+  {
+    "seconds": 21.576,
+    "cue": "Upgrades/skill_unlock_v01.wav"
+  },
+  {
+    "seconds": 22.883,
+    "cue": "Upgrades/skill_respec_v01.wav"
+  },
+  {
+    "seconds": 24.018,
+    "cue": "Upgrades/achievement_unlock_v01.wav"
+  },
+  {
+    "seconds": 26.788,
+    "cue": "Upgrades/record_best_score_v01.wav"
+  },
+  {
+    "seconds": 29.358,
+    "cue": "Upgrades/record_longest_run_v01.wav"
+  }
+]
