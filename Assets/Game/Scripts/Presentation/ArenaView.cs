@@ -69,11 +69,25 @@ namespace BorrowedHex.Presentation
         sealed class ShotView
         {
             public Transform Root;
-            public SpriteRenderer Glow;
+            public SpriteRenderer Glow;     // the halo: true hitbox size, in the state colour
             public SpriteRenderer Shadow;
+            public SpriteRenderer Sprite;   // the school's shape, on top of the halo
+            public TrailRenderer Trail;
+            public double NextPuff;
         }
 
-        readonly List<ShotView> shots = new List<ShotView>();
+        // Views are keyed by projectile, not by list position: a trail belongs to one shot, and
+        // indexing by position would hand a live trail to a different shot whenever an earlier
+        // one ended, drawing a streak across the arena. Ended views go back to the free stack.
+        readonly List<ShotView> shots = new List<ShotView>();               // every view made: the pool size
+        readonly Dictionary<int, ShotView> liveShots = new Dictionary<int, ShotView>();
+        readonly Stack<ShotView> freeShots = new Stack<ShotView>();
+        readonly HashSet<int> seenShots = new HashSet<int>();
+        readonly List<int> endedShots = new List<int>();
+        WorldEffects shotPuffs;   // its own 64-pool, so rocket puffs can never starve the hit sparks
+        Material trailMaterial;
+        public int ShotViewCount => shots.Count;
+        internal TrailRenderer TrailFor(int projectileId) => liveShots.TryGetValue(projectileId, out var v) ? v.Trail : null;
         Transform shotRoot, enemyRoot;
 
         // Phase 3 capture visuals. The cone is drawn only while the window is open, so its
@@ -131,6 +145,7 @@ namespace BorrowedHex.Presentation
         {
             sim = s;
             art = new WorldArtLibrary();
+            shotPuffs = new WorldEffects(transform, art, "ShotPuffs");
             player = CharacterView.Create(transform, "Player", PixelSprites.Kind.Magician, 1f, 0.45f);
             prevPlayer = currPlayer = sim.Player.Position;
 
@@ -238,7 +253,9 @@ namespace BorrowedHex.Presentation
         {
             // The feedback director first: its effects borrow textures from the art library.
             feedback?.Dispose();
+            shotPuffs?.Dispose();
             art?.Dispose();
+            if (trailMaterial != null) WorldArtLibrary.Release(trailMaterial);
         }
 
         SpriteRenderer tutorialMarker;
@@ -543,28 +560,78 @@ namespace BorrowedHex.Presentation
 
         void RenderProjectiles(float alpha)
         {
-            int n = 0;
+            seenShots.Clear();
+            double now = sim.Clock.Now;
             foreach (var p in sim.Projectiles)
             {
                 if (!p.Active) continue;
-                var v = n < shots.Count ? shots[n] : AddShotView();
-                n++;
+                seenShots.Add(p.ProjectileId);
                 Vector2 pos = Vector2.Lerp(p.PrevPosition, p.Position, alpha);
-                v.Root.gameObject.SetActive(true);
+                if (!liveShots.TryGetValue(p.ProjectileId, out var v))
+                {
+                    v = freeShots.Count > 0 ? freeShots.Pop() : AddShotView();
+                    liveShots[p.ProjectileId] = v;
+                    // Move first, then clear: the trail must start where THIS shot is.
+                    v.Root.position = Geometry2D.ToWorld(pos);
+                    v.Root.gameObject.SetActive(true);
+                    v.Trail.Clear();
+                    v.Trail.emitting = true;
+                    var state = ProjectileSkins.State(p.Faction, p.Shot.Kind, p.Shot.Overcharged);
+                    v.Trail.time = ProjectileSkins.TrailSeconds(p.Faction);
+                    v.Trail.widthMultiplier = p.Radius;   // the trail is as wide as the hitbox
+                    v.Trail.startColor = new Color(state.r, state.g, state.b, 0.8f);
+                    v.Trail.endColor = new Color(state.r, state.g, state.b, 0f);
+                    v.NextPuff = now;
+                }
                 v.Root.position = Geometry2D.ToWorld(pos);
-                Color c = p.Shot.Overcharged ? OverchargeGold
-                    : p.Shot.Kind == AttackKind.Riposte ? RiposteColor
-                    : p.Faction == AttackFaction.Returned ? ReturnedColor
-                    : p.Shot.Kind == AttackKind.Rocket ? RocketColor : HostileColor;
-                v.Glow.color = c;
-                // Glow size follows the logical radius so what you see is what can hit you
-                // (Disc sprites are 2 units across, so scale == radius gives a true-size disc;
-                // the 1.3 is a slight glow halo beyond the hitbox).
-                v.Glow.transform.localScale = Vector3.one * (p.Radius * 1.3f);
+                // The halo is the honest hitbox (Disc sprites are 2 units across, so scale ==
+                // radius is true size; 1.3 is the slight halo beyond it), now translucent so the
+                // school sprite reads on top of it.
+                v.Glow.color = ProjectileSkins.Halo(p.Faction, p.Shot.Kind, p.Shot.Overcharged);
+                v.Glow.transform.localScale = Vector3.one * (p.Radius * ProjectileSkins.HaloScale);
                 v.Shadow.transform.localScale = Vector3.one * (p.Radius * 2f);
-                if (cam != null) v.Glow.transform.rotation = cam.transform.rotation;
+                var frames = art.Effect(ProjectileSkins.Sheet(p.Shot.SourceCategory, p.Shot.Kind));
+                // A checkout without the packs draws the halo alone: still every shot, still honest.
+                v.Sprite.enabled = frames.Length > 0;
+                if (frames.Length > 0)
+                    v.Sprite.sprite = frames[WorldArtPolicy.Frame(now - p.SpawnedAt, frames.Length, ProjectileSkins.Fps, true)];
+                v.Sprite.color = new Color(1f, 1f, 1f, ProjectileSkins.SpriteAlpha(p.IsEcho));
+                v.Sprite.transform.localScale = Vector3.one * (p.Radius * ProjectileSkins.SpriteScale);
+                if (cam != null)
+                {
+                    v.Glow.transform.rotation = cam.transform.rotation;
+                    v.Sprite.transform.rotation = cam.transform.rotation * Quaternion.Euler(0f, 0f, ScreenAngle(v.Sprite.transform.position, p.Direction));
+                }
+                string puffs = ProjectileSkins.Puffs(p.Shot.Kind, p.Shot.Overcharged);
+                if (puffs != null && now >= v.NextPuff)
+                {
+                    shotPuffs.Spawn(puffs, v.Sprite.transform.position, p.Radius * 2f, now, Color.white, false, false, 16f);
+                    v.NextPuff = now + 0.06;   // sim time: puffs pause with the game
+                }
             }
-            for (int i = n; i < shots.Count; i++) shots[i].Root.gameObject.SetActive(false);
+            endedShots.Clear();
+            foreach (var id in liveShots.Keys) if (!seenShots.Contains(id)) endedShots.Add(id);
+            foreach (var id in endedShots)
+            {
+                var v = liveShots[id];
+                liveShots.Remove(id);
+                v.Trail.emitting = false;
+                v.Trail.Clear();
+                v.Root.gameObject.SetActive(false);
+                freeShots.Push(v);
+            }
+            shotPuffs.Render(now, cam);
+        }
+
+        /// <summary>
+        /// The on-screen angle of a ground direction, so a sheet drawn facing right points along
+        /// the shot's flight. That the sheets face right is an assumption from viewing them; the
+        /// Task 10 capture checks it.
+        /// </summary>
+        float ScreenAngle(Vector3 world, Vector2 dir)
+        {
+            Vector3 a = cam.WorldToScreenPoint(world), b = cam.WorldToScreenPoint(world + Geometry2D.ToWorld(dir));
+            return Mathf.Atan2(b.y - a.y, b.x - a.x) * Mathf.Rad2Deg;
         }
 
         ShotView AddShotView()
@@ -577,9 +644,24 @@ namespace BorrowedHex.Presentation
             var glow = glowGo.AddComponent<SpriteRenderer>();
             glow.sprite = PixelSprites.Disc(false);
             glow.sortingOrder = 5;
+            var spriteGo = new GameObject("Sprite");
+            spriteGo.transform.SetParent(root, false);
+            spriteGo.transform.localPosition = new Vector3(0f, ProjectileHeight, 0f);
+            var sprite = spriteGo.AddComponent<SpriteRenderer>();
+            sprite.sortingOrder = 6;   // the shape over its halo
+            var trail = glowGo.AddComponent<TrailRenderer>();
+            if (trailMaterial == null) trailMaterial = new Material(Shader.Find("Sprites/Default")) { name = "ShotTrail" };
+            trail.sharedMaterial = trailMaterial;
+            trail.minVertexDistance = 0.05f;
+            trail.numCapVertices = 2;
+            trail.widthCurve = AnimationCurve.Linear(0f, 1f, 1f, 0f);   // tapers to a point
+            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            trail.receiveShadows = false;
+            trail.sortingOrder = 4;    // under the halo
+            trail.emitting = false;
             var shadow = FlatSprite("Shadow", root, PixelSprites.Blob(), new Color(0f, 0f, 0f, 0.5f));
             shadow.transform.localPosition = new Vector3(0f, 0.02f, 0f);
-            var v = new ShotView { Root = root, Glow = glow, Shadow = shadow };
+            var v = new ShotView { Root = root, Glow = glow, Shadow = shadow, Sprite = sprite, Trail = trail };
             shots.Add(v);
             return v;
         }
