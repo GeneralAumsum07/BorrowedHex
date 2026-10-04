@@ -1,123 +1,123 @@
 [
   {
     "seconds": 0,
-    "cue": "Collector/collector_manifest_v01.wav"
-  },
-  {
-    "seconds": 2.09,
-    "cue": "Collector/collector_footstep_v01.wav"
-  },
-  {
-    "seconds": 2.89,
-    "cue": "Collector/collector_stream_windup_v01.wav"
-  },
-  {
-    "seconds": 4.014,
-    "cue": "Collector/collector_fan_windup_v01.wav"
-  },
-  {
-    "seconds": 5.238,
-    "cue": "Collector/collector_fan_release_v01.wav"
-  },
-  {
-    "seconds": 6.122,
-    "cue": "Collector/collector_sweep_windup_v01.wav"
-  },
-  {
-    "seconds": 7.478,
-    "cue": "Collector/collector_sweep_v01.wav"
-  },
-  {
-    "seconds": 8.502,
-    "cue": "Collector/collector_sweep_ground_v01.wav"
-  },
-  {
-    "seconds": 9.536,
-    "cue": "Collector/collector_slam_warning_v01.wav"
-  },
-  {
-    "seconds": 10.788,
-    "cue": "Collector/collector_slam_v01.wav"
-  },
-  {
-    "seconds": 12.286,
-    "cue": "Collector/collector_summon_windup_v01.wav"
-  },
-  {
-    "seconds": 13.843,
-    "cue": "Collector/collector_summon_release_v01.wav"
-  },
-  {
-    "seconds": 14.919,
-    "cue": "Collector/collector_summon_arrival_v01.wav"
-  },
-  {
-    "seconds": 15.907,
-    "cue": "Collector/collector_teleport_warning_v01.wav"
-  },
-  {
-    "seconds": 17.11,
-    "cue": "Collector/collector_teleport_depart_v01.wav"
-  },
-  {
-    "seconds": 17.945,
-    "cue": "Collector/collector_teleport_arrive_v01.wav"
-  },
-  {
-    "seconds": 18.827,
-    "cue": "Collector/collector_hurt_v01.wav"
-  },
-  {
-    "seconds": 19.755,
-    "cue": "Collector/collector_stagger_v01.wav"
-  },
-  {
-    "seconds": 20.809,
-    "cue": "Collector/collector_death_rupture_v01.wav"
-  },
-  {
-    "seconds": 22.235,
-    "cue": "Collector/collector_death_collapse_v01.wav"
-  },
-  {
-    "seconds": 24.442,
     "cue": "Collector/collector_death_binding_tail_v01.wav"
   },
   {
-    "seconds": 28.661,
+    "seconds": 4.22,
+    "cue": "Collector/collector_death_collapse_v01.wav"
+  },
+  {
+    "seconds": 6.426,
+    "cue": "Collector/collector_death_rupture_v01.wav"
+  },
+  {
+    "seconds": 7.853,
     "cue": "Collector/collector_encore_entrance_v01.wav"
   },
   {
+    "seconds": 10.319,
+    "cue": "Collector/collector_fan_release_v01.wav"
+  },
+  {
+    "seconds": 11.203,
+    "cue": "Collector/collector_fan_windup_v01.wav"
+  },
+  {
+    "seconds": 12.427,
+    "cue": "Collector/collector_footstep_v01.wav"
+  },
+  {
+    "seconds": 13.227,
+    "cue": "Collector/collector_hurt_v01.wav"
+  },
+  {
+    "seconds": 14.155,
+    "cue": "Collector/collector_manifest_v01.wav"
+  },
+  {
+    "seconds": 16.245,
+    "cue": "Collector/collector_slam_v01.wav"
+  },
+  {
+    "seconds": 17.742,
+    "cue": "Collector/collector_slam_warning_v01.wav"
+  },
+  {
+    "seconds": 18.994,
+    "cue": "Collector/collector_stagger_v01.wav"
+  },
+  {
+    "seconds": 20.048,
+    "cue": "Collector/collector_stream_windup_v01.wav"
+  },
+  {
+    "seconds": 21.172,
+    "cue": "Collector/collector_summon_arrival_v01.wav"
+  },
+  {
+    "seconds": 22.16,
+    "cue": "Collector/collector_summon_release_v01.wav"
+  },
+  {
+    "seconds": 23.237,
+    "cue": "Collector/collector_summon_windup_v01.wav"
+  },
+  {
+    "seconds": 24.794,
+    "cue": "Collector/collector_sweep_ground_v01.wav"
+  },
+  {
+    "seconds": 25.828,
+    "cue": "Collector/collector_sweep_v01.wav"
+  },
+  {
+    "seconds": 26.852,
+    "cue": "Collector/collector_sweep_windup_v01.wav"
+  },
+  {
+    "seconds": 28.208,
+    "cue": "Collector/collector_teleport_arrive_v01.wav"
+  },
+  {
+    "seconds": 29.091,
+    "cue": "Collector/collector_teleport_depart_v01.wav"
+  },
+  {
+    "seconds": 29.925,
+    "cue": "Collector/collector_teleport_warning_v01.wav"
+  },
+  {
     "seconds": 31.128,
-    "cue": "Stingers/run_start_v01.wav"
-  },
-  {
-    "seconds": 33.348,
-    "cue": "Stingers/encounter_clear_v01.wav"
-  },
-  {
-    "seconds": 36.218,
-    "cue": "Stingers/encounter_begin_v01.wav"
-  },
-  {
-    "seconds": 38.188,
-    "cue": "Stingers/boss_reveal_v01.wav"
-  },
-  {
-    "seconds": 41.708,
     "cue": "Stingers/boss_combat_start_v01.wav"
   },
   {
-    "seconds": 43.978,
+    "seconds": 33.398,
+    "cue": "Stingers/boss_reveal_v01.wav"
+  },
+  {
+    "seconds": 36.918,
     "cue": "Stingers/collector_defeated_v01.wav"
   },
   {
-    "seconds": 47.848,
-    "cue": "Stingers/short_run_victory_v01.wav"
+    "seconds": 40.788,
+    "cue": "Stingers/death_defeat_v01.wav"
   },
   {
-    "seconds": 52.468,
-    "cue": "Stingers/death_defeat_v01.wav"
+    "seconds": 44.308,
+    "cue": "Stingers/encounter_begin_v01.wav"
+  },
+  {
+    "seconds": 46.278,
+    "cue": "Stingers/encounter_clear_v01.wav"
+  },
+  {
+    "seconds": 49.148,
+    "cue": "Stingers/run_start_v01.wav"
+  },
+  {
+    "seconds": 51.368,
+    "cue": "Stingers/short_run_victory_v01.wav"
   },
   {
     "seconds": 55.988,

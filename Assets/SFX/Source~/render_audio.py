@@ -84,6 +84,9 @@ def modes(t,root,rng,material='magic',decay=.28):
         'magic':[1,1.5,2,3,4.01,6.02],
         'metal':[1,2.76,5.40,8.93,13.34],
         'stone':[1,1.61,2.39,3.84,5.17],
+        # Rock has a denser, less bell-like modal response than masonry/columns.
+        # Keep this name aligned with the approved material_rock_* catalog.
+        'rock':[1,1.38,2.17,3.43,4.91],
         'wood':[1,2.14,3.69,5.1],
         'ceramic':[1,2.32,4.25,6.57,9.22],
         'crystal':[1,2,3.02,4.03,6.06,8.12],
@@ -475,7 +478,9 @@ def music_track(spec):
         rise = sweep(tt,65,520,.7)*np.sin(np.pi*tt/1.6)**2
         put(x,ramp(rise,.05,.1),0,.35)
         for i,note in enumerate([62,64,65,69,70,74,76,77]):
-            put(x,instrument(note,1.3,'celesta',rng),2.2+i*.4,.16,(-.5 if i%2 else .5))
+            # LitPillars is floor((age - 2.2) / .4), so the FIRST light appears
+            # after one interval (2.6), and the eighth coincides with the title.
+            put(x,instrument(note,1.3,'celesta',rng),2.6+i*.4,.16,(-.5 if i%2 else .5))
         put(x,instrument(38,2.4,'bowed',rng),5.4,.35)
         put(x,instrument(50,2.4,'bell',rng),5.4,.19)
         return ramp(room(x,.17),.02,.15)
@@ -768,6 +773,7 @@ def verify(partial=False):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch',type=int,choices=range(1,7))
+    parser.add_argument('--only',help='Rerender one named family or music track within its batch.')
     parser.add_argument('--verify',action='store_true')
     parser.add_argument('--partial',action='store_true',help='Allow pending catalog items while validating an intermediate delivery batch.')
     args = parser.parse_args()
@@ -778,7 +784,7 @@ def main():
     records = json.loads(REPORT.read_text(encoding='utf-8')) if REPORT.exists() else []
     new = []
     for c in CUES:
-        if c.priority != args.batch:
+        if c.priority != args.batch or (args.only and c.name != args.only):
             continue
         for v in range(1,c.variants+1):
             x = loop_sound(c) if c.loop else short_sound(c,v)
@@ -787,7 +793,7 @@ def main():
             new.append(export(path,x,c.loop,{'approval_id':c.id,'priority':c.priority,'recipe':c.recipe,'variant':v}))
         print(f'{c.id:3s} {c.group}/{c.name}: {c.variants} variations',flush=True)
     for m in MUSIC:
-        if m[5] != args.batch:
+        if m[5] != args.batch or (args.only and m[1] != args.only):
             continue
         print(f'Composing {m[0]} {m[1]}...',flush=True)
         x = music_track(m)
@@ -795,6 +801,8 @@ def main():
         x = master(x,-2,loop,True,stem=m[4].endswith('_stem'))
         new.append(export(ROOT/'Music'/f'{m[1]}.wav',x,loop,
             {'approval_id':m[0],'priority':m[5],'bpm':m[2],'bars':m[3],'recipe':m[4],'variant':1}))
+    if not new:
+        parser.error('No assets match the requested batch/name')
     replaced = {r['path'] for r in new}
     records = [r for r in records if r['path'] not in replaced]+new
     save_reports(records)

@@ -1,0 +1,150 @@
+[
+  {
+    "seconds": 0,
+    "cue": "Environment/stone_wear_v01.wav"
+  },
+  {
+    "seconds": 0.85,
+    "cue": "Environment/stone_collapse_v01.wav"
+  },
+  {
+    "seconds": 2.587,
+    "cue": "Environment/stone_settle_v01.wav"
+  },
+  {
+    "seconds": 4.484,
+    "cue": "Environment/stone_form_v01.wav"
+  },
+  {
+    "seconds": 5.725,
+    "cue": "Environment/ceramic_wear_v01.wav"
+  },
+  {
+    "seconds": 6.58,
+    "cue": "Environment/ceramic_collapse_v01.wav"
+  },
+  {
+    "seconds": 8.301,
+    "cue": "Environment/ceramic_settle_v01.wav"
+  },
+  {
+    "seconds": 10.258,
+    "cue": "Environment/ceramic_form_v01.wav"
+  },
+  {
+    "seconds": 11.494,
+    "cue": "Environment/rock_wear_v01.wav"
+  },
+  {
+    "seconds": 12.341,
+    "cue": "Environment/rock_collapse_v01.wav"
+  },
+  {
+    "seconds": 14.093,
+    "cue": "Environment/rock_settle_v01.wav"
+  },
+  {
+    "seconds": 16.023,
+    "cue": "Environment/rock_form_v01.wav"
+  },
+  {
+    "seconds": 17.293,
+    "cue": "Environment/wood_wear_v01.wav"
+  },
+  {
+    "seconds": 18.149,
+    "cue": "Environment/wood_collapse_v01.wav"
+  },
+  {
+    "seconds": 19.742,
+    "cue": "Environment/wood_settle_v01.wav"
+  },
+  {
+    "seconds": 21.695,
+    "cue": "Environment/wood_form_v01.wav"
+  },
+  {
+    "seconds": 22.956,
+    "cue": "Environment/crystal_wear_v01.wav"
+  },
+  {
+    "seconds": 23.81,
+    "cue": "Environment/crystal_collapse_v01.wav"
+  },
+  {
+    "seconds": 25.384,
+    "cue": "Environment/crystal_settle_v01.wav"
+  },
+  {
+    "seconds": 27.274,
+    "cue": "Environment/crystal_form_v01.wav"
+  },
+  {
+    "seconds": 28.544,
+    "cue": "World/morph_begin_v01.wav"
+  },
+  {
+    "seconds": 30.044,
+    "cue": "World/morph_patch_v01.wav"
+  },
+  {
+    "seconds": 30.914,
+    "cue": "World/scenery_dissolve_v01.wav"
+  },
+  {
+    "seconds": 32.194,
+    "cue": "World/scenery_form_v01.wav"
+  },
+  {
+    "seconds": 33.454,
+    "cue": "World/morph_settle_v01.wav"
+  },
+  {
+    "seconds": 34.754,
+    "cue": "World/sanctum_pull_begin_v01.wav"
+  },
+  {
+    "seconds": 35.754,
+    "cue": "World/sanctum_rising_transport_v01.wav"
+  },
+  {
+    "seconds": 38.074,
+    "cue": "World/sanctum_darkness_v01.wav"
+  },
+  {
+    "seconds": 39.124,
+    "cue": "World/sanctum_light_01_v01.wav"
+  },
+  {
+    "seconds": 40.024,
+    "cue": "World/sanctum_light_02_v01.wav"
+  },
+  {
+    "seconds": 40.924,
+    "cue": "World/sanctum_light_03_v01.wav"
+  },
+  {
+    "seconds": 41.824,
+    "cue": "World/sanctum_light_04_v01.wav"
+  },
+  {
+    "seconds": 42.724,
+    "cue": "World/sanctum_light_05_v01.wav"
+  },
+  {
+    "seconds": 43.624,
+    "cue": "World/sanctum_light_06_v01.wav"
+  },
+  {
+    "seconds": 44.524,
+    "cue": "World/sanctum_light_07_v01.wav"
+  },
+  {
+    "seconds": 45.424,
+    "cue": "World/sanctum_light_08_v01.wav"
+  },
+  {
+    "seconds": 46.324,
+    "cue": "World/sanctum_reveal_resolve_v01.wav"
+  }
+]

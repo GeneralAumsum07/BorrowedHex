@@ -158,7 +158,7 @@ MUSIC = [
     ('A2','courtyard_combat',112,24,'courtyard',2,'D minor; hand-drum pulse, pizzicato ostinato, motif enters after eight bars.'),
     ('A3','graveyard_combat',112,24,'graveyard',2,'D minor; darker chords, hollow bells, syncopated low strings. Shares transition tempo with Courtyard.'),
     ('A4','cave_combat',112,24,'cave',2,'D minor with Phrygian colour; metallic plucks and driving percussion. Shared arena tempo.'),
-    ('A5','sanctum_intro',0,0,'intro',2,'Fixed 7.8-second reveal: rise at 0, darkness at 1.6, eight lights from 2.2 to 5.0, title at 5.4.'),
+    ('A5','sanctum_intro',0,0,'intro',2,'Fixed 7.8-second reveal: rise at 0, darkness at 1.6, eight lights from 2.6 to 5.4, title at 5.4. LightsAt is the start of the interval timer, not the first ignition.'),
     ('A6','collector_battle',138,32,'boss',2,'D harmonic minor; inverted borrowing motif, low string pulse, ritual drums. Four eight-bar movements.'),
     ('A7','endless_arena_escalation',112,24,'arena_stem',6,'Percussion and ostinato only; beat-aligned with A2-A4. Do not add a second full mix.'),
     ('A7','endless_collector_escalation',138,32,'boss_stem',6,'Additional drums and dissonant pulse only; beat-aligned with A6.'),

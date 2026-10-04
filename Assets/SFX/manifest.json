@@ -2662,7 +2662,7 @@
       "paths": [
         "Ambience/courtyard_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J2",
@@ -2673,7 +2673,7 @@
       "paths": [
         "Ambience/graveyard_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J3",
@@ -2684,7 +2684,7 @@
       "paths": [
         "Ambience/cave_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J4",
@@ -2695,7 +2695,7 @@
       "paths": [
         "Ambience/sanctum_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J5",
@@ -2706,7 +2706,7 @@
       "paths": [
         "Ambience/brazier_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J6",
@@ -2717,7 +2717,7 @@
       "paths": [
         "Ambience/blue_flame_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J7",
@@ -2728,7 +2728,7 @@
       "paths": [
         "Ambience/candle_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J8",
@@ -2742,7 +2742,7 @@
         "Environment/stone_wear_v03.wav",
         "Environment/stone_wear_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J8",
@@ -2756,7 +2756,7 @@
         "Environment/stone_collapse_v03.wav",
         "Environment/stone_collapse_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J8",
@@ -2769,7 +2769,7 @@
         "Environment/stone_settle_v02.wav",
         "Environment/stone_settle_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J8",
@@ -2782,7 +2782,7 @@
         "Environment/stone_form_v02.wav",
         "Environment/stone_form_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J9",
@@ -2796,7 +2796,7 @@
         "Environment/ceramic_wear_v03.wav",
         "Environment/ceramic_wear_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J9",
@@ -2810,7 +2810,7 @@
         "Environment/ceramic_collapse_v03.wav",
         "Environment/ceramic_collapse_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J9",
@@ -2823,7 +2823,7 @@
         "Environment/ceramic_settle_v02.wav",
         "Environment/ceramic_settle_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J9",
@@ -2836,7 +2836,7 @@
         "Environment/ceramic_form_v02.wav",
         "Environment/ceramic_form_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J10",
@@ -2850,7 +2850,7 @@
         "Environment/rock_wear_v03.wav",
         "Environment/rock_wear_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J10",
@@ -2864,7 +2864,7 @@
         "Environment/rock_collapse_v03.wav",
         "Environment/rock_collapse_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J10",
@@ -2877,7 +2877,7 @@
         "Environment/rock_settle_v02.wav",
         "Environment/rock_settle_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J10",
@@ -2890,7 +2890,7 @@
         "Environment/rock_form_v02.wav",
         "Environment/rock_form_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J11",
@@ -2904,7 +2904,7 @@
         "Environment/wood_wear_v03.wav",
         "Environment/wood_wear_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J11",
@@ -2918,7 +2918,7 @@
         "Environment/wood_collapse_v03.wav",
         "Environment/wood_collapse_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J11",
@@ -2931,7 +2931,7 @@
         "Environment/wood_settle_v02.wav",
         "Environment/wood_settle_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J11",
@@ -2944,7 +2944,7 @@
         "Environment/wood_form_v02.wav",
         "Environment/wood_form_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J12",
@@ -2958,7 +2958,7 @@
         "Environment/crystal_wear_v03.wav",
         "Environment/crystal_wear_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J12",
@@ -2972,7 +2972,7 @@
         "Environment/crystal_collapse_v03.wav",
         "Environment/crystal_collapse_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J12",
@@ -2985,7 +2985,7 @@
         "Environment/crystal_settle_v02.wav",
         "Environment/crystal_settle_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J12",
@@ -2998,7 +2998,7 @@
         "Environment/crystal_form_v02.wav",
         "Environment/crystal_form_v03.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J13",
@@ -3010,7 +3010,7 @@
         "World/morph_begin_v01.wav",
         "World/morph_begin_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J14",
@@ -3026,7 +3026,7 @@
         "World/morph_patch_v05.wav",
         "World/morph_patch_v06.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J15",
@@ -3040,7 +3040,7 @@
         "World/scenery_dissolve_v03.wav",
         "World/scenery_dissolve_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J16",
@@ -3054,7 +3054,7 @@
         "World/scenery_form_v03.wav",
         "World/scenery_form_v04.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J17",
@@ -3066,7 +3066,7 @@
         "World/morph_settle_v01.wav",
         "World/morph_settle_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J18",
@@ -3078,7 +3078,7 @@
         "World/sanctum_pull_begin_v01.wav",
         "World/sanctum_pull_begin_v02.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J19",
@@ -3089,7 +3089,7 @@
       "paths": [
         "World/sanctum_rising_transport_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J20",
@@ -3100,7 +3100,7 @@
       "paths": [
         "World/sanctum_darkness_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3111,7 +3111,7 @@
       "paths": [
         "World/sanctum_light_01_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3122,7 +3122,7 @@
       "paths": [
         "World/sanctum_light_02_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3133,7 +3133,7 @@
       "paths": [
         "World/sanctum_light_03_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3144,7 +3144,7 @@
       "paths": [
         "World/sanctum_light_04_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3155,7 +3155,7 @@
       "paths": [
         "World/sanctum_light_05_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3166,7 +3166,7 @@
       "paths": [
         "World/sanctum_light_06_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3177,7 +3177,7 @@
       "paths": [
         "World/sanctum_light_07_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J21",
@@ -3188,7 +3188,7 @@
       "paths": [
         "World/sanctum_light_08_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "J22",
@@ -3199,7 +3199,7 @@
       "paths": [
         "World/sanctum_reveal_resolve_v01.wav"
       ],
-      "status": "pending"
+      "status": "rendered"
     },
     {
       "approval_id": "B10",
@@ -3352,7 +3352,7 @@
       "name": "sanctum_intro",
       "priority": 2,
       "loop": false,
-      "note": "Fixed 7.8-second reveal: rise at 0, darkness at 1.6, eight lights from 2.2 to 5.0, title at 5.4.",
+      "note": "Fixed 7.8-second reveal: rise at 0, darkness at 1.6, eight lights from 2.6 to 5.4, title at 5.4. LightsAt is the start of the interval timer, not the first ignition.",
       "paths": [
         "Music/sanctum_intro.wav"
       ],

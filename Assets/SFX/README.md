@@ -47,7 +47,7 @@ the endless arena overlay can be beat-aligned. Collector uses 138 BPM and
 rhythm/ostinato, not another full theme; maintain their exported relative gain.
 
 The Sanctum introduction is a 7.8-second one-shot matched to the current reveal:
-rise 0-1.6 s, darkness 1.6-2.2 s, eight lights from 2.2-5.0 s, title at 5.4 s.
+rise 0-1.6 s, darkness 1.6-2.2 s, eight lights from 2.6-5.4 s, title at 5.4 s.
 When integrating, choose whether the score or separate light/reveal accents carry
 each moment; stacking every accent would be excessive.
 
@@ -86,6 +86,9 @@ python Assets/SFX/Source~/render_audio.py --batch 5
 python Assets/SFX/Source~/render_audio.py --batch 6
 python Assets/SFX/Source~/render_audio.py --verify
 ```
+
+To revise one family without rerendering the rest of its batch, add
+`--only family_name` (for example, `--batch 2 --only sanctum_intro`).
 
 Technical verification checks decoding, format, finite samples, non-silence, DC,
 true peaks, endpoint/seam discontinuities, duplicate files, GUIDs and complete
