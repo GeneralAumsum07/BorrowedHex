@@ -1,0 +1,2890 @@
+fileFormatVersion: 2
+guid: c3657cd4cbf83d34f8a38ec3d7f21c04
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 250560d54563535b0800000000000000
+      internalID: -5389341643113082798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a91ac9c6d1712c0800000000000000
+      internalID: -4461064553565676942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c50a709931252690800000000000000
+      internalID: -7627653862761298494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00e024965057ff190800000000000000
+      internalID: -7926488153047560704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f07b2a60fe151d310800000000000000
+      internalID: 1428012643903518479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ac3bcc3e063a8b0800000000000000
+      internalID: -5142159818018796938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80dd24b4c9b302e10800000000000000
+      internalID: 2170800562856189192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Idle_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebe6430ee8fbcd210800000000000000
+      internalID: 1359171807926841022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b71e6ea06e6f45130800000000000000
+      internalID: 3554737473787978107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25f6af700106b5650800000000000000
+      internalID: 6222672932112068434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7116532ad36c3e260800000000000000
+      internalID: 7125757003446968599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 554903dfb183e03f0800000000000000
+      internalID: -932746379956022187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b01c4ce3b2acc2540800000000000000
+      internalID: 4984581174677782795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12527b2ffda5d010800000000000000
+      internalID: 1213066986103394844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2d400aad6d875650800000000000000
+      internalID: 6221596912378727725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Moving_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 151124cbf24a4ce20800000000000000
+      internalID: 3369998946108838225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87976973510532220800000000000000
+      internalID: 2459897873531566456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2b1efef47778a360800000000000000
+      internalID: 7181120950220233514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b02cf8aa010a302b0800000000000000
+      internalID: -5619471916586778101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a43fe714509161d10800000000000000
+      internalID: 2095890186951914314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cd6b0ec68920aa20800000000000000
+      internalID: 3071500604825890244
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c374f89c7822fc90800000000000000
+      internalID: -7137597943821601849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516245e01d80ce0d0800000000000000
+      internalID: -3392326725335243243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed410fb3fc22cccc0800000000000000
+      internalID: -3689535721264114466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20fbe29e4a68e8ba0800000000000000
+      internalID: -6084778003686047998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c25e7c8653d47f20800000000000000
+      internalID: 3419590385758786245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e03ef1abc2caad00800000000000000
+      internalID: 984813648385814754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Attack_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c871d7cdca9a360800000000000000
+      internalID: 7181461143810444375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eca7fbd2dee925ae0800000000000000
+      internalID: -1562011379232179506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aa4a8c82c5c85220800000000000000
+      internalID: 2474945434612288169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aeac14dba3dc4950800000000000000
+      internalID: 6434750702557114025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: befc58f58f96c7cb0800000000000000
+      internalID: -4864896981991567381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 360145335801da4d0800000000000000
+      internalID: -3121820802420043677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10f7c412c8eb6ee80800000000000000
+      internalID: -8149616966616973567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dca6a43f92fc33090800000000000000
+      internalID: -8055867529353336115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2521455020537a500800000000000000
+      internalID: 407352574095921746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc0f6d8a2d99d6100800000000000000
+      internalID: 102907496554229963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5b4659d8a6127bf0800000000000000
+      internalID: -328174908387996837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 540a8fb5ae4aa7050800000000000000
+      internalID: 5799128796665258053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Front_Death_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e13b184d322703050800000000000000
+      internalID: 5778243820131037982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c70d2f4adc3bbc560800000000000000
+      internalID: 7335154113920028796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa750321cac63abc0800000000000000
+      internalID: -3773052576511010897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f85c310b5d7ff640800000000000000
+      internalID: 5115945531532400889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7a933d35f26a10b0800000000000000
+      internalID: -5757180368206456198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 152de1b72f79e7480800000000000000
+      internalID: -8899508745934024111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09aa289b4dd2377f0800000000000000
+      internalID: -616098332350961008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2dbbc630d4f3c6a20800000000000000
+      internalID: 3056887847080213458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Idle_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a0fbd4b080c1710800000000000000
+      internalID: 1665214806862268984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfe4b2aa074f23650800000000000000
+      internalID: 6211295600825814781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98a4e909309e80e40800000000000000
+      internalID: 5623000336292530825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f203e122ce9328da0800000000000000
+      internalID: -5944124871828164561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 640df1b98b7a44320800000000000000
+      internalID: 2541340501062176838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bddc3c6b72127caf0800000000000000
+      internalID: -376295589408420389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5f2a83230aeb4510800000000000000
+      internalID: 1534577397251845980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30792efc775b080c0800000000000000
+      internalID: -4575457695214954749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Moving_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff42f2de80ad20e60800000000000000
+      internalID: 7927138025999377663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b88b86da6b1246200800000000000000
+      internalID: 172299754224007307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c1f7bd1c918a4fc0800000000000000
+      internalID: -3509850452068404798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eddd0fa3bda48d7e0800000000000000
+      internalID: -1740558950531539490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b577c020496122d80800000000000000
+      internalID: -8277028340208208037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5840337e8cd544230800000000000000
+      internalID: 3622123117766444165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ef891aff3b8c9e20800000000000000
+      internalID: 3358712529006727138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fd63ef157f480760800000000000000
+      internalID: 7424271350185029111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03cdd6617e472f4c0800000000000000
+      internalID: -4255210162049131472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5401d14ac9c50c6f0800000000000000
+      internalID: -666430917012811707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a872adc71d95ca0800000000000000
+      internalID: -6027556292092524024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1843b0ddf738f9b0800000000000000
+      internalID: -5046221819200976865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Attack_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1608fff298ea97df0800000000000000
+      internalID: -181922405692768159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6069a79f5aa9c42a0800000000000000
+      internalID: -6751851703689374202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e3ce0896953fdba0800000000000000
+      internalID: -6062067652504927258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55b250bc654ce9340800000000000000
+      internalID: 4872547723913800533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0806e3ea651ab13e0800000000000000
+      internalID: -2081893009066139520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f46fa224a788d8cb0800000000000000
+      internalID: -4860078364185397681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03d215c6398e1af80800000000000000
+      internalID: -8096934935160345296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3408ff5560700490800000000000000
+      internalID: -7782096575392119749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48f4935ee51481b60800000000000000
+      internalID: 7716989837327814532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e24601459959d5de0800000000000000
+      internalID: -1342752628113644498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b551f9068ed78a710800000000000000
+      internalID: 1704750895966655835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5eb272a284971510800000000000000
+      internalID: 1519846688052919901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Back_Death_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 416a4aa8e8c9c3ba0800000000000000
+      internalID: -6107834858595899884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01213b572ee400960800000000000000
+      internalID: 7566134108526678544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 434ad171011d0ba20800000000000000
+      internalID: 3076188412531549236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c736341bbadfbcbd0800000000000000
+      internalID: -2608712645275851908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74561345b8c545f40800000000000000
+      internalID: 5716295580522734919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ed140f27bf109df0800000000000000
+      internalID: -175605513839174168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7f656ed65da77910800000000000000
+      internalID: 1835125961786748796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54dbe632061645c80800000000000000
+      internalID: -8334929944816730811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Idle_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5050abd30681d8e0800000000000000
+      internalID: -1670406635650002850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2281a070e50d23600800000000000000
+      internalID: 446648415326705698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9772edfd38f289cb0800000000000000
+      internalID: -4857079954675980423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5d31ee68d2c42370800000000000000
+      internalID: 8296970648352275807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15644ac4149a40f80800000000000000
+      internalID: -8141196128455211439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c446323954452d7e0800000000000000
+      internalID: -1742237448040913844
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbd83d1774c8b2dd0800000000000000
+      internalID: -2509758128848663108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca0335539f0ef6550800000000000000
+      internalID: 6156386576584880300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Moving_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73505cf07b2b2ec60800000000000000
+      internalID: 7846030000146154807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b036d1a5a01c38d60800000000000000
+      internalID: 7891363222288950027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12922e32295393d50800000000000000
+      internalID: 6717459220983327009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4d8e5b9e1b4940a0800000000000000
+      internalID: -6896898759513436854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 809b80bc5b7832750800000000000000
+      internalID: 6279011520349780232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52e44b3f3f3c094d0800000000000000
+      internalID: -3129786288489345499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c75fac00dfe9cdc0800000000000000
+      internalID: -3618097148770428990
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e93143406f26c940800000000000000
+      internalID: 5315988500649163233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd32576529431b990800000000000000
+      internalID: -7372053311908404260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97dc46ea579e21d00800000000000000
+      internalID: 942071963720142201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: affa8ac370df8b6e0800000000000000
+      internalID: -1821427841747079174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14ebee152f35b1820800000000000000
+      internalID: 2889995886110096961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Attack_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553c3d74ab100ee90800000000000000
+      internalID: -6998591921353145515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_00_Base
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2a2e0d9322ae1960800000000000000
+      internalID: 7574669897126259246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_01_Base
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f8b5f3fc466c6510800000000000000
+      internalID: 1543721252977752312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_02_Base
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 169c6d697a8157fb0800000000000000
+      internalID: -4650783932120905375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_03_Base
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93061cc31a36ca270800000000000000
+      internalID: 8263088960478208057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_04_Base
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f80d54d7860f7ad50800000000000000
+      internalID: 6748626898206969999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_05_Base
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cbc51a7ea1da0430800000000000000
+      internalID: 3750040187042122695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_06_Base
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a53e7fa8a49619900800000000000000
+      internalID: 689447986844394330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_07_Base
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f04fb4573fbf5d0b0800000000000000
+      internalID: -5704376329931328497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_08_Base
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b952885074711440800000000000000
+      internalID: 4904829495053277616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_09_Base
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9464f01cdce2b1260800000000000000
+      internalID: 7069295501330302537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_10_Base
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79357080c17e94980800000000000000
+      internalID: -8554051909633748073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Acolyte_Evolved_Side_Death_11_Base
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f3b779fc72e36d0800000000000000
+      internalID: -3008923728483762328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Acolyte_Evolved_Back_Attack_00_Base: 172299754224007307
+      Acolyte_Evolved_Back_Attack_01_Base: -3509850452068404798
+      Acolyte_Evolved_Back_Attack_02_Base: -1740558950531539490
+      Acolyte_Evolved_Back_Attack_03_Base: -8277028340208208037
+      Acolyte_Evolved_Back_Attack_04_Base: 3622123117766444165
+      Acolyte_Evolved_Back_Attack_05_Base: 3358712529006727138
+      Acolyte_Evolved_Back_Attack_06_Base: 7424271350185029111
+      Acolyte_Evolved_Back_Attack_07_Base: -4255210162049131472
+      Acolyte_Evolved_Back_Attack_08_Base: -666430917012811707
+      Acolyte_Evolved_Back_Attack_09_Base: -6027556292092524024
+      Acolyte_Evolved_Back_Attack_10_Base: -5046221819200976865
+      Acolyte_Evolved_Back_Attack_11_Base: -181922405692768159
+      Acolyte_Evolved_Back_Death_00_Base: -6751851703689374202
+      Acolyte_Evolved_Back_Death_01_Base: -6062067652504927258
+      Acolyte_Evolved_Back_Death_02_Base: 4872547723913800533
+      Acolyte_Evolved_Back_Death_03_Base: -2081893009066139520
+      Acolyte_Evolved_Back_Death_04_Base: -4860078364185397681
+      Acolyte_Evolved_Back_Death_05_Base: -8096934935160345296
+      Acolyte_Evolved_Back_Death_06_Base: -7782096575392119749
+      Acolyte_Evolved_Back_Death_07_Base: 7716989837327814532
+      Acolyte_Evolved_Back_Death_08_Base: -1342752628113644498
+      Acolyte_Evolved_Back_Death_09_Base: 1704750895966655835
+      Acolyte_Evolved_Back_Death_10_Base: 1519846688052919901
+      Acolyte_Evolved_Back_Death_11_Base: -6107834858595899884
+      Acolyte_Evolved_Back_Idle_00_Base: 7335154113920028796
+      Acolyte_Evolved_Back_Idle_01_Base: -3773052576511010897
+      Acolyte_Evolved_Back_Idle_02_Base: 5115945531532400889
+      Acolyte_Evolved_Back_Idle_03_Base: -5757180368206456198
+      Acolyte_Evolved_Back_Idle_04_Base: -8899508745934024111
+      Acolyte_Evolved_Back_Idle_05_Base: -616098332350961008
+      Acolyte_Evolved_Back_Idle_06_Base: 3056887847080213458
+      Acolyte_Evolved_Back_Idle_07_Base: 1665214806862268984
+      Acolyte_Evolved_Back_Moving_00_Base: 6211295600825814781
+      Acolyte_Evolved_Back_Moving_01_Base: 5623000336292530825
+      Acolyte_Evolved_Back_Moving_02_Base: -5944124871828164561
+      Acolyte_Evolved_Back_Moving_03_Base: 2541340501062176838
+      Acolyte_Evolved_Back_Moving_04_Base: -376295589408420389
+      Acolyte_Evolved_Back_Moving_05_Base: 1534577397251845980
+      Acolyte_Evolved_Back_Moving_06_Base: -4575457695214954749
+      Acolyte_Evolved_Back_Moving_07_Base: 7927138025999377663
+      Acolyte_Evolved_Front_Attack_00_Base: 2459897873531566456
+      Acolyte_Evolved_Front_Attack_01_Base: 7181120950220233514
+      Acolyte_Evolved_Front_Attack_02_Base: -5619471916586778101
+      Acolyte_Evolved_Front_Attack_03_Base: 2095890186951914314
+      Acolyte_Evolved_Front_Attack_04_Base: 3071500604825890244
+      Acolyte_Evolved_Front_Attack_05_Base: -7137597943821601849
+      Acolyte_Evolved_Front_Attack_06_Base: -3392326725335243243
+      Acolyte_Evolved_Front_Attack_07_Base: -3689535721264114466
+      Acolyte_Evolved_Front_Attack_08_Base: -6084778003686047998
+      Acolyte_Evolved_Front_Attack_09_Base: 3419590385758786245
+      Acolyte_Evolved_Front_Attack_10_Base: 984813648385814754
+      Acolyte_Evolved_Front_Attack_11_Base: 7181461143810444375
+      Acolyte_Evolved_Front_Death_00_Base: -1562011379232179506
+      Acolyte_Evolved_Front_Death_01_Base: 2474945434612288169
+      Acolyte_Evolved_Front_Death_02_Base: 6434750702557114025
+      Acolyte_Evolved_Front_Death_03_Base: -4864896981991567381
+      Acolyte_Evolved_Front_Death_04_Base: -3121820802420043677
+      Acolyte_Evolved_Front_Death_05_Base: -8149616966616973567
+      Acolyte_Evolved_Front_Death_06_Base: -8055867529353336115
+      Acolyte_Evolved_Front_Death_07_Base: 407352574095921746
+      Acolyte_Evolved_Front_Death_08_Base: 102907496554229963
+      Acolyte_Evolved_Front_Death_09_Base: -328174908387996837
+      Acolyte_Evolved_Front_Death_10_Base: 5799128796665258053
+      Acolyte_Evolved_Front_Death_11_Base: 5778243820131037982
+      Acolyte_Evolved_Front_Idle_00_Base: -5389341643113082798
+      Acolyte_Evolved_Front_Idle_01_Base: -4461064553565676942
+      Acolyte_Evolved_Front_Idle_02_Base: -7627653862761298494
+      Acolyte_Evolved_Front_Idle_03_Base: -7926488153047560704
+      Acolyte_Evolved_Front_Idle_04_Base: 1428012643903518479
+      Acolyte_Evolved_Front_Idle_05_Base: -5142159818018796938
+      Acolyte_Evolved_Front_Idle_06_Base: 2170800562856189192
+      Acolyte_Evolved_Front_Idle_07_Base: 1359171807926841022
+      Acolyte_Evolved_Front_Moving_00_Base: 3554737473787978107
+      Acolyte_Evolved_Front_Moving_01_Base: 6222672932112068434
+      Acolyte_Evolved_Front_Moving_02_Base: 7125757003446968599
+      Acolyte_Evolved_Front_Moving_03_Base: -932746379956022187
+      Acolyte_Evolved_Front_Moving_04_Base: 4984581174677782795
+      Acolyte_Evolved_Front_Moving_05_Base: 1213066986103394844
+      Acolyte_Evolved_Front_Moving_06_Base: 6221596912378727725
+      Acolyte_Evolved_Front_Moving_07_Base: 3369998946108838225
+      Acolyte_Evolved_Side_Attack_00_Base: 7891363222288950027
+      Acolyte_Evolved_Side_Attack_01_Base: 6717459220983327009
+      Acolyte_Evolved_Side_Attack_02_Base: -6896898759513436854
+      Acolyte_Evolved_Side_Attack_03_Base: 6279011520349780232
+      Acolyte_Evolved_Side_Attack_04_Base: -3129786288489345499
+      Acolyte_Evolved_Side_Attack_05_Base: -3618097148770428990
+      Acolyte_Evolved_Side_Attack_06_Base: 5315988500649163233
+      Acolyte_Evolved_Side_Attack_07_Base: -7372053311908404260
+      Acolyte_Evolved_Side_Attack_08_Base: 942071963720142201
+      Acolyte_Evolved_Side_Attack_09_Base: -1821427841747079174
+      Acolyte_Evolved_Side_Attack_10_Base: 2889995886110096961
+      Acolyte_Evolved_Side_Attack_11_Base: -6998591921353145515
+      Acolyte_Evolved_Side_Death_00_Base: 7574669897126259246
+      Acolyte_Evolved_Side_Death_01_Base: 1543721252977752312
+      Acolyte_Evolved_Side_Death_02_Base: -4650783932120905375
+      Acolyte_Evolved_Side_Death_03_Base: 8263088960478208057
+      Acolyte_Evolved_Side_Death_04_Base: 6748626898206969999
+      Acolyte_Evolved_Side_Death_05_Base: 3750040187042122695
+      Acolyte_Evolved_Side_Death_06_Base: 689447986844394330
+      Acolyte_Evolved_Side_Death_07_Base: -5704376329931328497
+      Acolyte_Evolved_Side_Death_08_Base: 4904829495053277616
+      Acolyte_Evolved_Side_Death_09_Base: 7069295501330302537
+      Acolyte_Evolved_Side_Death_10_Base: -8554051909633748073
+      Acolyte_Evolved_Side_Death_11_Base: -3008923728483762328
+      Acolyte_Evolved_Side_Idle_00_Base: 7566134108526678544
+      Acolyte_Evolved_Side_Idle_01_Base: 3076188412531549236
+      Acolyte_Evolved_Side_Idle_02_Base: -2608712645275851908
+      Acolyte_Evolved_Side_Idle_03_Base: 5716295580522734919
+      Acolyte_Evolved_Side_Idle_04_Base: -175605513839174168
+      Acolyte_Evolved_Side_Idle_05_Base: 1835125961786748796
+      Acolyte_Evolved_Side_Idle_06_Base: -8334929944816730811
+      Acolyte_Evolved_Side_Idle_07_Base: -1670406635650002850
+      Acolyte_Evolved_Side_Moving_00_Base: 446648415326705698
+      Acolyte_Evolved_Side_Moving_01_Base: -4857079954675980423
+      Acolyte_Evolved_Side_Moving_02_Base: 8296970648352275807
+      Acolyte_Evolved_Side_Moving_03_Base: -8141196128455211439
+      Acolyte_Evolved_Side_Moving_04_Base: -1742237448040913844
+      Acolyte_Evolved_Side_Moving_05_Base: -2509758128848663108
+      Acolyte_Evolved_Side_Moving_06_Base: 6156386576584880300
+      Acolyte_Evolved_Side_Moving_07_Base: 7846030000146154807
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

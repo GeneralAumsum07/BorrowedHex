@@ -103,7 +103,7 @@ namespace BorrowedHex.Tests
             Assert.IsFalse(sim.DamagePlayer(1, 0));
             sim.Tick(PlayerCommand.Moving(Vector2.zero), 0.3f);
             Assert.IsFalse(sim.DamagePlayer(1, 0));
-            Assert.AreEqual(before - 1.3f, sim.LifeSeconds, 1e-4f);
+            Assert.AreEqual(before - 1f - .3f * sim.Stats.LifeDrainPerSecond, sim.LifeSeconds, 1e-4f);
             for (int i = 0; i < 30; i++) sim.Tick(PlayerCommand.Moving(Vector2.zero), Dt);
             Assert.IsTrue(sim.DamagePlayer(1, 0), "invulnerability should have expired after 0.65 s");
         }

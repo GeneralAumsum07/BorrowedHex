@@ -1,0 +1,1096 @@
+fileFormatVersion: 2
+guid: 4bc73bed062910046866309f3f729f70
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 320
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc385508229aa8ee0800000000000000
+      internalID: -1258007180249562164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea0b7b51c374874c0800000000000000
+      internalID: -4289600321682427730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 405fe0b1409603140800000000000000
+      internalID: 4697369877702178052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1474c37868aa27db0800000000000000
+      internalID: -4795583158424942783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_04
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75f9175aed2ab7920800000000000000
+      internalID: 2989161854832582487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_05
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ab264be0bf3861a0800000000000000
+      internalID: -6816128006931207262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_06
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab7dcddcb1e7f71b0800000000000000
+      internalID: -5656663949071034438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Idle_07
+      rect:
+        serializedVersion: 2
+        x: 2240
+        y: 2560
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1e7f9d1cc01fe860800000000000000
+      internalID: 7561280768234716700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca5c0faf620a0aba0800000000000000
+      internalID: -6079683407670884948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10ef284edbe2fa900800000000000000
+      internalID: 697827860383202817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c5a3da0273f1a2b0800000000000000
+      internalID: -5574907192574499385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 459a9b5729e6e8040800000000000000
+      internalID: 4651777040439683412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_04
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd573048fe21508c0800000000000000
+      internalID: -4033797071319108133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_05
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb0fc7cfde1117710800000000000000
+      internalID: 1689151049081614523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_06
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3b5771fc71e2d560800000000000000
+      internalID: 7337174669683284794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Moving_07
+      rect:
+        serializedVersion: 2
+        x: 2240
+        y: 1920
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0736defea1ff9c30800000000000000
+      internalID: 4368475897474725643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9983b4ff5f42b0830800000000000000
+      internalID: 4038362129836488857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb7567e69d8ef8cf0800000000000000
+      internalID: -247723433923291205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65bdca62102ac9bf0800000000000000
+      internalID: -316199747995247786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c0c3565dce503b60800000000000000
+      internalID: 7723777596950036679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_04
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5153763ef82514450800000000000000
+      internalID: 6071224550621132053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_05
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c824d18d34629ec70800000000000000
+      internalID: 9000767403107107468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_06
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb0161ff624e1e40800000000000000
+      internalID: 5629009632818170868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Dash_07
+      rect:
+        serializedVersion: 2
+        x: 2240
+        y: 1280
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00082da3801df6150800000000000000
+      internalID: 5868138672763863040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49bd0843b88c51500800000000000000
+      internalID: 366419444907432852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6afab48b0cd7ef020800000000000000
+      internalID: 2377475919977361318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c33d4c03b8f724b0800000000000000
+      internalID: -5465126174901587004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c0473c93cb3dd6c0800000000000000
+      internalID: -4117068773021237050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_04
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d3a8c0231a2f7940800000000000000
+      internalID: 5295997948453757908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Hurt_05
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 640
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d348d0b08b10c02a0800000000000000
+      internalID: -6770034249873652675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 171c92c864599f930800000000000000
+      internalID: 4177534259594641777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_01
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28123b4ffe556cff0800000000000000
+      internalID: -16231059558293118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_02
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d28c4e0acc6b4b0f0800000000000000
+      internalID: -1102055018809997267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_03
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea40eb4e87208cb70800000000000000
+      internalID: 8919381780264256686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_04
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba226a4728977f180800000000000000
+      internalID: -9081656522359561557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_05
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5abee1ab93ce5fbb0800000000000000
+      internalID: -4902752886643037275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_06
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de759796dddee04c0800000000000000
+      internalID: -4319253457388611603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_07
+      rect:
+        serializedVersion: 2
+        x: 2240
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abd9c821652ea0630800000000000000
+      internalID: 3894173687121485242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_08
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7610f5a17bfee2b60800000000000000
+      internalID: 7723373980687466855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_09
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c6f0732707996160800000000000000
+      internalID: 7019307551148799684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_10
+      rect:
+        serializedVersion: 2
+        x: 3200
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2bb5fee3c799f26c0800000000000000
+      internalID: -4165942371383551054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RogueMagician_Back_Death_11
+      rect:
+        serializedVersion: 2
+        x: 3520
+        y: 0
+        width: 320
+        height: 640
+      alignment: 9
+      pivot: {x: 0.5, y: 0.109375}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e7ea3985183d5b30800000000000000
+      internalID: 4277636886219646950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RogueMagician_Back_Dash_00: 4038362129836488857
+      RogueMagician_Back_Dash_01: -247723433923291205
+      RogueMagician_Back_Dash_02: -316199747995247786
+      RogueMagician_Back_Dash_03: 7723777596950036679
+      RogueMagician_Back_Dash_04: 6071224550621132053
+      RogueMagician_Back_Dash_05: 9000767403107107468
+      RogueMagician_Back_Dash_06: 5629009632818170868
+      RogueMagician_Back_Dash_07: 5868138672763863040
+      RogueMagician_Back_Death_00: 4177534259594641777
+      RogueMagician_Back_Death_01: -16231059558293118
+      RogueMagician_Back_Death_02: -1102055018809997267
+      RogueMagician_Back_Death_03: 8919381780264256686
+      RogueMagician_Back_Death_04: -9081656522359561557
+      RogueMagician_Back_Death_05: -4902752886643037275
+      RogueMagician_Back_Death_06: -4319253457388611603
+      RogueMagician_Back_Death_07: 3894173687121485242
+      RogueMagician_Back_Death_08: 7723373980687466855
+      RogueMagician_Back_Death_09: 7019307551148799684
+      RogueMagician_Back_Death_10: -4165942371383551054
+      RogueMagician_Back_Death_11: 4277636886219646950
+      RogueMagician_Back_Hurt_00: 366419444907432852
+      RogueMagician_Back_Hurt_01: 2377475919977361318
+      RogueMagician_Back_Hurt_02: -5465126174901587004
+      RogueMagician_Back_Hurt_03: -4117068773021237050
+      RogueMagician_Back_Hurt_04: 5295997948453757908
+      RogueMagician_Back_Hurt_05: -6770034249873652675
+      RogueMagician_Back_Idle_00: -1258007180249562164
+      RogueMagician_Back_Idle_01: -4289600321682427730
+      RogueMagician_Back_Idle_02: 4697369877702178052
+      RogueMagician_Back_Idle_03: -4795583158424942783
+      RogueMagician_Back_Idle_04: 2989161854832582487
+      RogueMagician_Back_Idle_05: -6816128006931207262
+      RogueMagician_Back_Idle_06: -5656663949071034438
+      RogueMagician_Back_Idle_07: 7561280768234716700
+      RogueMagician_Back_Moving_00: -6079683407670884948
+      RogueMagician_Back_Moving_01: 697827860383202817
+      RogueMagician_Back_Moving_02: -5574907192574499385
+      RogueMagician_Back_Moving_03: 4651777040439683412
+      RogueMagician_Back_Moving_04: -4033797071319108133
+      RogueMagician_Back_Moving_05: 1689151049081614523
+      RogueMagician_Back_Moving_06: 7337174669683284794
+      RogueMagician_Back_Moving_07: 4368475897474725643
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

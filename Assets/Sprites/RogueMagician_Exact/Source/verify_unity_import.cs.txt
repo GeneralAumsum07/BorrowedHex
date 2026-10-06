@@ -1,0 +1,51 @@
+const string root = "Assets/Sprites/RogueMagician_Exact";
+var manifest = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(root + "/manifest.json"));
+int slices = 0, clips = 0, keysVerified = 0;
+foreach (var view in manifest["originalOrder"])
+{
+    string path = root + "/" + view + "/RogueMagician_" + view + "_Complete.png";
+    var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+    var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+    if (texture == null || texture.width != 3840 || texture.height != 3200)
+        throw new System.Exception("Incorrect imported master dimensions: " + path);
+    if (importer.filterMode != FilterMode.Point || importer.mipmapEnabled ||
+        importer.textureCompression != TextureImporterCompression.Uncompressed || importer.spritePixelsPerUnit != 320)
+        throw new System.Exception("Incorrect pixel sprite settings: " + path);
+    foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+    {
+        if (!(asset is Sprite sprite)) continue;
+        if (sprite.rect.width != 320 || sprite.rect.height != 640 ||
+            Vector2.Distance(sprite.pivot, new Vector2(160,70)) > .001f)
+            throw new System.Exception("Incorrect original-size cell or pivot: " + sprite.name);
+        slices++;
+    }
+}
+foreach (var sequence in manifest["sequences"])
+{
+    string path = root + "/" + sequence["clipFile"].ToString();
+    var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+    if (clip == null) throw new System.Exception("Missing clip: " + path);
+    int count = sequence["frames"].ToObject<int>();
+    int fps = sequence["fps"].ToObject<int>();
+    bool loop = sequence["loop"].ToObject<bool>();
+    if (clip.frameRate != fps || Mathf.Abs(clip.length - (float)count / fps) > .001f ||
+        AnimationUtility.GetAnimationClipSettings(clip).loopTime != loop)
+        throw new System.Exception("Incorrect clip timing: " + path + " length=" + clip.length);
+    var bindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+    if (bindings.Length != 1 || bindings[0].type != typeof(SpriteRenderer) || bindings[0].propertyName != "m_Sprite")
+        throw new System.Exception("Incorrect sprite binding: " + path);
+    var keys = AnimationUtility.GetObjectReferenceCurve(clip, bindings[0]);
+    if (keys.Length != count) throw new System.Exception("Incorrect key count: " + path);
+    for (int index = 0; index < keys.Length; index++)
+    {
+        if (!(keys[index].value is Sprite sprite) || Mathf.Abs(keys[index].time - (float)index / fps) > .001f)
+            throw new System.Exception("Null or mistimed sprite key: " + path);
+        string expected = "RogueMagician_" + sequence["view"] + "_" + sequence["state"] + "_" + index.ToString("D2");
+        if (sprite.name != expected) throw new System.Exception("Incorrect key sprite: " + path);
+        keysVerified++;
+    }
+    clips++;
+}
+if (slices != 168 || clips != 20 || keysVerified != 168) throw new System.Exception("Incomplete sprite set");
+return new { sprites = slices, clips = clips, spriteKeys = keysVerified, timingVerified = true,
+             importedDimensionsVerified = true, pixelSettingsVerified = true };

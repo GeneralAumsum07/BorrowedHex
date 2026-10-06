@@ -41,6 +41,7 @@ namespace BorrowedHex.Tests
             cam.transform.LookAt(new Vector3(0, 0, -2.2f));
             // Never the real save (section 8).
             GameRoot.StorageOverride = new MemoryProfileStorage();
+            GameRoot.SkipStory = true; // predates the lore holds; NarrativeFlowTests covers them
             rootGo = new GameObject("GameRoot");
             root = rootGo.AddComponent<GameRoot>();
             yield return null;
@@ -56,6 +57,7 @@ namespace BorrowedHex.Tests
             Object.Destroy(rootGo);
             Object.Destroy(camGo);
             GameRoot.StorageOverride = null;
+            GameRoot.SkipStory = false;
             yield return null;
         }
 
@@ -170,7 +172,9 @@ namespace BorrowedHex.Tests
                 if (card == null || !card.gameObject.activeInHierarchy) continue;
                 var cardBox = ScreenBox((RectTransform)card);
                 var parts = new List<(string, Rect)>();
-                foreach (string part in new[] { "Text", "Main", "Swap" })
+                // Task 15: the card body split into a glyph, a name line, the effect ("Text") and
+                // the locked line; each must clear the action column and stay inside the card.
+                foreach (string part in new[] { "Glyph", "Name", "Text", "Locked", "Main", "Swap" })
                 {
                     var p = card.Find(part);
                     if (p != null && p.gameObject.activeInHierarchy) parts.Add(($"Card{i}/{part}", ScreenBox((RectTransform)p)));
@@ -184,6 +188,29 @@ namespace BorrowedHex.Tests
         static IEnumerator Frames(int n) { for (int i = 0; i < n; i++) yield return null; }
 
         // ---- Tests ----------------------------------------------------------------------------
+
+        // Plan Task 6: the left column, the top-right Training/Settings pair and the footer never
+        // collide, and nothing is pushed off the edge at the reference resolution.
+        [UnityTest]
+        public IEnumerator MainMenu_NothingOverlapsAndEveryControlIsOnScreen()
+        {
+            root.ShowMainMenu();
+            yield return Frames(2);
+            Canvas.ForceUpdateCanvases();
+            var boxes = new List<(string, Rect)>();
+            foreach (var b in root.Main.GetComponentsInChildren<Button>(false)) boxes.Add((b.name, ScreenBox((RectTransform)b.transform)));
+            // Searched by name at any depth: the title, status and cheat notice live under the
+            // column, and a direct-child Find would skip them without failing.
+            var texts = root.Main.GetComponentsInChildren<Text>(false);
+            foreach (var n in new[] { "Title", "Status", "Warning", "CheatNotice" })
+            {
+                var t = texts.FirstOrDefault(x => x.name == n);
+                if (t != null && t.text != "") boxes.Add((n, ScreenBox(t.rectTransform)));
+            }
+            AssertNoOverlaps(boxes, "main menu");
+            AssertOnScreen(boxes, "main menu");
+            AssertTextFits(root.Main.transform, "main menu");
+        }
 
         [UnityTest]
         public IEnumerator Hud_InCombat_WithFourUpgrades_NothingOverlapsAndAllTextFits()
@@ -199,6 +226,49 @@ namespace BorrowedHex.Tests
             AssertNoOverlaps(boxes, "HUD in combat");
             AssertOnScreen(boxes, "HUD in combat");
             AssertTextFits(root.Hud.transform, "HUD in combat");
+        }
+
+        // Task 12: the practice tools fold into a drawer under the pause button. Opened in a
+        // sandbox run (the only kind that shows it), every tool is on screen, its text fits,
+        // and the drawer covers no other HUD element.
+        [UnityTest]
+        public IEnumerator Hud_PracticeDrawerOpen_NothingOverlapsAndAllTextFits()
+        {
+            root.PlaySandbox();
+            root.SetMenuOpen(false);
+            yield return Frames(3);
+            Assert.IsFalse(root.Hud.Drawer.Open, "every run starts with the drawer shut");
+            root.Hud.Drawer.Toggle();
+            yield return Frames(2);
+            Canvas.ForceUpdateCanvases();
+            var boxes = HudBoxes(root.Hud);
+            Assert.IsTrue(boxes.Exists(b => b.name == "PracticePanel"), "the drawer panel is showing");
+            AssertNoOverlaps(boxes, "HUD with the practice drawer open");
+            AssertOnScreen(boxes, "HUD with the practice drawer open");
+            var tools = root.Hud.Drawer.GetComponentsInChildren<Button>(false).Select(b => (b.name, ScreenBox((RectTransform)b.transform))).ToList();
+            Assert.Greater(tools.Count, 10, "every tool is in the drawer");
+            AssertNoOverlaps(tools, "practice tools");
+            AssertOnScreen(tools, "practice tools");
+            AssertTextFits(root.Hud.Drawer.transform, "practice drawer");
+        }
+
+        // Task 12: over the pause, only the life bar of the HUD stays, and it clears the frame.
+        [UnityTest]
+        public IEnumerator Pause_OnlyTheLifeBarShowsAndItClearsTheFrame()
+        {
+            yield return Frames(3);
+            root.SetMenuOpen(true);
+            yield return Frames(2);
+            Canvas.ForceUpdateCanvases();
+            var shown = HudBoxes(root.Hud).Select(b => b.name).OrderBy(n => n).ToList();
+            CollectionAssert.AreEqual(new[] { "LifeBar", "LifeHeart" }, shown, "HUD left showing under the pause");
+            var frame = ScreenBox((RectTransform)root.Menu.transform.Find("Panel"));
+            var hits = HudBoxes(root.Hud).Where(h => Overlap(h.box, frame)).Select(h => h.name).ToList();
+            Assert.IsEmpty(hits, "the pause frame covers the life bar");
+            AssertTextFits(root.Menu.transform, "pause menu");
+            root.SetMenuOpen(false);
+            yield return Frames(2);
+            Assert.Greater(HudBoxes(root.Hud).Count, 2, "resuming brings the HUD back");
         }
 
         [UnityTest]
@@ -235,6 +305,11 @@ namespace BorrowedHex.Tests
             var panel = OpenPanel(root.Flow, "UpgradeChoice");
             AssertPanelClean(panel, "2 held");
             AssertCardsClean(panel, "2 held");
+            // Task 15: the held line in the panel is the one listing; the HUD's chips (the whole
+            // Combat group, which has no separate "Upgrades" child) hide while the choice is open.
+            var combat = root.Hud.transform.Find("Combat");
+            Assert.IsNotNull(combat, "HUD Combat group");
+            Assert.IsFalse(combat.gameObject.activeInHierarchy, "the HUD's upgrade chips hide under the choice");
             sim.ContinueFromUpgrade();
             yield return Frames(2);
 
@@ -280,6 +355,44 @@ namespace BorrowedHex.Tests
         /// twelve cards, status, note, buttons) must be disjoint, inside the panel, with its text
         /// fitting - checked with the longest card text each state can produce.
         /// </summary>
+        // Task 11 capture: the tab art carries an ornament at each end, and a long label
+        // ("Achievements", "Capture style") ran under it on the fixed 280-wide tab. Every tab
+        // label must fit between the ornaments, on every screen that has tabs.
+        [UnityTest]
+        public IEnumerator Tabs_EveryLabelClearsTheTabOrnaments()
+        {
+            var bad = new List<string>();
+            // Measure each strip while it is showing: a hidden view is never laid out, so its
+            // tabs read as the default 100-wide rect.
+            void Measure(Component host)
+            {
+                Canvas.ForceUpdateCanvases();
+                foreach (var tab in host.GetComponentsInChildren<Button>(false))
+                {
+                    if (!tab.name.StartsWith("Tab")) continue;
+                    var label = tab.GetComponentInChildren<Text>(true);
+                    float room = ((RectTransform)tab.transform).rect.width - BorrowedHex.UI.UiKit.TabInsetLeft - BorrowedHex.UI.UiKit.TabInsetRight;
+                    if (label.preferredWidth > room + 1f) bad.Add($"{host.name}/{tab.name} \"{label.text}\": needs {label.preferredWidth:0}, has {room:0}");
+                }
+            }
+            root.ShowMainMenu();
+            yield return Frames(2);
+            Measure(root.Main);
+            root.Character.gameObject.SetActive(true);
+            yield return Frames(2);
+            Measure(root.Character);
+            root.Character.gameObject.SetActive(false);
+            root.RecordsView.Show(root.Profile.Profile, null);
+            foreach (int tab in new[] { BorrowedHex.UI.RecordsPanel.RecordsTab, BorrowedHex.UI.RecordsPanel.AchievementsTab })
+            {
+                root.RecordsView.ShowTab(tab);
+                yield return Frames(2);
+                Measure(root.RecordsView);
+            }
+            root.RecordsView.Hide();
+            Assert.IsEmpty(bad, "tab labels under the end ornaments:\n" + string.Join("\n", bad));
+        }
+
         [UnityTest]
         public IEnumerator SkillTree_FourBranches_NothingOverlapsAndAllTextFits()
         {
@@ -292,23 +405,30 @@ namespace BorrowedHex.Tests
                 foreach (bool cheat in new[] { false, true })
                 {
                     Cheats.SetUnlockAllNodes(cheat);
+                    // Task 8: the tree lives in the Character screen's Body, so its host must be up.
+                    root.Character.gameObject.SetActive(true);
                     root.Tree.Show(profile, root.Config.progression, null, null);
                     yield return Frames(2);
                     Canvas.ForceUpdateCanvases();
                     string where = cheat ? "skill tree (cheat)" : "skill tree (fresh)";
-                    var panel = (RectTransform)root.Tree.transform.Find("Panel");
-                    var panelBox = ScreenBox(panel);
-                    AssertOnScreen(new[] { ("Panel", panelBox) }, where);
-
-                    var parts = new List<(string, Rect)>();
-                    foreach (RectTransform child in panel)
-                        if (child.gameObject.activeInHierarchy) parts.Add((child.name, ScreenBox(child)));
-                    Assert.AreEqual(12, parts.Count(p => p.Item1.StartsWith("Node_")), "all twelve nodes have a card");
-                    AssertNoOverlaps(parts, where);
-                    var outside = parts.Where(p => !Inside(p.Item2, panelBox)).Select(p => $"{p.Item1} {p.Item2}").ToList();
-                    Assert.IsEmpty(outside, $"{where}: outside the panel {panelBox}:\n" + string.Join("\n", outside));
+                    var panel = (RectTransform)root.Tree.transform.Find("Panel");   // Panel is kept as the name
+                    var map = (RectTransform)panel.Find("Map");
+                    var nodes = new List<(string, Rect)>();
+                    foreach (RectTransform child in map)
+                        if (child.name.StartsWith("Node_") && child.gameObject.activeInHierarchy) nodes.Add((child.name, ScreenBox(child)));
+                    Assert.AreEqual(12, nodes.Count, "all twelve nodes are on the map");
+                    // Names too: on a diagonal branch a name under its seal lands on the next
+                    // seal inward, which the seals-only check never saw (Task 10 capture).
+                    var labelled = new List<(string, Rect)>(nodes);
+                    foreach (RectTransform child in map)
+                        if (child.name.StartsWith("Node_")) labelled.Add((child.name + "/Name", ScreenBox((RectTransform)child.Find("Name"))));
+                    AssertNoOverlaps(labelled, where);
+                    var blocks = new List<(string, Rect)> { ("Map", ScreenBox(map)), ("Inspector", ScreenBox((RectTransform)panel.Find("Inspector"))) };
+                    AssertNoOverlaps(blocks, where);
+                    AssertOnScreen(nodes.Concat(blocks), where);
                     AssertTextFits(panel, where);
                     root.Tree.Hide();
+                    root.Character.gameObject.SetActive(false);
                 }
             }
             finally { Cheats.SetUnlockAllNodes(false); }   // a static: never leak into other tests
@@ -327,16 +447,30 @@ namespace BorrowedHex.Tests
             var panel = OpenPanel(root.Flow, "Results");
             AssertPanelClean(panel, "results");
 
-            // "Cluttered": a fixed-height body left a gap half the panel tall. Each text block
-            // is now sized to what it holds, give or take a line of slack.
+            // "Cluttered": a fixed-height body left a gap half the panel tall. Task 16 order:
+            // Title, Headline, Progress, then the buttons; no visible block is followed by more
+            // than 30 px of nothing, and Progress is exactly as tall as what it holds.
             Canvas.ForceUpdateCanvases();
-            foreach (string block in new[] { "Body", "Progress" })
+            var shown = new List<RectTransform>();
+            foreach (RectTransform c in panel)
+                if (c.gameObject.activeSelf && !(c.GetComponent<LayoutElement>()?.ignoreLayout ?? false)) shown.Add(c);
+            var names = shown.Select(c => c.name).ToList();
+            foreach (var n in new[] { "Title", "Headline", "Progress", "Buttons" })
+                Assert.Contains(n, names, "results block showing");
+            Assert.Less(names.IndexOf("Title"), names.IndexOf("Headline"));
+            Assert.Less(names.IndexOf("Headline"), names.IndexOf("Progress"));
+            Assert.Less(names.IndexOf("Progress"), names.IndexOf("Buttons"));
+            Assert.IsFalse(panel.Find("DetailsView").gameObject.activeSelf, "Details opens collapsed");
+            for (int i = 1; i < shown.Count; i++)
             {
-                var t = panel.Find(block).GetComponent<Text>();
-                if (string.IsNullOrEmpty(t.text)) continue;
-                float gap = t.rectTransform.rect.height - t.preferredHeight;
-                Assert.LessOrEqual(gap, 30f, $"results {block}: {gap:0} px of empty space under the text");
+                // In canvas units: the 30-px rule is a design-grid rule, and the game view may be
+                // scaled (16 units of spacing read as 32 screen px at 2x).
+                float gap = (ScreenBox(shown[i - 1]).yMin - ScreenBox(shown[i]).yMax) / panel.GetComponentInParent<Canvas>().scaleFactor;
+                Assert.LessOrEqual(gap, 30f, $"results: {gap:0} px between {shown[i - 1].name} and {shown[i].name}");
             }
+            var prog = (RectTransform)panel.Find("Progress");
+            float slack = prog.rect.height - LayoutUtility.GetPreferredHeight(prog);
+            Assert.LessOrEqual(Mathf.Abs(slack), 1f, $"results Progress: {slack:0} px of slack");
         }
     }
 }

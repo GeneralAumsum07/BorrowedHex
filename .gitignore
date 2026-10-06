@@ -121,3 +121,17 @@ InitTestScene*.unity*
 # Local licensed art: recreate from the owner's downloads with WorldArtImporter.
 /Assets/Game/Resources/WorldArt/
 /Assets/Game/Resources/WorldArt.meta
+# Local licensed UI art + fonts: recreate from the owner's downloads with UiArtImporter.
+/Assets/Game/Resources/UiArt/
+/Assets/Game/Resources/UiArt.meta
+
+# Generated Python caches and their Unity import metadata.
+__pycache__/
+__pycache__.meta
+*.pyc
+*.pyc.meta
+
+# Unity crash recovery copies and misplaced local Git LFS hooks.
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+/dev/null/

@@ -24,9 +24,11 @@ namespace BorrowedHex.Enemies
         /// only the attack's lifetime as the limit.</param>
         /// <param name="unlimited">Ignore range AND lifetime (the Collector's stream): only a
         /// wall, a hit or a capture ends the shot.</param>
+        /// <param name="speedScale">Shooter-specific speed copied into the shot, so the boss
+        /// can fire faster bolts without speeding up ordinary enemies sharing that definition.</param>
         public static int FireVolley(ArenaSim sim, string attackId, int sourceActorId, Vector2 origin,
             float sourceRadius, Vector2 aim, float[] spreadDeg, int hostileDamage = -1,
-            float range = float.PositiveInfinity, bool unlimited = false)
+            float range = float.PositiveInfinity, bool unlimited = false, float speedScale = 1f)
         {
             var def = sim.Attacks.Get(attackId);
             ActorCategory sourceCategory = ActorCategory.Player; // unknown synthetic shots keep the base rule
@@ -42,6 +44,7 @@ namespace BorrowedHex.Enemies
                 Vector2 dir = Geometry2D.Rotate(aim, offset);
                 Vector2 muzzle = origin + dir * (sourceRadius + def.Radius + 0.05f);
                 var shot = AttackSnapshot.From(def, sourceActorId, sim.Ids.Next(), offset);
+                shot.Speed *= speedScale;
                 shot.SourceCategory = sourceCategory;
                 shot.SourceSpreadHalfAngle = halfSpread;
                 if (hostileDamage >= 0) shot.HostileDamage = hostileDamage;

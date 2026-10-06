@@ -88,10 +88,10 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
-        public void Collector_Has50Health_AndOnlyFiresCapturableBolts_NoRockets()
+        public void Collector_Has87_5Health_AndOnlyFiresCapturableBolts_NoRockets()
         {
             var (sim, boss) = BossFight();
-            Assert.AreEqual(50f, boss.Health);
+            Assert.AreEqual(87.5f, boss.Health);
             var kinds = new HashSet<AttackKind>();
             bool allCapturable = true;
             var damages = new HashSet<int>();
@@ -287,24 +287,30 @@ namespace BorrowedHex.Tests
             // 3.5 units: inside the sweep band, outside the slam band, nowhere near a pillar.
             // Before D54 this saw sweeps only: two sweeps hit the melee cap before the
             // same-attack swap could ever turn one into a slam.
-            var (sim, boss) = BossFight(c => c.collector.teleportChance = 0f);
-            int slams = 0, melee = 0, lastStarted = boss.Boss.PatternsStarted;
-            for (int i = 0; i < 60 * 90 && sim.State == RunState.BossCombat; i++)
+            int slams = 0, melee = 0;
+            // Summon consumes seeded rolls too. Sample several fights instead of treating
+            // one small random sample as a promised minimum slam frequency.
+            for (int seed = 1; seed <= 8; seed++)
             {
-                var b = boss.Boss;
-                if (b.Stage == BossStage.Reposition || b.Stage == BossStage.Recover)
-                    sim.Player.Position = new Vector2(0f, -1f);
-                if (b.Stage == BossStage.Recover)
+                var (sim, boss) = BossFight(c => c.collector.teleportChance = 0f, seed);
+                int lastStarted = boss.Boss.PatternsStarted;
+                for (int i = 0; i < 60 * 90 && sim.State == RunState.BossCombat; i++)
                 {
-                    // Re-plant the boss 3.5 units off so every choice is made from the sweep band.
-                    boss.Position = boss.PrevPosition = sim.Player.Position + Vector2.up * 3.5f;
+                    var b = boss.Boss;
+                    if (b.Stage == BossStage.Reposition || b.Stage == BossStage.Recover)
+                        sim.Player.Position = new Vector2(0f, -1f);
+                    if (b.Stage == BossStage.Recover)
+                    {
+                        // Re-plant the boss 3.5 units off so every choice is made from the sweep band.
+                        boss.Position = boss.PrevPosition = sim.Player.Position + Vector2.up * 3.5f;
+                    }
+                    sim.Tick(P5.Still, P5.Dt);
+                    if (b.PatternsStarted == lastStarted) continue;
+                    lastStarted = b.PatternsStarted;
+                    if (!CollectorBoss.IsMelee(b.Pattern)) continue;
+                    melee++;
+                    if (b.Pattern == BossPattern.Slam) slams++;
                 }
-                sim.Tick(P5.Still, P5.Dt);
-                if (b.PatternsStarted == lastStarted) continue;
-                lastStarted = b.PatternsStarted;
-                if (!CollectorBoss.IsMelee(b.Pattern)) continue;
-                melee++;
-                if (b.Pattern == BossPattern.Slam) slams++;
             }
             Assert.GreaterOrEqual(melee, 10, "fixture: enough melee choices");
             Assert.Greater(slams, 0);
@@ -341,7 +347,7 @@ namespace BorrowedHex.Tests
         public void Tuning_FasterBoss_AndFasterSlam()
         {
             var t = GameConfig.CreateDefault().collector;
-            Assert.AreEqual(3.6f, t.moveSpeed, 1e-6f, "was 3.0, then 3.3 (D55)");
+            Assert.AreEqual(4.968f, t.moveSpeed, 1e-6f, "another 15% faster than 4.32");
             Assert.AreEqual(0.8f, t.slamTelegraph, 1e-6f, "was 0.95");
         }
 
@@ -351,13 +357,13 @@ namespace BorrowedHex.Tests
             var t = GameConfig.CreateDefault().collector;
             Assert.AreEqual(6f, t.teleportMinDistance);
             Assert.AreEqual(5f, t.teleportCooldown);
-            Assert.AreEqual(0.48f, t.teleportChance, 1e-6f, "40% + 8 points (D55)");
+            Assert.AreEqual(0.5544f, t.teleportChance, 1e-6f, "another 5% relative increase from 52.8%");
             Assert.AreEqual(2, t.maxSameInARow);
             Assert.Greater(t.repositionMax, 1.0f, "more walking between attacks than before");
         }
 
         [Test]
-        public void Collector_UsesAllFourPatterns_AsThePlayerMoves_AndAmmunitionNeverPausesLong()
+        public void Collector_UsesAllFivePatterns_AsThePlayerMoves_AndAmmunitionNeverPausesLong()
         {
             var (sim, boss) = BossFight();
             var seen = new HashSet<BossPattern>();
@@ -386,7 +392,7 @@ namespace BorrowedHex.Tests
                 sim.Tick(P5.Still, P5.Dt);
                 seen.Add(boss.Boss.Pattern);
             }
-            CollectionAssert.AreEquivalent(new[] { BossPattern.BoltStream, BossPattern.Sweep, BossPattern.FanVolley, BossPattern.Slam }, seen);
+            CollectionAssert.AreEquivalent(new[] { BossPattern.BoltStream, BossPattern.Sweep, BossPattern.FanVolley, BossPattern.Slam, BossPattern.Summon }, seen);
             Assert.LessOrEqual(worstGap, WorstBoltGap(sim.Config.collector), $"worst gap between boss bolts {worstGap:F2} s");
         }
 
@@ -400,7 +406,13 @@ namespace BorrowedHex.Tests
         {
             double melee = t.repositionMax + Mathf.Max(t.slamTelegraph, t.sweepTelegraph + t.sweepDuration) + t.recover;
             double ranged = t.repositionMax + Mathf.Max(t.fanTelegraph, t.streamTelegraph);
-            return t.maxMeleeInARow * melee + t.teleportTelegraph + ranged + 0.1;
+            // One summon can fit in the gap. Its reservation waits at most one worst-case
+            // offensive pattern, then casts; the melee streak remains intact across it.
+            double summon = t.teleportTelegraph + t.repositionMax + t.recover
+                + Mathf.Max(t.streamTelegraph + (t.streamShots - 1) * t.streamInterval,
+                    Mathf.Max(t.fanTelegraph, Mathf.Max(t.sweepTelegraph + t.sweepDuration, t.slamTelegraph)))
+                + t.summonTelegraph + t.recover;
+            return t.maxMeleeInARow * melee + t.teleportTelegraph + ranged + summon + 0.1;
         }
 
         [Test]
@@ -598,11 +610,11 @@ namespace BorrowedHex.Tests
         // ---- Teleport (D49) ---------------------------------------------------------------
 
         /// <summary>A boss fight on a private config copy, so tuning can be changed safely.</summary>
-        static (ArenaSim sim, EnemyActor boss) BossFight(System.Action<GameConfig> tune)
+        static (ArenaSim sim, EnemyActor boss) BossFight(System.Action<GameConfig> tune, int seed = 1)
         {
             var cfg = GameConfig.CreateDefault();
             tune(cfg);
-            var sim = new ArenaSim(cfg, new RunSetup { Seed = 1, Mode = GameMode.Short, Sandbox = false });
+            var sim = new ArenaSim(cfg, new RunSetup { Seed = seed, Mode = GameMode.Short, Sandbox = false });
             P5.ToBossCombat(sim);
             return (sim, sim.Boss);
         }

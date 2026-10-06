@@ -21,6 +21,11 @@ namespace BorrowedHex.EditorTools
         [MenuItem("Borrowed Hex/Build/Windows")]
         public static void BuildWindows() => Build(BuildTarget.StandaloneWindows64, "Builds/Windows/BorrowedHex.exe", false);
 
+        // BYOG 2026 jam submission. Only the folder and exe are renamed; productName stays the
+        // same, so the window title and the save folder (persistentDataPath) do not move.
+        [MenuItem("Borrowed Hex/Build/Windows (BYOG26 jam)")]
+        public static void BuildJam() => Build(BuildTarget.StandaloneWindows64, "Builds/BorrowedHex_BYOG26_final/BorrowedHex_BYOG26_final.exe", false);
+
         [MenuItem("Borrowed Hex/Build/Web")]
         public static void BuildWeb() => Build(BuildTarget.WebGL, "Builds/Web", false);
 

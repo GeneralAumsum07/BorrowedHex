@@ -42,15 +42,21 @@ namespace BorrowedHex.Presentation.WorldArt
         {
             switch (theme)
             {
-                // Graveyard, Cave and Sanctum were raised after the first in-game review found them
-                // too dark; the Cave most of all (ambient ~2x, moon .3 -> .5) because it has no sky
-                // fill and read as a void. Courtyard was judged right and is unchanged.
-                case "Graveyard": return new WorldLighting(new Color(.12f, .14f, .14f), new Color(.03f, .045f, .04f), new Color(.55f, .66f, .78f), .5f, Warm);
-                case "Cave": return new WorldLighting(new Color(.18f, .16f, .24f), new Color(.05f, .04f, .08f), new Color(.55f, .55f, .82f), .5f, Cold);
+                case "Graveyard": return Brighten(new WorldLighting(new Color(.12f, .14f, .14f), new Color(.03f, .045f, .04f), new Color(.55f, .66f, .78f), .5f, Warm), 1.3f * 1.2f);
+                case "Cave": return Brighten(new WorldLighting(new Color(.18f, .16f, .24f), new Color(.05f, .04f, .08f), new Color(.55f, .55f, .82f), .5f, Cold), 1.3f * 1.2f);
                 // Cold to match the Sanctum's existing blue pillar flames (inference; owner may retune).
-                case "Sanctum": return new WorldLighting(new Color(.13f, .11f, .17f), new Color(.035f, .025f, .055f), new Color(.6f, .5f, .85f), .48f, Cold);
-                default: return new WorldLighting(new Color(.10f, .10f, .14f), new Color(.03f, .03f, .05f), new Color(.55f, .6f, .85f), .45f, Warm);
+                case "Sanctum": return Brighten(new WorldLighting(new Color(.13f, .11f, .17f), new Color(.035f, .025f, .055f), new Color(.6f, .5f, .85f), .48f, Cold), 1.15f);
+                default: return Brighten(new WorldLighting(new Color(.10f, .10f, .14f), new Color(.03f, .03f, .05f), new Color(.55f, .6f, .85f), .45f, Warm), 1.3f * 1.2f);
             }
         }
+
+        // Encounters compound the earlier 30% lift with another 20%; Sanctum gets its own 15% lift.
+        // Moon brightness uses intensity; fire brightness uses its HDR tint, including during morphs.
+        static WorldLighting Brighten(WorldLighting lighting, float scale)
+            => new WorldLighting(Brighter(lighting.Ambient, scale), Brighter(lighting.Fog, scale), lighting.Moon,
+                lighting.MoonIntensity * scale, Brighter(lighting.Fire, scale));
+
+        // Preserve hue and alpha when increasing RGB brightness; do not clamp HDR fire colours.
+        static Color Brighter(Color color, float scale) => new Color(color.r * scale, color.g * scale, color.b * scale, color.a);
     }
 }

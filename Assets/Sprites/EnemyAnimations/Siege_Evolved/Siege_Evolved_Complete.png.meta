@@ -1,0 +1,2890 @@
+fileFormatVersion: 2
+guid: 1bbf461904705b048a5663c857f82d64
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9da6832df1a0825c0800000000000000
+      internalID: -4240127917382145319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a811f8318dcc1e510800000000000000
+      internalID: 1576766572969529738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a850555fafc0c2da0800000000000000
+      internalID: -5968381134175402614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96c040163f3e7cfe0800000000000000
+      internalID: -1168714943835141015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f802988bfed57b60800000000000000
+      internalID: 7743340306242865401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2b62f1ed79048d90800000000000000
+      internalID: -7096536676562736340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b81b4874f19096180800000000000000
+      internalID: -9121749540313714293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Idle_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77f51064c50417040800000000000000
+      internalID: 4643563455851356023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5af6c6e0788c65660800000000000000
+      internalID: 7374301922253893541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d69e511678181850800000000000000
+      internalID: 6347850570155333334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a4ad598833311290800000000000000
+      internalID: -7921493951652191071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8e82e1298337b9f0800000000000000
+      internalID: -452836573455413619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e89d4a990d7038310800000000000000
+      internalID: 1405976101182036366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 067939f5401fb0020800000000000000
+      internalID: 2309204235043182432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f985979a515ba370800000000000000
+      internalID: 8334844984911301106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Moving_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7266a2c1a1d7d2cd0800000000000000
+      internalID: -2581269460318263769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eebe566669ad5a1e0800000000000000
+      internalID: -2187101704520602642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3269b2a6eac56b240800000000000000
+      internalID: 4807131556439889443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d16913bc36e40b00800000000000000
+      internalID: 794012582701261266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb612730ca3910b0800000000000000
+      internalID: -5757506051383399482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58a8acd9cc0935c20800000000000000
+      internalID: 3194055769230838405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f62d29cd981d645f0800000000000000
+      internalID: -772699896006126993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f5b387b698e25ac0800000000000000
+      internalID: -3867773395936233996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e235992bd3182cac0800000000000000
+      internalID: -3836361830576860370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3e2e967fd597f7e0800000000000000
+      internalID: -1731750744700342724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 077dfa6d9c30a4620800000000000000
+      internalID: 2759021887143008112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ab915c1fa9cd8500800000000000000
+      internalID: 400197695837412262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Attack_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3058f39f0bcda030800000000000000
+      internalID: 3507682952558956602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afe355a96ee063650800000000000000
+      internalID: 6212169119598722810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8521100c46743e060800000000000000
+      internalID: 6981502345397998168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5840a0a094ebcbcd0800000000000000
+      internalID: -2540946868833483643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea3f2db4a84b61710800000000000000
+      internalID: 1663715618430579630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad39d7742eb6ae2a0800000000000000
+      internalID: -6707430075408739366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbab49395a285e940800000000000000
+      internalID: 5324805782092692156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c57fa07d218d4410800000000000000
+      internalID: 1462967486129337798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eca1a93be167a1b0800000000000000
+      internalID: -5645435944973521689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e9bf056ae118b6b0800000000000000
+      internalID: -5280450864676357664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be7dc54208942c1c0800000000000000
+      internalID: -4484941464192886805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78c50f98c54b1fad0800000000000000
+      internalID: -2670154794509771641
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Front_Death_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b7810ef06a0c3a00800000000000000
+      internalID: 737475850676570039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cda89bea56d6bf40800000000000000
+      internalID: 5744014060745698753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f1b7c6e16cfe1bd0800000000000000
+      internalID: -2657409232688139790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9766a8b4248281d0800000000000000
+      internalID: -3349969879558625380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf122a87b36bdc090800000000000000
+      internalID: -8012547795479027205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10503619a510695a0800000000000000
+      internalID: -6515018322446973695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e0f49e383f3d5c40800000000000000
+      internalID: 5502623830517280994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afd2f397c1fcd9220800000000000000
+      internalID: 2494377489833340410
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Idle_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 832a2617927eaa680800000000000000
+      internalID: -8742921561404431816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3efb438a3b43e2c70800000000000000
+      internalID: 8948147455857573859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a604541e55835d120800000000000000
+      internalID: 2437916714793779306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81808a8d5dd84dd70800000000000000
+      internalID: 9067027899406092312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b5eb9d69c8eb0a40800000000000000
+      internalID: 5335614135375488432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbbe7d5de4cb28cb0800000000000000
+      internalID: -4863117600825545796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91d59cd366de196f0800000000000000
+      internalID: -679501045377180391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adaf21c2130837cf0800000000000000
+      internalID: -255719805148792102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Moving_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 097c74bb9822f63f0800000000000000
+      internalID: -905467025130272880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad6cc3bb362aa0b70800000000000000
+      internalID: 8866077365659027162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08dec60fc37018be0800000000000000
+      internalID: -1476891244487709312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a64d21bdd39e450d0800000000000000
+      internalID: -3434864163899124630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 834e74ebc05a84c70800000000000000
+      internalID: 8955589333176804408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71fb12c35e6175f70800000000000000
+      internalID: 9175827939602841367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3021ede8fc07acd80800000000000000
+      internalID: -8229641332308700669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc2efcf5b9725ddf0800000000000000
+      internalID: -156175063793540404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abf126cdd9c87d700800000000000000
+      internalID: 565074887893458874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa7b5213e7558f80800000000000000
+      internalID: -8104975321606161674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79ab76b2ca06848b0800000000000000
+      internalID: -5167774279828784489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cb4fc10395558d70800000000000000
+      internalID: 9044729516522425284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Attack_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92814c09e7cedbbc0800000000000000
+      internalID: -3765593685073061847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb54b4f314f1d5ba0800000000000000
+      internalID: -6098683955294550594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d9b83fb77b290000800000000000000
+      internalID: 2581068099664345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45af7f5fb6b611f60800000000000000
+      internalID: 8003296124246424148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae503dcc9ecb3d1e0800000000000000
+      internalID: -2174186482740034070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a6c48264d7337980800000000000000
+      internalID: -8542422682866235741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d11670e59f5b240800000000000000
+      internalID: 4807022359533919550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f206ecffa3b28a150800000000000000
+      internalID: 5884000445559365679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10b5397d624daa390800000000000000
+      internalID: -7806193740802729215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18b902e46b09dcd40800000000000000
+      internalID: 5606296223815342977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aa5aa9fc86debbc0800000000000000
+      internalID: -3765336337462699354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad8aa239f59b14990800000000000000
+      internalID: -7403432492278306598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Back_Death_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9acfe3e681fe02cd0800000000000000
+      internalID: -2584803297902789463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cd36ee4db85ebf30800000000000000
+      internalID: 4593206240060259776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b980a991c415e2570800000000000000
+      internalID: 8443775738655148187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4670c667a64d6f70800000000000000
+      internalID: 9182072900075681358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbdb2977fa21f69c0800000000000000
+      internalID: -3931903404836471363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad22a966fdcf90630800000000000000
+      internalID: 3893921389267788506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6c6db35d7ef08c70800000000000000
+      internalID: 8971450271951318126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4791f15d7cfd47d90800000000000000
+      internalID: -7100804663089358476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Idle_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6caf10e30a95ff0a0800000000000000
+      internalID: -6845654363809908026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18f43fa83fe05fc00800000000000000
+      internalID: 933668936920289153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e16706ac3b4739eb0800000000000000
+      internalID: -4714296069383490018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24943810809fc2090800000000000000
+      internalID: -8057791820492224190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb16f3929187cb5b0800000000000000
+      internalID: -5351270207761456705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3a0ab223c0b0e660800000000000000
+      internalID: 7413119338799565375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeb91799423284d40800000000000000
+      internalID: 5568739579343772654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92ce2d5fdf5ec5940800000000000000
+      internalID: 5286352941539847209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Moving_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 414a83b3c5c8dd670800000000000000
+      internalID: 8565156394086999060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffc7a82fd95d9b420800000000000000
+      internalID: 2646381130412621055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fdc96ed8239f5380800000000000000
+      internalID: -8980297328214028807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30a26f811eb19c920800000000000000
+      internalID: 3010968479474264579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 762b4c73857b2d5b0800000000000000
+      internalID: -5345008218214714777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b63dac48248c79a90800000000000000
+      internalID: -7307151682364058773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6261f7b9d48682980800000000000000
+      internalID: -8563480008914430426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 745f755f0ce210be0800000000000000
+      internalID: -1512876593534995129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5e0867109cf236a0800000000000000
+      internalID: -6470832018779795874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcf9bec3aaac2d360800000000000000
+      internalID: 7193034387379429325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34de34975b54f7860800000000000000
+      internalID: 7529813747712650563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3b5f8715e3e933d0800000000000000
+      internalID: -3226297084951962818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Attack_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 051a6e212ad15c050800000000000000
+      internalID: 5820090675385246032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_00_Composite
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb7c6b6abd810ffa0800000000000000
+      internalID: -5769083790987704385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_01_Composite
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cfa4b8db045e89c0800000000000000
+      internalID: -3923105815536029758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_02_Composite
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cc3f70de1889ece0800000000000000
+      internalID: -1375418545256579904
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_03_Composite
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3228f4c9a2185dea0800000000000000
+      internalID: -5848626521059655133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_04_Composite
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd08dfb9c74cd8f20800000000000000
+      internalID: 3426610930970886367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_05_Composite
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 867b2ffc62dc5eed0800000000000000
+      internalID: -2385274861041567896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_06_Composite
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e42818cec36a920800000000000000
+      internalID: 3001153188171763203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_07_Composite
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88a5c89d6f61daa90800000000000000
+      internalID: -7301154171430086008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_08_Composite
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8eb95e1892d16a90800000000000000
+      internalID: -7322339968341655923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_09_Composite
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd763ef0361298e40800000000000000
+      internalID: 5659091116119779292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_10_Composite
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebddd3b5f6f7d4250800000000000000
+      internalID: 5930536400565689790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Siege_Evolved_Side_Death_11_Composite
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab25b649ea459c740800000000000000
+      internalID: 5172758755802829498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Siege_Evolved_Back_Attack_00_Composite: 8866077365659027162
+      Siege_Evolved_Back_Attack_01_Composite: -1476891244487709312
+      Siege_Evolved_Back_Attack_02_Composite: -3434864163899124630
+      Siege_Evolved_Back_Attack_03_Composite: 8955589333176804408
+      Siege_Evolved_Back_Attack_04_Composite: 9175827939602841367
+      Siege_Evolved_Back_Attack_05_Composite: -8229641332308700669
+      Siege_Evolved_Back_Attack_06_Composite: -156175063793540404
+      Siege_Evolved_Back_Attack_07_Composite: 565074887893458874
+      Siege_Evolved_Back_Attack_08_Composite: -8104975321606161674
+      Siege_Evolved_Back_Attack_09_Composite: -5167774279828784489
+      Siege_Evolved_Back_Attack_10_Composite: 9044729516522425284
+      Siege_Evolved_Back_Attack_11_Composite: -3765593685073061847
+      Siege_Evolved_Back_Death_00_Composite: -6098683955294550594
+      Siege_Evolved_Back_Death_01_Composite: 2581068099664345
+      Siege_Evolved_Back_Death_02_Composite: 8003296124246424148
+      Siege_Evolved_Back_Death_03_Composite: -2174186482740034070
+      Siege_Evolved_Back_Death_04_Composite: -8542422682866235741
+      Siege_Evolved_Back_Death_05_Composite: 4807022359533919550
+      Siege_Evolved_Back_Death_06_Composite: 5884000445559365679
+      Siege_Evolved_Back_Death_07_Composite: -7806193740802729215
+      Siege_Evolved_Back_Death_08_Composite: 5606296223815342977
+      Siege_Evolved_Back_Death_09_Composite: -3765336337462699354
+      Siege_Evolved_Back_Death_10_Composite: -7403432492278306598
+      Siege_Evolved_Back_Death_11_Composite: -2584803297902789463
+      Siege_Evolved_Back_Idle_00_Composite: 5744014060745698753
+      Siege_Evolved_Back_Idle_01_Composite: -2657409232688139790
+      Siege_Evolved_Back_Idle_02_Composite: -3349969879558625380
+      Siege_Evolved_Back_Idle_03_Composite: -8012547795479027205
+      Siege_Evolved_Back_Idle_04_Composite: -6515018322446973695
+      Siege_Evolved_Back_Idle_05_Composite: 5502623830517280994
+      Siege_Evolved_Back_Idle_06_Composite: 2494377489833340410
+      Siege_Evolved_Back_Idle_07_Composite: -8742921561404431816
+      Siege_Evolved_Back_Moving_00_Composite: 8948147455857573859
+      Siege_Evolved_Back_Moving_01_Composite: 2437916714793779306
+      Siege_Evolved_Back_Moving_02_Composite: 9067027899406092312
+      Siege_Evolved_Back_Moving_03_Composite: 5335614135375488432
+      Siege_Evolved_Back_Moving_04_Composite: -4863117600825545796
+      Siege_Evolved_Back_Moving_05_Composite: -679501045377180391
+      Siege_Evolved_Back_Moving_06_Composite: -255719805148792102
+      Siege_Evolved_Back_Moving_07_Composite: -905467025130272880
+      Siege_Evolved_Front_Attack_00_Composite: -2187101704520602642
+      Siege_Evolved_Front_Attack_01_Composite: 4807131556439889443
+      Siege_Evolved_Front_Attack_02_Composite: 794012582701261266
+      Siege_Evolved_Front_Attack_03_Composite: -5757506051383399482
+      Siege_Evolved_Front_Attack_04_Composite: 3194055769230838405
+      Siege_Evolved_Front_Attack_05_Composite: -772699896006126993
+      Siege_Evolved_Front_Attack_06_Composite: -3867773395936233996
+      Siege_Evolved_Front_Attack_07_Composite: -3836361830576860370
+      Siege_Evolved_Front_Attack_08_Composite: -1731750744700342724
+      Siege_Evolved_Front_Attack_09_Composite: 2759021887143008112
+      Siege_Evolved_Front_Attack_10_Composite: 400197695837412262
+      Siege_Evolved_Front_Attack_11_Composite: 3507682952558956602
+      Siege_Evolved_Front_Death_00_Composite: 6212169119598722810
+      Siege_Evolved_Front_Death_01_Composite: 6981502345397998168
+      Siege_Evolved_Front_Death_02_Composite: -2540946868833483643
+      Siege_Evolved_Front_Death_03_Composite: 1663715618430579630
+      Siege_Evolved_Front_Death_04_Composite: -6707430075408739366
+      Siege_Evolved_Front_Death_05_Composite: 5324805782092692156
+      Siege_Evolved_Front_Death_06_Composite: 1462967486129337798
+      Siege_Evolved_Front_Death_07_Composite: -5645435944973521689
+      Siege_Evolved_Front_Death_08_Composite: -5280450864676357664
+      Siege_Evolved_Front_Death_09_Composite: -4484941464192886805
+      Siege_Evolved_Front_Death_10_Composite: -2670154794509771641
+      Siege_Evolved_Front_Death_11_Composite: 737475850676570039
+      Siege_Evolved_Front_Idle_00_Composite: -4240127917382145319
+      Siege_Evolved_Front_Idle_01_Composite: 1576766572969529738
+      Siege_Evolved_Front_Idle_02_Composite: -5968381134175402614
+      Siege_Evolved_Front_Idle_03_Composite: -1168714943835141015
+      Siege_Evolved_Front_Idle_04_Composite: 7743340306242865401
+      Siege_Evolved_Front_Idle_05_Composite: -7096536676562736340
+      Siege_Evolved_Front_Idle_06_Composite: -9121749540313714293
+      Siege_Evolved_Front_Idle_07_Composite: 4643563455851356023
+      Siege_Evolved_Front_Moving_00_Composite: 7374301922253893541
+      Siege_Evolved_Front_Moving_01_Composite: 6347850570155333334
+      Siege_Evolved_Front_Moving_02_Composite: -7921493951652191071
+      Siege_Evolved_Front_Moving_03_Composite: -452836573455413619
+      Siege_Evolved_Front_Moving_04_Composite: 1405976101182036366
+      Siege_Evolved_Front_Moving_05_Composite: 2309204235043182432
+      Siege_Evolved_Front_Moving_06_Composite: 8334844984911301106
+      Siege_Evolved_Front_Moving_07_Composite: -2581269460318263769
+      Siege_Evolved_Side_Attack_00_Composite: 2646381130412621055
+      Siege_Evolved_Side_Attack_01_Composite: -8980297328214028807
+      Siege_Evolved_Side_Attack_02_Composite: 3010968479474264579
+      Siege_Evolved_Side_Attack_03_Composite: -5345008218214714777
+      Siege_Evolved_Side_Attack_04_Composite: -7307151682364058773
+      Siege_Evolved_Side_Attack_05_Composite: -8563480008914430426
+      Siege_Evolved_Side_Attack_06_Composite: -1512876593534995129
+      Siege_Evolved_Side_Attack_07_Composite: -6470832018779795874
+      Siege_Evolved_Side_Attack_08_Composite: 7193034387379429325
+      Siege_Evolved_Side_Attack_09_Composite: 7529813747712650563
+      Siege_Evolved_Side_Attack_10_Composite: -3226297084951962818
+      Siege_Evolved_Side_Attack_11_Composite: 5820090675385246032
+      Siege_Evolved_Side_Death_00_Composite: -5769083790987704385
+      Siege_Evolved_Side_Death_01_Composite: -3923105815536029758
+      Siege_Evolved_Side_Death_02_Composite: -1375418545256579904
+      Siege_Evolved_Side_Death_03_Composite: -5848626521059655133
+      Siege_Evolved_Side_Death_04_Composite: 3426610930970886367
+      Siege_Evolved_Side_Death_05_Composite: -2385274861041567896
+      Siege_Evolved_Side_Death_06_Composite: 3001153188171763203
+      Siege_Evolved_Side_Death_07_Composite: -7301154171430086008
+      Siege_Evolved_Side_Death_08_Composite: -7322339968341655923
+      Siege_Evolved_Side_Death_09_Composite: 5659091116119779292
+      Siege_Evolved_Side_Death_10_Composite: 5930536400565689790
+      Siege_Evolved_Side_Death_11_Composite: 5172758755802829498
+      Siege_Evolved_Side_Idle_00_Composite: 4593206240060259776
+      Siege_Evolved_Side_Idle_01_Composite: 8443775738655148187
+      Siege_Evolved_Side_Idle_02_Composite: 9182072900075681358
+      Siege_Evolved_Side_Idle_03_Composite: -3931903404836471363
+      Siege_Evolved_Side_Idle_04_Composite: 3893921389267788506
+      Siege_Evolved_Side_Idle_05_Composite: 8971450271951318126
+      Siege_Evolved_Side_Idle_06_Composite: -7100804663089358476
+      Siege_Evolved_Side_Idle_07_Composite: -6845654363809908026
+      Siege_Evolved_Side_Moving_00_Composite: 933668936920289153
+      Siege_Evolved_Side_Moving_01_Composite: -4714296069383490018
+      Siege_Evolved_Side_Moving_02_Composite: -8057791820492224190
+      Siege_Evolved_Side_Moving_03_Composite: -5351270207761456705
+      Siege_Evolved_Side_Moving_04_Composite: 7413119338799565375
+      Siege_Evolved_Side_Moving_05_Composite: 5568739579343772654
+      Siege_Evolved_Side_Moving_06_Composite: 5286352941539847209
+      Siege_Evolved_Side_Moving_07_Composite: 8565156394086999060
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

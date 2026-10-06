@@ -31,17 +31,9 @@ namespace BorrowedHex.Presentation.Feedback
             root.SetParent(parent, false);
             // m5x7 (spec 6) when the local art is imported. It is licensed third-party content,
             // so it lives in the git-ignored WorldArt folder; a public checkout falls back to the
-            // built-in font and still shows its words.
-            font = Resources.Load<Font>("WorldArt/m5x7");
-            if (font == null) font = UI.Ui.Font;
-            else { PointFilter(font); Font.textureRebuilt += PointFilter; }
-        }
-
-        // A dynamic font rebuilds its atlas when new glyphs appear and the new texture comes back
-        // bilinear. Re-point it every time, or a pixel font blurs mid-run.
-        void PointFilter(Font f)
-        {
-            if (f == font && f.material != null && f.material.mainTexture != null) f.material.mainTexture.filterMode = FilterMode.Point;
+            // built-in font and still shows its words. UiFonts owns the point-filter hook, so
+            // every pixel face has exactly one, however many callers load it.
+            font = UI.UiFonts.LoadPixel("WorldArt/m5x7");
         }
 
         public int LiveCount { get { int n = 0; foreach (var i in items) if (i.Live) n++; return n; } }
@@ -128,7 +120,6 @@ namespace BorrowedHex.Presentation.Feedback
 
         public void Dispose()
         {
-            Font.textureRebuilt -= PointFilter;
             if (root != null) WorldArtLibrary.Release(root.gameObject);
             items.Clear();
         }

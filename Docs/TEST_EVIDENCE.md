@@ -681,3 +681,44 @@ Test report: EditMode 165/165, PlayMode 2/2.
   - the score/XP values;
   - the four-column skill tree at 1920x1080 by eye (the layout test checks boxes, not looks);
   - **manual check (Review Focus 4):** pressing Enter on a freshly opened upgrade choice continues for free.
+
+## Collector tuning and Summon (4 Oct 2026)
+
+- Ordinary hostile projectile ranges reduced 20%: Acolyte 12, Scatter 8, Siege 17.6.
+- Collector: health 50 → 87.5, movement 3.6 → 4.32, teleport chance 0.48 → 0.528
+  (relative 10% increase). Ranged execution durations divided by 1.15; boss bolt speed
+  9 → 10.35 without changing ordinary bolts. Stream selection starts beyond 7 units
+  instead of 7.5; existing melee and repeat caps remain.
+- Fifth pattern, Summon: two independent rolls from the four ordinary enemy kinds,
+  including duplicates, on a seeded 25–30 active-second timer. Reserves its cast between
+  offensive patterns. Per the owner's follow-up, the timer never overrides an executing
+  move or shortens recovery: budget-held attacks finish normally, then receive their full
+  recovery before Summon can cast. Arrivals may therefore run late. Summoned enemies
+  appear 2.5–4 units from the Collector with wall/enemy/player body clearance, the usual
+  warning, and endless cycle scaling. Both positions are planned before either spawn;
+  blocked casts retain their enemy rolls and wait for local room rather than spawning far away.
+- Presentation: existing Attack3 casting row, purple fallback ring, casting Vortex,
+  and Teleport effects at both arrivals. Cast frames follow gameplay time and pause.
+- Actual live-editor commands: `unity command recompile`, `recompile_status`,
+  `run_tests --mode editor --async_tests true`, `run_tests --mode playmode --async_tests true`,
+  and `test_status`. Config asset edited and saved through the live Editor.
+- Final results with nearby summons and no override: **EditMode 528/528 passed; PlayMode 37/37 passed; compilation clean.**
+  Coverage includes repeated cadence, seeded repeatability/all four kinds/duplicates,
+  pause/death, due summons waiting for held/recently unblocked ranged attacks and full
+  recovery, local spawn distance/clearance at edges and pillars, blocked casts waiting for
+  a complete pair, ordinary range expiry, Collector projectile speed, cast sprite/ring,
+  and both arrival effects.
+- Automated evidence only; human balance and visual feel have not been playtested.
+
+## UI redesign (2026-10-04)
+
+- Layout sweep: `bash .superpowers/rtp.sh LayoutSweepTests` -> 2/2 (art and flat skin). Each case checks main menu, settings, HUD (four upgrades held), pause, upgrade choice (three held, rank-3 cards) and results at the 80, 90, 100, 115 and 130% interface scales: all text fits, every text and control is on screen, and no two buttons overlap.
+- The sweep found the upgrade choice's footer below the screen at 130%. The panel now shrinks uniformly to fit below the Life bar (`RunFlowPanels.FitUpgradePanel`).
+- Not covered: the 3440x1440 ultrawide case (the PlayMode game view cannot change aspect), the training, cheats, character, records, achievements, pause-confirm, swap-step and tutorial screens in the sweep, the WebGL smoke test, and the review captures. All were skipped for time at the owner's request.
+
+## Pre-commit verification (6 Oct 2026)
+
+- Live Unity Editor, `unity command run_tests --mode editor --async_tests true`: **687/687 passed**, no failures or skipped tests (56.58 seconds).
+- After a laptop crash, the PlayMode suite was restarted with `unity command run_tests --mode playmode --async_tests true`: **59/61 passed, 2 failed**, no skipped tests (64.98 seconds).
+- Failures in `GameRootPlayModeTests`: `ClickOnHudButton_DoesNotCatch_ButClickOnArenaDoes` (the simulated HUD click did not open the pause menu) and `RestartKey_ThroughTheKeyboard` (the simulated R key did not replace the run simulation). Their causes remain unverified; no gameplay or test changes were made to address them in this commit-and-push pass.
+- Staged C# and `.gitignore` changes pass `git diff --cached --check -- '*.cs' .gitignore`. Unity-generated metadata contains trailing spaces, and the narrative plan uses Markdown hard-break spaces.

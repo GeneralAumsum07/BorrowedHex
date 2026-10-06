@@ -17,6 +17,8 @@ namespace BorrowedHex.Presentation
         void BuildTutorial()
         {
             TutorialUi = TutorialPanel.Create(canvas, PlayShort, ShowMainMenu);
+            // The completion card is a menu: the combat HUD steps back under it, as under pause.
+            TutorialUi.CardChanged += open => Hud.SetCovered(open);
         }
 
         /// <summary>

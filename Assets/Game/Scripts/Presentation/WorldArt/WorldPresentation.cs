@@ -267,7 +267,8 @@ namespace BorrowedHex.Presentation.WorldArt
                     previousGeometry?.Dispose(); previousGeometry = null; travelEffects.Clear();
                     fireFade = 1;
                     ApplyTheme(sim.Arena.worldTheme);
-                    if (sim.State == RunState.BossIntro) sim.CompleteBossIntro();
+                    // A short run's Sanctum scene plays first; GameRoot then starts the fight.
+                    if (sim.State == RunState.BossIntro && !root.NarrativeHoldsBossIntro) sim.CompleteBossIntro();
                 }
             }
             else
@@ -350,7 +351,16 @@ namespace BorrowedHex.Presentation.WorldArt
             }
             var state = actor.Boss;
             string next = WorldArtPolicy.Clip(state.Stage, state.Pattern);
-            if (next != clip || patternCount != state.PatternsStarted) { clip = next; poseBegan = sim.Clock.Now; patternCount = state.PatternsStarted; }
+            if (next != clip || patternCount != state.PatternsStarted)
+            {
+                clip = next;
+                // A skipped render frame must not delay the cast animation relative to its hit.
+                poseBegan = state.Stage == BossStage.Telegraph || state.Stage == BossStage.Active
+                    ? state.TelegraphStartedAt : sim.Clock.Now;
+                patternCount = state.PatternsStarted;
+            }
+            if (state.Pattern == BossPattern.Summon && state.Stage == BossStage.Telegraph && previousStage != BossStage.Telegraph)
+                Effect("Vortex", actor.Position, 2.4f, new Color(.7f, .35f, 1), cell: 100);
             if (state.Stage == BossStage.Teleport && previousStage != BossStage.Teleport)
             { beforeTeleport = actor.Position; Effect("Vortex", actor.Position, 2.4f, new Color(1, .35f, .4f), cell: 100); }
             if (previousStage == BossStage.Teleport && state.Stage != BossStage.Teleport)
@@ -359,7 +369,9 @@ namespace BorrowedHex.Presentation.WorldArt
             bool hurt = sim.Clock.Now < hurtUntil;
             var frames = art.Boss(hurt ? "Hurt" : clip);
             double began = hurt ? hurtUntil - 5.0 / 12 : poseBegan;
-            if (frames.Length > 0) bossBody.SetSprite(frames[WorldArtPolicy.Frame(sim.Clock.Now - began, frames.Length, 12, !hurt && (clip == "Idle" || clip == "Run"))]);
+            bool loop = clip == "Idle" || clip == "Run";
+            float fps = hurt || loop ? 12f : WorldArtPolicy.AttackFps(state.Stage, state.Pattern, sim.Config.collector);
+            if (frames.Length > 0) bossBody.SetSprite(frames[WorldArtPolicy.Frame(sim.Clock.Now - began, frames.Length, fps, !hurt && loop)]);
         }
 
         void Effect(string name, Vector2 at, float size, Color color, bool ground = false, int cell = 32)
@@ -371,6 +383,12 @@ namespace BorrowedHex.Presentation.WorldArt
             if (actor.Boss.Pattern == BossPattern.Slam)
             { Effect("Shockwave", actor.Position, 3.8f, new Color(.9f, .45f, .5f), true); Effect("Rock Burst", actor.Position, 2.5f, Color.white); }
             else if (actor.Boss.Pattern == BossPattern.Sweep) Effect("Wide Cleave", actor.Position, 3, new Color(1, .85f, .4f), true);
+            else if (actor.Boss.Pattern == BossPattern.Summon)
+            {
+                Effect("Dark Curse", actor.Position, 2, new Color(.7f, .35f, 1));
+                foreach (var position in actor.Boss.SummonedPositions)
+                    Effect("Teleport", position, 2, new Color(.7f, .45f, 1));
+            }
             else Effect("Midnight", actor.Position, 1.2f, Color.white, cell: 100);
         }
         void Damaged(EnemyActor actor, DamageEvent damage)

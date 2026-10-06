@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BorrowedHex.Presentation.Feedback;
 using BorrowedHex.Runs;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,62 +7,84 @@ using UnityEngine.UI;
 namespace BorrowedHex.UI
 {
     /// <summary>
-    /// Packet slots and catch readiness (Phase 3). One panel per slot, each with its OWN
-    /// shrinking countdown bar, so two stored packets are never merged into a single timer:
-    /// the player has to read which bundle fires first.
+    /// The two hex slots and catch readiness (plan Task 14). One card per slot, each with its OWN
+    /// countdown bar, so two stored packets are never merged into a single timer: the player has
+    /// to read which bundle fires first.
     ///
-    /// Panels are PINNED to slot indices (D34, superseding D18's oldest-first order): with
-    /// early release and Q selection, "slot 2" must stay the same bundle in the same place,
-    /// or the selection highlight would appear to jump when the other slot fires. The label
-    /// lists everything the slot holds (e.g. "Rocket x1  Bolt x2"), not one dominant type.
+    /// Cards are PINNED to slot indices (D34): with early release and Q selection, "slot 2" must
+    /// stay the same bundle in the same place, or the selection would appear to jump when the
+    /// other slot fires.
+    ///
+    /// What each card SAYS is decided by <see cref="SlotCue"/> (pure, tested); this class only
+    /// draws it. Two channels never stand in for each other: an ivory chevron above the card is
+    /// "the hand you fire from", a gold border around it is "this one is overcharged".
     ///
     /// Like the rest of the HUD it only polls the sim, so a restart needs just Bind().
     /// </summary>
     public sealed class PacketIndicator : MonoBehaviour
     {
-        sealed class Panel
-        {
-            public Image Back, Fill;
-            public Text Label;
-            public Outline Highlight;
-        }
+        // Sized from the font, not the brief's 300x96: Small is 36 px a line, and two rows of it
+        // plus a countdown bar need 120; four payload kinds plus the time need 400 across.
+        public const float CardW = 400f, CardH = 120f, Gap = 24f;
+        const float Pad = 16f, RowA = -8f, RowB = -44f, Row = 36f;
+        const float TimeW = 88f, CapW = 64f, PowerW = 80f, EntryW = 68f, Glyph = 24f;
+        // The hint clears the selection chevron: card top 150, border +4, gap 8, chevron 16, gap 8.
+        const float CardY = 30f, HintY = 186f, RootH = 222f;
+        const int BarScale = 2;   // bar.trayDark at 2 = 14 px, the same as the HUD's dash bar
 
-        static readonly Color FillColor = new Color(0.45f, 0.95f, 1f);
-        static readonly Color UrgentColor = new Color(1f, 1f, 1f);
-        static readonly Color EmptyBack = new Color(0f, 0f, 0f, 0.35f);
-        static readonly Color UsedBack = new Color(0f, 0.1f, 0.15f, 0.7f);
-        static readonly Color LockedBack = new Color(0.2f, 0.05f, 0.1f, 0.7f);
-        static readonly Color RejectRed = new Color(1f, 0.3f, 0.3f);
-        // D93: gold = "fire now for the Overcharge bonus"; distinct from the cyan fill and white urgency.
-        static readonly Color OverchargeGold = new Color(1f, 0.84f, 0.2f);
+        /// <summary>Every AttackKind has its own payload glyph, heaviest first (the old label order).</summary>
+        static readonly (Core.AttackKind kind, string glyph)[] Kinds =
+        {
+            (Core.AttackKind.Riposte, "payload.riposte"), (Core.AttackKind.Rocket, "payload.rocket"),
+            (Core.AttackKind.HeavyShot, "payload.heavy"), (Core.AttackKind.Bolt, "payload.bolt"),
+        };
+
+        // The countdown's own colours (spec: "consistent"): cyan as the world's returned shots,
+        // ivory when the selected hand is about to go, the shared gold while overcharged.
+        static readonly Color FillColor = FeedbackColors.Returned;
+        static readonly Color UrgentColor = UiPalette.Ivory;
+
+        sealed class Card
+        {
+            public Image Back, Marker, Border, Tray, Fill;
+            public Text Time, Cap, Power;
+            public readonly Image[] PayloadGlyphs = new Image[Kinds.Length];
+            public readonly Text[] PayloadCounts = new Text[Kinds.Length];
+            public readonly List<(Image glyph, Text word)> States = new List<(Image, Text)>();
+            public string StateKey;   // rebuild the state row only when what it says changes
+        }
 
         ArenaSim sim;
         RectTransform root;
-        readonly List<Panel> panels = new List<Panel>();
+        readonly List<Card> cards = new List<Card>();
+        PulseClock[] pulse = new PulseClock[2];
         Image catchFill;
         Text catchLabel, hint;
-        static readonly Color SelectedColor = new Color(1f, 0.85f, 0.35f);
-
-        const float PanelW = 270f, PanelH = 70f, Gap = 14f;
+        bool hintVisible = true;
+        float handFullUntil;
 
         public static PacketIndicator Create(RectTransform parent)
         {
-            var rt = Ui.Place(Ui.Rect("Packets", parent), new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(600, 110));
+            var rt = Ui.Place(Ui.Rect("Packets", parent), new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(2 * CardW + Gap, RootH));
             var pi = rt.gameObject.AddComponent<PacketIndicator>();
             pi.root = rt;
             pi.BuildCatchBar();
             return pi;
         }
 
-        float handFullUntil;
-
         public void Bind(ArenaSim s)
         {
             if (sim != null) sim.Events.CaptureRejected -= OnRejected;
             sim = s;
             handFullUntil = 0f;
+            // A rebind never carries a border or a pulse phase into the new run.
+            pulse = new PulseClock[2];
+            foreach (var c in cards) { c.Border.gameObject.SetActive(false); c.StateKey = null; }
             sim.Events.CaptureRejected += OnRejected;
         }
+
+        /// <summary>The control hint; hidden in the tutorial, whose prompts teach the same keys.</summary>
+        public void SetHintVisible(bool on) => hintVisible = on;
 
         // D89: the one rejection Q would have prevented gets its own cue on the hand itself,
         // so "why didn't that catch?" reads as "my hand was full", not as a missed click.
@@ -74,124 +97,238 @@ namespace BorrowedHex.UI
 
         void BuildCatchBar()
         {
-            var bg = Ui.Image("CatchBar", root, new Color(0, 0, 0, 0.55f));
-            Ui.Place(bg.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 0), new Vector2(240, 12));
-            catchFill = Ui.Image("Fill", bg.transform, FillColor);
-            var fr = catchFill.rectTransform;
-            fr.anchorMin = Vector2.zero; fr.anchorMax = Vector2.one; fr.pivot = new Vector2(0, 0.5f);
-            fr.offsetMin = fr.offsetMax = Vector2.zero;
-            catchLabel = Ui.Label("CatchLabel", root, "CATCH", 18);
-            Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(240, 22));
-            hint = Ui.Label("Hint", root, "LMB catch   RMB fire   Q freeze / swap   Expiry backfires!", 16);
-            hint.color = new Color(1f, 1f, 1f, 0.55f);
-            // The three-row panels reach y=120; keep the hint above their selection outline.
-            Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, 144), new Vector2(600, 20));
+            (_, catchFill) = GameplayHud.Bar("CatchBar", root, new Vector2(0, -(RootH - 7 * BarScale)), 240, BarScale, "fill.blue");
+            catchLabel = UiKit.Text("CatchLabel", root, "", UiFonts.Role.Small, TextAnchor.MiddleLeft);
+            catchLabel.color = UiPalette.Muted;
+            // Beside the bar, its 36-px line centred on the 14-px bar.
+            Ui.Place(catchLabel.rectTransform, new Vector2(0.5f, 0), new Vector2(128 + 60, -11), new Vector2(120, Row));
+            hint = UiKit.Text("Hint", root, "Catch [LMB]  ·  Fire [RMB]  ·  Swap [Q]", UiFonts.Role.Small, TextAnchor.MiddleCenter);
+            hint.color = UiPalette.Muted;
+            Ui.Place(hint.rectTransform, new Vector2(0.5f, 0), new Vector2(0, HintY), new Vector2(2 * CardW + Gap, Row));
         }
 
-        Panel AddPanel()
+        Card AddCard(int index)
         {
-            var p = new Panel { Back = Ui.Image("Slot", root, EmptyBack) };
-            p.Fill = Ui.Image("Countdown", p.Back.transform, FillColor);
-            var fr = p.Fill.rectTransform;
-            // A thin bar along the panel's bottom edge; its width shrinks with time left.
-            fr.anchorMin = Vector2.zero; fr.anchorMax = new Vector2(1, 0); fr.pivot = new Vector2(0, 0);
-            fr.offsetMin = Vector2.zero; fr.offsetMax = new Vector2(0, 8);
-            p.Highlight = p.Back.gameObject.AddComponent<Outline>();
-            p.Highlight.effectColor = SelectedColor;
-            p.Highlight.effectDistance = new Vector2(3, -3);
-            p.Label = Ui.Label("Text", p.Back.transform, "", 17);
-            Ui.Stretch(p.Label.rectTransform);
-            p.Label.rectTransform.offsetMin = new Vector2(0, 8);
-            panels.Add(p);
-            return p;
+            var c = new Card { Back = UiKit.Frame("Slot" + index, root, UiKit.FrameKind.Card) };
+            c.Back.raycastTarget = false;   // catches land anywhere, including over the slots
+            var back = c.Back.transform;
+
+            // Gold border: a 2-art-px ring sliced around the card, 4 px outside it, so it never
+            // covers the card's own frame art. White texture, tinted: the colour is exactly
+            // FeedbackColors.Overcharge with the cue's alpha.
+            c.Border = Ui.Image("Border", back, Color.white);
+            c.Border.sprite = RingSprite();
+            c.Border.type = Image.Type.Sliced;
+            c.Border.fillCenter = false;
+            c.Border.raycastTarget = false;
+            Ui.Stretch(c.Border.rectTransform);
+            c.Border.rectTransform.offsetMin = new Vector2(-4, -4);
+            c.Border.rectTransform.offsetMax = new Vector2(4, 4);
+            c.Border.gameObject.SetActive(false);
+
+            // Ivory chevron above the card, pointing at it: a separate Image, never an outline,
+            // so it cannot be confused with the border.
+            c.Marker = Ui.Image("Marker", back, UiPalette.Ivory);
+            c.Marker.sprite = ChevronSprite();
+            c.Marker.raycastTarget = false;
+            Ui.Place(c.Marker.rectTransform, new Vector2(0.5f, 1), new Vector2(0, 4 + 8), new Vector2(32, 16));
+            c.Marker.rectTransform.pivot = new Vector2(0.5f, 0);   // its bottom sits 8 px above the border (which is 4 px out)
+
+            for (int k = 0; k < Kinds.Length; k++)
+            {
+                var g = Ui.Image("Payload" + k, back, Color.white);
+                g.sprite = UiGlyphs.Get(Kinds[k].glyph);
+                g.preserveAspect = true; g.raycastTarget = false;
+                c.PayloadGlyphs[k] = g;
+                var n = UiKit.Text("Count" + k, back, "", UiFonts.Role.Small, TextAnchor.MiddleLeft);
+                n.color = UiPalette.Ivory;
+                c.PayloadCounts[k] = n;
+            }
+
+            // Fixed rects, right-aligned: the numbers never jump as they change (spec).
+            c.Time = Num(back, "Time", new Vector2(CardW - Pad - TimeW, RowA), TimeW, UiPalette.Ivory);
+            c.Power = Num(back, "Power", new Vector2(CardW - Pad - PowerW, RowB), PowerW, UiPalette.Honey);
+            c.Cap = Num(back, "Capacity", new Vector2(CardW - Pad - PowerW - 8 - CapW, RowB), CapW, UiPalette.Muted);
+
+            (c.Tray, c.Fill) = GameplayHud.Bar("Countdown", back, new Vector2(0, -(CardH - 12 - 7 * BarScale)), CardW - 2 * Pad, BarScale, "fill.blue");
+            cards.Add(c);
+            return c;
+        }
+
+        static Text Num(Transform parent, string name, Vector2 at, float w, Color color)
+        {
+            var t = UiKit.Text(name, parent, "", UiFonts.Role.Small, TextAnchor.MiddleRight);
+            t.color = color;
+            Ui.Place(t.rectTransform, new Vector2(0, 1), at, new Vector2(w, Row));
+            return t;
         }
 
         void LateUpdate()
         {
             if (sim == null) return;
-            hint.enabled = DisplayOptions.ShowHints;
+            hint.enabled = DisplayOptions.ShowHints && hintVisible;
             double now = sim.Clock.Now;
-            int slots = sim.Packets.SlotCount;
-            while (panels.Count < slots) AddPanel();
-
-            float total = slots * PanelW + (slots - 1) * Gap;
             var store = sim.Packets;
-            for (int i = 0; i < panels.Count; i++)
-            {
-                var p = panels[i];
-                bool shown = i < slots;
-                p.Back.gameObject.SetActive(shown);
-                if (!shown) continue;
-                Ui.Place(p.Back.rectTransform, new Vector2(0.5f, 0),
-                    new Vector2(-total * 0.5f + PanelW * 0.5f + i * (PanelW + Gap), 50), new Vector2(PanelW, PanelH));
+            int slots = store.SlotCount;
+            while (cards.Count < slots) AddCard(cards.Count);
+            if (pulse.Length < slots) System.Array.Resize(ref pulse, slots);
 
-                bool selected = i == store.SelectedSlot;
-                p.Highlight.enabled = selected;
-                bool handFullFlash = selected && Time.unscaledTime < handFullUntil;
-                // Red outline while the HandFull cue runs (D89), the usual gold otherwise.
-                p.Highlight.effectColor = handFullFlash ? RejectRed : SelectedColor;
+            float total = slots * CardW + (slots - 1) * Gap;
+            for (int i = 0; i < cards.Count; i++)
+            {
+                var c = cards[i];
+                bool shown = i < slots;
+                c.Back.gameObject.SetActive(shown);
+                if (!shown) continue;
+                Ui.Place(c.Back.rectTransform, new Vector2(0.5f, 0), new Vector2(-total * 0.5f + CardW * 0.5f + i * (CardW + Gap), CardY), new Vector2(CardW, CardH));
+
                 var pk = store.InSlot(i);
-                string tag = (selected ? "> " : "") + (i + 1);
+                bool selected = i == store.SelectedSlot;
+                bool over = pk != null && pk.IsOvercharged(sim.Stats.Power);   // the slot's own packet only (spec)
+                double since = SlotCue.Track(ref pulse[i], pk, pk != null && selected && over, now);
+                var cue = SlotCue.Evaluate(new SlotInput
+                {
+                    HasPacket = pk != null, Locked = store.IsLocked(i), Selected = selected,
+                    Primed = pk == null || sim.IsPrimed(pk), Overcharged = over, Fused = pk != null && pk.PowerScale > 1f,
+                    HandFull = selected && Time.unscaledTime < handFullUntil,
+                    ReduceFlashes = DisplayOptions.ReduceFlashes, Now = now, OverchargeSince = since,
+                });
+
+                c.Marker.gameObject.SetActive(cue.Marker);
+                c.Marker.color = cue.MarkerColor;
+                c.Border.gameObject.SetActive(cue.Border);
+                if (cue.Border) c.Border.color = cue.BorderColor;
+                SetStates(c, cue);
+
                 if (pk != null)
                 {
                     float left = pk.Remaining(now);
-                    float frac = Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime));
-                    p.Back.color = UsedBack;
-                    p.Fill.enabled = true;
-                    p.Fill.rectTransform.anchorMax = new Vector2(frac, 0);
-                    // D90: an unprimed hex is drawn dimmed and labelled UNSTABLE until it can fire.
-                    bool primed = sim.IsPrimed(pk);
-                    // D93: the Overcharge zone turns the bar gold - it replaces the urgent red,
-                    // because inside the zone "about to expire" is exactly the moment to fire.
-                    bool overcharged = pk.IsOvercharged(sim.Stats.Power);
-                    var fill = overcharged ? OverchargeGold : selected && left < 0.5f ? UrgentColor : FillColor;
-                    if (!primed) fill.a = 0.5f;
-                    p.Fill.color = fill;
-                    // A pocketed hex frozen inside the zone is a banked crit (R10), so it says so.
-                    string baseState = handFullFlash ? "HAND FULL — Q"
-                        : !primed ? "UNSTABLE"
-                        : selected ? (overcharged ? "OVERCHARGE — FIRE!" : "DECAYING")
-                        : overcharged ? "FROZEN  OVERCHARGED" : "FROZEN";
-                    string state = baseState + (pk.PowerScale > 1f ? "  FUSED" : "");
+                    c.Tray.gameObject.SetActive(true);
+                    c.Fill.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(left / Mathf.Max(0.01f, pk.Lifetime)), 1);
+                    // D93: inside the zone "about to expire" is exactly the moment to fire, so gold
+                    // replaces the urgent colour rather than competing with it.
+                    var fill = cue.CountdownGold ? FeedbackColors.Overcharge : selected && left < 0.5f ? UrgentColor : FillColor;
+                    if (!sim.IsPrimed(pk)) fill.a = 0.5f;   // D90: an unprimed hex is drawn dimmed
+                    c.Fill.color = fill;
+                    c.Time.text = $"{left:0.0} s";
                     // FirePower, not Power: a fused packet shows the +25% it will actually fire with.
-                    p.Label.text = $"{tag}  {Contents(pk)}\n{pk.CapacityUsed}/{pk.Capacity}   x{pk.FirePower(sim.Stats.Power):0.00}   {left:0.0}s\n{state}";
+                    c.Power.text = $"x{pk.FirePower(sim.Stats.Power):0.00}";
+                    c.Cap.text = $"{pk.CapacityUsed}/{pk.Capacity}";
+                    SetPayloads(c, pk);
                 }
                 else
                 {
-                    p.Back.color = store.IsLocked(i) ? LockedBack : EmptyBack;
-                    p.Fill.enabled = false;
-                    // Fusion lock (section 5): the slot is unusable until the fused packet leaves.
-                    p.Label.text = store.IsLocked(i) ? $"{tag}  LOCKED\n(fused)" : $"{tag}  empty";
+                    c.Tray.gameObject.SetActive(false);   // an empty slot has no clock
+                    c.Time.text = c.Power.text = c.Cap.text = "";
+                    SetPayloads(c, null);
                 }
             }
 
             // Catch readiness: drains while the window + recovery run, full when ready again.
-            var c = sim.Capture;
-            float span = Mathf.Max(0.0001f, (float)(c.RecoveryEndsAt - c.WindowOpensAt));
-            float ready = c.IsReady(now) ? 1f : Mathf.Clamp01((float)((now - c.WindowOpensAt) / span));
+            var cap = sim.Capture;
+            float span = Mathf.Max(0.0001f, (float)(cap.RecoveryEndsAt - cap.WindowOpensAt));
+            float ready = cap.IsReady(now) ? 1f : Mathf.Clamp01((float)((now - cap.WindowOpensAt) / span));
             catchFill.rectTransform.anchorMax = new Vector2(ready, 1);
-            catchFill.color = ready >= 1f ? FillColor : new Color(0.3f, 0.5f, 0.55f);
-            catchLabel.text = c.IsWindowOpen(now) ? "CATCHING" : ready >= 1f ? "CATCH" : "...";
+            catchFill.color = ready >= 1f ? Color.white : new Color(1f, 1f, 1f, 0.45f);   // dims, as the dash bar
+            catchLabel.text = cap.IsWindowOpen(now) ? "Catching" : ready >= 1f ? "Catch" : "";
         }
 
-        static readonly System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
         /// <summary>
-        /// Every kind the packet holds with its count, heaviest first ("Rocket x1  Bolt x2"),
-        /// so a mixed packet is never mislabelled as a single type.
+        /// Every kind the packet holds with its count, heaviest first, in a fixed left-to-right
+        /// run, so a mixed packet is never mislabelled as a single type (the old label's rule).
         /// </summary>
-        static string Contents(Combat.CapturedPacket pk)
+        static void SetPayloads(Card c, Combat.CapturedPacket pk)
         {
-            sb.Clear();
-            for (int kind = (int)Core.AttackKind.Riposte; kind >= 0; kind--)
+            float x = Pad;
+            for (int k = 0; k < Kinds.Length; k++)
             {
                 int n = 0;
-                foreach (var s in pk.Payloads) if ((int)s.Kind == kind) n++;
+                if (pk != null) foreach (var s in pk.Payloads) if (s.Kind == Kinds[k].kind) n++;
+                c.PayloadGlyphs[k].gameObject.SetActive(n > 0);
+                c.PayloadCounts[k].gameObject.SetActive(n > 0);
                 if (n == 0) continue;
-                if (sb.Length > 0) sb.Append("  ");
-                sb.Append((Core.AttackKind)kind).Append(" x").Append(n);
+                Ui.Place(c.PayloadGlyphs[k].rectTransform, new Vector2(0, 1), new Vector2(x, RowA - (Row - Glyph) / 2), new Vector2(Glyph, Glyph));
+                c.PayloadCounts[k].text = "x" + n;
+                Ui.Place(c.PayloadCounts[k].rectTransform, new Vector2(0, 1), new Vector2(x + Glyph + 4, RowA), new Vector2(EntryW - Glyph - 4, Row));
+                x += EntryW;
             }
-            return sb.ToString();
+        }
+
+        /// <summary>
+        /// The state row: each state's glyph with its word, left to right. When the words run out
+        /// of room the remaining states keep their glyph and drop the word: the symbol is the
+        /// constant, the word is the gloss. Rebuilt only when the cue's text changes.
+        /// </summary>
+        void SetStates(Card c, in SlotCue cue)
+        {
+            string key = cue.Label + "|" + string.Join(",", cue.States);
+            if (key == c.StateKey) return;
+            c.StateKey = key;
+            foreach (var (g, w) in c.States) { g.gameObject.SetActive(false); w.gameObject.SetActive(false); }
+
+            // Words without a glyph ("Hand full", "Decaying") come first in Label; the rest pair
+            // one-to-one with States, in the same order (SlotCue.Evaluate builds both together).
+            var words = cue.Label.Length > 0 ? cue.Label.Split(new[] { "  " }, System.StringSplitOptions.None) : new string[0];
+            int bare = words.Length - cue.States.Length;
+            float x = Pad, limit = CardW - Pad - PowerW - 8 - CapW - 8;
+            for (int i = 0; i < words.Length; i++)
+            {
+                if (i == c.States.Count) c.States.Add(NewState(c));
+                var (g, w) = c.States[i];
+                string glyphId = i >= bare ? cue.States[i - bare] : null;
+                if (glyphId != null)
+                {
+                    if (x + Glyph > limit) break;   // not even the symbol fits: stop (cannot happen with today's four states)
+                    g.sprite = UiGlyphs.Get(glyphId);
+                    g.color = glyphId == "state.frozen" ? FeedbackColors.Returned : Color.white;   // UiGlyphs: frozen is tinted ice blue
+                    g.gameObject.SetActive(true);
+                    Ui.Place(g.rectTransform, new Vector2(0, 1), new Vector2(x, RowB - (Row - Glyph) / 2), new Vector2(Glyph, Glyph));
+                    x += Glyph + 4;
+                }
+                w.text = words[i];
+                w.color = words[i] == "Hand full" ? SlotCue.RejectRed : UiPalette.Ivory;
+                float ww = Mathf.Ceil(w.preferredWidth);
+                if (x + ww <= limit)
+                {
+                    w.gameObject.SetActive(true);
+                    Ui.Place(w.rectTransform, new Vector2(0, 1), new Vector2(x, RowB), new Vector2(ww, Row));
+                    x += ww + 12;
+                }
+                else if (glyphId == null) continue;   // a bare word that does not fit is simply not said
+                else x += 4;
+            }
+        }
+
+        static (Image, Text) NewState(Card c)
+        {
+            var g = Ui.Image("State", c.Back.transform, Color.white);
+            g.preserveAspect = true; g.raycastTarget = false;
+            var w = UiKit.Text("StateWord", c.Back.transform, "", UiFonts.Role.Small, TextAnchor.MiddleLeft);
+            g.gameObject.SetActive(false); w.gameObject.SetActive(false);
+            return (g, w);
+        }
+
+        // ---- Generated sprites (PixelGeometry: no import, no licence) ----------------------
+        // PPU 50 on the 100-PPU canvas, as all the UI art: 1 texel = 2 reference px.
+
+        static Sprite ring, chevron;
+
+        static Sprite RingSprite()
+        {
+            if (ring != null) return ring;
+            var t = PixelGeometry.Frame(6, 2);
+            ring = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(0.5f, 0.5f), 50f, 0, SpriteMeshType.FullRect, new Vector4(2, 2, 2, 2));
+            ring.hideFlags = HideFlags.DontSave;
+            return ring;
+        }
+
+        static Sprite ChevronSprite()
+        {
+            if (chevron != null) return chevron;
+            var t = PixelGeometry.Chevron(16, 8);   // 32x16 ref: 24x12 read as a speck in the capture
+            chevron = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(0.5f, 0.5f), 50f);
+            chevron.hideFlags = HideFlags.DontSave;
+            return chevron;
         }
     }
 }

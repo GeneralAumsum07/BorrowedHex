@@ -1,0 +1,2890 @@
+fileFormatVersion: 2
+guid: 62de7c5185a1c7249b4e516fd832faba
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 32
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbb68ddac0cc755a0800000000000000
+      internalID: -6532528379649299524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f46e317271aacdc0800000000000000
+      internalID: -3617901837740514063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 556151e5fa9b76e60800000000000000
+      internalID: 7955531429622126165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a945bb306312c6ce0800000000000000
+      internalID: -1410716067399248742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65dec108b775b63f0800000000000000
+      internalID: -906534712043049642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9d77b188d8525b70800000000000000
+      internalID: 8886262701667876255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65d6f833b3133cd60800000000000000
+      internalID: 7909219500930592086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Idle_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1408
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3533dd6500b3d6bf0800000000000000
+      internalID: -329542325084802221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28b183e28a0763f60800000000000000
+      internalID: 8013716454584621954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adc714ef13ff8fed0800000000000000
+      internalID: -2379871812881122086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0820119d895198c30800000000000000
+      internalID: 4362041460306018944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64704982134505360800000000000000
+      internalID: 7156312378002638662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b26ca5d35b763e60800000000000000
+      internalID: 7941670592911794870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89a77798ee63461c0800000000000000
+      internalID: -4511420528581969256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 091d04d2235a6fae0800000000000000
+      internalID: -1515842589637422704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Moving_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1280
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e168bdcc87760cef0800000000000000
+      internalID: -89958224016734690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e918a1732993cccf0800000000000000
+      internalID: -230746180750245474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba12ff340bca0a710800000000000000
+      internalID: 1702550532201062827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af0e0ca99f7e14730800000000000000
+      internalID: 3981718604801433850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a7ac20fbc281edb0800000000000000
+      internalID: -4764383118361843799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a676c26113ea0300800000000000000
+      internalID: 219237195692013221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82a1304f0e8742a70800000000000000
+      internalID: 8801292479350643240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c92ba69be0d069fd0800000000000000
+      internalID: -2335664999853542756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be740094b5829a730800000000000000
+      internalID: 4010781315682027499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6481c7fc2e293380800000000000000
+      internalID: -8991104410398391186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6feb163f0ae06c6f0800000000000000
+      internalID: -664827810549743882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 237cd771d125473b0800000000000000
+      internalID: -5515693358720366798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Attack_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1152
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f00176e77459c060800000000000000
+      internalID: 6974198371903930612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad6ea85c587595800800000000000000
+      internalID: 601608257287153370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fa680aaed61a6750800000000000000
+      internalID: 6298872174422289140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d22c7af50962959e0800000000000000
+      internalID: -1632230988423118291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce6524c5fd5a752b0800000000000000
+      internalID: -5595821633240410388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a95d3aa0e4b5fba0800000000000000
+      internalID: -6055735246907942496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 897f72bd4a3f9ef80800000000000000
+      internalID: -8076656567335258216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5796cf176698b1e0800000000000000
+      internalID: -2181828649802098850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 606d621f43d95c410800000000000000
+      internalID: 1496775301880272390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2fcd4fc94dcfa1b0800000000000000
+      internalID: -5643066091177652438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4748310ed684dd830800000000000000
+      internalID: 4097510872725030004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3ce3d64a7d3a1150800000000000000
+      internalID: 5844051061850238012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Front_Death_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 1024
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43130e263ca902290800000000000000
+      internalID: -7917157980949171916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93fdce89128f89ff0800000000000000
+      internalID: -29000574394638535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec847a67801956e90800000000000000
+      internalID: -7033055777532720946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c77014f8ab9cd620800000000000000
+      internalID: 2800284218269136836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36ce782791fac64b0800000000000000
+      internalID: -5445785325567218589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f48663dc762d62110800000000000000
+      internalID: 1235906491026139215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00c2758be6376bc90800000000000000
+      internalID: -7154404038655136768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24be5f5a113e1afc0800000000000000
+      internalID: -3485254971669746878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Idle_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 896
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccf6374029e037ab0800000000000000
+      internalID: -5011645940030541876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea6631cb308536290800000000000000
+      internalID: -7898372548414183762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65a10cf1ac0d005f0800000000000000
+      internalID: -792403967882552746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 041ca3cd971b62070800000000000000
+      internalID: 8081341718306931008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a501850c25984bb0800000000000000
+      internalID: -4951543773990419035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 026785a612b23c8c0800000000000000
+      internalID: -3980290223147289056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6363ddc200c01e60800000000000000
+      internalID: 7931050062075093867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91903aea5f0260e40800000000000000
+      internalID: 5622217424387639577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Moving_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 768
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70fae2f182327a8e0800000000000000
+      internalID: -1682337280570773753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e921e71c3a13f0700800000000000000
+      internalID: 508679862311850654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27439ddc58c5859e0800000000000000
+      internalID: -1632453135167835022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7f97a7e88ade1d90800000000000000
+      internalID: -7125017278916616326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4199d28bc7e24980800000000000000
+      internalID: -8556021480790847154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21fd8b85276168060800000000000000
+      internalID: 6955271354890903314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df09a4dd378fa5b20800000000000000
+      internalID: 3124082468052439293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b4861587c350b5b0800000000000000
+      internalID: -5354687840547076944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 051fb6f7329735f20800000000000000
+      internalID: 3410202536218194256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c16e9bf43b9adcc70800000000000000
+      internalID: 8993030618530571804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39b2c07c61f49bdc0800000000000000
+      internalID: -3622777465995514989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f37a41369bc6a0e0800000000000000
+      internalID: -2258894317147229196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Attack_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 640
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05e0dc206e1783c10800000000000000
+      internalID: 2033500464461188688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6206d7ad54bfd1fe0800000000000000
+      internalID: -1216540046883200986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b838c9632cd179c30800000000000000
+      internalID: 4365991083736073099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aae334ad4df4c6f0800000000000000
+      internalID: -665128335034815831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ba7c6ec83381c3e0800000000000000
+      internalID: -2035201276590130505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75eb86b145ca543d0800000000000000
+      internalID: -3222980481076642217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ac3194295dd3c560800000000000000
+      internalID: 7332947993224625318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7381e942c55481f30800000000000000
+      internalID: 4546460085884164151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0f5383f65b296f40800000000000000
+      internalID: 5722152454003580687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fde661b1e685d41a0800000000000000
+      internalID: -6823700630472331553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66e0b1e651f3426c0800000000000000
+      internalID: -4169137993764106650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3149acc7226327420800000000000000
+      internalID: 2626221054460859411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Back_Death_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 512
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c9f4bdb68c096070800000000000000
+      internalID: 8100019177650452931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22b90c541f5ae4cd0800000000000000
+      internalID: -2571935881506022622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62b268f0ee7d156b0800000000000000
+      internalID: -5309225068230464730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08d05932a259befa0800000000000000
+      internalID: -5770354489327022720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6912beeaa28574590800000000000000
+      internalID: -7690080898365316714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4369256d4d014a510800000000000000
+      internalID: 1559389877291882036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 244e6f6a823e13170800000000000000
+      internalID: 8156550163884074050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b6d4e14e4f167320800000000000000
+      internalID: 2555264259552761522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Idle_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 384
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44c02a66e19993a00800000000000000
+      internalID: 736788369901751364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a14e78a1db407f230800000000000000
+      internalID: 3672409231384372250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 569f451f20e2a0090800000000000000
+      internalID: -8067585192307132059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f6f18199b7febf20800000000000000
+      internalID: 3440459541739861748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a957c2b4c25cd7870800000000000000
+      internalID: 8682312450670622106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 533536afc89c26d10800000000000000
+      internalID: 2117476382150972213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbd1e0829d17d0180800000000000000
+      internalID: -9147530090625753667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ff0e7853a99f0080800000000000000
+      internalID: -9218980985360740360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Moving_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 256
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bce058032131af490800000000000000
+      internalID: -7711830443074187573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d11daf821759e4390800000000000000
+      internalID: -7832158388699344611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 090ceba5d6a2a1580800000000000000
+      internalID: -8855719068108406640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b18e3982fca8f010800000000000000
+      internalID: 1222917456515727796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb3429329ded5a4a0800000000000000
+      internalID: -6582610256146054212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbcdb26bd096dd3d0800000000000000
+      internalID: -3180270254241882948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8c96021ba6903140800000000000000
+      internalID: 4697420072833424526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d97f63ca8250be430800000000000000
+      internalID: 3813147181745371037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06b40653dc7542a90800000000000000
+      internalID: -7339644953831650464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 092e307fe01ddbb00800000000000000
+      internalID: 846062167219495568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a80baaffef3e58150800000000000000
+      internalID: 5874351973325254794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e033a7f16bdd70300800000000000000
+      internalID: 218386881232646926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Attack_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 128
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fac051370669dd250800000000000000
+      internalID: 5971094021954931887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_00_Aura
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 027004a1859eadf90800000000000000
+      internalID: -6927968512149289184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_01_Aura
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12565cf8c65d13080800000000000000
+      internalID: -9209345100750691039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_02_Aura
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8f7ee51a9f2d78a0800000000000000
+      internalID: -6305831564409405558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_03_Aura
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b6eee9f3302a5660800000000000000
+      internalID: 7375242747381212854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_04_Aura
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5270b324e90464480800000000000000
+      internalID: -8915367363873143003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_05_Aura
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64e387a816cc15d50800000000000000
+      internalID: 6724380437947891270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_06_Aura
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79998ca6324398ff0800000000000000
+      internalID: -33438195508536937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_07_Aura
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2039f94c275ac6d90800000000000000
+      internalID: -7103120599926467838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_08_Aura
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10e05ac308f90b410800000000000000
+      internalID: 1490866849781714433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_09_Aura
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e1a6f4ca4e302010800000000000000
+      internalID: 1161997194714587620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_10_Aura
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8fc7f8765403a290800000000000000
+      internalID: -7880450153525031027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Pursuer_Evolved_Side_Death_11_Aura
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 0
+        width: 160
+        height: 128
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1015625}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f490a4391fadeddd0800000000000000
+      internalID: -2459287615404635825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Pursuer_Evolved_Back_Attack_00_Aura: 508679862311850654
+      Pursuer_Evolved_Back_Attack_01_Aura: -1632453135167835022
+      Pursuer_Evolved_Back_Attack_02_Aura: -7125017278916616326
+      Pursuer_Evolved_Back_Attack_03_Aura: -8556021480790847154
+      Pursuer_Evolved_Back_Attack_04_Aura: 6955271354890903314
+      Pursuer_Evolved_Back_Attack_05_Aura: 3124082468052439293
+      Pursuer_Evolved_Back_Attack_06_Aura: -5354687840547076944
+      Pursuer_Evolved_Back_Attack_07_Aura: 3410202536218194256
+      Pursuer_Evolved_Back_Attack_08_Aura: 8993030618530571804
+      Pursuer_Evolved_Back_Attack_09_Aura: -3622777465995514989
+      Pursuer_Evolved_Back_Attack_10_Aura: -2258894317147229196
+      Pursuer_Evolved_Back_Attack_11_Aura: 2033500464461188688
+      Pursuer_Evolved_Back_Death_00_Aura: -1216540046883200986
+      Pursuer_Evolved_Back_Death_01_Aura: 4365991083736073099
+      Pursuer_Evolved_Back_Death_02_Aura: -665128335034815831
+      Pursuer_Evolved_Back_Death_03_Aura: -2035201276590130505
+      Pursuer_Evolved_Back_Death_04_Aura: -3222980481076642217
+      Pursuer_Evolved_Back_Death_05_Aura: 7332947993224625318
+      Pursuer_Evolved_Back_Death_06_Aura: 4546460085884164151
+      Pursuer_Evolved_Back_Death_07_Aura: 5722152454003580687
+      Pursuer_Evolved_Back_Death_08_Aura: -6823700630472331553
+      Pursuer_Evolved_Back_Death_09_Aura: -4169137993764106650
+      Pursuer_Evolved_Back_Death_10_Aura: 2626221054460859411
+      Pursuer_Evolved_Back_Death_11_Aura: 8100019177650452931
+      Pursuer_Evolved_Back_Idle_00_Aura: -29000574394638535
+      Pursuer_Evolved_Back_Idle_01_Aura: -7033055777532720946
+      Pursuer_Evolved_Back_Idle_02_Aura: 2800284218269136836
+      Pursuer_Evolved_Back_Idle_03_Aura: -5445785325567218589
+      Pursuer_Evolved_Back_Idle_04_Aura: 1235906491026139215
+      Pursuer_Evolved_Back_Idle_05_Aura: -7154404038655136768
+      Pursuer_Evolved_Back_Idle_06_Aura: -3485254971669746878
+      Pursuer_Evolved_Back_Idle_07_Aura: -5011645940030541876
+      Pursuer_Evolved_Back_Moving_00_Aura: -7898372548414183762
+      Pursuer_Evolved_Back_Moving_01_Aura: -792403967882552746
+      Pursuer_Evolved_Back_Moving_02_Aura: 8081341718306931008
+      Pursuer_Evolved_Back_Moving_03_Aura: -4951543773990419035
+      Pursuer_Evolved_Back_Moving_04_Aura: -3980290223147289056
+      Pursuer_Evolved_Back_Moving_05_Aura: 7931050062075093867
+      Pursuer_Evolved_Back_Moving_06_Aura: 5622217424387639577
+      Pursuer_Evolved_Back_Moving_07_Aura: -1682337280570773753
+      Pursuer_Evolved_Front_Attack_00_Aura: -230746180750245474
+      Pursuer_Evolved_Front_Attack_01_Aura: 1702550532201062827
+      Pursuer_Evolved_Front_Attack_02_Aura: 3981718604801433850
+      Pursuer_Evolved_Front_Attack_03_Aura: -4764383118361843799
+      Pursuer_Evolved_Front_Attack_04_Aura: 219237195692013221
+      Pursuer_Evolved_Front_Attack_05_Aura: 8801292479350643240
+      Pursuer_Evolved_Front_Attack_06_Aura: -2335664999853542756
+      Pursuer_Evolved_Front_Attack_07_Aura: 4010781315682027499
+      Pursuer_Evolved_Front_Attack_08_Aura: -8991104410398391186
+      Pursuer_Evolved_Front_Attack_09_Aura: -664827810549743882
+      Pursuer_Evolved_Front_Attack_10_Aura: -5515693358720366798
+      Pursuer_Evolved_Front_Attack_11_Aura: 6974198371903930612
+      Pursuer_Evolved_Front_Death_00_Aura: 601608257287153370
+      Pursuer_Evolved_Front_Death_01_Aura: 6298872174422289140
+      Pursuer_Evolved_Front_Death_02_Aura: -1632230988423118291
+      Pursuer_Evolved_Front_Death_03_Aura: -5595821633240410388
+      Pursuer_Evolved_Front_Death_04_Aura: -6055735246907942496
+      Pursuer_Evolved_Front_Death_05_Aura: -8076656567335258216
+      Pursuer_Evolved_Front_Death_06_Aura: -2181828649802098850
+      Pursuer_Evolved_Front_Death_07_Aura: 1496775301880272390
+      Pursuer_Evolved_Front_Death_08_Aura: -5643066091177652438
+      Pursuer_Evolved_Front_Death_09_Aura: 4097510872725030004
+      Pursuer_Evolved_Front_Death_10_Aura: 5844051061850238012
+      Pursuer_Evolved_Front_Death_11_Aura: -7917157980949171916
+      Pursuer_Evolved_Front_Idle_00_Aura: -6532528379649299524
+      Pursuer_Evolved_Front_Idle_01_Aura: -3617901837740514063
+      Pursuer_Evolved_Front_Idle_02_Aura: 7955531429622126165
+      Pursuer_Evolved_Front_Idle_03_Aura: -1410716067399248742
+      Pursuer_Evolved_Front_Idle_04_Aura: -906534712043049642
+      Pursuer_Evolved_Front_Idle_05_Aura: 8886262701667876255
+      Pursuer_Evolved_Front_Idle_06_Aura: 7909219500930592086
+      Pursuer_Evolved_Front_Idle_07_Aura: -329542325084802221
+      Pursuer_Evolved_Front_Moving_00_Aura: 8013716454584621954
+      Pursuer_Evolved_Front_Moving_01_Aura: -2379871812881122086
+      Pursuer_Evolved_Front_Moving_02_Aura: 4362041460306018944
+      Pursuer_Evolved_Front_Moving_03_Aura: 7156312378002638662
+      Pursuer_Evolved_Front_Moving_04_Aura: 7941670592911794870
+      Pursuer_Evolved_Front_Moving_05_Aura: -4511420528581969256
+      Pursuer_Evolved_Front_Moving_06_Aura: -1515842589637422704
+      Pursuer_Evolved_Front_Moving_07_Aura: -89958224016734690
+      Pursuer_Evolved_Side_Attack_00_Aura: -7832158388699344611
+      Pursuer_Evolved_Side_Attack_01_Aura: -8855719068108406640
+      Pursuer_Evolved_Side_Attack_02_Aura: 1222917456515727796
+      Pursuer_Evolved_Side_Attack_03_Aura: -6582610256146054212
+      Pursuer_Evolved_Side_Attack_04_Aura: -3180270254241882948
+      Pursuer_Evolved_Side_Attack_05_Aura: 4697420072833424526
+      Pursuer_Evolved_Side_Attack_06_Aura: 3813147181745371037
+      Pursuer_Evolved_Side_Attack_07_Aura: -7339644953831650464
+      Pursuer_Evolved_Side_Attack_08_Aura: 846062167219495568
+      Pursuer_Evolved_Side_Attack_09_Aura: 5874351973325254794
+      Pursuer_Evolved_Side_Attack_10_Aura: 218386881232646926
+      Pursuer_Evolved_Side_Attack_11_Aura: 5971094021954931887
+      Pursuer_Evolved_Side_Death_00_Aura: -6927968512149289184
+      Pursuer_Evolved_Side_Death_01_Aura: -9209345100750691039
+      Pursuer_Evolved_Side_Death_02_Aura: -6305831564409405558
+      Pursuer_Evolved_Side_Death_03_Aura: 7375242747381212854
+      Pursuer_Evolved_Side_Death_04_Aura: -8915367363873143003
+      Pursuer_Evolved_Side_Death_05_Aura: 6724380437947891270
+      Pursuer_Evolved_Side_Death_06_Aura: -33438195508536937
+      Pursuer_Evolved_Side_Death_07_Aura: -7103120599926467838
+      Pursuer_Evolved_Side_Death_08_Aura: 1490866849781714433
+      Pursuer_Evolved_Side_Death_09_Aura: 1161997194714587620
+      Pursuer_Evolved_Side_Death_10_Aura: -7880450153525031027
+      Pursuer_Evolved_Side_Death_11_Aura: -2459287615404635825
+      Pursuer_Evolved_Side_Idle_00_Aura: -2571935881506022622
+      Pursuer_Evolved_Side_Idle_01_Aura: -5309225068230464730
+      Pursuer_Evolved_Side_Idle_02_Aura: -5770354489327022720
+      Pursuer_Evolved_Side_Idle_03_Aura: -7690080898365316714
+      Pursuer_Evolved_Side_Idle_04_Aura: 1559389877291882036
+      Pursuer_Evolved_Side_Idle_05_Aura: 8156550163884074050
+      Pursuer_Evolved_Side_Idle_06_Aura: 2555264259552761522
+      Pursuer_Evolved_Side_Idle_07_Aura: 736788369901751364
+      Pursuer_Evolved_Side_Moving_00_Aura: 3672409231384372250
+      Pursuer_Evolved_Side_Moving_01_Aura: -8067585192307132059
+      Pursuer_Evolved_Side_Moving_02_Aura: 3440459541739861748
+      Pursuer_Evolved_Side_Moving_03_Aura: 8682312450670622106
+      Pursuer_Evolved_Side_Moving_04_Aura: 2117476382150972213
+      Pursuer_Evolved_Side_Moving_05_Aura: -9147530090625753667
+      Pursuer_Evolved_Side_Moving_06_Aura: -9218980985360740360
+      Pursuer_Evolved_Side_Moving_07_Aura: -7711830443074187573
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

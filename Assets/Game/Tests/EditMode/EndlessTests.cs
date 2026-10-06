@@ -64,7 +64,8 @@ namespace BorrowedHex.Tests
                 double lifeBefore = sim.LifeSeconds;
                 KillBoss(sim);
                 Assert.AreEqual(RunState.UpgradeChoice, sim.State, "the deferred wave-six choice opens when the boss falls");
-                Assert.AreEqual(lifeBefore + 30.0 - 91 * P5.Dt, sim.LifeSeconds, 0.05, "+30 s on a boss kill");
+                Assert.AreEqual(lifeBefore + 30.0 - 91 * P5.Dt * sim.Stats.LifeDrainPerSecond,
+                    sim.LifeSeconds, 0.05, "+30 life seconds on a boss kill, less passive drain");
                 Assert.AreEqual(cycle + 1, sim.Cycle);
                 Assert.AreEqual(cycle + 1, sim.Offers[0].Rank, "the post-boss choice already has the next cycle's rank");
                 stops.Add($"{sim.State} w{sim.Wave} c{sim.Cycle}");
@@ -314,7 +315,8 @@ namespace BorrowedHex.Tests
                 if (sim.State == RunState.UpgradeChoice) sim.ContinueFromUpgrade();
             }
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
-            Assert.AreEqual(sim.Stats.StartingSeconds, sim.Summary.Duration, 0.05f, "no kills: the clock lasts exactly its start");
+            Assert.AreEqual(sim.Stats.StartingSeconds / sim.Stats.LifeDrainPerSecond,
+                sim.Summary.Duration, 0.05f, "no kills: the health budget drains at the configured rate");
         }
 
         [Test]

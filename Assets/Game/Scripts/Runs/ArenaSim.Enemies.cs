@@ -21,7 +21,8 @@ namespace BorrowedHex.Runs
         /// </summary>
         public bool AutoSpawn;
 
-        public EnemyActor SpawnEnemy(ActorCategory category, Vector2 position, bool elite = false)
+        public EnemyActor SpawnEnemy(ActorCategory category, Vector2 position, bool elite = false,
+            bool scaleForCycle = false)
         {
             var c = Config.combat;
             var e = new EnemyActor
@@ -44,6 +45,7 @@ namespace BorrowedHex.Runs
             // Section 6: elite kill value is 1.5x the base. Elite behaviour modifiers arrive
             // with endless mode (Phase 11); the flag and value exist now so scoring is stable.
             e.KillValue = elite ? Mathf.RoundToInt(t.killValue * 1.5f) : t.killValue;
+            if (scaleForCycle) ApplyCycleScaling(e);
             Enemies.Add(e);
             Events.RaiseEnemySpawned(e);
             return e;
@@ -121,8 +123,12 @@ namespace BorrowedHex.Runs
 
         void TickEnemies(double now, float dt)
         {
-            foreach (var e in Enemies)
+            // The Collector can append two summons while it ticks. Capture the initial count
+            // so additions neither invalidate enumeration nor act on their own spawn tick.
+            int count = Enemies.Count;
+            for (int i = 0; i < count; i++)
             {
+                var e = Enemies[i];
                 if (!e.Alive) continue;
                 e.PrevPosition = e.Position;
                 if (e.IsBoss)
@@ -337,6 +343,48 @@ namespace BorrowedHex.Runs
         int sandboxFormation;
 
         /// <summary>
+        /// Collector summons stay in a local ring. Prefer the usual player-distance rule,
+        /// but when the player hugs the boss, keep body clearance instead of falling back
+        /// to a far-away arena spawn. A reserved first arrival lets the pair be planned atomically.
+        /// </summary>
+        internal bool TryFindSpawnPointNear(float radius, Vector2 centre, float minDistance,
+            float maxDistance, out Vector2 point, Vector2? reservedPosition = null, float reservedRadius = 0)
+        {
+            var bounds = Arena.bounds;
+            float margin = radius + .8f;
+            float playerClearance = Player.Radius + radius + .6f;
+            float bestDistance = -1;
+            point = default;
+            float angleOffset = Random.Range(0, 360f);
+            // Random candidates preserve variety; a small ring scan also finds clear sectors
+            // beside arena edges/pillars without ever widening the authored maximum distance.
+            for (int i = 0; i < 120; i++)
+            {
+                float angle = i < 48 ? Random.Range(0, 360f) : angleOffset + (i - 48) % 24 * 15f;
+                float distance = i < 48 ? Random.Range(minDistance, maxDistance)
+                    : Mathf.Lerp(minDistance, maxDistance, (i - 48) / 24 * .5f);
+                var candidate = centre + Geometry2D.Rotate(Vector2.right, angle) * distance;
+                if (candidate.x < bounds.xMin + margin || candidate.x > bounds.xMax - margin
+                    || candidate.y < bounds.yMin + margin || candidate.y > bounds.yMax - margin) continue;
+                float playerDistance = Vector2.Distance(candidate, Player.Position);
+                if (playerDistance <= playerClearance) continue;
+                bool blocked = false;
+                foreach (var wall in Walls)
+                    if (Geometry2D.CircleOverlapsRect(candidate, radius + .3f, wall)) { blocked = true; break; }
+                if (blocked) continue;
+                foreach (var enemy in Enemies)
+                    if (enemy.Alive && Vector2.Distance(candidate, enemy.Position) < enemy.Radius + radius + .6f)
+                    { blocked = true; break; }
+                if (blocked) continue;
+                if (reservedPosition.HasValue
+                    && Vector2.Distance(candidate, reservedPosition.Value) < radius + reservedRadius + .6f) continue;
+                if (playerDistance > bestDistance) { point = candidate; bestDistance = playerDistance; }
+                if (playerDistance >= Config.combat.minSpawnDistance) return true;
+            }
+            return bestDistance >= 0;
+        }
+
+        /// <summary>
         /// Sandbox director: when the arena is clear, bring in the next authored formation after
         /// a short breather, cycling through the list so practice covers every enemy kind.
         /// The scheduled spawn dies with the run (death cancels the scheduler).
@@ -368,7 +416,7 @@ namespace BorrowedHex.Runs
         /// as a formation member: spawn warning, minimum player distance, clear of pillars).
         /// </summary>
         public EnemyActor SummonEnemy(ActorCategory category) =>
-            SpawnEnemy(category, FindSpawnPoint(Config.combat.For(category).bodyRadius));
+            SpawnEnemy(category, FindSpawnPoint(Config.combat.For(category).bodyRadius), scaleForCycle: true);
 
         /// <summary>
         /// Playtest control: despawn every enemy (never counted as kills) and remove hostile

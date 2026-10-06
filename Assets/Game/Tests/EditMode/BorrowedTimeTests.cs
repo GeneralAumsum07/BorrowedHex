@@ -100,7 +100,8 @@ namespace BorrowedHex.Tests
             sim.Tick(Still, 2);
             Assert.IsTrue(sim.DamagePlayer(10, 123));
             // Derived from the cap so retuning the life budget (D65) does not break the test.
-            Assert.AreEqual(sim.Stats.StartingSeconds - 12f, sim.SecondsLeftInRun(), 1e-5f);
+            Assert.AreEqual(sim.Stats.StartingSeconds - 10f - 2f * sim.Stats.LifeDrainPerSecond,
+                sim.SecondsLeftInRun(), 1e-5f);
             Assert.IsFalse(sim.DamagePlayer(10, 123));
             Assert.AreEqual(10, sim.Score.DamageTaken);
         }
@@ -113,7 +114,7 @@ namespace BorrowedHex.Tests
             var e = sim.SpawnEnemy(ActorCategory.Acolyte, new Vector2(8, 0));
             e.ActiveAt = 0;
             P5.Kill(sim, e);
-            Assert.AreEqual(180f, sim.SecondsLeftInRun(), 1e-5f);
+            Assert.AreEqual(sim.Stats.StartingSeconds, sim.SecondsLeftInRun(), 1e-5f);
         }
 
         [TestCase(true, RunEndReason.Death)]
@@ -124,7 +125,8 @@ namespace BorrowedHex.Tests
             P5.Invulnerable(sim);
             // Stop 8 s short of the cap (a 10 s hit then kills) or 0.01 s short (time runs out).
             float life = sim.Stats.StartingSeconds;
-            sim.Tick(Still, hit ? life - 8f : life - 0.01f);
+            // Convert health left to elapsed time so faster drain does not end the run early.
+            sim.Tick(Still, (hit ? life - 8f : life - 0.01f) / sim.Stats.LifeDrainPerSecond);
             sim.ClearArena();
             sim.Player.ClearInvulnerability();
             if (hit) sim.DamagePlayer(10, 42);

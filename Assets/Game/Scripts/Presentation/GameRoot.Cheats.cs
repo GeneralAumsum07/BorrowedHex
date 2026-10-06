@@ -14,8 +14,9 @@ namespace BorrowedHex.Presentation
 
         void OpenCheats()
         {
-            Main.Show(false);
             CheatPanel.Show(ToggleInvincible, ToggleUnlockAll, CloseCheats);
+            // Esc runs the same close as Back, so the main menu's warning line refreshes either way.
+            Screens.Push(CheatPanel.gameObject, () => CheatPanel.DefaultFocus, CloseCheats);
         }
 
         void ToggleInvincible() => Cheats.Invincible = !Cheats.Invincible;
@@ -25,17 +26,8 @@ namespace BorrowedHex.Presentation
 
         void CloseCheats()
         {
-            CheatPanel.Hide();
+            if (Screens.Top == CheatPanel.gameObject) Screens.Pop();
             RefreshMainMenu();
-            Main.Show(true);
-        }
-
-        static string CheatsWarning()
-        {
-            if (!Cheats.AnyActive) return null;
-            string which = Cheats.Invincible && Cheats.UnlockAllNodes ? "Invincible, all skills unlocked"
-                : Cheats.Invincible ? "Invincible" : "All skills unlocked";
-            return $"CHEATS ON ({which}): runs give no XP, records or achievements.";
         }
     }
 }

@@ -1,0 +1,321 @@
+{
+  "status": "detailed original with animated poses",
+  "sheetSize": [
+    1280,
+    640
+  ],
+  "frameSize": [
+    320,
+    640
+  ],
+  "originalOrder": [
+    "Left",
+    "Front",
+    "Right",
+    "Back"
+  ],
+  "detailPixelSize": 5,
+  "pixelsPerUnit": 320,
+  "originalFileHashes": {
+    "Byog_Game_Jam_Assets.png": "bcf7b60b4f1553fd8920e3cc04e6b013ea774204d52a317e3846e34474d59aa5",
+    "Byog_Game_Jam_Assets.png.meta": "ade86c7fc62bdb1bed0a7531b8b2939372a54d9cc7c14bbd61ae19e98fdcbedb"
+  },
+  "sheetFile": "RogueMagician_Detailed_OriginalDimensions.png",
+  "frames": [
+    {
+      "view": "Left",
+      "file": "RogueMagician_Left_Detailed.png",
+      "originalColumn": 0,
+      "bounds": [
+        20,
+        50,
+        290,
+        570
+      ],
+      "alphaSHA256": "02d589609fe86cc42b2293f854a22245fe93370c79078604d92f81a353f35db0"
+    },
+    {
+      "view": "Front",
+      "file": "RogueMagician_Front_Detailed.png",
+      "originalColumn": 1,
+      "bounds": [
+        30,
+        50,
+        290,
+        570
+      ],
+      "alphaSHA256": "b21dadd87d9338f7aa893f01062b2d042bff8b97da2d394107369f9a9dec6a5b"
+    },
+    {
+      "view": "Right",
+      "file": "RogueMagician_Right_Detailed.png",
+      "originalColumn": 2,
+      "bounds": [
+        30,
+        50,
+        300,
+        570
+      ],
+      "alphaSHA256": "e1e24793da409c6424418a5a3a9e84999d7c618aa27697b45b604cfbff2012dc"
+    },
+    {
+      "view": "Back",
+      "file": "RogueMagician_Back_Detailed.png",
+      "originalColumn": 3,
+      "bounds": [
+        20,
+        50,
+        280,
+        570
+      ],
+      "alphaSHA256": "1f3fbaad4506562f76dbc1d0ac9a08bf1d566af1b1cc41e730b6470cf3d5a634"
+    }
+  ],
+  "originalMaskPreserved": true,
+  "materialAreasPreserved": true,
+  "masterSize": [
+    3840,
+    3200
+  ],
+  "masterColumns": 12,
+  "masterRowOrder": [
+    "Idle",
+    "Moving",
+    "Dash",
+    "Hurt",
+    "Death"
+  ],
+  "pivot": [
+    0.5,
+    0.109375
+  ],
+  "groundPixel": [
+    160,
+    570
+  ],
+  "sequences": [
+    {
+      "view": "Left",
+      "state": "Idle",
+      "frames": 8,
+      "fps": 8,
+      "loop": true,
+      "masterRow": 0,
+      "stripFile": "Left/RogueMagician_Left_Idle.png",
+      "masterFile": "Left/RogueMagician_Left_Complete.png",
+      "clipFile": "Clips/RogueMagician_Left_Idle.anim"
+    },
+    {
+      "view": "Left",
+      "state": "Moving",
+      "frames": 8,
+      "fps": 12,
+      "loop": true,
+      "masterRow": 1,
+      "stripFile": "Left/RogueMagician_Left_Moving.png",
+      "masterFile": "Left/RogueMagician_Left_Complete.png",
+      "clipFile": "Clips/RogueMagician_Left_Moving.anim"
+    },
+    {
+      "view": "Left",
+      "state": "Dash",
+      "frames": 8,
+      "fps": 24,
+      "loop": false,
+      "masterRow": 2,
+      "stripFile": "Left/RogueMagician_Left_Dash.png",
+      "masterFile": "Left/RogueMagician_Left_Complete.png",
+      "clipFile": "Clips/RogueMagician_Left_Dash.anim"
+    },
+    {
+      "view": "Left",
+      "state": "Hurt",
+      "frames": 6,
+      "fps": 15,
+      "loop": false,
+      "masterRow": 3,
+      "stripFile": "Left/RogueMagician_Left_Hurt.png",
+      "masterFile": "Left/RogueMagician_Left_Complete.png",
+      "clipFile": "Clips/RogueMagician_Left_Hurt.anim"
+    },
+    {
+      "view": "Left",
+      "state": "Death",
+      "frames": 12,
+      "fps": 10,
+      "loop": false,
+      "masterRow": 4,
+      "stripFile": "Left/RogueMagician_Left_Death.png",
+      "masterFile": "Left/RogueMagician_Left_Complete.png",
+      "clipFile": "Clips/RogueMagician_Left_Death.anim"
+    },
+    {
+      "view": "Front",
+      "state": "Idle",
+      "frames": 8,
+      "fps": 8,
+      "loop": true,
+      "masterRow": 0,
+      "stripFile": "Front/RogueMagician_Front_Idle.png",
+      "masterFile": "Front/RogueMagician_Front_Complete.png",
+      "clipFile": "Clips/RogueMagician_Front_Idle.anim"
+    },
+    {
+      "view": "Front",
+      "state": "Moving",
+      "frames": 8,
+      "fps": 12,
+      "loop": true,
+      "masterRow": 1,
+      "stripFile": "Front/RogueMagician_Front_Moving.png",
+      "masterFile": "Front/RogueMagician_Front_Complete.png",
+      "clipFile": "Clips/RogueMagician_Front_Moving.anim"
+    },
+    {
+      "view": "Front",
+      "state": "Dash",
+      "frames": 8,
+      "fps": 24,
+      "loop": false,
+      "masterRow": 2,
+      "stripFile": "Front/RogueMagician_Front_Dash.png",
+      "masterFile": "Front/RogueMagician_Front_Complete.png",
+      "clipFile": "Clips/RogueMagician_Front_Dash.anim"
+    },
+    {
+      "view": "Front",
+      "state": "Hurt",
+      "frames": 6,
+      "fps": 15,
+      "loop": false,
+      "masterRow": 3,
+      "stripFile": "Front/RogueMagician_Front_Hurt.png",
+      "masterFile": "Front/RogueMagician_Front_Complete.png",
+      "clipFile": "Clips/RogueMagician_Front_Hurt.anim"
+    },
+    {
+      "view": "Front",
+      "state": "Death",
+      "frames": 12,
+      "fps": 10,
+      "loop": false,
+      "masterRow": 4,
+      "stripFile": "Front/RogueMagician_Front_Death.png",
+      "masterFile": "Front/RogueMagician_Front_Complete.png",
+      "clipFile": "Clips/RogueMagician_Front_Death.anim"
+    },
+    {
+      "view": "Right",
+      "state": "Idle",
+      "frames": 8,
+      "fps": 8,
+      "loop": true,
+      "masterRow": 0,
+      "stripFile": "Right/RogueMagician_Right_Idle.png",
+      "masterFile": "Right/RogueMagician_Right_Complete.png",
+      "clipFile": "Clips/RogueMagician_Right_Idle.anim"
+    },
+    {
+      "view": "Right",
+      "state": "Moving",
+      "frames": 8,
+      "fps": 12,
+      "loop": true,
+      "masterRow": 1,
+      "stripFile": "Right/RogueMagician_Right_Moving.png",
+      "masterFile": "Right/RogueMagician_Right_Complete.png",
+      "clipFile": "Clips/RogueMagician_Right_Moving.anim"
+    },
+    {
+      "view": "Right",
+      "state": "Dash",
+      "frames": 8,
+      "fps": 24,
+      "loop": false,
+      "masterRow": 2,
+      "stripFile": "Right/RogueMagician_Right_Dash.png",
+      "masterFile": "Right/RogueMagician_Right_Complete.png",
+      "clipFile": "Clips/RogueMagician_Right_Dash.anim"
+    },
+    {
+      "view": "Right",
+      "state": "Hurt",
+      "frames": 6,
+      "fps": 15,
+      "loop": false,
+      "masterRow": 3,
+      "stripFile": "Right/RogueMagician_Right_Hurt.png",
+      "masterFile": "Right/RogueMagician_Right_Complete.png",
+      "clipFile": "Clips/RogueMagician_Right_Hurt.anim"
+    },
+    {
+      "view": "Right",
+      "state": "Death",
+      "frames": 12,
+      "fps": 10,
+      "loop": false,
+      "masterRow": 4,
+      "stripFile": "Right/RogueMagician_Right_Death.png",
+      "masterFile": "Right/RogueMagician_Right_Complete.png",
+      "clipFile": "Clips/RogueMagician_Right_Death.anim"
+    },
+    {
+      "view": "Back",
+      "state": "Idle",
+      "frames": 8,
+      "fps": 8,
+      "loop": true,
+      "masterRow": 0,
+      "stripFile": "Back/RogueMagician_Back_Idle.png",
+      "masterFile": "Back/RogueMagician_Back_Complete.png",
+      "clipFile": "Clips/RogueMagician_Back_Idle.anim"
+    },
+    {
+      "view": "Back",
+      "state": "Moving",
+      "frames": 8,
+      "fps": 12,
+      "loop": true,
+      "masterRow": 1,
+      "stripFile": "Back/RogueMagician_Back_Moving.png",
+      "masterFile": "Back/RogueMagician_Back_Complete.png",
+      "clipFile": "Clips/RogueMagician_Back_Moving.anim"
+    },
+    {
+      "view": "Back",
+      "state": "Dash",
+      "frames": 8,
+      "fps": 24,
+      "loop": false,
+      "masterRow": 2,
+      "stripFile": "Back/RogueMagician_Back_Dash.png",
+      "masterFile": "Back/RogueMagician_Back_Complete.png",
+      "clipFile": "Clips/RogueMagician_Back_Dash.anim"
+    },
+    {
+      "view": "Back",
+      "state": "Hurt",
+      "frames": 6,
+      "fps": 15,
+      "loop": false,
+      "masterRow": 3,
+      "stripFile": "Back/RogueMagician_Back_Hurt.png",
+      "masterFile": "Back/RogueMagician_Back_Complete.png",
+      "clipFile": "Clips/RogueMagician_Back_Hurt.anim"
+    },
+    {
+      "view": "Back",
+      "state": "Death",
+      "frames": 12,
+      "fps": 10,
+      "loop": false,
+      "masterRow": 4,
+      "stripFile": "Back/RogueMagician_Back_Death.png",
+      "masterFile": "Back/RogueMagician_Back_Complete.png",
+      "clipFile": "Clips/RogueMagician_Back_Death.anim"
+    }
+  ],
+  "restPoseMatchesDetailedOriginal": true,
+  "animationFramesMayChangeOutline": true,
+  "totalAnimationFrames": 168
+}

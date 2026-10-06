@@ -16,10 +16,11 @@ namespace BorrowedHex.UI
     /// </summary>
     public static class Ui
     {
-        public static readonly Color Ink = new Color(0.96f, 0.93f, 1f);
-        public static readonly Color Panel = new Color(0.07f, 0.05f, 0.12f, 0.92f);
-        public static readonly Color Accent = new Color(0.98f, 0.82f, 0.31f);
-        public static readonly Color ButtonFill = new Color(0.27f, 0.19f, 0.47f, 1f);
+        // Aliases kept for screens not yet rebuilt; new code reads UiPalette directly.
+        public static Color Ink => UiPalette.Ivory;
+        public static Color Panel => UiPalette.Panel;
+        public static Color Accent => UiPalette.Honey;
+        public static Color ButtonFill => UiPalette.Panel;
 
         static Font font;
         public static Font Font => font != null ? font : (font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
@@ -36,6 +37,9 @@ namespace BorrowedHex.UI
             scaler.referenceResolution = new Vector2(1920, 1080);
             scaler.matchWidthOrHeight = 0.5f;
             go.AddComponent<GraphicRaycaster>();
+            // Pixel art: no sub-pixel placement, or a 1-art-pixel line lands across two screen pixels.
+            canvas.pixelPerfect = true;
+            FocusPointer.Ensure(canvas);
             return canvas;
         }
 
@@ -101,6 +105,11 @@ namespace BorrowedHex.UI
             var t = rt.gameObject.AddComponent<Text>();
             t.font = Font;
             t.fontSize = size;
+            // Pixel body face where imported. Sizes from older screens (22-30) snap to the
+            // body role's grid so legacy text is crisp until its screen is rebuilt. UiKit.Text
+            // re-asserts its own role size afterwards, so display text keeps alagard's grid.
+            t.font = UiFonts.Body;
+            if (UiFonts.HasPixelFonts) t.fontSize = Mathf.Max(UiFonts.NativeBody, Mathf.RoundToInt(size / (float)UiFonts.NativeBody) * UiFonts.NativeBody);
             t.alignment = align;
             t.color = Ink;
             t.text = text;
@@ -111,20 +120,9 @@ namespace BorrowedHex.UI
             return t;
         }
 
+        // fontSize stays for source compatibility; the kit sizes captions by role now.
         public static Button Button(string name, Transform parent, string text, Action onClick, int fontSize = 30)
-        {
-            var img = Image(name, parent, ButtonFill);
-            var b = img.gameObject.AddComponent<Button>();
-            var colors = b.colors;
-            colors.highlightedColor = new Color(1.25f, 1.2f, 1.1f);
-            colors.pressedColor = new Color(0.8f, 0.8f, 0.8f);
-            colors.selectedColor = new Color(1.2f, 1.15f, 1.05f);
-            b.colors = colors;
-            var label = Label("Label", img.transform, text, fontSize);
-            Stretch(label.rectTransform);
-            if (onClick != null) b.onClick.AddListener(() => onClick());
-            return b;
-        }
+            => UiKit.Button(name, parent, text, onClick, UiKit.Tier.Secondary);
 
         /// <summary>Vertical stack used by menus; children size themselves via LayoutElement.</summary>
         public static VerticalLayoutGroup Column(RectTransform rt, float spacing)

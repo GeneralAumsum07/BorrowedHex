@@ -12,6 +12,8 @@ namespace BorrowedHex.Player
     {
         public float MoveSpeed;
         public float StartingSeconds;
+        // Resolve alongside the health cap so changing tuning cannot affect a run already underway.
+        public float LifeDrainPerSecond;
         public float HitInvulnerability;
         public float ContactInvulnerability;
         public float DashDistance;
@@ -65,6 +67,7 @@ namespace BorrowedHex.Player
             {
                 MoveSpeed = p.moveSpeed,
                 StartingSeconds = config.shortMode.runLength,
+                LifeDrainPerSecond = p.lifeDrainPerSecond,
                 HitInvulnerability = p.hitInvulnerability,
                 ContactInvulnerability = p.contactInvulnerability,
                 DashDistance = p.dashDistance,

@@ -76,7 +76,7 @@ MonoBehaviour:
       - -8
       - 0
       - 8
-      range: 15
+      range: 12
       repositions: 0
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -125,7 +125,7 @@ MonoBehaviour:
       - 0
       - 12
       - 24
-      range: 10
+      range: 8
       repositions: 1
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -148,7 +148,7 @@ MonoBehaviour:
       attackId: rocket
       volleySpreadDeg:
       - 0
-      range: 22
+      range: 17.6
       repositions: 0
       strikeTrigger: 1.6
       strikeReach: 0.8
@@ -167,6 +167,22 @@ MonoBehaviour:
     - 1
     - 3
     - 5
+  endless:
+    waveLength: 30
+    wavesPerCycle: 6
+    choiceEveryWaves: 2
+    bossKillSeconds: 30
+    maxOrdinaryEnemies: 18
+    maxOfferRank: 3
+    healthPerCycle: 0.15
+    movePerCycle: 0.05
+    moveMax: 1.25
+    cooldownPerCycle: 0.05
+    cooldownMin: 0.7
+    bossHealthPerCycle: 0.2
+    overstayStepPerCycle: 2
+    overstayMinSeconds: 15
+    maxHostileProjectiles: 80
   arena:
     bounds:
       serializedVersion: 2
@@ -201,6 +217,8 @@ MonoBehaviour:
       width: 1.2
       height: 1.2
     playerSpawn: {x: 0, y: -4}
+    worldTheme: Courtyard
+    propKinds:
   cameraRig:
     position: {x: 0, y: 17, z: -17.5}
     lookAt: {x: 0, y: 0, z: -2.2}
@@ -213,6 +231,7 @@ MonoBehaviour:
   overstayedSiege: {fileID: 0}
   player:
     moveSpeed: 6
+    lifeDrainPerSecond: 1.4
     hitInvulnerability: 0.65
     contactInvulnerability: 0.5
     dashDistance: 2.9
@@ -239,11 +258,25 @@ MonoBehaviour:
     parryRingRadius: 1.15
     parryRingWidth: 0.12
     parryWindowScale: 0.5
+  progression:
+    precisionAngle: 15
+    precisionCapacity: 2
+    quickDrawBonus: 0.3
+    quickDrawWindow: 0.3
+    mobilitySpeed: 0.05
+    mobilityDashRecovery: 0.1
+    mobilityDashDistance: 0.3
+    resilienceGrace: 0.15
+    resilienceTime: 20
+    resilienceDashGrace: 0.1
+    bloodLeech: 0.15
+    bloodSiphon: 0.25
+    bloodDebt: 0.3
   collector:
     displayName: The Collector
-    health: 50
+    health: 87.5
     bodyRadius: 0.9
-    moveSpeed: 3.6
+    moveSpeed: 4.968
     hitDamage: 20
     contactDamage: 10
     killValue: 250
@@ -255,23 +288,24 @@ MonoBehaviour:
     strafeMaxDeg: 55
     slamChooseDistance: 2.4
     sweepChooseDistance: 5
-    fanMaxDistance: 7.5
+    fanMaxDistance: 7
     maxMeleeInARow: 2
     maxSameInARow: 2
     slamInsteadOfSweepChance: 0.35
     teleportMinDistance: 6
-    teleportChance: 0.48
+    teleportChance: 0.55439997
     teleportTelegraph: 0.6
     teleportCooldown: 5
     teleportBehindDistance: 2.6
-    streamTelegraph: 0.6
-    streamAimLock: 0.17
+    streamTelegraph: 0.5217392
+    streamAimLock: 0.14782609
     streamShots: 12
-    streamInterval: 0.105
+    streamInterval: 0.09130435
+    rangedProjectileSpeedScale: 1.15
     streamTurnRate: 70
     streamUnlimited: 1
-    fanTelegraph: 0.72
-    fanAimLock: 0.25
+    fanTelegraph: 0.626087
+    fanAimLock: 0.21739131
     fanSpreadDeg:
     - -48
     - -36
@@ -283,6 +317,18 @@ MonoBehaviour:
     - 36
     - 48
     fanRange: 30
+    fanSpreadRepeatDeg:
+    - -60
+    - -48
+    - -36
+    - -24
+    - -12
+    - 0
+    - 12
+    - 24
+    - 36
+    - 48
+    - 60
     sweepTelegraph: 0.77
     sweepAimLock: 0.25
     sweepReach: 3
@@ -295,8 +341,13 @@ MonoBehaviour:
     parriedRecover: 1.2
     slamTelegraph: 0.8
     slamRadius: 3.2
+    summonIntervalMin: 25
+    summonIntervalMax: 30
+    summonTelegraph: 0.93333334
+    summonSpawnMinDistance: 2.5
+    summonSpawnMaxDistance: 4
   shortMode:
-    runLength: 180
+    runLength: 234
     encounterCount: 3
     formationsPerEncounter: 040000000500000005000000
     maxOrdinaryEnemies: 12
@@ -309,4 +360,45 @@ MonoBehaviour:
     comboStep: 0.25
     comboMax: 3
     comboTimer: 5
+    overchargeScore: 20
+    chainScore: 00000000050000000a0000000f000000
     victoryBonusPerSecond: 2
+  styles:
+    collectorConeAngle: 140
+    collectorWindow: 0.4
+    collectorRecovery: 1
+    daredevilCatchRadius: 1
+  upgrades:
+    offerCount: 3
+    maxHeld: 4
+    maxRank: 3
+    takeCostByHeld:
+    - 0.15
+    - 0.25
+    - 0.4
+    - 0.5
+    piercePerRank: 1
+    echoDelay: 0.2
+    echoFraction:
+    - 0.25
+    - 0.4
+    - 0.55
+    orbitRadius:
+    - 1
+    - 1.2
+    - 1.4
+    orbitDamage: 1
+    orbitInterval: 0.35
+    partingGiftDamage:
+    - 1
+    - 2
+    - 3
+    partingGiftRadius:
+    - 1.5
+    - 1.75
+    - 2
+    finalSecondBonus:
+    - 0.2
+    - 0.4
+    - 0.6
+    fusionPowerScale: 1.25

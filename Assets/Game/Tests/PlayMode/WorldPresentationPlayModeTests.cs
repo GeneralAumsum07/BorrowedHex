@@ -4,6 +4,8 @@ using BorrowedHex.Presentation;
 using BorrowedHex.Progression;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
+using BorrowedHex.Enemies;
+using BorrowedHex.Player;
 using BorrowedHex.Presentation.WorldArt;
 using NUnit.Framework;
 using UnityEngine;
@@ -20,6 +22,7 @@ namespace BorrowedHex.Tests
         public IEnumerator Setup()
         {
             GameRoot.StorageOverride = new MemoryProfileStorage();
+            GameRoot.SkipStory = true; // predates the lore holds; NarrativeFlowTests covers them
             cameraObject = new GameObject("WorldArtTestCamera") { tag = "MainCamera" };
             cameraObject.AddComponent<Camera>();
             rootObject = new GameObject("WorldArtTestRoot");
@@ -77,6 +80,57 @@ namespace BorrowedHex.Tests
             var sprite = body.sprite;
             yield return new WaitForSecondsRealtime(.2f);
             Assert.That(body.sprite, Is.SameAs(sprite));
+        }
+
+        [UnityTest]
+        public IEnumerator SummonRendersItsCastRingAndTwoArrivalEffects()
+        {
+            Attach();
+            root.PlaySandbox(); root.Sim.AutoSpawn = false;
+            var sim = root.Sim;
+            sim.ClearArena(); // Practice starts with a formation before AutoSpawn is switched off.
+            sim.Player.InvulnerableUntil = 1e9;
+            var boss = sim.SpawnBoss();
+            yield return null; // Bind listeners and create the boss view before driving the cast.
+            var still = PlayerCommand.Moving(Vector2.zero);
+            for (int i = 0; i < 36 * 60; i++)
+            {
+                sim.Tick(still, 1f / 60);
+                if (boss.Boss.Pattern == BossPattern.Summon && boss.Boss.Stage == BossStage.Telegraph) break;
+            }
+            Assert.That(boss.Boss.Pattern, Is.EqualTo(BossPattern.Summon));
+            Assert.That(boss.Boss.Stage, Is.EqualTo(BossStage.Telegraph));
+            sim.SetPause(PauseReason.Manual, true);
+            yield return null;
+            var bodyRoot = root.View.transform.Find("Enemies/Boss#" + boss.ActorId);
+            Assert.That(bodyRoot.Find("SummonRing").GetComponent<SpriteRenderer>().enabled, Is.True);
+            var body = bodyRoot.Find("Billboard/Sprite").GetComponent<SpriteRenderer>();
+            var castSprite = body.sprite;
+            if (Resources.Load<Texture2D>("WorldArt/Necromancer") != null)
+            {
+                using (var art = new WorldArtLibrary())
+                    Assert.That(castSprite.rect.y, Is.EqualTo(art.Boss("Attack3")[0].rect.y), "Use the existing casting row.");
+            }
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(body.sprite, Is.SameAs(castSprite), "A paused cast must not advance frames.");
+            sim.SetPause(PauseReason.Manual, false);
+            for (int i = 0; i < 120 && boss.Boss.SummonsResolved == 0; i++) sim.Tick(still, 1f / 60);
+            sim.SetPause(PauseReason.Manual, true);
+            yield return null;
+            Assert.That(boss.Boss.SummonsResolved, Is.EqualTo(1));
+            Assert.That(sim.AliveOrdinaryCount(), Is.EqualTo(2));
+            Assert.That(bodyRoot.Find("SummonRing").GetComponent<SpriteRenderer>().enabled, Is.False);
+            if (Resources.Load<Texture2D>("WorldArt/Teleport") != null)
+            {
+                foreach (var position in boss.Boss.SummonedPositions)
+                {
+                    bool arrivalEffect = false;
+                    foreach (var effect in artObject.transform.Find("WorldEffects").GetComponentsInChildren<SpriteRenderer>())
+                        arrivalEffect |= effect.enabled && Vector3.Distance(effect.transform.position,
+                            Geometry2D.ToWorld(position, .85f)) < .001f;
+                    Assert.That(arrivalEffect, Is.True, "Each actual arrival gets a teleport effect.");
+                }
+            }
         }
 
         [UnityTest]
@@ -405,6 +459,7 @@ namespace BorrowedHex.Tests
             UnityEngine.Object.Destroy(rootObject);
             UnityEngine.Object.Destroy(cameraObject);
             GameRoot.StorageOverride = null;
+            GameRoot.SkipStory = false;
             yield return null;
         }
     }

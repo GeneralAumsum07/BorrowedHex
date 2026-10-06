@@ -118,7 +118,7 @@ namespace BorrowedHex.Tests
             StringAssert.Contains("1.00 s", collector);
             string dare = StylePanel.CardBody(CaptureStyles.Resolve(CaptureStyles.Daredevil), p, Cfg, true);
             StringAssert.Contains("dash", dare);
-            StringAssert.Contains("SELECTED", dare);
+            StringAssert.Contains("Selected", dare);
         }
 
         // ---- Collector in play ----

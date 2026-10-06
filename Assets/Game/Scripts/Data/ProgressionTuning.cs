@@ -35,15 +35,16 @@ namespace BorrowedHex.Data
         [Tooltip("resilience_time: seconds added to the starting clock and its cap.")]
         public float resilienceTime = 20f;
         [Tooltip("resilience_dash_grace: seconds added to dash invulnerability (capped at the dash duration).")]
-        public float resilienceDashGrace = 0.04f;
+        public float resilienceDashGrace = 0.10f;
 
         [Header("Blood Price")]
-        [Tooltip("blood_leech: life SECONDS returned per point of damage that lands (shown x10 on screen, D100). Placeholder.")]
-        public float bloodLeech = 0.10f;
-        [Tooltip("blood_siphon: added to the above; the nodes stack (placeholder).")]
-        public float bloodSiphon = 0.10f;
-        [Tooltip("blood_debt: added to the above; the nodes stack (placeholder).")]
-        public float bloodDebt = 0.15f;
+        // Health is displayed x10: these seconds yield 1.5, 2.5 and 3 displayed health per damage.
+        [Tooltip("blood_leech: life seconds returned per damage; shown as 1.5 health.")]
+        public float bloodLeech = 0.15f;
+        [Tooltip("blood_siphon: adds 2.5 displayed health per damage; stacks with other nodes.")]
+        public float bloodSiphon = 0.25f;
+        [Tooltip("blood_debt: adds 3 displayed health per damage; stacks with other nodes.")]
+        public float bloodDebt = 0.30f;
     }
 
     public partial class GameConfig

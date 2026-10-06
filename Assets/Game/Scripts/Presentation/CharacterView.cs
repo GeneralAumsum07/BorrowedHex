@@ -79,12 +79,86 @@ namespace BorrowedHex.Presentation
 
         public void SetSprite(Sprite s) => body.sprite = s != null ? s : PixelSprites.Get(PixelSprites.Kind.Magician);
 
+        // ---- Animated art (CharacterArt). Off until SetCharacter finds the character's clips;
+        // without the asset (tests, an unbuilt library) the view keeps its static sprite. ----
+        CharacterArt art;
+        string character;      // "RogueMagician", "Acolyte", "Acolyte_Evolved", ...
+        bool fourViews;        // the player has Left/Right art; enemies have one Side view, flipped for left
+        string clipKey, state = "Idle";
+        Sprite[] frames;
+        float clipTime;
+
+        /// <summary>True once animated art drives this body; static SetSprite/SetFacing then step aside.</summary>
+        public bool Animated => frames != null;
+
+        /// <summary>
+        /// Switches this body to the named character's animations, keeping the current state and
+        /// view. Returns false (and changes nothing) when the art has no clips for it.
+        /// </summary>
+        public bool SetCharacter(string name, bool hasFourViews)
+        {
+            art ??= CharacterArt.Load();
+            if (art == null || art.Get($"{name}_Front_Idle") == null) return false;
+            character = name;
+            fourViews = hasFourViews;
+            clipKey = null;
+            Play(state, Vector2.down);
+            return true;
+        }
+
+        /// <summary>
+        /// Shows <paramref name="newState"/> facing <paramref name="dir"/> (sim plane: +y is away
+        /// from the camera). Re-asking for the same clip continues it; a new clip starts at frame 0.
+        /// One-shot states (Attack, Dash, Hurt, Death) hold their last frame until replaced.
+        /// </summary>
+        public void Play(string newState, Vector2 dir)
+        {
+            if (character == null) return;
+            string view;
+            bool flip = false;
+            if (dir.sqrMagnitude < 1e-6f) view = clipKey != null ? CurrentView() : "Front";
+            else if (Mathf.Abs(dir.y) > Mathf.Abs(dir.x)) view = dir.y > 0f ? "Back" : "Front";
+            else if (fourViews) view = dir.x < 0f ? "Left" : "Right";
+            else { view = "Side"; flip = dir.x < 0f; }
+            if (view == "Side" && dir.sqrMagnitude < 1e-6f) flip = body.flipX;
+            string key = $"{character}_{view}_{newState}";
+            var f = art.Get(key);
+            if (f == null) return;   // a state this character lacks keeps the current clip
+            body.flipX = flip;
+            if (key == clipKey) return;
+            clipKey = key; state = newState; frames = f; clipTime = 0f;
+            body.sprite = frames[0];
+        }
+
+        /// <summary>The state of the clip playing now, and whether a one-shot has finished.</summary>
+        public string State => state;
+        public bool Finished => frames != null && !CharacterArt.Loops(state)
+            && clipTime * CharacterArt.Fps(state) >= frames.Length;
+
+        string CurrentView()
+        {
+            // "{character}_{View}_{State}": the view is the part between the two.
+            var rest = clipKey.Substring(character.Length + 1);
+            return rest.Substring(0, rest.IndexOf('_'));
+        }
+
+        void Animate(float dt)
+        {
+            if (frames == null) return;
+            clipTime += dt;
+            int i = Mathf.FloorToInt(clipTime * CharacterArt.Fps(state));
+            i = CharacterArt.Loops(state) ? i % frames.Length : Mathf.Min(i, frames.Length - 1);
+            body.sprite = frames[i];
+        }
+
         public void SetTint(Color c) { tint = c; body.color = Silhouette ? Color.white : tint; }
         public void SetVisualScale(float scale) { visualScale = scale; body.transform.localScale = Vector3.one * scale; }
 
         /// <summary>Face left/right toward the aim; purely cosmetic.</summary>
         public void SetFacing(float x)
         {
+            // Animated art faces through Play's view choice instead.
+            if (Animated) return;
             if (Mathf.Abs(x) > 0.05f) body.flipX = x < 0f;
         }
 
@@ -164,6 +238,8 @@ namespace BorrowedHex.Presentation
         {
             if (cam == null) cam = Camera.main;
             if (cam != null) billboard.rotation = cam.transform.rotation;
+            // Scaled time: animations freeze with the game in pause menus and hit-stop.
+            Animate(Time.deltaTime);
             ApplyRecoil(Time.unscaledTime);
             ApplyFlash(Time.unscaledTime);
             bool hidden = blink && Mathf.Repeat(Time.unscaledTime * 12f, 1f) < 0.4f;

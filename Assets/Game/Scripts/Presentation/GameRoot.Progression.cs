@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using BorrowedHex.Progression;
 using BorrowedHex.Runs;
 using BorrowedHex.UI;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace BorrowedHex.Presentation
 {
@@ -9,10 +11,21 @@ namespace BorrowedHex.Presentation
     public sealed partial class GameRoot
     {
         public SkillTreePanel Tree { get; private set; }
+        /// <summary>The Character screen hosting the tree (Skills tab) and the styles (Capture style tab).</summary>
+        public CharacterScreen Character { get; private set; }
+        /// <summary>The overlay confirm for irreversible menu actions (spec: Reset skills, abandon run).</summary>
+        public ConfirmDialog Confirm { get; private set; }
 
         partial void BuildProgressionMenus()
         {
-            Tree = SkillTreePanel.Create(canvas);
+            // Character first: the tree and the style cards parent their views into its Body.
+            Character = CharacterScreen.Create(canvas);
+            Tree = SkillTreePanel.Create(Character.Body);
+            // One shared confirm dialog: Reset skills asks through it now, the pause menu later (Task 12).
+            Confirm = ConfirmDialog.Create(canvas);
+            Tree.Bind(Confirm, Screens);
+            Character.TabChanged += ShowCharacterTab;
+            Character.Back += CloseCharacter;
             Main.EnableEntry("mastery", OpenTree);
             BuildLaterMenus();
         }
@@ -20,26 +33,46 @@ namespace BorrowedHex.Presentation
         // Phases 10-12 switch on their own entries here.
         partial void BuildLaterMenus();
 
-        void OpenTree()
+        void OpenTree() => OpenCharacter(CharacterScreen.SkillsTab);
+
+        void OpenCharacter(int tab)
         {
-            Main.Show(false);
-            Tree.Show(Profile.Profile, Config.progression, () => Profile.Save(), CloseTree);
+            Character.SetHeader(Profile.Profile.mastery);
+            Character.Open(tab);
+            Screens.Push(Character.gameObject, () => Character.DefaultFocus, CloseCharacter);
         }
 
-        partial void CloseSubMenus()
+        // Only the active tab's view is active; each view's IsOpen reads activeInHierarchy.
+        void ShowCharacterTab(int tab)
         {
-            if (Tree != null && Tree.IsOpen) CloseTree();
-            CloseLaterSubMenus();
+            if (tab == CharacterScreen.SkillsTab)
+            {
+                Styles?.Hide();
+                Tree.Show(Profile.Profile, Config.progression, OnTreeChanged, CloseCharacter);
+                Character.ViewFocus = () => Tree.DefaultFocus;
+            }
+            else
+            {
+                Tree.Hide();
+                Styles.Show(Profile.Profile, Config, () => Profile.Save(), CloseCharacter);
+                Character.ViewFocus = () => Styles.DefaultFocus;
+            }
         }
 
-        partial void CloseLaterSubMenus();
-
-        void CloseTree()
+        // A purchase spends points and may change the header's numbers.
+        void OnTreeChanged()
         {
-            Tree.Hide();
+            Profile.Save();
+            Character.SetHeader(Profile.Profile.mastery);
+        }
+
+        void CloseCharacter()
+        {
+            if (Screens.Top == Character.gameObject) Screens.Pop();
             RefreshMainMenu();
-            Main.Show(true);
         }
+
+        void CloseTree() => CloseCharacter();
 
         /// <summary>
         /// Section 7: style plus equipped passives are resolved ONCE here, into the setup the sim
@@ -55,38 +88,6 @@ namespace BorrowedHex.Presentation
         // Phase 11 applies the capture style on top of the passives here.
         partial void ApplyStyleExtra(RunSetup setup);
 
-        partial void ProfileLineExtra(ref string line)
-        {
-            var m = Profile.Profile.mastery;
-            string xp = m.level >= Mastery.MaxLevel ? "max level" : $"{m.xp}/{Mastery.CostToAdvance(m.level)} XP";
-            string pts = m.points > 0 ? $"   ·   {m.points} unspent point{(m.points == 1 ? "" : "s")}" : "";
-            // The style is shown here too, so the choice is visible right next to Play.
-            line = $"Mastery {m.level}   ·   {xp}{pts}   ·   {CaptureStyles.Resolve(Profile.Profile.styleId).Name}";
-        }
-
-        partial void FinalizeTextExtra(FinalizeResult r, System.Text.StringBuilder sb)
-        {
-            if (r.Xp == null) return;
-            var x = r.Xp;
-            // Only the non-zero terms, so a short loss reads "+4 XP (kills 4)" rather than a wall of zeros.
-            var parts = new List<string>();
-            if (x.NormalKills > 0) parts.Add($"kills {x.NormalKills * Mastery.XpPerNormalKill}");
-            if (x.OverstayedKills > 0) parts.Add($"overstayed {x.OverstayedKills * Mastery.XpPerOverstayedKill}");
-            if (x.BossKills > 0) parts.Add($"boss {x.BossKills * Mastery.XpPerBossKill}");
-            if (x.Encounters > 0) parts.Add($"encounters {x.Encounters * Mastery.XpPerEncounter}");
-            if (x.PerfectHits > 0) parts.Add($"perfect {x.PerfectHits}");
-            if (x.ScoreXp > 0) parts.Add($"score {x.ScoreXp}");   // D102
-            sb.Append($"+{x.Total} XP");
-            if (parts.Count > 0) sb.Append("  (").Append(string.Join(", ", parts)).Append(')');
-            var m = Profile.Profile.mastery;
-            if (r.LevelsGained > 0)
-                sb.Append($"\n<color=#FAD150>Mastery {r.LevelBefore} → {r.LevelAfter}: +{r.LevelsGained} point{(r.LevelsGained == 1 ? "" : "s")}</color>");
-            else if (m.level < Mastery.MaxLevel)
-                sb.Append($"\nMastery {m.level}: {m.xp}/{Mastery.CostToAdvance(m.level)} XP");
-            FinalizeTextMore(r, sb);
-        }
-
-        // Phase 10 adds achievements and records lines.
-        partial void FinalizeTextMore(FinalizeResult r, System.Text.StringBuilder sb);
+        // Task 16: the XP lines moved to ResultsCopy.FromFinalize (the results screen's copy).
     }
 }

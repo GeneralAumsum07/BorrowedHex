@@ -1,0 +1,19 @@
+{
+  "referenceSheetSize": [
+    1280,
+    640
+  ],
+  "animationFrameSize": [
+    320,
+    640
+  ],
+  "changedReferenceOutlinePixels": 0,
+  "verifiedFrames": 168,
+  "verifiedSequences": 20,
+  "restFramesIdenticalToReference": true,
+  "sourcePNGAndMetadataUnchanged": true,
+  "allPosesInsideFrame": true,
+  "masterSlicesMatchStateStrips": true,
+  "frontEyesMatchOriginalExactly": true,
+  "frontFacePixelsMatchOriginalExactly": true
+}

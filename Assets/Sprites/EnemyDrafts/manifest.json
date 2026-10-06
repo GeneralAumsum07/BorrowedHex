@@ -1,0 +1,532 @@
+{
+  "status": "static visual drafts; no animation cycles",
+  "drawingMethod": "authored deterministic Python/Pillow pixel drawing",
+  "frameSize": [
+    160,
+    128
+  ],
+  "pixelsPerUnit": 32,
+  "groundAnchorTopLeft": [
+    80,
+    115
+  ],
+  "unityPivot": [
+    0.5,
+    0.1015625
+  ],
+  "viewOrder": [
+    "Front",
+    "Back",
+    "Side"
+  ],
+  "flipSideForLeft": true,
+  "filterMode": "Point",
+  "mipmaps": false,
+  "compression": "None",
+  "characters": [
+    {
+      "character": "Acolyte",
+      "category": "Acolyte",
+      "evolved": false,
+      "evolutionDesign": "Extra casting hands; the original pair remains near the body.",
+      "turnaround": "Acolyte/Acolyte_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Acolyte/Acolyte_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            58,
+            49,
+            107,
+            116
+          ],
+          "paletteSize": 22,
+          "sha256": "e98627dfc8704a050784d704177d45330fcc00ca9fd01d8104a9aad2647e903a"
+        },
+        {
+          "view": "Back",
+          "file": "Acolyte/Acolyte_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            58,
+            49,
+            109,
+            116
+          ],
+          "paletteSize": 18,
+          "sha256": "9cfa2085c2d65ab7dbce11bf2ba0e8c17cc02ce916dbca0991c16ba677343676"
+        },
+        {
+          "view": "Side",
+          "file": "Acolyte/Acolyte_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            60,
+            49,
+            104,
+            117
+          ],
+          "paletteSize": 20,
+          "sha256": "8e6adad4cc8785ffc246b6fb51c18f365dc559600726cd21ef9714f39047766f"
+        }
+      ]
+    },
+    {
+      "character": "Acolyte_Evolved",
+      "category": "Acolyte",
+      "evolved": true,
+      "evolutionDesign": "Extra casting hands; the original pair remains near the body.",
+      "turnaround": "Acolyte_Evolved/Acolyte_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            46,
+            45,
+            115,
+            116
+          ],
+          "paletteSize": 25,
+          "sha256": "b562970240b904075c87c80f1c0a46d7f55a2fb5ea93fa595cf700dbcc932cfa"
+        },
+        {
+          "view": "Back",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            46,
+            45,
+            115,
+            116
+          ],
+          "paletteSize": 18,
+          "sha256": "c26e1e894ac7e6c2dae0c3391026889c51c23ce35ad95b857241372a6c0ffa63"
+        },
+        {
+          "view": "Side",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            55,
+            49,
+            104,
+            117
+          ],
+          "paletteSize": 20,
+          "sha256": "91580040bdd2c5a1d5782b0f628a90bc4038dd7089d448e3b379ba843db2a5d2"
+        }
+      ]
+    },
+    {
+      "character": "Pursuer",
+      "category": "Pursuer",
+      "evolved": false,
+      "evolutionDesign": "Lengthened reaching limbs, exposed spine and a face recessed into the skull.",
+      "turnaround": "Pursuer/Pursuer_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Pursuer/Pursuer_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "paletteSize": 18,
+          "sha256": "a98dac73b8275ec42f7edcdfe0c0755f6155d6e09a14d859afac9fd64cab8ced"
+        },
+        {
+          "view": "Back",
+          "file": "Pursuer/Pursuer_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "paletteSize": 13,
+          "sha256": "bee31b4c8148a548ba7a31ba551bcb016ae2b56a676ca3fb77198413cd68e48a"
+        },
+        {
+          "view": "Side",
+          "file": "Pursuer/Pursuer_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            57,
+            58,
+            104,
+            117
+          ],
+          "paletteSize": 18,
+          "sha256": "4cf4a12a8c7bf358c2fc77a4acd31c1b38e705ca3db41b727e70be4080694dcd"
+        }
+      ]
+    },
+    {
+      "character": "Pursuer_Evolved",
+      "category": "Pursuer",
+      "evolved": true,
+      "evolutionDesign": "Lengthened reaching limbs, exposed spine and a face recessed into the skull.",
+      "turnaround": "Pursuer_Evolved/Pursuer_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            42,
+            53,
+            119,
+            118
+          ],
+          "paletteSize": 18,
+          "sha256": "3dc549725851fd4e77ff66f684892f26b52aa1af3ca11558b9af52f35edce25b"
+        },
+        {
+          "view": "Back",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            42,
+            53,
+            119,
+            118
+          ],
+          "paletteSize": 14,
+          "sha256": "8071b01e020cb855eb8b0c710f43d34db03b02a5dd2ae67603e3e86428f3ae4c"
+        },
+        {
+          "view": "Side",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            48,
+            57,
+            120,
+            118
+          ],
+          "paletteSize": 18,
+          "sha256": "2c606ba210cf88a0f773c57024ba5568324d62ba1fe36dbd094af5a469558e69"
+        }
+      ]
+    },
+    {
+      "character": "Scatter",
+      "category": "Scatter",
+      "evolved": false,
+      "evolutionDesign": "Broken funerary collar and an open throat/rib seam carrying the chorus.",
+      "turnaround": "Scatter/Scatter_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Scatter/Scatter_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "paletteSize": 22,
+          "sha256": "157c633ef28c0d66c3442346e01856a7eb3a7a1eff56285d19f5d3085b51846f"
+        },
+        {
+          "view": "Back",
+          "file": "Scatter/Scatter_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "paletteSize": 13,
+          "sha256": "1ad9c01efa9804d638b5cf83946aaa70e4f6b1be34918caf3d59248056c3513b"
+        },
+        {
+          "view": "Side",
+          "file": "Scatter/Scatter_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            59,
+            48,
+            102,
+            117
+          ],
+          "paletteSize": 20,
+          "sha256": "8917e498e365e2baf8e29059e30ae9f4b291db194228d88d02783dccd22c46a8"
+        }
+      ]
+    },
+    {
+      "character": "Scatter_Evolved",
+      "category": "Scatter",
+      "evolved": true,
+      "evolutionDesign": "Broken funerary collar and an open throat/rib seam carrying the chorus.",
+      "turnaround": "Scatter_Evolved/Scatter_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Scatter_Evolved/Scatter_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            53,
+            49,
+            112,
+            116
+          ],
+          "paletteSize": 22,
+          "sha256": "a7ed44a717fe8c2c985d5a3f2b400ea17529650f17862cebaafc7c7b514b4897"
+        },
+        {
+          "view": "Back",
+          "file": "Scatter_Evolved/Scatter_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            53,
+            49,
+            112,
+            116
+          ],
+          "paletteSize": 16,
+          "sha256": "64520cdfcede1780c0279c6ab3b3988d552d0663e69a0748ecf86af83053c034"
+        },
+        {
+          "view": "Side",
+          "file": "Scatter_Evolved/Scatter_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            59,
+            48,
+            108,
+            117
+          ],
+          "paletteSize": 20,
+          "sha256": "e1e8b236b45c88aec38bff97fdd7f9f09b2c5c3b4627b10f1d0299b20ed7d3df"
+        }
+      ]
+    },
+    {
+      "character": "Siege",
+      "category": "Siege",
+      "evolved": false,
+      "evolutionDesign": "Coffin cracked and enclosed by growing ribs, bone braces and grasping bones.",
+      "turnaround": "Siege/Siege_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Siege/Siege_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "paletteSize": 25,
+          "sha256": "4c01bf60a6e02dde7dc44b5881538106e30c33221368d03257564469ebad8779"
+        },
+        {
+          "view": "Back",
+          "file": "Siege/Siege_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "paletteSize": 24,
+          "sha256": "1693d3a0d9205648defa922735e35f9f510e205949b568e30633b8bc4c3b1320"
+        },
+        {
+          "view": "Side",
+          "file": "Siege/Siege_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            60,
+            46,
+            107,
+            117
+          ],
+          "paletteSize": 25,
+          "sha256": "6369a4de5053408626a65ea27a240975254fd552610dd2c1fb9fd53b991846ab"
+        }
+      ]
+    },
+    {
+      "character": "Siege_Evolved",
+      "category": "Siege",
+      "evolved": true,
+      "evolutionDesign": "Coffin cracked and enclosed by growing ribs, bone braces and grasping bones.",
+      "turnaround": "Siege_Evolved/Siege_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Siege_Evolved/Siege_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            45,
+            38,
+            114,
+            117
+          ],
+          "paletteSize": 26,
+          "sha256": "36bd50e80a81b059d7746c3fae9e32df12298d15a5435ecf0a16e561928af5cb"
+        },
+        {
+          "view": "Back",
+          "file": "Siege_Evolved/Siege_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            45,
+            38,
+            114,
+            117
+          ],
+          "paletteSize": 26,
+          "sha256": "3d851031fb9cc0e80832fd3653d0f3ea34502cab2595eedf2e4c724d075d245f"
+        },
+        {
+          "view": "Side",
+          "file": "Siege_Evolved/Siege_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "opaqueBounds": [
+            56,
+            40,
+            107,
+            117
+          ],
+          "paletteSize": 23,
+          "sha256": "c09f43cccfe5b9877d535bb3a56eddf4a3d6495baa73cbcb96963b642da7e199"
+        }
+      ]
+    }
+  ]
+}

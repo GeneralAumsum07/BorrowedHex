@@ -162,9 +162,25 @@ namespace BorrowedHex.Tests
         }
 
         [Test]
+        public void LifeDrainsAtOnePointFourPerActiveSecondAndPausesWithGameplay()
+        {
+            var sim = P5.Short();
+            sim.AutoSpawn = false;
+            P5.Invulnerable(sim);
+            float start = sim.LifeSeconds;
+            // Drain health faster without speeding up AI, spawn timers or the gameplay clock.
+            P5.Run(sim, 60 * 10);
+            Assert.AreEqual(10, sim.Clock.Now, 1e-4);
+            Assert.AreEqual(start - 14, sim.LifeSeconds, 1e-3);
+            sim.SetPause(PauseReason.Menu, true);
+            P5.Run(sim, 60 * 10);
+            Assert.AreEqual(start - 14, sim.LifeSeconds, 1e-3, "Pauses must not spend health.");
+        }
+
+        [Test]
         public void TheSharedRunClock_EndsTheRun_EvenMidEncounter()
         {
-            // One 3:00 clock for the whole run (owner ruling): a player who never clears
+            // One life budget for the whole run: a player who never clears
             // encounter 1 still runs out of time.
             var sim = P5.Short();
             P5.Invulnerable(sim);
@@ -173,7 +189,8 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
             Assert.AreEqual(0, sim.Encounter);
-            Assert.AreEqual(180.0, sim.Clock.Now, 1e-4);
+            double timeBudget = sim.Stats.StartingSeconds / sim.Stats.LifeDrainPerSecond;
+            Assert.That(sim.Clock.Now, Is.InRange(timeBudget - P5.Dt, timeBudget + P5.Dt));
             Assert.AreEqual(0f, sim.SecondsLeftInRun());
         }
 
@@ -237,12 +254,12 @@ namespace BorrowedHex.Tests
             CollectionAssert.Contains(sim.Packets.Packets, packet, "captured packets survive the transition");
             Assert.NotNull(sim.Boss);
             Assert.IsTrue(sim.Boss.Alive);
-            Assert.AreEqual(50f, sim.Boss.MaxHealth);
+            Assert.AreEqual(87.5f, sim.Boss.MaxHealth);
             Assert.IsTrue(sim.Clock.IsPaused, "the intro banner holds the clock");
 
             Assert.IsTrue(sim.CompleteBossIntro());
             Assert.AreEqual(RunState.BossCombat, sim.State);
-            // No ordinary spawns during the boss window.
+            // No ordinary spawns before the first 25–30 second summon.
             for (int i = 0; i < 600; i++) sim.Tick(P5.Still, P5.Dt);
             Assert.AreEqual(0, sim.AliveOrdinaryCount());
         }
@@ -255,7 +272,8 @@ namespace BorrowedHex.Tests
             P5.TickWhile(sim, RunState.BossCombat);
             Assert.AreEqual(RunState.Results, sim.State);
             Assert.AreEqual(RunEndReason.TimeExpired, sim.Summary.Reason);
-            Assert.GreaterOrEqual(sim.Clock.Now, 180.0, "encounter kills bought extra time");
+            Assert.GreaterOrEqual(sim.Clock.Now, sim.Stats.StartingSeconds / sim.Stats.LifeDrainPerSecond,
+                "encounter kills bought extra time");
             Assert.AreEqual(0f, sim.LifeSeconds);
             Assert.AreEqual(0, sim.Summary.VictoryBonus);
         }

@@ -58,9 +58,11 @@ namespace BorrowedHex.Presentation
             // inside a ring drawn at the slam's true radius.
             public SpriteRenderer SweepWedge, SweepBlade, SlamFill, SlamRing;
             // Collector only: the sweep's gold parry arc (D47) and the teleport arrival marker.
-            public SpriteRenderer SweepParry, TeleportMarker;
+            public SpriteRenderer SweepParry, TeleportMarker, SummonRing;
             public bool Seen;
             public bool Evolved;
+            // Killed (not cleared or despawned): its body stays behind to play the death clip.
+            public bool Dying;
         }
 
         readonly Dictionary<int, EnemyView> enemies = new Dictionary<int, EnemyView>();
@@ -149,6 +151,8 @@ namespace BorrowedHex.Presentation
             art = new WorldArtLibrary();
             shotPuffs = new WorldEffects(transform, art, "ShotPuffs");
             player = CharacterView.Create(transform, "Player", PixelSprites.Kind.Magician, 1f, 0.45f);
+            // The Rogue Magician art (four views); the pixel placeholder stays if it is missing.
+            player.SetCharacter("RogueMagician", true);
             prevPlayer = currPlayer = sim.Player.Position;
 
             aimMarker = FlatSprite("AimMarker", transform, PixelSprites.Disc(true), new Color(1f, 0.85f, 0.35f, 0.85f));
@@ -166,7 +170,8 @@ namespace BorrowedHex.Presentation
             shotRoot = new GameObject("Projectiles").transform;
             shotRoot.SetParent(transform, false);
 
-            sim.Events.PlayerHit += (_, __) => player.Flash(0.12f);
+            sim.Events.PlayerHit += (_, __) => { player.Flash(0.12f); playerHurtUntil = Time.time + HurtSeconds; };
+            sim.Events.EnemyKilled += (e, _) => { if (enemies.TryGetValue(e.ActorId, out var v)) v.Dying = true; };
             sim.Events.LifeClockChanged += SpawnTimeNumber;
             sim.Events.LifeStolen += SpawnStolenNumber;
             sim.Events.PacketBackfired += _ => SpawnPop(sim.Player.Position, RejectColor, 0.1f, 2f, 0.35f);
@@ -283,7 +288,17 @@ namespace BorrowedHex.Presentation
             player.SetFacing(p.AimDirection.x);
             // Post-hit invulnerability blinks; dash i-frames are short enough to skip.
             player.SetBlink(p.Alive && p.InvulnerableUntil > sim.Clock.Now);
-            player.gameObject.SetActive(p.Alive);
+            if (player.Animated)
+            {
+                // Faces the aim (where the hexes go), not the walk: a caster backpedals.
+                bool moving = (currPlayer - prevPlayer).sqrMagnitude > 1e-6f;
+                string st = !p.Alive ? "Death" : p.Dashing ? "Dash" : Time.time < playerHurtUntil ? "Hurt"
+                    : moving ? "Moving" : "Idle";
+                player.Play(st, p.AimDirection);
+                // The body stays up after death so the collapse is seen.
+                player.gameObject.SetActive(true);
+            }
+            else player.gameObject.SetActive(p.Alive);
             float orbit = sim.OrbitRadiusNow;
             heavyOrbitRing.enabled = p.Alive && orbit > 0f;
             if (heavyOrbitRing.enabled)
@@ -313,6 +328,19 @@ namespace BorrowedHex.Presentation
                 Vector2 pos = Vector2.Lerp(e.PrevPosition, e.Position, alpha);
                 v.Body.transform.position = Geometry2D.ToWorld(pos);
                 v.Body.SetFacing(e.AimDirection.x);
+                if (e.Overstayed && !v.Evolved && v.Body.Animated)
+                {
+                    // Animated art has its own evolved form (darker gear, violet aura).
+                    v.Evolved = true;
+                    v.Body.SetCharacter(ArtName(e.Category) + "_Evolved", false);
+                    v.Body.SetVisualScale(EnemyArtScale * 1.15f);
+                    v.Body.Flash(0.2f);
+                }
+                if (v.Body.Animated && !e.IsBoss)
+                {
+                    bool moving = (e.Position - e.PrevPosition).sqrMagnitude > 1e-7f;
+                    v.Body.Play(e.Phase == EnemyPhase.Telegraph ? "Attack" : moving ? "Moving" : "Idle", e.AimDirection);
+                }
                 if (e.Overstayed && !v.Evolved)
                 {
                     v.Evolved = true;
@@ -404,10 +432,35 @@ namespace BorrowedHex.Presentation
             foreach (var kv in enemies) if (!kv.Value.Seen) scratch.Add(kv.Key);
             foreach (int id in scratch)
             {
-                Destroy(enemies[id].Body.gameObject);
+                var dead = enemies[id];
+                if (dead.Dying && dead.Body.Animated)
+                {
+                    // Leave the body to play its death (12 frames at 10 fps), with every
+                    // telegraph and ring under it hidden, then remove it.
+                    foreach (var r in dead.Body.GetComponentsInChildren<SpriteRenderer>())
+                        r.enabled = r.gameObject.name == "Sprite" || r.gameObject.name == "Shadow";
+                    dead.Body.Play("Death", Vector2.zero);
+                    Destroy(dead.Body.gameObject, 1.4f);
+                }
+                else Destroy(dead.Body.gameObject);
                 enemies.Remove(id);
             }
         }
+
+        // Enemy frames are 160x128 at 32 PPU with a ~67 px tall figure (2.1 units); this brings
+        // them to the ~1.5 units the pixel placeholders stood, so hit circles still match.
+        const float EnemyArtScale = 0.7f;
+        // The Hurt clip: 6 frames at 15 fps.
+        const float HurtSeconds = 0.4f;
+        float playerHurtUntil;
+
+        static string ArtName(ActorCategory c) => c switch
+        {
+            ActorCategory.Pursuer => "Pursuer",
+            ActorCategory.ScatterCaster => "Scatter",
+            ActorCategory.SiegeFamiliar => "Siege",
+            _ => "Acolyte",
+        };
 
         EnemyView CreateEnemyView(EnemyActor e)
         {
@@ -420,6 +473,8 @@ namespace BorrowedHex.Presentation
                 _ => PixelSprites.Kind.Acolyte,
             };
             var body = CharacterView.Create(enemyRoot, $"{e.Category}#{e.ActorId}", kind, 1f, e.Radius + 0.1f);
+            // The four regular enemies use the animated sheets; the Collector keeps its own art.
+            if (!e.IsBoss && body.SetCharacter(ArtName(e.Category), false)) body.SetVisualScale(EnemyArtScale);
             var v = new EnemyView { Body = body };
             // Telegraph and warning ring live under the body root but must not inherit its
             // position offsets, so they are placed in world space each frame.
@@ -446,6 +501,7 @@ namespace BorrowedHex.Presentation
                 v.SweepParry = FlatSprite("SweepParry", body.transform,
                     PixelSprites.ArcBand(bt.sweepHalfAngle, (bt.sweepParryArcRadius - bt.sweepParryArcWidth * 0.5f) / outer), RiposteColor);
                 v.TeleportMarker = FlatSprite("TeleportMarker", body.transform, PixelSprites.Disc(true), TeleportColor);
+                v.SummonRing = FlatSprite("SummonRing", body.transform, PixelSprites.Disc(true), TeleportColor);
             }
             v.WarningRing = FlatSprite("SpawnWarning", body.transform, PixelSprites.Disc(true), Color.red);
             v.WarningRing.transform.localPosition = new Vector3(0f, 0.04f, 0f);
@@ -468,6 +524,16 @@ namespace BorrowedHex.Presentation
             bool active = b.Stage == BossStage.Active;
             float ramp = tele ? 1f - Mathf.Clamp01((float)(b.StageEndsAt - now) / Mathf.Max(0.01f, CollectorBoss.TelegraphOf(b.Pattern, t))) : 0f;
             float yaw = -Mathf.Atan2(e.AimDirection.y, e.AimDirection.x) * Mathf.Rad2Deg;
+
+            // This also presents the cast in public checkouts without the licensed boss atlas.
+            v.SummonRing.enabled = b.Pattern == BossPattern.Summon && tele;
+            if (v.SummonRing.enabled)
+            {
+                float pulse = Mathf.Sin((float)(now - b.TelegraphStartedAt) * 12f);
+                v.SummonRing.transform.position = Geometry2D.ToWorld(pos, .055f);
+                v.SummonRing.transform.localScale = Vector3.one * e.Radius * (1.3f + .5f * ramp + .08f * pulse);
+                v.SummonRing.color = new Color(.75f, .45f, 1f, .45f + .45f * ramp);
+            }
 
             // Aim lines: the stream shows one (it keeps tracking while firing), the fan all.
             var fan = CollectorBoss.FanOf(e, t);

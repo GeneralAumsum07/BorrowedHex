@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using BorrowedHex.Core;
 using BorrowedHex.Presentation;
 using BorrowedHex.Progression;
@@ -44,6 +45,7 @@ namespace BorrowedHex.Tests
             // Never the real save (section 8): an in-memory profile per test.
             storage = new MemoryProfileStorage();
             GameRoot.StorageOverride = storage;
+            GameRoot.SkipStory = true; // predates the lore holds; NarrativeFlowTests covers them
             rootGo = new GameObject("GameRoot");
             root = rootGo.AddComponent<GameRoot>();
             yield return null;
@@ -62,6 +64,7 @@ namespace BorrowedHex.Tests
                 Object.Destroy(c.gameObject);
             if (mouse != null) InputSystem.RemoveDevice(mouse);
             GameRoot.StorageOverride = null;
+            GameRoot.SkipStory = false;
             yield return null;
         }
 
@@ -210,7 +213,8 @@ namespace BorrowedHex.Tests
             yield return null;
             Assert.IsTrue(root.Tree.IsOpen);
             Assert.IsFalse(root.Main.IsOpen);
-            root.Tree.Click(SkillTree.PrecisionAngle);   // buy: owning it makes it active (D101)
+            root.Tree.Click(SkillTree.PrecisionAngle);   // select (the spec splits selection from purchase)
+            root.Tree.UnlockSelected();                  // buy: owning it makes it active (D101)
             Assert.AreEqual(1, storage.Writes, "each tree change is a save point");
             CollectionAssert.Contains(root.Profile.Profile.ownedNodes, SkillTree.PrecisionAngle);
             root.ShowMainMenu();
@@ -271,7 +275,7 @@ namespace BorrowedHex.Tests
             Assert.IsTrue(root.Sim.IsEndlessRun);
             Assert.IsFalse(root.Sim.Setup.Debug);
             var objective = GameObject.Find("Objective").GetComponent<UnityEngine.UI.Text>();
-            StringAssert.StartsWith("WAVE 1/6", objective.text);
+            StringAssert.StartsWith("Wave 1/6", objective.text);
             // Two waves of sim time, driven directly (the frame loop would take a real minute).
             root.Sim.Player.InvulnerableUntil = 1e9;
             for (int i = 0; i < 2 * 30 * 60 + 5 && root.Sim.State != RunState.UpgradeChoice; i++)
@@ -279,7 +283,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(RunState.UpgradeChoice, root.Sim.State);
             yield return null;
             var title = GameObject.Find("RunFlow/UpgradeChoice/Panel/Title").GetComponent<UnityEngine.UI.Text>();
-            Assert.AreEqual("WAVE 2 COMPLETE", title.text);
+            Assert.AreEqual("Wave 2 complete", title.text);   // Task 15: sentence case
             var retire = GameObject.Find("RunFlow/UpgradeChoice/Panel/Retire");
             // A path Find also returns inactive children, so visibility is asserted explicitly.
             Assert.IsTrue(retire.activeInHierarchy, "endless choices offer retirement");
@@ -291,7 +295,7 @@ namespace BorrowedHex.Tests
             Assert.AreEqual(1, storage.Writes);
             Assert.AreEqual(GameMode.Endless.ToString(), root.Profile.Profile.records[0].mode);
             var resultsTitle = GameObject.Find("RunFlow/Results/Panel/Title").GetComponent<UnityEngine.UI.Text>();
-            Assert.AreEqual("RETIRED", resultsTitle.text);
+            Assert.AreEqual("Retired", resultsTitle.text);   // Task 16: sentence case
         }
 
         [UnityTest]
@@ -315,7 +319,9 @@ namespace BorrowedHex.Tests
             Assert.IsFalse(found.activeInHierarchy, "the Retire button is hidden in short mode");
         }
 
-        string RecordsPanelText() => BorrowedHex.UI.RecordsPanel.RecordsBody(root.Profile.Profile);
+        // Everything the Records screen draws, hidden Details included (Task 11: the rows are
+        // built from RecordRows, so the old static text bodies are gone).
+        string RecordsPanelText() => string.Join(" | ", root.RecordsView.GetComponentsInChildren<UnityEngine.UI.Text>(true).Select(t => t.text));
 
         IEnumerator Click(Vector2 pos)
         {
@@ -398,6 +404,48 @@ namespace BorrowedHex.Tests
                 Assert.AreNotSame(first, root.Sim);
             }
             finally { InputSystem.RemoveDevice(kb); }
+        }
+
+        /// <summary>
+        /// Plan Task 14 wiring: two overcharged packets, one per slot. Both get the gold border;
+        /// only the selected one pulses; a fresh run clears both (no stale border survives).
+        /// </summary>
+        [UnityTest]
+        public IEnumerator HexSlots_OverchargeBorder_PulsesOnlyOnTheSelectedSlotAndClearsOnRebind()
+        {
+            yield return StartShortRun();
+            var sim = root.Sim;
+            var store = sim.Packets;
+            float window = sim.Stats.Power.OverchargeWindow;
+            for (int slot = 0; slot < 2; slot++)
+            {
+                var p = store.CreateInSlot(slot, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+                Assert.IsNotNull(p, $"slot {slot} accepts a packet");
+                p.Status = BorrowedHex.Combat.PacketStatus.Stored;
+                p.CapturedAt = sim.Clock.Now - 3600.0;           // primed long ago
+                p.DecayedTime = p.Lifetime - window + 0.01;      // just inside the Overcharge zone
+            }
+            Assert.AreEqual(0, store.SelectedSlot);
+            yield return null;   // the HUD sees the selected charge: the pulse starts bright here
+
+            // A quarter second of gameplay time: the trough of the 2 Hz pulse. Ticked by hand so
+            // the selected packet (which decays) stays inside its 0.35 s zone on any frame rate.
+            for (int i = 0; i < 5; i++) sim.Tick(BorrowedHex.Player.PlayerCommand.Moving(Vector2.zero), 0.05f);
+            yield return null;
+
+            var packets = root.Hud.Packets.transform;
+            var b0 = packets.Find("Slot0/Border").GetComponent<UnityEngine.UI.Image>();
+            var b1 = packets.Find("Slot1/Border").GetComponent<UnityEngine.UI.Image>();
+            Assert.IsTrue(b0.gameObject.activeInHierarchy, "the selected charge has the gold border");
+            Assert.Less(b0.color.a, 1f, "the selected charge pulses");
+            Assert.IsTrue(b1.gameObject.activeInHierarchy, "the frozen charge has the gold border too");
+            Assert.AreEqual(1f, b1.color.a, 1e-4, "the frozen charge holds steady");
+
+            root.PlayShort();    // a fresh run rebinds the HUD
+            root.SetMenuOpen(false);
+            yield return null;
+            Assert.IsFalse(b0.gameObject.activeSelf, "no border survives into a new run");
+            Assert.IsFalse(b1.gameObject.activeSelf, "no border survives into a new run");
         }
     }
 }

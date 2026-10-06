@@ -1,0 +1,731 @@
+{
+  "revision": 2,
+  "approvedDraft": "../EnemyDrafts",
+  "status": "static body drafts with separate aura loop reference",
+  "drawingMethod": "deterministic Python/Pillow; original silhouettes preserved",
+  "frameSize": [
+    160,
+    128
+  ],
+  "pixelsPerUnit": 32,
+  "groundAnchorTopLeft": [
+    80,
+    115
+  ],
+  "unityPivot": [
+    0.5,
+    0.1015625
+  ],
+  "viewOrder": [
+    "Front",
+    "Back",
+    "Side"
+  ],
+  "flipSideForLeft": true,
+  "filterMode": "Point",
+  "mipmaps": false,
+  "compression": "None",
+  "evolvedMaterialBrightness": {
+    "wine_e": 0.86,
+    "blue_e": 0.86,
+    "cloth": 0.88,
+    "leather": 0.88,
+    "wood": 0.88,
+    "iron": 0.88,
+    "brass": 0.89,
+    "stone": 0.94,
+    "wine": 0.86,
+    "blue": 0.86
+  },
+  "aura": {
+    "colourRGB": [
+      174,
+      143,
+      222
+    ],
+    "outerRadiusPixels": 5,
+    "bandAlpha": [
+      34,
+      24,
+      16,
+      10,
+      5
+    ],
+    "pulseStrengths": [
+      0.8,
+      0.86,
+      1.0,
+      1.1,
+      1.16,
+      1.1,
+      1.0,
+      0.86
+    ],
+    "pulseFrames": 8,
+    "pulseFPS": 8,
+    "appliesTo": "all evolved animation states; preview attached to static poses",
+    "compositing": "straight-alpha normal blending, aura behind base sprite"
+  },
+  "characters": [
+    {
+      "character": "Acolyte",
+      "category": "Acolyte",
+      "evolved": false,
+      "evolutionDesign": "Extra casting hands; the original pair remains near the body.",
+      "turnaround": "Acolyte/Acolyte_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Acolyte/Acolyte_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            58,
+            49,
+            107,
+            116
+          ],
+          "visibleBounds": [
+            58,
+            49,
+            107,
+            116
+          ],
+          "sha256": "e98627dfc8704a050784d704177d45330fcc00ca9fd01d8104a9aad2647e903a"
+        },
+        {
+          "view": "Back",
+          "file": "Acolyte/Acolyte_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            58,
+            49,
+            109,
+            116
+          ],
+          "visibleBounds": [
+            58,
+            49,
+            109,
+            116
+          ],
+          "sha256": "9cfa2085c2d65ab7dbce11bf2ba0e8c17cc02ce916dbca0991c16ba677343676"
+        },
+        {
+          "view": "Side",
+          "file": "Acolyte/Acolyte_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            60,
+            49,
+            104,
+            117
+          ],
+          "visibleBounds": [
+            60,
+            49,
+            104,
+            117
+          ],
+          "sha256": "8e6adad4cc8785ffc246b6fb51c18f365dc559600726cd21ef9714f39047766f"
+        }
+      ]
+    },
+    {
+      "character": "Acolyte_Evolved",
+      "category": "Acolyte",
+      "evolved": true,
+      "evolutionDesign": "Extra casting hands; the original pair remains near the body.",
+      "turnaround": "Acolyte_Evolved/Acolyte_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            46,
+            45,
+            115,
+            116
+          ],
+          "visibleBounds": [
+            41,
+            40,
+            120,
+            121
+          ],
+          "sha256": "be0734d0070d009d1b672e6b9682cd3af7692b320719bf74e1e4e9d0e7b59d6e",
+          "baseFile": "Acolyte_Evolved/Acolyte_Evolved_Front_Base.png",
+          "auraFile": "Acolyte_Evolved/Acolyte_Evolved_Front_Aura.png",
+          "auraPulseFile": "Acolyte_Evolved/Acolyte_Evolved_Front_AuraPulse.png"
+        },
+        {
+          "view": "Back",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            46,
+            45,
+            115,
+            116
+          ],
+          "visibleBounds": [
+            41,
+            40,
+            120,
+            121
+          ],
+          "sha256": "11eab47011290ace5d7f1145bd7817faec1c37fe59fd557942aa4b00452d4ac1",
+          "baseFile": "Acolyte_Evolved/Acolyte_Evolved_Back_Base.png",
+          "auraFile": "Acolyte_Evolved/Acolyte_Evolved_Back_Aura.png",
+          "auraPulseFile": "Acolyte_Evolved/Acolyte_Evolved_Back_AuraPulse.png"
+        },
+        {
+          "view": "Side",
+          "file": "Acolyte_Evolved/Acolyte_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            55,
+            49,
+            104,
+            117
+          ],
+          "visibleBounds": [
+            50,
+            44,
+            109,
+            122
+          ],
+          "sha256": "490853466a041e0abb43f0847548049c1711733108726768407a837274c38a04",
+          "baseFile": "Acolyte_Evolved/Acolyte_Evolved_Side_Base.png",
+          "auraFile": "Acolyte_Evolved/Acolyte_Evolved_Side_Aura.png",
+          "auraPulseFile": "Acolyte_Evolved/Acolyte_Evolved_Side_AuraPulse.png"
+        }
+      ]
+    },
+    {
+      "character": "Pursuer",
+      "category": "Pursuer",
+      "evolved": false,
+      "evolutionDesign": "Lengthened reaching limbs, exposed spine and a face recessed into the skull.",
+      "turnaround": "Pursuer/Pursuer_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Pursuer/Pursuer_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "visibleBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "sha256": "a98dac73b8275ec42f7edcdfe0c0755f6155d6e09a14d859afac9fd64cab8ced"
+        },
+        {
+          "view": "Back",
+          "file": "Pursuer/Pursuer_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "visibleBounds": [
+            56,
+            54,
+            104,
+            117
+          ],
+          "sha256": "bee31b4c8148a548ba7a31ba551bcb016ae2b56a676ca3fb77198413cd68e48a"
+        },
+        {
+          "view": "Side",
+          "file": "Pursuer/Pursuer_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            57,
+            58,
+            104,
+            117
+          ],
+          "visibleBounds": [
+            57,
+            58,
+            104,
+            117
+          ],
+          "sha256": "4cf4a12a8c7bf358c2fc77a4acd31c1b38e705ca3db41b727e70be4080694dcd"
+        }
+      ]
+    },
+    {
+      "character": "Pursuer_Evolved",
+      "category": "Pursuer",
+      "evolved": true,
+      "evolutionDesign": "Lengthened reaching limbs, exposed spine and a face recessed into the skull.",
+      "turnaround": "Pursuer_Evolved/Pursuer_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            42,
+            53,
+            119,
+            118
+          ],
+          "visibleBounds": [
+            37,
+            48,
+            124,
+            123
+          ],
+          "sha256": "4b5a0b37f6d3cca4a277f5da956dc3444252d8e35ccb624d560a932a1b2cbe3b",
+          "baseFile": "Pursuer_Evolved/Pursuer_Evolved_Front_Base.png",
+          "auraFile": "Pursuer_Evolved/Pursuer_Evolved_Front_Aura.png",
+          "auraPulseFile": "Pursuer_Evolved/Pursuer_Evolved_Front_AuraPulse.png"
+        },
+        {
+          "view": "Back",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            42,
+            53,
+            119,
+            118
+          ],
+          "visibleBounds": [
+            37,
+            48,
+            124,
+            123
+          ],
+          "sha256": "407ebb33097beeb1d1e8dab7034b241b259651aefac518b9abeff471471b2898",
+          "baseFile": "Pursuer_Evolved/Pursuer_Evolved_Back_Base.png",
+          "auraFile": "Pursuer_Evolved/Pursuer_Evolved_Back_Aura.png",
+          "auraPulseFile": "Pursuer_Evolved/Pursuer_Evolved_Back_AuraPulse.png"
+        },
+        {
+          "view": "Side",
+          "file": "Pursuer_Evolved/Pursuer_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            48,
+            57,
+            120,
+            118
+          ],
+          "visibleBounds": [
+            43,
+            52,
+            125,
+            123
+          ],
+          "sha256": "94be8b141de157482b83bb0bb6c2a401b620327943d3aacc5b110b0955ff59bf",
+          "baseFile": "Pursuer_Evolved/Pursuer_Evolved_Side_Base.png",
+          "auraFile": "Pursuer_Evolved/Pursuer_Evolved_Side_Aura.png",
+          "auraPulseFile": "Pursuer_Evolved/Pursuer_Evolved_Side_AuraPulse.png"
+        }
+      ]
+    },
+    {
+      "character": "Scatter",
+      "category": "Scatter",
+      "evolved": false,
+      "evolutionDesign": "Broken funerary collar and an open throat/rib seam carrying the chorus.",
+      "turnaround": "Scatter/Scatter_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Scatter/Scatter_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "visibleBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "sha256": "157c633ef28c0d66c3442346e01856a7eb3a7a1eff56285d19f5d3085b51846f"
+        },
+        {
+          "view": "Back",
+          "file": "Scatter/Scatter_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "visibleBounds": [
+            56,
+            49,
+            105,
+            116
+          ],
+          "sha256": "1ad9c01efa9804d638b5cf83946aaa70e4f6b1be34918caf3d59248056c3513b"
+        },
+        {
+          "view": "Side",
+          "file": "Scatter/Scatter_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            59,
+            48,
+            102,
+            117
+          ],
+          "visibleBounds": [
+            59,
+            48,
+            102,
+            117
+          ],
+          "sha256": "8917e498e365e2baf8e29059e30ae9f4b291db194228d88d02783dccd22c46a8"
+        }
+      ]
+    },
+    {
+      "character": "Scatter_Evolved",
+      "category": "Scatter",
+      "evolved": true,
+      "evolutionDesign": "Broken funerary collar and an open throat/rib seam carrying the chorus.",
+      "turnaround": "Scatter_Evolved/Scatter_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Scatter_Evolved/Scatter_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            53,
+            49,
+            112,
+            116
+          ],
+          "visibleBounds": [
+            48,
+            44,
+            117,
+            121
+          ],
+          "sha256": "ba8fd8b4bc5d05c3310621d52ed65a40aedbf7cf374347bd35acd91032eeb38f",
+          "baseFile": "Scatter_Evolved/Scatter_Evolved_Front_Base.png",
+          "auraFile": "Scatter_Evolved/Scatter_Evolved_Front_Aura.png",
+          "auraPulseFile": "Scatter_Evolved/Scatter_Evolved_Front_AuraPulse.png"
+        },
+        {
+          "view": "Back",
+          "file": "Scatter_Evolved/Scatter_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            53,
+            49,
+            112,
+            116
+          ],
+          "visibleBounds": [
+            48,
+            44,
+            117,
+            121
+          ],
+          "sha256": "9a7c98006e66e94a2e17970ac7bcf33b26a62a8bc0fb3ebd81608814fb01bc65",
+          "baseFile": "Scatter_Evolved/Scatter_Evolved_Back_Base.png",
+          "auraFile": "Scatter_Evolved/Scatter_Evolved_Back_Aura.png",
+          "auraPulseFile": "Scatter_Evolved/Scatter_Evolved_Back_AuraPulse.png"
+        },
+        {
+          "view": "Side",
+          "file": "Scatter_Evolved/Scatter_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            59,
+            48,
+            108,
+            117
+          ],
+          "visibleBounds": [
+            54,
+            43,
+            113,
+            122
+          ],
+          "sha256": "6c4b5b736fa3ba96f7289f74b45e3a50e92560a24702e84034bffb679d87d25b",
+          "baseFile": "Scatter_Evolved/Scatter_Evolved_Side_Base.png",
+          "auraFile": "Scatter_Evolved/Scatter_Evolved_Side_Aura.png",
+          "auraPulseFile": "Scatter_Evolved/Scatter_Evolved_Side_AuraPulse.png"
+        }
+      ]
+    },
+    {
+      "character": "Siege",
+      "category": "Siege",
+      "evolved": false,
+      "evolutionDesign": "Coffin cracked and enclosed by growing ribs, bone braces and grasping bones.",
+      "turnaround": "Siege/Siege_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Siege/Siege_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "visibleBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "sha256": "4c01bf60a6e02dde7dc44b5881538106e30c33221368d03257564469ebad8779"
+        },
+        {
+          "view": "Back",
+          "file": "Siege/Siege_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "visibleBounds": [
+            45,
+            45,
+            114,
+            117
+          ],
+          "sha256": "1693d3a0d9205648defa922735e35f9f510e205949b568e30633b8bc4c3b1320"
+        },
+        {
+          "view": "Side",
+          "file": "Siege/Siege_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            60,
+            46,
+            107,
+            117
+          ],
+          "visibleBounds": [
+            60,
+            46,
+            107,
+            117
+          ],
+          "sha256": "6369a4de5053408626a65ea27a240975254fd552610dd2c1fb9fd53b991846ab"
+        }
+      ]
+    },
+    {
+      "character": "Siege_Evolved",
+      "category": "Siege",
+      "evolved": true,
+      "evolutionDesign": "Coffin cracked and enclosed by growing ribs, bone braces and grasping bones.",
+      "turnaround": "Siege_Evolved/Siege_Evolved_Turnaround.png",
+      "poses": [
+        {
+          "view": "Front",
+          "file": "Siege_Evolved/Siege_Evolved_Front.png",
+          "sheetRectTopLeft": [
+            0,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            45,
+            38,
+            114,
+            117
+          ],
+          "visibleBounds": [
+            40,
+            33,
+            119,
+            122
+          ],
+          "sha256": "b6fc638374f626aaab18a8f362ad6323a06045e45afc9c1963f3fbdc001f0836",
+          "baseFile": "Siege_Evolved/Siege_Evolved_Front_Base.png",
+          "auraFile": "Siege_Evolved/Siege_Evolved_Front_Aura.png",
+          "auraPulseFile": "Siege_Evolved/Siege_Evolved_Front_AuraPulse.png"
+        },
+        {
+          "view": "Back",
+          "file": "Siege_Evolved/Siege_Evolved_Back.png",
+          "sheetRectTopLeft": [
+            160,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            45,
+            38,
+            114,
+            117
+          ],
+          "visibleBounds": [
+            40,
+            33,
+            119,
+            122
+          ],
+          "sha256": "e017288b8cdd4c9d3d5486b01a02e74611654ab3edfe4edfa960e838f109b068",
+          "baseFile": "Siege_Evolved/Siege_Evolved_Back_Base.png",
+          "auraFile": "Siege_Evolved/Siege_Evolved_Back_Aura.png",
+          "auraPulseFile": "Siege_Evolved/Siege_Evolved_Back_AuraPulse.png"
+        },
+        {
+          "view": "Side",
+          "file": "Siege_Evolved/Siege_Evolved_Side.png",
+          "sheetRectTopLeft": [
+            320,
+            0,
+            160,
+            128
+          ],
+          "bodyBounds": [
+            56,
+            40,
+            107,
+            117
+          ],
+          "visibleBounds": [
+            51,
+            35,
+            112,
+            122
+          ],
+          "sha256": "c1b6ff0e7e9e4f73f8425ec1a357d5f1c0ffbb1e070da2426b24be77e74b26bd",
+          "baseFile": "Siege_Evolved/Siege_Evolved_Side_Base.png",
+          "auraFile": "Siege_Evolved/Siege_Evolved_Side_Aura.png",
+          "auraPulseFile": "Siege_Evolved/Siege_Evolved_Side_AuraPulse.png"
+        }
+      ]
+    }
+  ]
+}

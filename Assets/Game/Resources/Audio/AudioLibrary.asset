@@ -1,0 +1,1610 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37970ca082e57b948ad00614bed2fe8e, type: 3}
+  m_Name: AudioLibrary
+  m_EditorClassIdentifier: BorrowedHex::BorrowedHex.Presentation.Audio.AudioLibrary
+  cues:
+  - name: catch_snatcher
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 412f08c5a08e5ab0a0940da59439f1a3, type: 3}
+    - {fileID: 8300000, guid: 667fc51c7b1e52c5ade9569ded73421d, type: 3}
+    - {fileID: 8300000, guid: c43d66ec3b8459598192a22df33be3f6, type: 3}
+    - {fileID: 8300000, guid: 4bc6966db42054eb9219273b549bc205, type: 3}
+  - name: catch_collector_style
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: df17ffad77d253a588bc89ca92b11c4d, type: 3}
+    - {fileID: 8300000, guid: d3d740e28aa950598f7b6c116777b13a, type: 3}
+    - {fileID: 8300000, guid: f0345a7e301a584db34605aabcbb2367, type: 3}
+    - {fileID: 8300000, guid: effea6e440af5e3aa8f2844f05a37368, type: 3}
+  - name: catch_daredevil
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4deabf0298325256b3f25853b25d3e44, type: 3}
+    - {fileID: 8300000, guid: 5473261abd3c5cbc8d7c46d51e71332e, type: 3}
+    - {fileID: 8300000, guid: 348b8ae6cc4b5c53be106759dfa2b7a9, type: 3}
+    - {fileID: 8300000, guid: 795a30e904e15f97a5bbf137942293f9, type: 3}
+  - name: catch_window_empty
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 66af74c6a2ba557bb99dec5544d17f99, type: 3}
+    - {fileID: 8300000, guid: 2116a79cfbf75760b5d8240d11e481db, type: 3}
+    - {fileID: 8300000, guid: 11301edcef0a519da1fa15b285d65d3d, type: 3}
+  - name: capture_success
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 719e7b3743525e2c98ceed49ad409450, type: 3}
+    - {fileID: 8300000, guid: 1e8dd45d350b526c86011fe0905864f1, type: 3}
+    - {fileID: 8300000, guid: 8216dba5ebd155bb861062bd81b59089, type: 3}
+    - {fileID: 8300000, guid: ce5c7984eed857aabbd4fd34f2c81513, type: 3}
+    - {fileID: 8300000, guid: bcddc86ba2fc5a3a97719d5c90a67ebe, type: 3}
+    - {fileID: 8300000, guid: 77641938411f5126814030ceda9d0fc1, type: 3}
+  - name: capture_append
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8b026cc568fb5c6a93e39861763a73a1, type: 3}
+    - {fileID: 8300000, guid: faf5d201c01a5861bb1ece484ded8205, type: 3}
+    - {fileID: 8300000, guid: 7be43e87e98656a0b4f4e30a1a44b88d, type: 3}
+    - {fileID: 8300000, guid: 3f6fa56cff365e9fbafa5b9e2256499c, type: 3}
+    - {fileID: 8300000, guid: 536c75af489558ed998855e22d639f34, type: 3}
+  - name: capture_perfect
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bb0155d3bf7654b5a7f5290fb8bfc769, type: 3}
+    - {fileID: 8300000, guid: ee295cd994f9553399b786452d53c850, type: 3}
+    - {fileID: 8300000, guid: 960d4818ba385dcaac021c122b82fdd9, type: 3}
+    - {fileID: 8300000, guid: 08e565db46b05aaabe4d39ce5edd847f, type: 3}
+  - name: packet_capacity_full
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e428aeb52247532e829884a095fcc5ab, type: 3}
+    - {fileID: 8300000, guid: 28e2923af8c25898aded4ccdf279ec3a, type: 3}
+    - {fileID: 8300000, guid: 5951b0c3ec665b539814790baaeaadb5, type: 3}
+  - name: catch_hand_occupied
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b0cb54e851e35fa6bced238c4c5de6a8, type: 3}
+    - {fileID: 8300000, guid: c8a96b9dc32d5c9994d09d90db973abf, type: 3}
+  - name: catch_slots_occupied
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 917775e152465b0381e5bc0617f0e52d, type: 3}
+    - {fileID: 8300000, guid: 00c17d0f45c35eeaa5dd484feec2c756, type: 3}
+  - name: catch_capacity_rejected
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a62b6d0e324e5e02849a7a76ed4f6fb1, type: 3}
+    - {fileID: 8300000, guid: 9431a437407155e2a8da63d674089832, type: 3}
+  - name: catch_recovery_unavailable
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b0636f1a6aec54c59745210282966b62, type: 3}
+    - {fileID: 8300000, guid: 28bccffb24ac5bc9bcdf5b07ad85c49c, type: 3}
+  - name: packet_forms
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d278fd1780a857afa4267d12f1ad27c8, type: 3}
+    - {fileID: 8300000, guid: 71b3ef218c115b5f8cdda461367e7fb3, type: 3}
+    - {fileID: 8300000, guid: 4fa0610547885cfe8fe6e3d47f24aa14, type: 3}
+    - {fileID: 8300000, guid: 2086be190f015bbbaab602fe5262df04, type: 3}
+  - name: packet_primed
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9fb9b61c599b5e75b5faecc9a2b641a0, type: 3}
+    - {fileID: 8300000, guid: f7a62d36da50508c806795a23b852c7a, type: 3}
+    - {fileID: 8300000, guid: 1c5aad664c8a55c3ba137ad7efdf6985, type: 3}
+  - name: release_unprimed
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 84bdc631687456a0b4de53aa14eeb574, type: 3}
+    - {fileID: 8300000, guid: 9baa51e9a3815a98af0717217ad55680, type: 3}
+  - name: release_empty
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 57230bfdfaf55023860a73cf786f5e6c, type: 3}
+    - {fileID: 8300000, guid: 4bd86f07a6875185a579b8dc7f3231f9, type: 3}
+  - name: packet_expiry_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e1ed755a403955bca3ba5ecafa055627, type: 3}
+    - {fileID: 8300000, guid: 1588e06b55d75fa49806f4ba1f092af5, type: 3}
+    - {fileID: 8300000, guid: 9028009eea9558698596c10a5d650c67, type: 3}
+  - name: overcharge_window_enter
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b4c9f024194c5e1986f7b80144efb03c, type: 3}
+    - {fileID: 8300000, guid: c6f15ecf8bb6545590c4ebff1f996716, type: 3}
+    - {fileID: 8300000, guid: 2015df9b90475535a8787daf9bf739dc, type: 3}
+  - name: overcharge_release
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: aec2532397105abba71712cb73f3b1aa, type: 3}
+    - {fileID: 8300000, guid: 962ef07e5f8e51a1af78a24473e3bd1a, type: 3}
+    - {fileID: 8300000, guid: 91c23250558a544e84c060b6fb0998d0, type: 3}
+    - {fileID: 8300000, guid: 1e831b8945755628ba92372dfdfab47a, type: 3}
+  - name: packet_backfire
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8f06c9c9dd3b5e79a59e384f69336fb2, type: 3}
+    - {fileID: 8300000, guid: 728afce785d5532aab960882c7d99b02, type: 3}
+    - {fileID: 8300000, guid: 6b9b4640522d51a5bb33c5d78832623f, type: 3}
+    - {fileID: 8300000, guid: b735a2c8f11458fc9f4af4dcb669d2a4, type: 3}
+  - name: slot_swap
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bae67ee98a245f5cb3f8d3ea4f101814, type: 3}
+    - {fileID: 8300000, guid: 0dcb934c66e655ba8d9946588751b2f3, type: 3}
+    - {fileID: 8300000, guid: 4d002d14f44c5af5b6f86ddd67da222e, type: 3}
+    - {fileID: 8300000, guid: fa040535c81257c79ac0275f73a73fcd, type: 3}
+  - name: packet_bank_freeze
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7b9c6d9d424f52a38ac665595341e1dd, type: 3}
+    - {fileID: 8300000, guid: c192135d4d385a358dbe055e3cea9247, type: 3}
+    - {fileID: 8300000, guid: 35de3112becf59cca46884ccd4399145, type: 3}
+  - name: packet_bank_resume
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b5c2bb8eb43954e6a508d173024d36cf, type: 3}
+    - {fileID: 8300000, guid: ce9b542ffc9f506fb5139e8102912b6f, type: 3}
+    - {fileID: 8300000, guid: e31fd830d9325588ba6591aa0100b616, type: 3}
+  - name: fusion_slot_lock
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: cf738a44bcea52298abc15e58e9ffbe9, type: 3}
+    - {fileID: 8300000, guid: e860ec46f37254a78faa111f73465d3c, type: 3}
+  - name: fusion_slot_unlock
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fe20ddf9884f5c4c91b1a0821d854c3b, type: 3}
+    - {fileID: 8300000, guid: 6cf5a4deb11a5d899aae3c48a1e57c94, type: 3}
+  - name: packet_charge
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 1e864b78f7f554cbad88d4eb7cc2975c, type: 3}
+  - name: acolyte_bolt_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 182e3b2d1f7b51e18fccd91b39db53af, type: 3}
+    - {fileID: 8300000, guid: 3c9b65a83fb556e59450207c78fd8a60, type: 3}
+    - {fileID: 8300000, guid: f11250bf6cc15be6aed28f97fa22d882, type: 3}
+    - {fileID: 8300000, guid: 298d63437ace5e3fa271bc92f3cf38e3, type: 3}
+  - name: acolyte_bolt_returned_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1679bb87c4aa593893d37becab6f4182, type: 3}
+    - {fileID: 8300000, guid: f2a3f8c7e1a153d9af7df9268f28e039, type: 3}
+    - {fileID: 8300000, guid: cb83a3fc69db575a934648eef92bccee, type: 3}
+    - {fileID: 8300000, guid: ace1b27560ff5212a1a5ec3ece547bc6, type: 3}
+  - name: acolyte_bolt_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 018203dcda565c81a0f2af24076ee62e, type: 3}
+    - {fileID: 8300000, guid: 3690b202e5d452ba8afcf414876e04cd, type: 3}
+    - {fileID: 8300000, guid: 7e174157c3235e2cb4378089c8b9b3cd, type: 3}
+    - {fileID: 8300000, guid: f21f947cb1725e7b85381be372343764, type: 3}
+    - {fileID: 8300000, guid: feb58c6f2db5509eb15e5f588deb9623, type: 3}
+    - {fileID: 8300000, guid: c6c5e513b7e054bebff857e42d2fe13a, type: 3}
+  - name: acolyte_bolt_wall_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fc2d8c9bfda056f38215eb24a706b3e8, type: 3}
+    - {fileID: 8300000, guid: fc8e9c4b986f5af3bbbee5205bf41fe5, type: 3}
+    - {fileID: 8300000, guid: 567b365a6db9557c8690f32a181778f3, type: 3}
+    - {fileID: 8300000, guid: 55f8ecd6bb225cabba4484971c62d79f, type: 3}
+  - name: acolyte_bolt_dissipate
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 72228b0e4a1f56c0bcd59df8d1d072e4, type: 3}
+    - {fileID: 8300000, guid: b2ddb57d819053b4b605368f3a6184ff, type: 3}
+    - {fileID: 8300000, guid: e857e05db57754b78fdbea6fa0b4cc10, type: 3}
+    - {fileID: 8300000, guid: 0b373f747c4a5eb9897e5464445fa672, type: 3}
+  - name: acolyte_bolt_flight
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 26a26ca0d5045d7cb6efbbae4bc69bf4, type: 3}
+  - name: scatter_volley_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 006d945c7b885b38a5c53338806840dc, type: 3}
+    - {fileID: 8300000, guid: 2d3d01f4ca4c53c18154db03b9dc9e41, type: 3}
+    - {fileID: 8300000, guid: 96151ed95af85259bd55bb534042ddea, type: 3}
+    - {fileID: 8300000, guid: 3fee1fe749755c84a56d515eb9d94934, type: 3}
+  - name: scatter_volley_returned_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a32de26caaf45a08b8f0544320337225, type: 3}
+    - {fileID: 8300000, guid: e9e6de2a719158858c77b67e8a628167, type: 3}
+    - {fileID: 8300000, guid: 158260da7721565e8b6c36ce2ea5e40e, type: 3}
+    - {fileID: 8300000, guid: e6c32a33ea62564c95c55f4b85cd8f40, type: 3}
+  - name: scatter_volley_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e2e590ff6a9d568f98285537cdd6accf, type: 3}
+    - {fileID: 8300000, guid: bc88fc75165c5a76a565236dc71f7a0d, type: 3}
+    - {fileID: 8300000, guid: 61664a8cad6457e785a95ee70c93f016, type: 3}
+    - {fileID: 8300000, guid: 345f7dcb1e555cabb104086eaade3a3a, type: 3}
+    - {fileID: 8300000, guid: 2073541abd3951b59a965cdb5b45ebe8, type: 3}
+    - {fileID: 8300000, guid: b7136b6ed1785bd9b2f78e4862a4f1ec, type: 3}
+  - name: scatter_volley_wall_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e21dd5f83ea0599e87cfba175398786a, type: 3}
+    - {fileID: 8300000, guid: 8be4d04a8d3754889140114ef3632993, type: 3}
+    - {fileID: 8300000, guid: 3cbeddd5e00f5df9ac16935fc77809bb, type: 3}
+    - {fileID: 8300000, guid: a112b0e27d105b33af00f8e8ab1a40f7, type: 3}
+  - name: scatter_volley_dissipate
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a2c9fd098a1056fb9b00bf0df4f58ceb, type: 3}
+    - {fileID: 8300000, guid: f811c1d018065b44baa1cda338e5b366, type: 3}
+    - {fileID: 8300000, guid: 06897217846b53d283050cacea4445f2, type: 3}
+    - {fileID: 8300000, guid: 1ad6edabed5753b6b9ad20ff4ff4a5ff, type: 3}
+  - name: scatter_volley_flight
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 892ee1e3e77a5670ab459328e5dfcb18, type: 3}
+  - name: siege_rocket_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b3b740de76a554c38541a94b638453b4, type: 3}
+    - {fileID: 8300000, guid: 80045791fe5a5b0aa02a6ca4f0494e28, type: 3}
+    - {fileID: 8300000, guid: f7d56ff654755184b966f6632bce3934, type: 3}
+    - {fileID: 8300000, guid: fe20009455005fe2ae01220500931931, type: 3}
+  - name: siege_rocket_returned_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1c60eba0ecf65baeb2b1c2e238625b06, type: 3}
+    - {fileID: 8300000, guid: 54ae31c7073d5d71a6ba20ca2bff9958, type: 3}
+    - {fileID: 8300000, guid: f0c36b7993335125beea5190c5b2c6a7, type: 3}
+    - {fileID: 8300000, guid: 18e4816759d75301bc0a476635fe4d9d, type: 3}
+  - name: siege_rocket_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8f7751ad41e452359102a008ad3c3ef5, type: 3}
+    - {fileID: 8300000, guid: e91b874b99415bcb8d5171ec6a59a5ee, type: 3}
+    - {fileID: 8300000, guid: c237ae5b08605f588cbbf5607d18a42e, type: 3}
+    - {fileID: 8300000, guid: b0c80a60d20a5b80b2ce6e01e36c0548, type: 3}
+    - {fileID: 8300000, guid: 7facb273a97c59b89fead1aa8c51cb12, type: 3}
+    - {fileID: 8300000, guid: c16d110747465e8ba795a44e5079b917, type: 3}
+  - name: siege_rocket_wall_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a176a0b315965699b12e0056a616fb6f, type: 3}
+    - {fileID: 8300000, guid: ccb88da38cc45e1c9788fdd9bffe2989, type: 3}
+    - {fileID: 8300000, guid: 9e6324ef39c75f19a2ca71c761cbc610, type: 3}
+    - {fileID: 8300000, guid: a974ae1321f85727a2251f1adfb9f263, type: 3}
+  - name: siege_rocket_dissipate
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a3c60ec7707b51b197e2f03b00d10ceb, type: 3}
+    - {fileID: 8300000, guid: e89269d2435e57149b66242b99b4acd9, type: 3}
+    - {fileID: 8300000, guid: 267c3e88e37255a8ac13f92eb37e2099, type: 3}
+    - {fileID: 8300000, guid: 402fb043529c5925b360fa0761dfd080, type: 3}
+  - name: siege_rocket_flight
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 78bc0db028be5829814d66a9230fd734, type: 3}
+  - name: collector_bolt_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 970e81e562c855ca974086ea09370470, type: 3}
+    - {fileID: 8300000, guid: 67aa969ec02350c2adafe7e4732feb31, type: 3}
+    - {fileID: 8300000, guid: ee6e864e1907548e92653495f257c37c, type: 3}
+    - {fileID: 8300000, guid: 39d80da8fc0b5625b3572cf32fd07b96, type: 3}
+  - name: collector_bolt_returned_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 482ba749a4255791b22390c926dd4a7b, type: 3}
+    - {fileID: 8300000, guid: 61522b8a3aec5855ab0d106f4fc0c279, type: 3}
+    - {fileID: 8300000, guid: 86f7dbfaed1f5b419a0fb8686608368b, type: 3}
+    - {fileID: 8300000, guid: d6a3cb1abd915eeca9a1f7e9bd0eb9a8, type: 3}
+  - name: collector_bolt_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b43c99d8e58a53e9b9289918530ff780, type: 3}
+    - {fileID: 8300000, guid: d02aa00913655876b585193a90228a6a, type: 3}
+    - {fileID: 8300000, guid: ab8d20663ea85d70a69b21db0016fb76, type: 3}
+    - {fileID: 8300000, guid: b0da12f5ff3a5ee490d004a66fe96d56, type: 3}
+    - {fileID: 8300000, guid: e0b55adf39075956945bcba6980248d0, type: 3}
+    - {fileID: 8300000, guid: 3a57421a5ed5553ab97d4a8678bececa, type: 3}
+  - name: collector_bolt_wall_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 41f2c771796950f6bd4bdf280ea32df2, type: 3}
+    - {fileID: 8300000, guid: 519fa6c20e1656d49871549ba434550d, type: 3}
+    - {fileID: 8300000, guid: 0f7e7629c36f575ba662e6f327d80a8a, type: 3}
+    - {fileID: 8300000, guid: dd8ec18ce7be59f6b435eec457cac34a, type: 3}
+  - name: collector_bolt_dissipate
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: afbe3010938a5415a4723627ebc72073, type: 3}
+    - {fileID: 8300000, guid: 049122f4a7b05b47b84773278e632960, type: 3}
+    - {fileID: 8300000, guid: 3a730d00e12451bb82be3dcbe2a21202, type: 3}
+    - {fileID: 8300000, guid: e3e1c925b70251a6bea8148d6cc21dd6, type: 3}
+  - name: collector_bolt_flight
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 874b244ee48158f4a76b5bb492417bcc, type: 3}
+  - name: riposte_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8ee4c6b122275500a0e9f1347282afee, type: 3}
+    - {fileID: 8300000, guid: 95764b0de1855425a984e3de0500803f, type: 3}
+    - {fileID: 8300000, guid: 9ae3d78c9933505e838718b2a6c260d9, type: 3}
+    - {fileID: 8300000, guid: 9645193199535b538050e70825c37908, type: 3}
+  - name: riposte_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fcff2212a8d6534ca053391c5869e7f3, type: 3}
+    - {fileID: 8300000, guid: 8ed9cdd60073526895e5689904fd39d2, type: 3}
+    - {fileID: 8300000, guid: 6d7075e6d80a56e98af0d5ed16ac801d, type: 3}
+    - {fileID: 8300000, guid: ca27a8b331d15f7f8639390c31a93037, type: 3}
+    - {fileID: 8300000, guid: a734fef1e91f5812a44f2ba52c193ad0, type: 3}
+    - {fileID: 8300000, guid: 8175c689e2565c34be0fe1646f9db145, type: 3}
+  - name: riposte_wall_impact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8ad17dd85bbf501dba1256437b52bcd8, type: 3}
+    - {fileID: 8300000, guid: f95a08168edc577cb35fcaf497b39c84, type: 3}
+    - {fileID: 8300000, guid: de45f415f4d65e0583c8b5fd2bdf6577, type: 3}
+    - {fileID: 8300000, guid: 8f3c0a03886655daa5ec3350df92e3d8, type: 3}
+  - name: riposte_dissipate
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 05e7bc200ed85f529a748835195720e8, type: 3}
+    - {fileID: 8300000, guid: d2791adbc11e5a3fa36d461dfcba9710, type: 3}
+    - {fileID: 8300000, guid: 16f8d56b4b1f525baad7e5f594faf0d8, type: 3}
+    - {fileID: 8300000, guid: 2c38c1c58c8956cf974c1691572fd5bc, type: 3}
+  - name: riposte_flight
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 34938f2c6f1f581180cb107760a9ba16, type: 3}
+  - name: siege_rocket_explosion
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8eac997a6256553bb7e111f0a0f3d375, type: 3}
+    - {fileID: 8300000, guid: 7ebcfb089490547180ecc59c5eab1185, type: 3}
+    - {fileID: 8300000, guid: 31be0c841ec95c9f89043cf2cb58efc4, type: 3}
+    - {fileID: 8300000, guid: d92ba17827365d63b01463746d0febfd, type: 3}
+    - {fileID: 8300000, guid: ef6b328c2405520e88f94262abd1f02d, type: 3}
+  - name: siege_rocket_debris_tail
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b552fb1069835286860fbe8f4aa84581, type: 3}
+    - {fileID: 8300000, guid: f03d1e9edec650eea360a1e29a851fee, type: 3}
+    - {fileID: 8300000, guid: 04b28aa65c2557f3bcaa21d2a1c079ad, type: 3}
+    - {fileID: 8300000, guid: ac2ee91de28054ebab9016e69bac6336, type: 3}
+  - name: riposte_pierce
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c24990ea39bd5607a4a9b6248fb8766f, type: 3}
+    - {fileID: 8300000, guid: 73dd0f48df8754d9af90487f6c68add1, type: 3}
+    - {fileID: 8300000, guid: 726644158cdc5fc8be4c42a09d122cee, type: 3}
+    - {fileID: 8300000, guid: a4a28047ea945bb69a7d29be11d504fe, type: 3}
+  - name: parry_pursuer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9e72e8eb5acd5c04a54ec6768d153fda, type: 3}
+    - {fileID: 8300000, guid: 8fd9b07c0cf65879bf0cb525b69facf2, type: 3}
+    - {fileID: 8300000, guid: 346d97a26cf857678bfe73be62a156ce, type: 3}
+    - {fileID: 8300000, guid: d3668eb9c40d5d37b4943a1a5623ba04, type: 3}
+    - {fileID: 8300000, guid: 4353c5b5bd0b5f62acc0048de2dc952e, type: 3}
+  - name: parry_collector
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 5baa7a61420153b39d06352bd533f9d1, type: 3}
+    - {fileID: 8300000, guid: c062c7091dff5699932b90908d6a710b, type: 3}
+    - {fileID: 8300000, guid: 6f84208d94c65083b513f1396008368c, type: 3}
+    - {fileID: 8300000, guid: cb9d7bbaabb1568998bccec956d1ee1e, type: 3}
+  - name: parry_stagger
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e914f4f265a85db6940d74e651facccc, type: 3}
+    - {fileID: 8300000, guid: 5e23e67d54f7550fa1766386eb2a0ce6, type: 3}
+    - {fileID: 8300000, guid: cdf668f1bbf0526abd288ed0db7867b4, type: 3}
+  - name: parry_opportunity
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: be5b561d790456799da4d397ca34c0e4, type: 3}
+    - {fileID: 8300000, guid: 03f1ca1e8cf555d8a9894146662d09a5, type: 3}
+  - name: projectile_pierce
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e6aaa52be7845eb6bb9d1b3adf891ca8, type: 3}
+    - {fileID: 8300000, guid: e1fb3dc4146a5e21945a71c42a4fe54d, type: 3}
+    - {fileID: 8300000, guid: a0897f593c885bf4a7370dcee5403e93, type: 3}
+    - {fileID: 8300000, guid: d53300afba2d59938e335309ba9e7ffc, type: 3}
+    - {fileID: 8300000, guid: fea6390a037154949acc1e20b684a2c6, type: 3}
+  - name: impact_school_resisted
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9a6b3db7a780503985c275d18a77c704, type: 3}
+    - {fileID: 8300000, guid: b1e36e9eb3895d338112d89e085e19c7, type: 3}
+    - {fileID: 8300000, guid: 41f36581daa1553e94ffc79c3840d1f5, type: 3}
+    - {fileID: 8300000, guid: e67f8b4747ba5f46836fac277a4b55e1, type: 3}
+  - name: impact_school_amplified
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9baab5f2d90d52b08252083437810664, type: 3}
+    - {fileID: 8300000, guid: 080a654d2db95f539439c729df5b8dc5, type: 3}
+    - {fileID: 8300000, guid: 84818ecc6c91518a865031a0508d03f5, type: 3}
+    - {fileID: 8300000, guid: bbc180685a2753349f7cb32ae599395a, type: 3}
+  - name: impact_overcharge_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: dd62f0073df55ff181ce5a302fc3ad52, type: 3}
+    - {fileID: 8300000, guid: 900d2e283d3e5f36a7fb191c2890c8db, type: 3}
+    - {fileID: 8300000, guid: 13f06fb67c645b6c8321ab2488b159b5, type: 3}
+    - {fileID: 8300000, guid: 1e8be58f10b15b7997010605c604672f, type: 3}
+  - name: explosion_overcharge_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 0ac41c0c33bc5118941891d9e2b824a7, type: 3}
+    - {fileID: 8300000, guid: 31fe6ecb786857e3924cfd69cd82a82c, type: 3}
+    - {fileID: 8300000, guid: c060d91985a15415b920f8d8e43c754c, type: 3}
+  - name: mixed_packet_release
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 82a0da1c7d0b514ab6e2c42f3ff741a2, type: 3}
+    - {fileID: 8300000, guid: 4eac432ccf41551fbf7284e4a007531f, type: 3}
+    - {fileID: 8300000, guid: 5807056a8069522b8249a9b0f050e61f, type: 3}
+  - name: dash_launch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 131d50e5ef2e5a79a56aa0c59fc58f8c, type: 3}
+    - {fileID: 8300000, guid: 1e666adba6b55f9eb2da54be573da525, type: 3}
+    - {fileID: 8300000, guid: 906e349d999e5520858e5749a5d3a11d, type: 3}
+    - {fileID: 8300000, guid: d541134834ad5e6587221600d97e0d4e, type: 3}
+    - {fileID: 8300000, guid: fd327574aea55aba8d80746c1e683f5b, type: 3}
+    - {fileID: 8300000, guid: 97d8e8f2dcce57f0a2813d8231c70cf2, type: 3}
+  - name: dash_end
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 512f30bcd01f5260b7ece0c914fabfd6, type: 3}
+    - {fileID: 8300000, guid: ffd0c8225d3654f7a3849b8b0313b624, type: 3}
+    - {fileID: 8300000, guid: 869264a0b26656d49be8f4c5a04541a7, type: 3}
+    - {fileID: 8300000, guid: 744b997d536753ea89433d7a57421390, type: 3}
+  - name: dash_ready
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 82e05c35a4e450cb90de74c1146efc7c, type: 3}
+    - {fileID: 8300000, guid: 9364c96c68ce5f24a14d367f8fc99aaa, type: 3}
+    - {fileID: 8300000, guid: b87bdf62b3a35de5bd440188bcb66cfe, type: 3}
+  - name: player_hit_projectile
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 79597310f96d52a3a624823a5f2ad812, type: 3}
+    - {fileID: 8300000, guid: c619ea2a070051888b52c3f753ac14a8, type: 3}
+    - {fileID: 8300000, guid: 7904fad3837f577195567b769613a1dd, type: 3}
+    - {fileID: 8300000, guid: 8fabf588f15c541989843e088c8046e9, type: 3}
+    - {fileID: 8300000, guid: 1df8dda8a52b543b8ced46f98f266bf0, type: 3}
+    - {fileID: 8300000, guid: 4353587a014d5964800f104fd4767834, type: 3}
+  - name: player_hit_melee
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d2728df21c8d5b89b320cb8fdbcc6a25, type: 3}
+    - {fileID: 8300000, guid: c30036c731565a09955cf627930f0d4d, type: 3}
+    - {fileID: 8300000, guid: c1d499fe0cde506086f9b9df31f9cdfe, type: 3}
+    - {fileID: 8300000, guid: d772f8d1440b52649627ae663b534967, type: 3}
+    - {fileID: 8300000, guid: e75bbd8fb4445d4cb755ccaff26d975e, type: 3}
+    - {fileID: 8300000, guid: 8aadde8ef15f5cfcb3a06f1e37cd032b, type: 3}
+  - name: player_hit_contact
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: eea84d65c4db5edba60f902b406e25f4, type: 3}
+    - {fileID: 8300000, guid: a5f752dd74ca56e1a9a59ec1877e47e7, type: 3}
+    - {fileID: 8300000, guid: 90b38bf7710c595dbd61222733f60dc5, type: 3}
+    - {fileID: 8300000, guid: fb7bb89031e15d7fa3db49e743e0b997, type: 3}
+  - name: life_danger_enter
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c9aaf5c5082d589cad4529ff1318d464, type: 3}
+    - {fileID: 8300000, guid: 0022b32a31ae588f86b3f756e33c10e3, type: 3}
+  - name: player_death
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d8d5489c23975c23a45d784cb72bf949, type: 3}
+    - {fileID: 8300000, guid: e40dd92e9df65fa399ad66c9c720ed36, type: 3}
+    - {fileID: 8300000, guid: e4d59b68a1065cb9b70a9dcf12547f69, type: 3}
+  - name: borrowed_life_exhausted
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 097aabea05d854d09273887301fa892c, type: 3}
+    - {fileID: 8300000, guid: b4caacf27d9051e1a74c4af3c101f904, type: 3}
+  - name: acolyte_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fcfa158c92865eec887246e9888f580a, type: 3}
+    - {fileID: 8300000, guid: 689cdd72a9d757a9967ee30a1ef356d2, type: 3}
+    - {fileID: 8300000, guid: c902ea3ed5695ff8907e4fb47966eb76, type: 3}
+    - {fileID: 8300000, guid: fac7a48e980c58af97bc5c68350b8f02, type: 3}
+  - name: scatter_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1aa18de4b1f65c0cb11863f564c71d1d, type: 3}
+    - {fileID: 8300000, guid: a17ebc16e7b45e8b9eb7543a21e1b50c, type: 3}
+    - {fileID: 8300000, guid: 01a6bbf0280c59acae6f7f37812f41f0, type: 3}
+    - {fileID: 8300000, guid: 351607acbd7b55ca95717ca08c837c75, type: 3}
+  - name: siege_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d8644d9782cf52269ffefcab2b564e2b, type: 3}
+    - {fileID: 8300000, guid: 45e0794e38045457b9a662581ad0d581, type: 3}
+    - {fileID: 8300000, guid: 5be9fb7b48235ee2a4c540ed6926fd06, type: 3}
+    - {fileID: 8300000, guid: 7a5099e10e90537e8cadc5435a2441bd, type: 3}
+  - name: pursuer_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 87226e1ee4cc5c14b66342d49b42fc49, type: 3}
+    - {fileID: 8300000, guid: 4ae03c9836095457995042b2b52a6346, type: 3}
+    - {fileID: 8300000, guid: 3b806588b92b59b8b5bb8c7cceeff63a, type: 3}
+    - {fileID: 8300000, guid: 35abfe6fa7cb592a899ddc8bed44d6f3, type: 3}
+  - name: pursuer_strike
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 300486c0e68e536693056d6f68778f94, type: 3}
+    - {fileID: 8300000, guid: 60d764a647fc5437b68832e0e49b66ae, type: 3}
+    - {fileID: 8300000, guid: 2135dd759ad157799e9695006c7030ef, type: 3}
+    - {fileID: 8300000, guid: 6c9d23e9a26e5ed6ae9772a6ccc7c20e, type: 3}
+    - {fileID: 8300000, guid: 2027d267535d5c5f973ed5a6f7ebe8ab, type: 3}
+    - {fileID: 8300000, guid: c8af8055bb945a65bf7b93962ffdf3a5, type: 3}
+  - name: collector_manifest
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: df34af76a8a45a938988abc817146a7c, type: 3}
+    - {fileID: 8300000, guid: a30690ebfc0d529ba3e71cfdacf6d915, type: 3}
+  - name: collector_footstep
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e619fa4dc19e5998a3c08c0cc1bd1e6f, type: 3}
+    - {fileID: 8300000, guid: c4d2c7aced61529a99283b0eb769804e, type: 3}
+    - {fileID: 8300000, guid: 06430df18bbe539fa7c1b83aa8d42d00, type: 3}
+    - {fileID: 8300000, guid: 07d259dc0e2154558383946d6e4a6f8b, type: 3}
+    - {fileID: 8300000, guid: 4969073e5f22504780f3d35959e86924, type: 3}
+    - {fileID: 8300000, guid: c43261c234025c75b2581b1a622352c5, type: 3}
+  - name: collector_stream_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9669fa6be97151fca18568a60c8b4dc0, type: 3}
+    - {fileID: 8300000, guid: 35b7092fab225a04b0ffe16c16497fc6, type: 3}
+    - {fileID: 8300000, guid: b937b4f055f65373b85ac9e8b6b392e1, type: 3}
+  - name: collector_fan_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 13040c20febb5530b262061ab3651faf, type: 3}
+    - {fileID: 8300000, guid: 58062e1c50445b43897fdcd227ec6e0c, type: 3}
+    - {fileID: 8300000, guid: 8a25c4175c735945afdd0a366ecdfd07, type: 3}
+  - name: collector_fan_release
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d8dd1f0e3f615355b52edcfd43b22730, type: 3}
+    - {fileID: 8300000, guid: 4e2923f2552154ed8e9387b4ff1ff091, type: 3}
+    - {fileID: 8300000, guid: 1b3d5ca4dcac53d5aac2fe29bb03c222, type: 3}
+    - {fileID: 8300000, guid: 47eb11201ab555d7ac6eaf880561ec00, type: 3}
+  - name: collector_sweep_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 83f3f81701d9584d917a5274e80eb83b, type: 3}
+    - {fileID: 8300000, guid: 2fe7c2cd7f595e3299d3b3487e8bd87e, type: 3}
+    - {fileID: 8300000, guid: 9593c400acbb5e65bd3c93dfd15ac583, type: 3}
+  - name: collector_sweep
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 3d1e161634145b65a30a65f81b8e909b, type: 3}
+    - {fileID: 8300000, guid: 26c02b48a9895d63800073d2fe5cb488, type: 3}
+    - {fileID: 8300000, guid: 9f47c65720785a67b8f16902f70df8cb, type: 3}
+    - {fileID: 8300000, guid: fefdbb6e509b5414966f02be9b784351, type: 3}
+  - name: collector_sweep_ground
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 69b7eaba9e4e5ab1ad4998f19849ec38, type: 3}
+    - {fileID: 8300000, guid: 2d5ea32322c05e85a0fbacde40fcb046, type: 3}
+    - {fileID: 8300000, guid: 20e1c989eb8f57e6b946a2f87d9b772f, type: 3}
+    - {fileID: 8300000, guid: 344e80d403235d42b70ea83e3167c75b, type: 3}
+  - name: collector_slam_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f0d74dd8120d542fb158a5de5cbe1e94, type: 3}
+    - {fileID: 8300000, guid: 555f0182f389511db23bd3c8ce028921, type: 3}
+    - {fileID: 8300000, guid: ba19234824fc5a438aa63d2771007ecb, type: 3}
+  - name: collector_slam
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f4c70a7bfa4a51069a54e0ced319fb9c, type: 3}
+    - {fileID: 8300000, guid: cdc57eb6caf359eca9c01070192d9afa, type: 3}
+    - {fileID: 8300000, guid: d5eab1e5355d50f99effd06f23947ce4, type: 3}
+    - {fileID: 8300000, guid: be2516c64226555cbbaf59d7555f611e, type: 3}
+  - name: collector_summon_windup
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: dc94acf30b3e5a708bff40d0aefbb47a, type: 3}
+    - {fileID: 8300000, guid: b321475785ae51c0801c4ddb8e00c1c9, type: 3}
+    - {fileID: 8300000, guid: 6dacefa2a6555a0394db7204009637c1, type: 3}
+  - name: collector_summon_release
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c0259bc1a4545ccb9b424a682d3102c3, type: 3}
+    - {fileID: 8300000, guid: 5c9b41edb01e514d82eac1f567f5be60, type: 3}
+    - {fileID: 8300000, guid: 4c8db08039365dabba1bfe5b3562dfd5, type: 3}
+  - name: collector_summon_arrival
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 0689577ca3d158348a4e675633c2fc7c, type: 3}
+    - {fileID: 8300000, guid: 0a25d81ee0025e639dc7f673969c9383, type: 3}
+    - {fileID: 8300000, guid: 4d2030ef46005b30a8c178a4f6f08be3, type: 3}
+    - {fileID: 8300000, guid: 37093830f670543bb0a4c04af66c7248, type: 3}
+  - name: collector_teleport_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8d17824fff2c50c89f34507cfa003d1d, type: 3}
+    - {fileID: 8300000, guid: 64b261d5e6985202be7fd9fa9f1d7494, type: 3}
+    - {fileID: 8300000, guid: 44558f1adc6158798ecc84298988356a, type: 3}
+  - name: collector_teleport_depart
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 703b5e5e4d7253ada1c4b6204dd60a86, type: 3}
+    - {fileID: 8300000, guid: aae6f84568395c17a17549f8ed1e0e35, type: 3}
+    - {fileID: 8300000, guid: dc191deaf5685186a3a2b1496efed74c, type: 3}
+    - {fileID: 8300000, guid: 6f63329e138356729d871cd0fdc43e41, type: 3}
+  - name: collector_teleport_arrive
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9b6347b473185cdbbf0568821fef12f7, type: 3}
+    - {fileID: 8300000, guid: 361835f2c76558adb466f15c5e9aa9c7, type: 3}
+    - {fileID: 8300000, guid: b43dd23c78fa56adab3c43b13730a2b7, type: 3}
+    - {fileID: 8300000, guid: 4cfc71d26b84503b83704e260262bd39, type: 3}
+  - name: collector_hurt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 12324fb3198c5c2a8dee32326b4cdf19, type: 3}
+    - {fileID: 8300000, guid: 10f98992885a5c6eb6cacf0c2c14d8e6, type: 3}
+    - {fileID: 8300000, guid: 27972a65d31253c486f39f6a6fe16d59, type: 3}
+    - {fileID: 8300000, guid: 4dd65455df2c538daaa6705b453190e9, type: 3}
+    - {fileID: 8300000, guid: 3316ca5a696b5b85a9ef2198c0085d3b, type: 3}
+    - {fileID: 8300000, guid: 97f23d8aabd45b6985c85b43014bcc3d, type: 3}
+  - name: collector_stagger
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fe343a7694b154b383f1b3acfed73bbf, type: 3}
+    - {fileID: 8300000, guid: b465c761e40356ab9c1a78cceb3efa86, type: 3}
+    - {fileID: 8300000, guid: c95947d9f6a151398e8852ac98efac38, type: 3}
+  - name: collector_death_rupture
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b6f24d80a35a53d5af3c02568c5a6b12, type: 3}
+    - {fileID: 8300000, guid: ff0c86faf3005bcda32a9140c1124774, type: 3}
+  - name: collector_death_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 184d16fc055f5c2f99fb4927393d4a24, type: 3}
+    - {fileID: 8300000, guid: eeb41f1dcfa15282bde5bd6acf5d9973, type: 3}
+  - name: collector_death_binding_tail
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7387ee48ef3e5c5bb67d0048bea3e927, type: 3}
+  - name: collector_encore_entrance
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 206641f2a6dd5229af93217f49b6acff, type: 3}
+    - {fileID: 8300000, guid: 8098151e3e2352a08550f887e5f9920d, type: 3}
+  - name: run_start
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 568955ba1bf352b881f55c199155c5f6, type: 3}
+  - name: encounter_clear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f7619882e9a85fcdb6efaa6216717637, type: 3}
+  - name: encounter_begin
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 49048e06c12d50d6bde2bfc327781862, type: 3}
+  - name: boss_reveal
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9ca022630f015dca93186e5a84e3939a, type: 3}
+  - name: boss_combat_start
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 77a172024ab451c7a67429acb84895d8, type: 3}
+  - name: collector_defeated
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e8095d8ccb7d55c49d629c848ad8f4dc, type: 3}
+  - name: short_run_victory
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4d60ed38c7d354dd8f47c638a11f9566, type: 3}
+  - name: death_defeat
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 323c2e000ac352f2afe4065f6b786282, type: 3}
+  - name: time_expiry_defeat
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f0ed5a806dbf5b0c9310405d2ad750a5, type: 3}
+  - name: footstep_courtyard_stone
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ada20859b5b35b538949af264e38824e, type: 3}
+    - {fileID: 8300000, guid: a882779d068456e291128b9d079c2d02, type: 3}
+    - {fileID: 8300000, guid: d8857e75a7165bc089a4ee5e46676551, type: 3}
+    - {fileID: 8300000, guid: ca226aedf68e5d74abc4a31d736d7c0a, type: 3}
+    - {fileID: 8300000, guid: c2afea5a88ee56f38c9d39005d595030, type: 3}
+    - {fileID: 8300000, guid: 7fcec33599125aa2845580ca61e3a10c, type: 3}
+    - {fileID: 8300000, guid: 79af0ba3778c5865a2d3a48a6f9b82f8, type: 3}
+    - {fileID: 8300000, guid: 9278deb94d2c5175b52a29e23a78514b, type: 3}
+  - name: footstep_graveyard_ground
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7ceb77e6588d5481a5f1dd59bc565003, type: 3}
+    - {fileID: 8300000, guid: 3c43d0e0fa5d54e8bb818b8fe8f20cc0, type: 3}
+    - {fileID: 8300000, guid: 0c4cd05aad9057b1bab22eaedfbe52dc, type: 3}
+    - {fileID: 8300000, guid: c584bcf21eba54e0a20446d16c14f163, type: 3}
+    - {fileID: 8300000, guid: 8428a74c7c675e45a783d4b99882cfef, type: 3}
+    - {fileID: 8300000, guid: cb17029fe3415996b7a2d7664637735b, type: 3}
+    - {fileID: 8300000, guid: 5fddbb5a194956feb94490f6ec4d9a56, type: 3}
+    - {fileID: 8300000, guid: f7fa839469c85876a8a5008f17277f91, type: 3}
+  - name: footstep_cave_rock
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b5ae5944b74a58c6938a0b0c98e74f88, type: 3}
+    - {fileID: 8300000, guid: a7092c7cd9665ab8bcfe0edeefa7f9dc, type: 3}
+    - {fileID: 8300000, guid: 1dcb980c0efd53beb6aca0eb718fc376, type: 3}
+    - {fileID: 8300000, guid: 840355b320bd51e09fc68e030ca86831, type: 3}
+    - {fileID: 8300000, guid: d912d7ce7d7b56c3bca929d4d28215bb, type: 3}
+    - {fileID: 8300000, guid: d5dc8aae81e75998a848be7bf4456ae3, type: 3}
+    - {fileID: 8300000, guid: 08b62ad11f9256d1b8d38c06e8181348, type: 3}
+    - {fileID: 8300000, guid: f1041571386a528ea2bc21114c6323d9, type: 3}
+  - name: footstep_sanctum_stone
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a5d32bd8aa6a53ae8c3c3cfb1d387230, type: 3}
+    - {fileID: 8300000, guid: 18b35ec1240f53b2b1dec86e57a21256, type: 3}
+    - {fileID: 8300000, guid: 1d35b031c6125bd1a28cd286c2ecd17b, type: 3}
+    - {fileID: 8300000, guid: 728ad77159ea5d59b2f5b2347c126a33, type: 3}
+    - {fileID: 8300000, guid: d17eecc90cd5563597ecf5a097394535, type: 3}
+    - {fileID: 8300000, guid: bdd100a2d3395b47827a9e7f23adeeba, type: 3}
+    - {fileID: 8300000, guid: 09068d051809512480586e73579c0e1f, type: 3}
+    - {fileID: 8300000, guid: 0ecd3bfbdd4a5cf282f42eb00fb83ea3, type: 3}
+  - name: dash_unavailable
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 389b0597ba005decaf8dae5e8f6e417c, type: 3}
+    - {fileID: 8300000, guid: 215661a4373c58808656d4cbd746ce06, type: 3}
+  - name: grace_protection
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a534999b07e4511ca2cf1dbfefa8e2c5, type: 3}
+    - {fileID: 8300000, guid: 6f9a27614436521badfb8e9585d3a24b, type: 3}
+    - {fileID: 8300000, guid: bd06dbd4014b5f8ab7ec843b67bea9c1, type: 3}
+  - name: life_restored_kill
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8db71e38d4df540d806021253806ea2e, type: 3}
+    - {fileID: 8300000, guid: 9cb5ccabc20455d893d8ef582bb462c7, type: 3}
+    - {fileID: 8300000, guid: a66afff51adf5257b7d2ab5773bc5093, type: 3}
+    - {fileID: 8300000, guid: bbbabadf32115420989e224b65f6af2e, type: 3}
+  - name: life_stolen
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 25fde746ccf151998c8955b6d8c4abe8, type: 3}
+    - {fileID: 8300000, guid: 332a08108f5b5a0ea2aae33ca704c17a, type: 3}
+    - {fileID: 8300000, guid: d4659e462b465a77a4ba6a19c19d4a3c, type: 3}
+    - {fileID: 8300000, guid: 159969e5d15f53a2a52f1d5899c548cf, type: 3}
+  - name: low_life_heartbeat
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 6f9bfa007ac15b22b1f050d076d62a1a, type: 3}
+  - name: focus_hover
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ce0e78cdfaf552c6a8475ceddfcbf565, type: 3}
+    - {fileID: 8300000, guid: ae33d93c52bc5092bacc6c5dddfc8ca8, type: 3}
+    - {fileID: 8300000, guid: 941e41a394995b63817f3032e0d3423a, type: 3}
+  - name: button_press
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: aa0322c6376150b58744465fb3ea8c28, type: 3}
+    - {fileID: 8300000, guid: e205a4a661db543ea461698cf7a1b3e0, type: 3}
+    - {fileID: 8300000, guid: 293ffa834bc35b05902291b1c41bbf1b, type: 3}
+  - name: confirm
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: cdeed2598b4c509bac502e91f368bff1, type: 3}
+    - {fileID: 8300000, guid: d28763c0bc0c528faaa780174bd82fb1, type: 3}
+    - {fileID: 8300000, guid: 92d29571695350fd98e848e5e8c71369, type: 3}
+  - name: back_cancel
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4da9d19c550e556fa374aa21abc86a90, type: 3}
+    - {fileID: 8300000, guid: cb7bf76839b551c3a227d9c29eed893e, type: 3}
+    - {fileID: 8300000, guid: fe19c0b48ef35ea8b7315f447594ace2, type: 3}
+  - name: panel_open
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4fff3d21c50a53fd8481ba02ff8373da, type: 3}
+    - {fileID: 8300000, guid: 5fa72bf973a35cb1be7fdca332a3bd63, type: 3}
+    - {fileID: 8300000, guid: eaa89b627d4b5e509ca5855852912ca6, type: 3}
+  - name: panel_close
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 948acfb91c875de6a3bc13ea11c4cc47, type: 3}
+    - {fileID: 8300000, guid: 5b2569e86fac5563a5cd16f746767d66, type: 3}
+    - {fileID: 8300000, guid: 2124a3dc2bc155fcaab85af8c7e6bfe2, type: 3}
+  - name: tab_change
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 710cb395c37f59dfa31431b1a58439c6, type: 3}
+    - {fileID: 8300000, guid: f1246813f4135fc9a085d3fcd5374334, type: 3}
+    - {fileID: 8300000, guid: 351f4ffcaa8d5bda8bcc1773b5f52d1f, type: 3}
+  - name: card_node_select
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f2c132f249e85fdeae15fc2d3a6aedcb, type: 3}
+    - {fileID: 8300000, guid: 9926f981934c54b3b446706f623a2d16, type: 3}
+    - {fileID: 8300000, guid: 3845551f69505a5c8adabb1b71eda161, type: 3}
+  - name: toggle_on
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ebb5f96908275a7f890c680ccc05c0a4, type: 3}
+    - {fileID: 8300000, guid: 4016feb1d6df5cc2933e0ffa27d16b92, type: 3}
+  - name: toggle_off
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4996abc3ee165914a97d7c7e036ccaaa, type: 3}
+    - {fileID: 8300000, guid: 0319004de9085b2c9138e3622779ca95, type: 3}
+  - name: setting_increase
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 94f3bd7340d65ba88fc3a548422c94dd, type: 3}
+    - {fileID: 8300000, guid: f11bcb36db425aba81f8f5d395b4cbf5, type: 3}
+  - name: setting_decrease
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9c999f2af0d4559a95a7f77578f825ed, type: 3}
+    - {fileID: 8300000, guid: f6977e4759d25d97832a7e976309b19c, type: 3}
+  - name: action_rejected
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fc1ef063989e5d5a8cf779470dbbe041, type: 3}
+    - {fileID: 8300000, guid: 4fe6918b2b815485960062bc618abd54, type: 3}
+    - {fileID: 8300000, guid: 8a34205252d35d3f8ee5cb7536a3bc76, type: 3}
+  - name: confirmation_open
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e60fe494ee12561da5770d29c0150d5f, type: 3}
+    - {fileID: 8300000, guid: 2268df7848f05135af1cbe5a4c96c6da, type: 3}
+  - name: destructive_confirm
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a60aebbbd039515e97b267ea855e02b8, type: 3}
+    - {fileID: 8300000, guid: e23451547ca4556bac813dbcf87ee229, type: 3}
+  - name: style_equipped
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bf7ecb97857f5abf9eb6bc2ba85920d2, type: 3}
+    - {fileID: 8300000, guid: 4dd512473d2c5189bcd67ce1f84e80c4, type: 3}
+    - {fileID: 8300000, guid: a51c33842ce753b09a75738e1e6f56f6, type: 3}
+  - name: details_open
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1fb11cf54cb4575dba32ef7fa943fef9, type: 3}
+    - {fileID: 8300000, guid: f150957dd837550191ea56b1c7ea7740, type: 3}
+  - name: details_close
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 81a6cf4db75856e7acc8dbc28659c673, type: 3}
+    - {fileID: 8300000, guid: 9a3fb67507a85677b7d15fdb18fd7ec5, type: 3}
+  - name: scroll_tick
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4002f7c7899353408d9324e84522c22d, type: 3}
+    - {fileID: 8300000, guid: 890b989fde845ab4aa2ecb33f7dc16df, type: 3}
+    - {fileID: 8300000, guid: 6ef72ef8b1b85f5196d159f70fe34456, type: 3}
+  - name: notification
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: fb5ea89f25fb5630842a76491913fc50, type: 3}
+    - {fileID: 8300000, guid: f4996a737211505fa7cf3f08d17e7f9d, type: 3}
+    - {fileID: 8300000, guid: d2fc0e0bb9ff58c0b8d87e8b23ede439, type: 3}
+  - name: acolyte_spawn_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bd8f0530bb0b59da8cee1c3d3da2f1c3, type: 3}
+    - {fileID: 8300000, guid: c5496f9b85ca578a93f47144267efb04, type: 3}
+    - {fileID: 8300000, guid: 0b53287157e05e979cc4993d6cd96bbc, type: 3}
+  - name: acolyte_materialize
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 196869ffcdb75c0a910ad7e7328ab47a, type: 3}
+    - {fileID: 8300000, guid: 3255f5e714b156cabf3ca9c338cef09a, type: 3}
+    - {fileID: 8300000, guid: b6a22a871bac53f895b058b9a5f324b3, type: 3}
+    - {fileID: 8300000, guid: c97ba0e9989656d1a027deeda5edc3a8, type: 3}
+  - name: acolyte_movement
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 0025a3819ac05021a244ea5311d58fed, type: 3}
+    - {fileID: 8300000, guid: 5e790dfc71cb55f485ba0eac93454471, type: 3}
+    - {fileID: 8300000, guid: fe0bb271e59c57fa96c344882b0d8ca3, type: 3}
+    - {fileID: 8300000, guid: dc39e39e6d8f564f9894c6ccaa4e1e06, type: 3}
+    - {fileID: 8300000, guid: a9c60c7628c454f983ef3569b54a66c5, type: 3}
+    - {fileID: 8300000, guid: 3ca9aacedaaa5486a31a7c3da13171b7, type: 3}
+  - name: acolyte_hurt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 65762c0e8e685e75b5f91b0e3c742614, type: 3}
+    - {fileID: 8300000, guid: f2c6210a84e05e2f9a6d8a091018979a, type: 3}
+    - {fileID: 8300000, guid: 5cc75846c27d5809abcab1525069248e, type: 3}
+    - {fileID: 8300000, guid: 766b6dd0eb0f5ad5854e0808a4387204, type: 3}
+    - {fileID: 8300000, guid: 9f384c3c6a1b57c585d2b209bd2ddd20, type: 3}
+    - {fileID: 8300000, guid: e8621655956a57bfa2c1787d2da2b0cd, type: 3}
+  - name: acolyte_death
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4201c37baf035d6bae2a52f2086b6499, type: 3}
+    - {fileID: 8300000, guid: 290fe7e88378592da519821d590e370e, type: 3}
+    - {fileID: 8300000, guid: 9f1a4b98c86253e5ab07ff42d67c5725, type: 3}
+    - {fileID: 8300000, guid: 06eff21dd42257409478737a0c126288, type: 3}
+    - {fileID: 8300000, guid: 5ee0f8f9a3e653d199eb17e37ec72152, type: 3}
+    - {fileID: 8300000, guid: b94c325fd02559399ab2c2c99c02b2d1, type: 3}
+  - name: pursuer_spawn_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 82546e88c7ae523092cc25336b0af9b4, type: 3}
+    - {fileID: 8300000, guid: ecb601c758a556fab9d992d416dcc53a, type: 3}
+    - {fileID: 8300000, guid: 58ca3b102307519297b9daa05930c792, type: 3}
+  - name: pursuer_materialize
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bc8973b6651156ceb21d55026dd3a2ed, type: 3}
+    - {fileID: 8300000, guid: 4ff3dfc489475e6894402ad5eb9d76dc, type: 3}
+    - {fileID: 8300000, guid: 1090abe7a0a3583bb94dda7c5d6b832c, type: 3}
+    - {fileID: 8300000, guid: b0a53795944b59c9823867a000a2123d, type: 3}
+  - name: pursuer_movement
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 12dc3cb366d25db9bc5c8e08690452fd, type: 3}
+    - {fileID: 8300000, guid: b25a54a54d9a59499beeba065cb5e7b1, type: 3}
+    - {fileID: 8300000, guid: ec10ae910062520587594a31142d3b87, type: 3}
+    - {fileID: 8300000, guid: 4b1e45034a8050559531a7c6a26b98e6, type: 3}
+    - {fileID: 8300000, guid: aed77d6435a159458d17a29f94133070, type: 3}
+    - {fileID: 8300000, guid: d8d822ec9f0e5b92b9562e2463e6e037, type: 3}
+  - name: pursuer_hurt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 02c21df086f457e3ae484fc512ddac26, type: 3}
+    - {fileID: 8300000, guid: af03a433d7995009ae1ddc783845d389, type: 3}
+    - {fileID: 8300000, guid: f16de2cd2ce05dbea61c849ac48a7268, type: 3}
+    - {fileID: 8300000, guid: 58f32ee2467f5ccf9e69e41d5638e0b0, type: 3}
+    - {fileID: 8300000, guid: 33e3412a8ff25137bf3985e74ef40e73, type: 3}
+    - {fileID: 8300000, guid: 5e82437fac5e53528da7b51be47d1e4a, type: 3}
+  - name: pursuer_death
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 19df4e2e96e35505aabbc1221dd6e6df, type: 3}
+    - {fileID: 8300000, guid: 1c1c5653959f515095efa48da6b65256, type: 3}
+    - {fileID: 8300000, guid: bd3bb84c47d154b4a2a0eff8e4f4ec10, type: 3}
+    - {fileID: 8300000, guid: 6df7d69ec1055ec2941ed6c1aa946cd7, type: 3}
+    - {fileID: 8300000, guid: 77d2e12f65a85ecc8fe3f7ea2b04f11a, type: 3}
+    - {fileID: 8300000, guid: d46e984056065ea2a5c94dabc4381175, type: 3}
+  - name: scatter_caster_spawn_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 80be16228ac454c695668962f5a25fb3, type: 3}
+    - {fileID: 8300000, guid: 58bea2c69a405cf380c99923a1f75075, type: 3}
+    - {fileID: 8300000, guid: 1e059896c5a150949f473e7017064b75, type: 3}
+  - name: scatter_caster_materialize
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: aecd03ded37a53ddad47b07624a3cf6b, type: 3}
+    - {fileID: 8300000, guid: 2dee8ec7cbd05a1dbec4bf1a92d84dce, type: 3}
+    - {fileID: 8300000, guid: b5eab65b9e015f069d05e79f490d56c6, type: 3}
+    - {fileID: 8300000, guid: 05229340a85757eea348943eb75b866e, type: 3}
+  - name: scatter_caster_movement
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8ea861885ed158c0a8cb643d7db37545, type: 3}
+    - {fileID: 8300000, guid: eda0ea90cc32582195608fd0382c5d38, type: 3}
+    - {fileID: 8300000, guid: a85feadadece57598164bb15aac13f43, type: 3}
+    - {fileID: 8300000, guid: 22d8e2df7e885270ab563761e8c1fde9, type: 3}
+    - {fileID: 8300000, guid: f2c14d8152595412be3aae00b91437f2, type: 3}
+    - {fileID: 8300000, guid: 93127d7b372158e8bdac568bcb9944ee, type: 3}
+  - name: scatter_caster_hurt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 54cdf24926d758abbc0381ced6026c88, type: 3}
+    - {fileID: 8300000, guid: cdf957cf0fee56a5b4cf08ef6c537501, type: 3}
+    - {fileID: 8300000, guid: a61fa3c011f252cf8d26908d16a9ac5c, type: 3}
+    - {fileID: 8300000, guid: 05dc68d0896e5a708c28c03407978f78, type: 3}
+    - {fileID: 8300000, guid: f590af7703dc5d61ab1abd8745dd3c89, type: 3}
+    - {fileID: 8300000, guid: dfe3aca04d4c52d1843d57748cf3a451, type: 3}
+  - name: scatter_caster_death
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e399e2e8692257fbacf2ac6194c7742d, type: 3}
+    - {fileID: 8300000, guid: e1f53c3c8ded5b38b38372a7ce53347e, type: 3}
+    - {fileID: 8300000, guid: b14fce0a8665563eaa0b67cd77d3bfc2, type: 3}
+    - {fileID: 8300000, guid: 6efa72d7fae75b3b93cfa0f831344705, type: 3}
+    - {fileID: 8300000, guid: 4845e513ca235d2dab0f767803c31691, type: 3}
+    - {fileID: 8300000, guid: d2d05f4e91ed5d759431733cc7a135c6, type: 3}
+  - name: siege_familiar_spawn_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 204af9cd07d15e2ebfe9fa38bfbfb958, type: 3}
+    - {fileID: 8300000, guid: 54c6c232c3285358873164f82c5b7dfb, type: 3}
+    - {fileID: 8300000, guid: 42c3bdd01bcc5a1e91acbee4fd2e0efe, type: 3}
+  - name: siege_familiar_materialize
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7b8fc62ed7ce5c9ca6bff36533b1680e, type: 3}
+    - {fileID: 8300000, guid: 9495f428b03d5aa7af30e79d0f0e1320, type: 3}
+    - {fileID: 8300000, guid: cc0102fd65fc5b43b960b9d78c78deef, type: 3}
+    - {fileID: 8300000, guid: 8c56be02d8555031badfd1f4d9f8d0c0, type: 3}
+  - name: siege_familiar_movement
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9322cd11d19a5df2815a26b06cba742b, type: 3}
+    - {fileID: 8300000, guid: f80f787fc0e651ad8f9c487d94c55560, type: 3}
+    - {fileID: 8300000, guid: b6973e6d9715565d8a83aa2268ef6476, type: 3}
+    - {fileID: 8300000, guid: 1222b8ecc6095b368517b19318b1ba66, type: 3}
+    - {fileID: 8300000, guid: 58d1fee9294c5efcad8b95b758179dad, type: 3}
+    - {fileID: 8300000, guid: 27cc3eabe39d512cbe4da13a96642a9a, type: 3}
+  - name: siege_familiar_hurt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 53198eef0bcf55c6a535bfd4e8437d67, type: 3}
+    - {fileID: 8300000, guid: 696fc161a034553f918edce6a163b42d, type: 3}
+    - {fileID: 8300000, guid: 175c0f8569795203967b886180e8d82c, type: 3}
+    - {fileID: 8300000, guid: 10fe9538eb0c57d78d3441654b9f9ffb, type: 3}
+    - {fileID: 8300000, guid: a5b65ff5fe935baa93b878e6216cd017, type: 3}
+    - {fileID: 8300000, guid: 8530f237368e5b39b631b2c133074cbb, type: 3}
+  - name: siege_familiar_death
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e873dab2c77d53cb80e620fd8299a3e3, type: 3}
+    - {fileID: 8300000, guid: 169af2225f5b53a598fb9c6169f44dc7, type: 3}
+    - {fileID: 8300000, guid: d838702c49b9511bbbb3bd629e41101c, type: 3}
+    - {fileID: 8300000, guid: d31842b381e758e6ae4496ebcf11ac87, type: 3}
+    - {fileID: 8300000, guid: 2c2635a087e1554bb53c3dd4f7443e5a, type: 3}
+    - {fileID: 8300000, guid: 266d187adac75090958efa21e0715efe, type: 3}
+  - name: overstay_warning
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 5d4b43ff21e45472a1e8f9fe86c37a87, type: 3}
+    - {fileID: 8300000, guid: 02724c86933950118713df71dce4f0f1, type: 3}
+    - {fileID: 8300000, guid: 889c75262904573593151f1e1c5110e8, type: 3}
+  - name: elite_evolution
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ecc6dab700e451f4957fb23f432d5ec9, type: 3}
+    - {fileID: 8300000, guid: 08ab10a1990557d2b179f33f81b65c5f, type: 3}
+    - {fileID: 8300000, guid: 57640c1fe7a654f8888bb521ebdbf24e, type: 3}
+    - {fileID: 8300000, guid: aad4d68954595eac862300950b500c6f, type: 3}
+  - name: elite_attack_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f8dfd98d66955928819b77ab172653cb, type: 3}
+    - {fileID: 8300000, guid: 9e13a4e4c6735b039828f57c3ed65e84, type: 3}
+    - {fileID: 8300000, guid: 2388065a82615ad39716e7507ff33ff7, type: 3}
+    - {fileID: 8300000, guid: 3d655860cf7f54309ee254d1c84864a0, type: 3}
+  - name: elite_movement_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 445cf32edc6851babaa6873229608228, type: 3}
+    - {fileID: 8300000, guid: bc18a4117efa573ca6e756216615712b, type: 3}
+    - {fileID: 8300000, guid: c17019ca85515300a43a1dfc04130c65, type: 3}
+    - {fileID: 8300000, guid: 81ba029b68315c898ff34df303496e34, type: 3}
+  - name: elite_hurt_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 818d8c84fab05cb19a08689e35d03669, type: 3}
+    - {fileID: 8300000, guid: ba17454712745b018f191eaed8754f32, type: 3}
+    - {fileID: 8300000, guid: cce7a336fcab5ec0b71988730f015750, type: 3}
+    - {fileID: 8300000, guid: de1987c07c95536a894bc10fc0c891f0, type: 3}
+  - name: elite_death_accent
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d0887c2147f55c43b4a7e0ab01dbbc98, type: 3}
+    - {fileID: 8300000, guid: 18aeb624b0ec5798a963c5e1fba8bd6d, type: 3}
+    - {fileID: 8300000, guid: 3c2ed1cd89fa576ea1e084dca26cd900, type: 3}
+    - {fileID: 8300000, guid: 846e9aaa98695e76bb48fa74ce4a856f, type: 3}
+  - name: upgrade_offers
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 627d67a4b31451fb82dd1250c9aec6dd, type: 3}
+    - {fileID: 8300000, guid: 7a9363e1455f582a94f6bf9f657ae55c, type: 3}
+  - name: upgrade_buy_life_payment
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e2a3e8c5c5615f2ea147ce36385b5a84, type: 3}
+    - {fileID: 8300000, guid: e04df7e120f7501f8e8f02fc98cf7134, type: 3}
+    - {fileID: 8300000, guid: ad51c7952af65f8886fb32f13a6264f8, type: 3}
+  - name: upgrade_rank_up
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c6d8a45efa1f5c5b8731928526d0d7bd, type: 3}
+    - {fileID: 8300000, guid: 515d25af12a956a9b029b4f7e31fb1f5, type: 3}
+    - {fileID: 8300000, guid: 581bf1a879af585e9fb7797cb87ccc28, type: 3}
+  - name: upgrade_life_insufficient
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: cca17522f6cc5b1aa4fce9b373eb4e06, type: 3}
+    - {fileID: 8300000, guid: da6f1f45806b516695e03258619dd55d, type: 3}
+  - name: piercing_return_layer
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 41cf9ded394f5ceb90a6cc36533f76f4, type: 3}
+    - {fileID: 8300000, guid: c3b5feb2b5225a8fa2b46318d992817c, type: 3}
+    - {fileID: 8300000, guid: 5e89fa550df150ceaaa3c9eb229e9bd4, type: 3}
+    - {fileID: 8300000, guid: 5c3cafe1447056c68feae60406462a6d, type: 3}
+  - name: echo_volley_release
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 47ca5a3bd1ab58a6a794f7c65fe0e427, type: 3}
+    - {fileID: 8300000, guid: 69b20de5f45456efb423b0b89164a052, type: 3}
+    - {fileID: 8300000, guid: 16440a77b47951469842f577e64b1e08, type: 3}
+    - {fileID: 8300000, guid: a6c89114b66a5548a47791627b3d8525, type: 3}
+  - name: heavy_orbit_hit
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b21911b987a25337844d729bc5966db6, type: 3}
+    - {fileID: 8300000, guid: 09d56e538bbe5a03bda04548599b223c, type: 3}
+    - {fileID: 8300000, guid: 5c55664aad15534699db74d4bc426ace, type: 3}
+    - {fileID: 8300000, guid: 72506d438d28557a97d2e0f1a4ffae7c, type: 3}
+  - name: parting_gift
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 29667fd49937587491ab1d6ecf569ebd, type: 3}
+    - {fileID: 8300000, guid: f869e79c841c55b6bcf0ec1ebd3170ee, type: 3}
+    - {fileID: 8300000, guid: 0b1c890186f95457986f41dca63c9f55, type: 3}
+    - {fileID: 8300000, guid: 9709e9b3ec4f5111a76727e2af534d3b, type: 3}
+  - name: final_second_perfect
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f030b93c13065ca48594f9102e2ec15b, type: 3}
+    - {fileID: 8300000, guid: 00a790bca4ca5802b68c7f2507e2b7c0, type: 3}
+    - {fileID: 8300000, guid: 9bfaa681b0ef55cdaa4fae854ec44f76, type: 3}
+  - name: overflow_replace
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 02876e5d6b7e5fdca78d178ef08ae0ad, type: 3}
+    - {fileID: 8300000, guid: 3dc659c8d84a5770b1f987ab3e8e80b2, type: 3}
+    - {fileID: 8300000, guid: 06d32b106be453f68d411a8246c42832, type: 3}
+    - {fileID: 8300000, guid: 9e1a0ba5a2be5577a567148eada1ba27, type: 3}
+  - name: fusion_merge
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 6ce7874eff39560aae8240afee69fa8a, type: 3}
+    - {fileID: 8300000, guid: 5ef77cd34ed65b9097838c06511349a1, type: 3}
+    - {fileID: 8300000, guid: 8338d2554639525a904e2d5453dee766, type: 3}
+    - {fileID: 8300000, guid: f9d27bed105f5d92aafcd81e7192e392, type: 3}
+  - name: quick_draw
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 69ade45215d05509940c576a6117b4fd, type: 3}
+    - {fileID: 8300000, guid: 175d1a30a1e55780afd356629a2e02c0, type: 3}
+    - {fileID: 8300000, guid: 3803b8d6fecc54e29d8f66bc51b1cf12, type: 3}
+    - {fileID: 8300000, guid: 55e822a700f2570c906383b90c19076a, type: 3}
+  - name: chain_start
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 12656dc72aed525e97bed38036b8d115, type: 3}
+    - {fileID: 8300000, guid: 5a3042c4d8df546683e15db9879553a1, type: 3}
+    - {fileID: 8300000, guid: 07711890d7ce585bbdf18efac8397898, type: 3}
+  - name: chain_advance_02
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 124d94ca8eb05785a4ddbf04748683a2, type: 3}
+    - {fileID: 8300000, guid: dde6cb2e5806538784470937d561715c, type: 3}
+  - name: chain_advance_03
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 91aecee0429e5b53849b056c7ad86c62, type: 3}
+    - {fileID: 8300000, guid: 5f0cf9c08d8356feac5e2abf260619eb, type: 3}
+  - name: chain_advance_04
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8de57e926ad55a21b1a68ae82d5eb300, type: 3}
+    - {fileID: 8300000, guid: 07a8773787fc59cea8ac8c1f6551af07, type: 3}
+  - name: chain_advance_05
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1cea4d7d0e0c541c8f93ce24093b84e1, type: 3}
+    - {fileID: 8300000, guid: 05ecc74295e05eb4865b7d74fa6debc7, type: 3}
+  - name: chain_milestone
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d9fa19f343265f258be1bda88c0fc36d, type: 3}
+    - {fileID: 8300000, guid: 0a12895b7a5a5ce9922b751b114c8de3, type: 3}
+    - {fileID: 8300000, guid: e7c2e8d3ae32523284b0922ee15cfdb8, type: 3}
+  - name: chain_break
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 82b72402684f508db1cb53995a8feab2, type: 3}
+    - {fileID: 8300000, guid: ec3d5d8ef51a5aceb6c11e9764807c26, type: 3}
+  - name: xp_tally_tick
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8dd100cc71e45869803a0bc8b190281a, type: 3}
+    - {fileID: 8300000, guid: 141c082a290950249091ebec4c61c9e9, type: 3}
+    - {fileID: 8300000, guid: c23cdf53b5dd550b9e1778dc33ea3aa7, type: 3}
+  - name: xp_tally_complete
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 76b2acfbf148565c937c7eed420d66ac, type: 3}
+    - {fileID: 8300000, guid: d26d8900a21d567c8cc69df6355d373f, type: 3}
+  - name: mastery_level_up
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 12ea9c0a311a59daaddc0d3a0d3d8fab, type: 3}
+  - name: mastery_point_awarded
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4a5ead1ecbd45548a84415240022b882, type: 3}
+    - {fileID: 8300000, guid: a30a2e4ec77a5c23a4f7c93e20bf46ea, type: 3}
+  - name: skill_unlock
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c669284e976050eaade4dd5bd8db81c4, type: 3}
+    - {fileID: 8300000, guid: 80129910d3ab5b36b4b3faf60a9e5e03, type: 3}
+    - {fileID: 8300000, guid: 57036dc86c9557b89b81982fc7729751, type: 3}
+  - name: skill_respec
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c49da573c74750818bb534801de0224f, type: 3}
+    - {fileID: 8300000, guid: 736e6eee8c945caba3dddc66406050ef, type: 3}
+  - name: achievement_unlock
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: d10ba8df021b58d6b700b25b21a512c0, type: 3}
+  - name: record_best_score
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9b88d16303b95b3fa8d0ffbf11335876, type: 3}
+  - name: record_longest_run
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 5403bf95c42351148a6564f62c433b42, type: 3}
+  - name: heavy_orbit_active
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 707f9808c7a156fca369fb95bd03fab0, type: 3}
+  - name: courtyard
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: bdff0793001f5269a98f5b845523660a, type: 3}
+  - name: graveyard
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: dbed2ada804a5b5c9ec1d722d67538dc, type: 3}
+  - name: cave
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 6974ce3bbbe9530d970ba63f92ab40df, type: 3}
+  - name: sanctum
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 8302619ea781501183b2bac6045468c4, type: 3}
+  - name: brazier
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: c2ed20f55d8859ec894c5addf17bc5d7, type: 3}
+  - name: blue_flame
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 1b19d210e2795f0cae5a735107138c1b, type: 3}
+  - name: candle
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 55a67e26b86655e79ef70fbf143a33e0, type: 3}
+  - name: stone_wear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: defe0dcb43bb56eb9c0e62aeb506c44e, type: 3}
+    - {fileID: 8300000, guid: b7ce277934c2544ca1b0691d7d9b4968, type: 3}
+    - {fileID: 8300000, guid: ba0716e2febc5b62b2dd1dd5ed0206ff, type: 3}
+    - {fileID: 8300000, guid: 064943d19def5f67a598afa5d20a5d5b, type: 3}
+  - name: stone_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 72a477b069fd58c5ba2033c6e9bd1319, type: 3}
+    - {fileID: 8300000, guid: 068a723107685f658c8a2ce4bdd20b52, type: 3}
+    - {fileID: 8300000, guid: 22f2bb0e2005515f848b54ff9ccf4921, type: 3}
+    - {fileID: 8300000, guid: 876f18e316a5570c9c496896125a4ce5, type: 3}
+  - name: stone_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7a504cbf6e2e52738702d633b75e7c4f, type: 3}
+    - {fileID: 8300000, guid: f9fce81655ed5c3f8aad4c1ffd00c6ba, type: 3}
+    - {fileID: 8300000, guid: 4390aae60ea75eec82bf53952a8952eb, type: 3}
+  - name: stone_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9d44440ac1905b8f893ba402dbf15fce, type: 3}
+    - {fileID: 8300000, guid: 4d32c288cedd5cfb9695e53987a20076, type: 3}
+    - {fileID: 8300000, guid: bd9e1cbab9705fce8af8c239fe080514, type: 3}
+  - name: ceramic_wear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e74cd333cff35317a7eabb725b36533d, type: 3}
+    - {fileID: 8300000, guid: d0a916956de35b0ba3f19e08cbab8d61, type: 3}
+    - {fileID: 8300000, guid: 62cd4bff49c257a49f01ae9feb1f1ef1, type: 3}
+    - {fileID: 8300000, guid: cd72b2883e6450a19793f8f812664869, type: 3}
+  - name: ceramic_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 76c76e2023ff5ace97f7dfb31d69a6c2, type: 3}
+    - {fileID: 8300000, guid: d1323da69e655194aa13e3aba3378263, type: 3}
+    - {fileID: 8300000, guid: 3d8fd93593bd5a419dbf7943420634e4, type: 3}
+    - {fileID: 8300000, guid: 0a41455993da5542ae0647c5dccfef22, type: 3}
+  - name: ceramic_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ac4e4b8273a55c15a0fc94a9bed4bcfe, type: 3}
+    - {fileID: 8300000, guid: 8d5b049729a25de3b51f931c85e70696, type: 3}
+    - {fileID: 8300000, guid: b201342f625d5a4a9fb769bcf2602812, type: 3}
+  - name: ceramic_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7ab012fe68825c3396354d81a088170f, type: 3}
+    - {fileID: 8300000, guid: 3104bce6848d5fbeb4068ac83f4c3643, type: 3}
+    - {fileID: 8300000, guid: 43dcb05b2af6537b8b7370f92ba8d167, type: 3}
+  - name: rock_wear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8fe2928c7821536b8f79ac3f9befe280, type: 3}
+    - {fileID: 8300000, guid: bf5aaeb24b3454139b5e902f489dda58, type: 3}
+    - {fileID: 8300000, guid: 3478a798098857539fd6f2d71749c2db, type: 3}
+    - {fileID: 8300000, guid: 8b1feadece8955dd934bdaefaae0a766, type: 3}
+  - name: rock_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b80cfb77f2055148b49a16c6adbabc30, type: 3}
+    - {fileID: 8300000, guid: df60ce17e4d95ca984b7c25c02035dfe, type: 3}
+    - {fileID: 8300000, guid: 743a7dd2dc7057d78fb6c0c4e0b0cda9, type: 3}
+    - {fileID: 8300000, guid: ec4d9a230a055dbe8e0156765c3f90f9, type: 3}
+  - name: rock_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ac71483392515655bd297892f479af20, type: 3}
+    - {fileID: 8300000, guid: a1c3771bacb65138aecd46fb3381b2b4, type: 3}
+    - {fileID: 8300000, guid: 787746f38ef658e18288a932d1b8abfc, type: 3}
+  - name: rock_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: f91be324aa3b56eebbb6f52afd2ad57e, type: 3}
+    - {fileID: 8300000, guid: ced72d172861598f968e42ae89b04bc9, type: 3}
+    - {fileID: 8300000, guid: 29214579dfcb5eda906850a58b56661f, type: 3}
+  - name: wood_wear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 81c5628cd83c57f3be8b261990b6d914, type: 3}
+    - {fileID: 8300000, guid: 360c70a6e9ba59b49adb16f5037202b7, type: 3}
+    - {fileID: 8300000, guid: ad17d7268b5155d0b22f47bee7583376, type: 3}
+    - {fileID: 8300000, guid: d892913246065ec3a3543cad98d991fc, type: 3}
+  - name: wood_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: e3c9f64b1a1f5774b81c066d5a97abd8, type: 3}
+    - {fileID: 8300000, guid: 91850f64c72558c5a9fe24919cd0e1fe, type: 3}
+    - {fileID: 8300000, guid: 5feb10ed5e1651539fbce76cb5695074, type: 3}
+    - {fileID: 8300000, guid: 91e391d66e6f5f9fac43bb0cfd48af2c, type: 3}
+  - name: wood_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 39b561cee63a5814ac03d193477a1436, type: 3}
+    - {fileID: 8300000, guid: 863cf37541e054b2a4798925a603d1bb, type: 3}
+    - {fileID: 8300000, guid: 4f044d9f22ca5828b32845994d86029e, type: 3}
+  - name: wood_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a96d1a01841f5e5f806b0297f715376d, type: 3}
+    - {fileID: 8300000, guid: a015f0b946705e74b05de7785402f76b, type: 3}
+    - {fileID: 8300000, guid: 0ca30a764a095e5cb446cc5577779571, type: 3}
+  - name: crystal_wear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 0f9219fe412d50e2ab60c6c33dbf65fc, type: 3}
+    - {fileID: 8300000, guid: b3b1f15334305b30b160bb689f74f5f3, type: 3}
+    - {fileID: 8300000, guid: 85d06df8b4bc5ff0b2d71160973619fc, type: 3}
+    - {fileID: 8300000, guid: 75449c41e6625d8fab436d19038b51a0, type: 3}
+  - name: crystal_collapse
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 9e750b8b12ac5a35ac77e449ad222c8d, type: 3}
+    - {fileID: 8300000, guid: 203760ee41d45ce8a627bd90816ee930, type: 3}
+    - {fileID: 8300000, guid: 7668999b75e859889e28d16bb867d7d2, type: 3}
+    - {fileID: 8300000, guid: 22a8c9f1cc6a55b7840eeecd98eabcad, type: 3}
+  - name: crystal_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 92744f94518d578eb4098fcef33afcc9, type: 3}
+    - {fileID: 8300000, guid: 34e4e6ca808e538cbcf400a7fe64bc0a, type: 3}
+    - {fileID: 8300000, guid: ed046ac97aa2540598907afecfcdb447, type: 3}
+  - name: crystal_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 3d5d6a15a537526d89489b3901879ac0, type: 3}
+    - {fileID: 8300000, guid: e14635d0ca21548c8d71b08a5cc03075, type: 3}
+    - {fileID: 8300000, guid: a739815761d35133aeba7e13c746be96, type: 3}
+  - name: morph_begin
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 7354e9e3d2655bcbb6836c956e50bb3e, type: 3}
+    - {fileID: 8300000, guid: 36f334498bb658f2a2ff22426429cecc, type: 3}
+  - name: morph_patch
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b7a64708a6705b3e93b81e341d0bee3f, type: 3}
+    - {fileID: 8300000, guid: 12ba2a7120105e299587ca28630cfb8d, type: 3}
+    - {fileID: 8300000, guid: 18757645260e545dbc1305b1ed7429da, type: 3}
+    - {fileID: 8300000, guid: f0883ecdd04e533cac5f50100b026c7d, type: 3}
+    - {fileID: 8300000, guid: d082d5d8ae1a5b4995108dbe3230c092, type: 3}
+    - {fileID: 8300000, guid: 134950ad1b23536da91c5ef02059626a, type: 3}
+  - name: scenery_dissolve
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4920548070f05f0ba4c27c2fbdaba821, type: 3}
+    - {fileID: 8300000, guid: 14b0ce37587a5dc4b23af32d6c717129, type: 3}
+    - {fileID: 8300000, guid: 37a54a2b2f145b23b8bfdb733a84639a, type: 3}
+    - {fileID: 8300000, guid: acbdce9654645f499eca154fb93f5592, type: 3}
+  - name: scenery_form
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 5afcfecf76285c12afbddc5e906f7099, type: 3}
+    - {fileID: 8300000, guid: d924e83e648e507db89b3b11c27250aa, type: 3}
+    - {fileID: 8300000, guid: ae3605be76e151ddbf6ae5078611a9c7, type: 3}
+    - {fileID: 8300000, guid: 684474b12fd75e36b5df67bcc75b2c0c, type: 3}
+  - name: morph_settle
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 632c0855fc475aa19da5570c9ec9bb62, type: 3}
+    - {fileID: 8300000, guid: 8914f24b736156d09b57a41efbaae9eb, type: 3}
+  - name: sanctum_pull_begin
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 257869ba9a6e53e19566c8b635357739, type: 3}
+    - {fileID: 8300000, guid: dc0b27532a1a57dd92f488dd87fec01a, type: 3}
+  - name: sanctum_rising_transport
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 5d8043c632045cd6a20afae29ff6b48e, type: 3}
+  - name: sanctum_darkness
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: b13bf9d18336511f8d37b8e945eadf47, type: 3}
+  - name: sanctum_light_01
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a8ce92dc0a74505fbd544ae7dbdc1636, type: 3}
+  - name: sanctum_light_02
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 53853cd3e630541596711f37f67b0108, type: 3}
+  - name: sanctum_light_03
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 6eccb7afab18551bb5ee256ec319a9e6, type: 3}
+  - name: sanctum_light_04
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 2ee0b40d19b2528385784d839d041f86, type: 3}
+  - name: sanctum_light_05
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: bae421fc8e405c3ca3c00fcb8bda89af, type: 3}
+  - name: sanctum_light_06
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 75b5bb221c2e5641b440e656f603375e, type: 3}
+  - name: sanctum_light_07
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: aac2457a99505320ac5c154ce3008a64, type: 3}
+  - name: sanctum_light_08
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 422d66a9a26b56ccbe0ae982d4ddd556, type: 3}
+  - name: sanctum_reveal_resolve
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 2ca648309a4e594d82c96f24b164381f, type: 3}
+  - name: endless_wave_clear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 99f9518b5d5050659a5bea47e360da4a, type: 3}
+  - name: endless_cycle_escalates
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 3ead6731d8fd5358b3624b67502d3a7e, type: 3}
+  - name: endless_boss_clear
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8d7fe08e7b775515b129ab974995fa50, type: 3}
+  - name: run_retired
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 8552d9ec605359e4b064b72f80f1efc7, type: 3}
+  - name: lesson_prompt
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 1b733f2fbd98529281bbcccbe49a8c4f, type: 3}
+    - {fileID: 8300000, guid: 173f9df31e8b5ed3a975fc8e6a7bc720, type: 3}
+  - name: objective_progress
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: c95830533c26515db2d97d4080d58027, type: 3}
+    - {fileID: 8300000, guid: 681a950ce736560896df14031bff099d, type: 3}
+    - {fileID: 8300000, guid: 44df2cd835865dadabee31e391c1ab6e, type: 3}
+  - name: lesson_complete
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: a15cf063d2c65ad2928ca13af374f46d, type: 3}
+  - name: tutorial_complete
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 618a821616755c0bbf3bcc0f6fb917a2, type: 3}
+  - name: dialogue_tick
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: 4ee88f6c1f8058caae30bba58970e0cb, type: 3}
+  - name: main_menu
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 1da6198ddda257e19d40b12c36fe5d1c, type: 3}
+  - name: courtyard_combat
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 857b325186c45662b8af4cc2efb1eeb5, type: 3}
+  - name: graveyard_combat
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: d2100abfdbac5bdbacb39b5ccf3dba50, type: 3}
+  - name: cave_combat
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: fc3739c1a8a256748ae54846d2270678, type: 3}
+  - name: sanctum_intro
+    loop: 0
+    clips:
+    - {fileID: 8300000, guid: ecd12d8179695a4b813e74649e82acbc, type: 3}
+  - name: collector_battle
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 0effe80ef1445cb2967bb1d0f634e3df, type: 3}
+  - name: endless_arena_escalation
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 382b187077fd5ea3a4d7e3baf47079da, type: 3}
+  - name: endless_collector_escalation
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: fdebe87064f15e8ba4db635ddea34615, type: 3}
+  - name: training
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 1a2f4451b22a5ffab1e2adcdeb687b9e, type: 3}
+  - name: upgrade_selection
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 5e562a0b22b85f7bb99ad781f94f12d7, type: 3}
+  - name: victory_results
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: 4a3a694c3c40536b82be0f0c5389b362, type: 3}
+  - name: failure_results
+    loop: 1
+    clips:
+    - {fileID: 8300000, guid: b634c340bbce56799b8b822eaa652546, type: 3}

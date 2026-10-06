@@ -24,7 +24,5 @@ namespace BorrowedHex.Presentation
             // would also turn the run debug (DebugSkipWave), but the panel is not shown there.
             Hud.AddDevButton("Skip wave", () => Sim.DebugSkipWave());
         }
-
-        partial void CloseEndlessSubMenus() { }
     }
 }

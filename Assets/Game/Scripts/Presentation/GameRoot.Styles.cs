@@ -11,7 +11,8 @@ namespace BorrowedHex.Presentation
 
         partial void BuildModeMenus()
         {
-            Styles = StylePanel.Create(canvas);
+            // The Capture style tab's view lives in the Character screen's Body (plan Task 8).
+            Styles = StylePanel.Create(Character.Body);
             Main.EnableEntry("style", OpenStyles);
             BuildEndlessMenus();
         }
@@ -19,26 +20,9 @@ namespace BorrowedHex.Presentation
         // Phase 12 (endless).
         partial void BuildEndlessMenus();
 
-        void OpenStyles()
-        {
-            Main.Show(false);
-            Styles.Show(Profile.Profile, Config, () => Profile.Save(), CloseStyles);
-        }
+        void OpenStyles() => OpenCharacter(CharacterScreen.StyleTab);
 
-        void CloseStyles()
-        {
-            Styles.Hide();
-            RefreshMainMenu();
-            Main.Show(true);
-        }
-
-        partial void CloseModeSubMenus()
-        {
-            if (Styles != null && Styles.IsOpen) CloseStyles();
-            CloseEndlessSubMenus();
-        }
-
-        partial void CloseEndlessSubMenus();
+        void CloseStyles() => CloseCharacter();
 
         /// <summary>
         /// Section 7: the style sets the base catch, then the equipped passives apply on top, in one

@@ -339,10 +339,10 @@ namespace BorrowedHex.Tests
             foreach (var theme in Themes)
             {
                 var lighting = WorldLightingPolicy.For(theme);
-                // Bounds widened after the brightness review; still a night rig, not daylight.
-                Assert.That(lighting.Ambient.maxColorComponent, Is.LessThanOrEqualTo(.25f), theme);
-                Assert.That(lighting.Fog.maxColorComponent, Is.LessThanOrEqualTo(.09f), theme);
-                Assert.That(lighting.MoonIntensity, Is.InRange(.2f, .6f), theme);
+                // Allow both encounter brightness lifts and Sanctum's separate 15% lift.
+                Assert.That(lighting.Ambient.maxColorComponent, Is.LessThanOrEqualTo(.39f), theme);
+                Assert.That(lighting.Fog.maxColorComponent, Is.LessThanOrEqualTo(.1404f), theme);
+                Assert.That(lighting.MoonIntensity, Is.InRange(.2f, .94f), theme);
             }
         }
 

@@ -1,0 +1,113 @@
+// Evaluate with Unity Pipeline's eval_file (copy to a temporary .cs path).
+// This creates assets only under EnemyAnimations. No scene, prefab, animator
+// controller, gameplay callback, existing draft, or runtime code is changed.
+const string rootFolder = "Assets/Sprites/EnemyAnimations";
+var manifest = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(rootFolder + "/manifest.json"));
+AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+var spriteSheetProperty = typeof(TextureImporter).GetProperty("spritesheet");
+if (spriteSheetProperty == null) throw new System.Exception("Sprite rectangle import API unavailable");
+int spritesCreated = 0, clipsCreated = 0, textureCount = 0;
+foreach (var character in manifest["characters"])
+{
+    var characterName = character["character"].ToString();
+    bool evolved = character["evolved"].ToObject<bool>();
+    var layers = evolved ? new[] { "Composite", "Base", "Aura" } : new[] { "Composite" };
+    foreach (var layer in layers)
+    {
+        var field = layer == "Composite" ? "masterFile" : layer == "Base" ? "baseMasterFile" : "auraMasterFile";
+        string texturePath = rootFolder + "/" + character[field].ToString();
+        var importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+        if (importer == null) throw new System.Exception("Missing texture: " + texturePath);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.spritePixelsPerUnit = 32;
+        importer.filterMode = FilterMode.Point;
+        importer.mipmapEnabled = false;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.alphaIsTransparency = true;
+        importer.npotScale = TextureImporterNPOTScale.None;
+        importer.maxTextureSize = 2048;
+        var textureSettings = new TextureImporterSettings();
+        importer.ReadTextureSettings(textureSettings);
+        textureSettings.spriteMeshType = SpriteMeshType.FullRect;
+        importer.SetTextureSettings(textureSettings);
+        var rects = new System.Collections.Generic.List<SpriteMetaData>();
+        foreach (var sequence in character["sequences"])
+        {
+            string prefix = characterName + "_" + sequence["view"] + "_" + sequence["state"] + "_";
+            int row = sequence["masterRow"].ToObject<int>();
+            int count = sequence["frames"].ToObject<int>();
+            for (int frame = 0; frame < count; frame++)
+            {
+                rects.Add(new SpriteMetaData {
+                    name = prefix + frame.ToString("D2") + "_" + layer,
+                    rect = new Rect(frame * 160, 1536 - (row + 1) * 128, 160, 128),
+                    alignment = (int)SpriteAlignment.Custom,
+                    pivot = new Vector2(.5f, 13f / 128f),
+                    border = Vector4.zero
+                });
+            }
+        }
+        // The project has no Sprite Editor package. Use its verified built-in
+        // texture importer API; reflection avoids obsolete-call warnings in the
+        // ephemeral evaluator without installing or altering project packages.
+        spriteSheetProperty.SetValue(importer, rects.ToArray());
+        importer.SaveAndReimport();
+        var sprites = new System.Collections.Generic.Dictionary<string, Sprite>();
+        foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(texturePath))
+            if (asset is Sprite sprite) sprites.Add(sprite.name, sprite);
+        if (sprites.Count != 120) throw new System.Exception("Expected 120 slices: " + texturePath + ", got " + sprites.Count);
+        spritesCreated += sprites.Count;
+        foreach (var sequence in character["sequences"])
+        {
+            string prefix = characterName + "_" + sequence["view"] + "_" + sequence["state"];
+            int count = sequence["frames"].ToObject<int>();
+            int fps = sequence["fps"].ToObject<int>();
+            bool loop = sequence["loop"].ToObject<bool>();
+            string clipName = prefix + (layer == "Composite" ? "" : "_" + layer);
+            string clipFolder = rootFolder + "/" + characterName + "/Clips";
+            if (!AssetDatabase.IsValidFolder(clipFolder)) AssetDatabase.CreateFolder(rootFolder + "/" + characterName, "Clips");
+            string clipPath = clipFolder + "/" + clipName + ".anim";
+            var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+            bool isNew = clip == null;
+            if (isNew) clip = new AnimationClip();
+            clip.name = clipName;
+            clip.frameRate = fps;
+            clip.wrapMode = loop ? WrapMode.Loop : WrapMode.Once;
+            var keys = new ObjectReferenceKeyframe[count];
+            for (int frame = 0; frame < count; frame++)
+                keys[frame] = new ObjectReferenceKeyframe { time = (float)frame / fps, value = sprites[prefix + "_" + frame.ToString("D2") + "_" + layer] };
+            // Unity's discrete sprite curves automatically hold their last key
+            // for one frame. An extra closing key adds an unwanted frame pause.
+            var binding = EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite");
+            AnimationUtility.SetObjectReferenceCurve(clip, binding, keys);
+            var settings = AnimationUtility.GetAnimationClipSettings(clip);
+            settings.loopTime = loop;
+            settings.startTime = 0;
+            settings.stopTime = (float)count / fps;
+            AnimationUtility.SetAnimationClipSettings(clip, settings);
+            if (isNew) AssetDatabase.CreateAsset(clip, clipPath);
+            else EditorUtility.SetDirty(clip);
+            clipsCreated++;
+        }
+    }
+}
+// Direction/state strips remain convenient grid exports. Point filtering and
+// no compression also apply to them; master sheets contain the usable slices.
+foreach (var fullPath in System.IO.Directory.GetFiles(rootFolder, "*.png", System.IO.SearchOption.AllDirectories))
+{
+    string path = fullPath.Replace('\\','/');
+    if (path.Contains("_Complete")) continue;
+    var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+    if (importer == null) throw new System.Exception("Missing reference texture: " + path);
+    importer.filterMode = FilterMode.Point;
+    importer.mipmapEnabled = false;
+    importer.textureCompression = TextureImporterCompression.Uncompressed;
+    importer.alphaIsTransparency = true;
+    importer.npotScale = TextureImporterNPOTScale.None;
+    importer.maxTextureSize = 4096;
+    importer.SaveAndReimport();
+    textureCount++;
+}
+AssetDatabase.SaveAssets();
+return new { slicedSprites = spritesCreated, animationClips = clipsCreated, referenceTextures = textureCount };

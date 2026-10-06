@@ -8,6 +8,8 @@ namespace BorrowedHex.Data
     public class PlayerTuning
     {
         public float moveSpeed = 6f;
+        [Tooltip("Life seconds spent per active gameplay second; does not accelerate AI or other timers.")]
+        public float lifeDrainPerSecond = 1.4f;
         public float hitInvulnerability = 0.65f;
         [Tooltip("Invulnerability after a CONTACT hit (bumping an enemy body). Shorter than a "
                  + "hit's, so contact is a brief shove of danger rather than a free dash-through.")]

@@ -38,8 +38,9 @@ namespace BorrowedHex.Presentation
             Main.AddEntry("play_short", "Play", PlayShort);
             // Phase 14: right under Play, where a first-time player looks first (D86).
             Main.AddEntry("tutorial", "Tutorial", PlayTutorial);
+            // GameRoot.Endless switches this on; until then its tab is greyed beside Short run.
+            Main.AddEntry("endless", "Endless", null);
             // Visibly disabled until their phase lands (Phase 8 checklist).
-            Main.AddEntry("endless", "Endless", null, "later build");
             Main.AddEntry("practice", "Practice sandbox", PlaySandbox);
             Main.AddEntry("mastery", "Mastery & skills", null, "later build");
             Main.AddEntry("style", "Capture style", null, "later build");
@@ -51,13 +52,15 @@ namespace BorrowedHex.Presentation
             Settings = SettingsPanel.Create(canvas, allowWindowed: !IsWeb);
             CheatPanel = CheatsPanel.Create(canvas);
             BuildProgressionMenus();
+            // Training is a sub-screen like any other: the stack hides the menu under it, and Esc
+            // or Back returns with focus restored. Starting a run from it clears the whole stack.
+            Main.OpenTraining += () => Screens.Push(Main.Training.gameObject, () => Main.Training.DefaultFocus, null);
+            Main.Training.Back += () => { if (Screens.Top == Main.Training.gameObject) Screens.Pop(); };
             ApplySettings();
         }
 
         // Later phases (tree, styles, records, endless) switch on their menu entries here.
         partial void BuildProgressionMenus();
-        // ...and close their own panels here (Esc on the main menu, or returning to it).
-        partial void CloseSubMenus();
         // Later phases fill the run's style, passives and stats from the profile here.
         partial void ApplyLoadoutExtra(RunSetup setup);
 
@@ -79,8 +82,7 @@ namespace BorrowedHex.Presentation
         void StartRun(RunKind k)
         {
             kind = k;
-            Main.Show(false);
-            Settings.Hide();
+            Screens.Clear();
             BeginRun();
         }
 
@@ -90,38 +92,35 @@ namespace BorrowedHex.Presentation
         /// </summary>
         public void ShowMainMenu()
         {
+            // One call closes every sub-screen (the old per-partial CloseSubMenus chain).
+            Screens.Clear();
             Menu.Show(false);
-            Settings.Hide();
-            CheatPanel.Hide();
-            CloseSubMenus();
             kind = RunKind.Backdrop;
             BeginRun();
             RefreshMainMenu();
             Main.Show(true);
-            // Above the HUD, flow panels and pause menu, below settings.
-            Main.transform.SetAsLastSibling();
-            Settings.transform.SetAsLastSibling();
+            // The main menu is the stack's bottom entry: that is what hides it while Character,
+            // Records or Settings is up. Esc on it does nothing; it never starts or resumes a run.
+            // Push also raises it above the HUD and flow panels.
+            Screens.Push(Main.gameObject, () => Main.DefaultFocus, () => { });
             SyncGameplayInput();
         }
 
         void RefreshMainMenu()
         {
-            Main.SetProfileLine(ProfileLine());
-            // A cheated run never counts, so say so where the player presses Play.
-            string cheat = CheatsWarning();
-            Main.SetWarning(string.IsNullOrEmpty(Profile.Warning) ? cheat
-                : cheat == null ? Profile.Warning : Profile.Warning + "\n" + cheat);
+            var m = Profile.Profile.mastery;
+            Main.SetStatus(new MenuStatus
+            {
+                Mastery = m.level,
+                StyleName = CaptureStyles.Resolve(Profile.Profile.styleId).Name,
+                Points = m.points,
+                // At max level the bar reads full rather than an empty 0/0.
+                XpFraction = m.level >= Mastery.MaxLevel ? 1f : m.xp / (float)Mastery.CostToAdvance(m.level),
+            });
+            Main.SetWarning(Profile.Warning);        // save failures only: readable, on their own line
+            // A cheated run never counts, so say so right under Play.
+            Main.SetCheatNotice(Cheats.AnyActive);
         }
-
-        // Replaced by a mastery line in Phase 9.
-        string ProfileLine()
-        {
-            var st = Profile.Profile.stats;
-            string extra = null;
-            ProfileLineExtra(ref extra);
-            return extra ?? (st.runs == 0 ? "" : $"Runs {st.runs}   Victories {st.victories}");
-        }
-        partial void ProfileLineExtra(ref string line);
 
         void OnRunEnded(RunSummary summary)
         {
@@ -129,30 +128,21 @@ namespace BorrowedHex.Presentation
             // landed in the same frame, so finalize with the summary's own setup.
             var setup = summary.RunId == Sim.RunId ? Sim.Setup : null;
             LastFinalize = Profile.FinalizeRun(summary, setup);
-            Flow.SetProgress(FinalizeText(LastFinalize));
+            // Task 16: one pure call regroups the finalize into outcome, rewards and Details.
+            Flow.SetOutcome(ResultsCopy.FromFinalize(LastFinalize ?? new FinalizeResult(), Profile.Profile.mastery, Profile.Warning));
         }
 
-        /// <summary>The results screen's profile lines. Later phases add XP, achievements and records.</summary>
-        string FinalizeText(FinalizeResult r)
+        void OpenSettingsFromMain() => OpenSettings();
+        void OpenSettingsFromPause() => OpenSettings();
+
+        void OpenSettings()
         {
-            if (r == null || !r.Applied) return null;
-            var sb = new System.Text.StringBuilder();
-            FinalizeTextExtra(r, sb);
-            if (!r.Saved) sb.Append(sb.Length > 0 ? "\n" : "").Append("<color=#FF8C73>Not saved: ").Append(Profile.Warning).Append("</color>");
-            return sb.ToString();
+            Settings.Show(Profile.Profile.settings, SettingsChanged, CloseSettings);
+            Screens.Push(Settings.gameObject, () => Settings.DefaultFocus, null);
         }
-        partial void FinalizeTextExtra(FinalizeResult r, System.Text.StringBuilder sb);
 
-        void OpenSettingsFromMain() => Settings.Show(Profile.Profile.settings, SettingsChanged, CloseSettings);
-        void OpenSettingsFromPause() => Settings.Show(Profile.Profile.settings, SettingsChanged, CloseSettings);
-
-        void CloseSettings()
-        {
-            Settings.Hide();
-            // Return focus to whichever menu opened it.
-            if (InMainMenu) Main.Show(true);
-            else if (Menu.IsOpen) Menu.Show(true);
-        }
+        // The stack restores whichever menu opened it, and that menu's focus.
+        void CloseSettings() { if (Screens.Top == Settings.gameObject) Screens.Pop(); }
 
         void SettingsChanged()
         {
@@ -178,6 +168,12 @@ namespace BorrowedHex.Presentation
             }
             else if (s.displayMode == 0 && Screen.fullScreen && !IsWeb)
                 Screen.SetResolution(1600, 900, FullScreenMode.Windowed);
+            // Jam build fix: Unity restores the last window size/mode from the registry and that
+            // beats the project's fullscreen default, so one windowed dev launch left later builds
+            // stuck in a 960x540 window. "As launched" on a desktop player now means native
+            // borderless fullscreen; players who want a window pick Windowed explicitly.
+            else if (s.displayMode == -1 && !IsWeb && !Application.isEditor && !Screen.fullScreen)
+                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, FullScreenMode.FullScreenWindow);
         }
     }
 }

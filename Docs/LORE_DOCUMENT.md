@@ -1,420 +1,279 @@
 # Borrowed Hex
 
-## Lore document
-
 > Everything is temporary. Some things become monstrous when they are not allowed to be.
 
-This document establishes a proposed narrative canon for **Borrowed Hex**: a nightmare action roguelike RPG about a rogue magician living on stolen time. It develops the supplied premise alongside the combat vocabulary in [GAME_PLAN.md](GAME_PLAN.md) and the later revisions in [REWORK_PLAN.md](REWORK_PLAN.md). Names, history, dialogue, and narrative outcomes introduced here are creative additions. They do not claim that story scenes, locations, or endings are implemented, or change the gameplay specifications.
+## The last kindness
 
----
+Before the world became a nightmare, magic was an ordinary miracle.
 
-## 1. The world in a breath
+A healer borrowed tomorrow's strength to carry a patient through the night. A mason asked stone to stand a little longer. A mother took warmth from her own hands to light a fire beside a sleeping child. Every working named what it borrowed and left a way for it to return. The healer tended the patient through the exhaustion that followed. The mason eventually took the old wall down. The fire became ash, and the ash fed something else.
 
-The world has outlived its permission to exist.
+People called this the Accord. No deity had signed it. It was the way things passed through the world without belonging to anyone forever. A magician's true name stood behind each promise: someone who could receive the loan, bear its cost, and release it when its time was done.
 
-Its dead cannot leave. Its buildings forget how to stand. Things that survive too long grow additional mouths, limbs, and hungers, as though existence has begun trying to chew its way out of them. Above it all, a necromancer called **The Collector** keeps a record of every life he refuses to let end.
+At the House of the Last Lamp, a physician named Avel Sere practiced the gentlest forms of that art. He eased pain, carried messages, and sat beside people who had no one to sit beside them. He was known for never looking toward the door while someone was speaking.
 
-You are a rogue magician whose own death has already been entered in that record. You stole the entry before it could be closed. Now your heart spends the remainder, second by second. To keep moving, you must seize the dangerous time trapped inside the Collector's servants and steal the spells they throw at you.
-
-You cannot make a weapon. You can only catch one meant to kill you.
-
-Somewhere inside the Collector's keeping is your name. Reach it before your borrowed life runs out, and you might recover the right to decide how it ends.
-
-## 2. Before the keeping
-
-### The common miracle
-
-Once, people understood that magic was borrowed.
-
-A flame called into a palm came from the warmth of something else. A bridge raised by a word borrowed the patience of stone. A healing spell brought tomorrow's strength into a wounded body today; afterward, the patient slept, and the magician tended them until tomorrow caught up.
-
-Magic was the art of asking something to be here before its time, or to remain a little after.
-
-The old schools taught three obligations: name what you borrow, know when it must return, and leave a way for it to leave. Every spell contained a dismissal. Every summoning had an open door.
-
-This was called **the Accord**. It was a practice, not a bargain with a god. Things passed through hands. Warmth became flame, flame became ash, ash fed an orchard. The world endured because nothing within it endured unchanged.
-
-There were magicians who broke these obligations, as there were people who dammed rivers or stole grain. Their spells turned bitter. Their houses became dangerous. The damage was local, and eventually it ended.
-
-Then one man learned to make the damage wait.
-
-### The first withheld death
-
-Before he became The Collector, **Avel Sere** was a physician of endings at the House of the Last Lamp.
-
-He eased pain. He carried messages. He found missing relatives and sat beside those who had none. When a patient needed one more hour, he borrowed it and stayed to witness its return. He was known for never looking toward the door while someone was speaking.
-
-During the winter famine, the wards filled faster than the graves. Sere borrowed hours, then days. He persuaded frightened people to lend him their remaining summers. He took years from his own life and distributed them in fractions so small that a hundred patients could see morning.
+During the winter famine, the wards filled faster than the graves. Sere borrowed hours, then days. He persuaded frightened people to lend him their remaining summers. He divided years from his own life into portions small enough that a hundred patients could see morning.
 
 For a while, it worked.
 
 Then the loans came due together.
 
-His sister **Mara**, the House's keeper of names, was among those he had prolonged. She had spent her extra days recording who wanted burial, who wanted burning, who wanted their rings returned, and who wanted no ceremony at all. When her time arrived, she asked him to open the window.
+His sister Mara, the House's keeper of names, was among those he had prolonged. She had used her extra days to record what the dying wanted: burial or burning, a ring returned, a letter delivered, no ceremony at all. When her time arrived, she asked him to open the window.
 
 Sere closed it.
 
-He cut the dismissal from her healing spell. Her heart beat again. She remained aware long enough to understand what he had done.
+He cut the dismissal from her healing spell. Her heart beat again. The life he had borrowed remained trapped inside a body that had finished with it.
 
-In the margin beside her name, she wrote one word:
+Mara understood. Beside her name, she wrote one word.
 
 *Enough.*
 
 He crossed it out.
 
-### The keeping
+## The keeping
 
 Sere treated the next death the same way. Then the next.
 
-What began as emergency medicine became a system. The House's register became the **Ledger of Continuance**: a necromantic instrument that tethered a person to the world after their natural release had passed. The tether could hold a soul inside ruined flesh, route stolen time into another body, or put a familiar's obedience where a person's will had been.
+The House's register became the Ledger of Continuance. Through its names and bindings, he could hold a soul inside ruined flesh, transfer captive time between bodies, and bind a dead person's movements to another will. Families arrived pleading for their loved ones. Magistrates offered graveyards. Kings asked him to hold cities through plague and siege.
 
-People arrived pleading for their families. Magistrates offered entire graveyards. Kings asked him to hold cities through siege and plague. He accepted them all. Each successful postponement became proof that the next death would be his fault if he permitted it.
+Each life he prolonged convinced him that permitting the next death would be a failure of care. When patients begged to leave, he recorded their requests as distress. When relatives stopped visiting, he preserved the beds they had once sat beside.
 
-Eventually he ceased distinguishing between rescue and possession.
+He extended the Ledger through burial records, civic registers, family books, and names cut into doorframes. He bound the homes his patients remembered, the roads their families used, the seasons that fed them, and eventually the earth beneath it all. He made the renewals repeat without waiting for his hand. Nothing entrusted to his keeping was to be released while some fragment of it could still be made to remain.
 
-The Ledger spread through burial records, civic registers, family books, and the names cut into doorframes. Sere extended his keeping from bodies to everything those bodies needed: homes, roads, seasons, the earth beneath them. He bound the world's old forms in place and obstructed the return on which the Accord depended.
+People stopped calling him physician.
 
-People stopped calling him physician. They brought their dead to **The Collector**.
+They brought their dead to The Collector.
 
 For the first time in history, a winter failed to end.
 
-## 3. The present nightmare
+This was the same world its inhabitants had always known. No other reality had swallowed it. Its own streets, orchards, and households had been held so long that they began to rot around the people inside them. Those still able to speak freely called it the Afterlease.
 
-### The world past its term
+Morning arrived, but the light was old. Apples remained red while their insides turned to dust. Houses remembered their occupants after forgetting how to stand. Sometimes rain fell with the smell of a particular funeral, and everyone beneath it mourned someone they had never met.
 
-The kept world is called **the Afterlease** by those still able to speak freely.
+The Collector could preserve a thing's presence. He could not restore the years it had spent. His necromancy moved what remained between vessels; it could neither create an unspent past nor undo suffering that had already happened. Even if he wished to return the world to what it had been, there was no reserve large enough to make that world young again.
 
-Morning arrives, but the light is old. Apples remain red while their insides turn to dust. A house can remember its occupants after it has forgotten its foundations. Sometimes rain falls with the smell of a particular funeral, and everyone beneath it remembers someone they have never met.
+He knew this. He kept renewing it anyway.
 
-The land is constantly decaying because the Collector preserves its presence, not its health. He can make a wall remain a wall. He cannot give it back the years spent being one.
+In time, he began preparing a final binding. He would join the Ledger's renewals into a single, unbroken circle: every borrowed interval passing from one of his holdings into another, with no dismissal left through which it could depart. There would be no more requests to consider, no more endings to prevent one at a time. He would seal the keeping, and everything within it would remain his.
 
-Streets sag into hollows filled with arrested weather. Beneath cracked plaster, brickwork pulses around the bones of earlier houses. Pillars crumble without being struck: each has exhausted the borrowed interval that held it upright. A structure may be called back into service later, recognizable and already doomed to fall again.
+He could not make the preserved world whole. He meant to make its captivity permanent.
 
-Nothing here becomes safe merely because it has survived.
+The House grew through the old city, a mortuary gathering everything he still had a use for. Its courtyards held hospital columns beside garden gates and fragments of chapel floors. He recalled them from storage, supported them with another dwindling measure of time, and watched them crumble again. A pillar could fall without anything striking it. It had simply reached the end of what was holding it up.
 
-The Collector's dominion gathers around the **House of the Last Lamp**, now a vast mortuary built through the old city. Its courtyards receive the things he recalls from storage. A magician fighting through one might recognize a hospital column, a garden gate, or the floor of a chapel. They do not belong together. They have been assembled because he still has a use for them.
+His servants reached their ends too. The binding refused to release them, and their failing bodies found worse ways to obey.
 
-This is the narrative setting of the arena: the world's remains put to work.
+Bolt Acolytes, once apprentices who measured the duration of spells, grew extra hands that continued casting while the original hands tried to stop. Scatter Casters, once mortuary choristers, split along their throats and ribs to make room for the voices of the choirs they had been forced to replace. Siege Familiars grew around the coffins they carried until something inside could be heard knocking against their bones.
 
-### Overstaying
+Pursuers were the dead made from captured fugitives. Their names had been replaced with destinations. When their bodies began to fail, their limbs lengthened toward the quarry and their faces withdrew into their skulls, as though some surviving part of them was trying to flee backward.
 
-When a creature reaches the end of the interval sustaining its current shape, it should be released. In the Afterlease, the tether holds.
+These were the Overstayed. Their strength returned at the expense of their shape. Left alive long enough, even a familiar enemy became something worse.
 
-Its remaining life is forced through a body that can no longer contain it. Old instincts become anatomy. A creature made to hunt grows around its hunger. A servant ordered to watch develops eyes in places that cannot close. A caster's hands become knots of gestures it no longer knows how to stop performing.
+Elsewhere, people hid what they could. They changed the names they answered to, burned their records, or spoke in gestures. A warm cloth still appeared beside an unmarked doorway. A farewell was still sung once and left unwritten. The Collector had preserved the world for so long that its smallest departures had become acts of resistance.
 
-These creatures are **the Overstayed**.
+## The empty hand
 
-Their transformation is decay under restraint. They become harder to kill, quicker to attack, and more horrifying because the Ledger compels the failing body to find another means of serving. Their restored strength costs them whatever remained of their original form.
+The rogue magician had once earned a living making coins disappear.
 
-An enemy left alive too long is therefore a visible future. The player watches what this world does to anything it keeps.
+They used false pockets, quick hands, borrowed scarves, and a solemn expression that children learned to distrust. The coins always came back. So did the scarves, usually with a ridiculous explanation for where they had been.
 
-### Those who still choose
+Later, they became a courier at the House of the Last Lamp. They carried medicine through wards where people thanked them for things that should never have required permission. A letter. A wedding ring. News that someone outside was still alive.
 
-Not everyone in the Afterlease serves willingly. Some inhabitants hide their names, exchange them daily, or speak only in gestures. Families burn their records even when doing so makes them forget their own grandparents.
+They learned interception magic to open sealed messages without allowing the sealing spell to finish. Soon they were slipping keepsakes past the registrars, replacing renewal warrants with blank paper, and carrying farewells the House had refused to deliver.
 
-They cannot undo the keeping. They can make it harder to renew.
-
-Small kindnesses survive here. Someone leaves warm cloth beside a doorway. Someone takes the burden of naming a dead stranger, then destroys the paper before the Collector can find it. Someone sings a song once and refuses to write it down.
-
-Such acts matter because they can be lost. The nightmare needs people with something worth spending their brief lives on.
-
-## 4. The rogue magician
-
-### A small, disobedient profession
-
-The protagonist was a street magician before becoming a fugitive: quick hands, false pockets, borrowed scarves, coins returned to children after an elaborate disappearance.
-
-They later worked as a courier at the House of the Last Lamp. There, sleight of hand acquired consequences. They smuggled farewell letters past the registrars, slipped keepsakes out of inventories, and substituted blank paper for renewal warrants. They learned illicit interception magic to open sealed spells without letting them finish.
+They did not arrive with a theory about saving the world. They found it difficult to tell a frightened person that their last request was against procedure.
 
 The order called them a rogue magician. The people in the wards called them when they wanted something delivered.
 
-They were caught destroying a renewal register. The Collector sentenced them to become a Pursuer: a servant who would hunt other fugitives after death.
+Then a registrar found them destroying a renewal register.
 
-Their execution was completed. Their conversion was not.
+The Collector remembered the courier. He had seen those capable hands carrying bowls and adjusting pillows. Their disobedience offended him partly because he believed they understood his work. He sentenced them to become a Pursuer: they would spend their service recovering the very fugitives they had helped escape.
 
-In the instant when the Ledger received their death, the magician caught the binding hex and pulled their own entry loose. They escaped with a body already declared dead and a small reserve of time diverted from the conversion spell.
+Their execution was completed.
 
-Their true name remained in the master Ledger. Without it, the stolen entry could neither close properly nor become a complete life again.
+Their conversion was not.
 
-That is where play begins.
+As the Ledger entered their death and dispatched the binding that would claim their body, the magician caught it. They tore loose the unfinished transfer and stole the time already placed inside it.
 
-### The heart that spends itself
+The first returning breath tasted of ink.
 
-The protagonist's health is the amount of life they have left to spend. Standing still uses it. Running uses it. A wound destroys some of it at once. There is no healthy state in which the bar ceases draining: the magician's continued existence is itself the expenditure.
+They lay beneath a sheet with their name written on it. Someone had folded their hands. One was clenched around the torn entry. The other was cold.
 
-The Collector's servants contain time withheld from the dead. Breaking one of those bindings releases its remaining reserve. The rogue's stolen entry catches a portion, refilling their life and delaying collection.
+Beyond the curtain, a voice said, "That one is finished."
 
-They take no years from a living stranger elsewhere. They intercept time already imprisoned here. But this does not make survival innocent. The fugitive benefits from the same captive resource the Collector uses, and each necessary kill makes that resemblance harder to ignore.
+Their heart beat. A line vanished from the paper.
 
-The protagonist wants their name back. At first, escape is enough. Learning what the Ledger does makes escape a smaller answer than it seemed.
+Another beat would cost another line.
 
-### Empty hands
+The curtain moved. A hand reached through it carrying a spell meant to put them back.
 
-The rogue cannot create an offensive spell of their own. Their severed entry gives them no recognized standing in the Accord. They retain the craft of interception: catching another caster's work, briefly redirecting its tether, and sending it onward.
+The magician lifted their empty hand.
 
-A caught hex has to settle before it can be released. In the active hand it burns through its remaining term, becoming more violent as it nears collapse. For a brief moment before expiry, its restraint gives way and its power surges. Hold it beyond that moment and the broken binding tears time out of its new bearer.
+"Was that meant for me?"
 
-The magician's hidden pocket suspends a hex's expenditure. It preserves the state already reached; it creates no further time and adds no strength. To catch another attack, the rogue must clear the active hand themselves. No unseen helper makes the exchange safe.
+## A life outside the record
 
-A parry borrows only the instant of a strike. That instant is returned as a riposte before it needs to be stored.
+The escape left the rogue between two entries. Their natural life had been closed by their execution, but the Collector's claim had never completed its passage into their body. Their true name remained in the master Ledger. The torn transfer remained in their possession.
 
-The protagonist survives by performing a succession of small, precise departures. Every successful release is something The Collector has forgotten how to do.
+They had stolen an interval of existence, not reversed their death.
 
-## 5. The servants of the Ledger
+Every second spent alive used that interval. Standing still spent it as surely as running. Wounds destroyed portions of it at once. There was no recovery that could make their heart beat for free.
 
-### Bolt Acolytes
+The Collector's servants carried reserves of time withheld from the dead. Breaking a servant's binding released its unspent remainder. The torn entry caught a portion and gave the magician a few more heartbeats. They took no years from a living stranger elsewhere, but the time they spent still belonged to people who had never freely offered it.
 
-Once apprentices who measured the permissible duration of spells, the acolytes now enforce terms they are forbidden to question. Their mouths continue counting after their voices fail. They throw narrow, disciplined bolts, each a fragment of a binding warrant.
+The Collector would remember to mention that.
 
-An Overstayed acolyte develops a second set of hands beneath the first. These continue the spell while the original hands attempt, uselessly, to stop.
+Their own spellmaking had died with their registered life. The Accord required a whole, living name behind a new promise. The rogue had neither their name nor a future of their own to pledge. They could no longer originate an offensive working.
 
-### Pursuers
+Their hands remembered interception. A spell already cast had already been borrowed and paid for by someone else. They could catch its tether, turn its purpose, and send it onward before its term expired.
 
-Pursuers are confiscated fugitives. Their names have been replaced with destinations, and their bodies remember only how to close the distance.
+A fresh hex shook in the hand until its binding settled. Then it began to burn through its remaining time. Near the end it flared gold, briefly more powerful as the restraint holding it together gave way. Release it then, and the rogue could strike with devastating force. Hold it a moment too long, and the collapse would tear time from their own body.
 
-The rogue was meant to become one of them.
+The hidden pocket could suspend a captured hex exactly as it was. It could not strengthen it or grant it more life. To catch another spell, the magician had to put the first away and offer an empty hand. A parry borrowed only the instant of an enemy's strike, returning it before there was anything to store.
 
-When a Pursuer overstays, its limbs lengthen to reach the target sooner. Its face draws backward into its skull, as though some surviving part of it is trying to flee in the opposite direction.
+They could purchase other workings with their remaining existence. Each new attachment promised more power and left less life in which to use it. Eventually they learned to reclaim small fragments of captive time through wounds before an enemy's whole binding broke. That skill kept them alive and made their resemblance to the physician harder to dismiss.
 
-### Scatter Casters
+"I'll need less time if this works," they said, and paid.
 
-The old mortuary choristers sang spells in company so that no single person carried the entire burden. The Collector divided them into solitary servants, each obliged to perform a whole choir's work.
+## The claim he cannot close
 
-Their attacks break into fans of competing voices. Their Overstayed forms split along the throat and ribs, opening places for the absent singers. The voices that emerge are borrowed from people they have buried.
+On the night the rogue escaped, the Collector attempted to join another span of the final binding. The last line would not meet the first.
 
-### Siege Familiars
+The Ledger recorded a completed death. Its renewal demanded a servant who had never arrived. Between them, a heart continued beating on time the book had already placed in his keeping but could no longer reach. Neither an ordinary living person nor one of his bound dead, the magician was an anomaly his workings could not reconcile.
 
-Built to carry medicine and lamps between distant wards, these bound creatures were enlarged to transport coffins, then fitted to demolish places that refused collection. Their explosive hexes contain the violence of collapsed thresholds.
+Every heartbeat kept the contradiction open. The rogue could hide in a cellar and never raise a hand against him again; while their stolen life continued, he could not seal the keeping. The corruption of the world had begun long before their escape. Their existence now prevented him from making that corruption inescapable.
 
-An Overstayed familiar grows around its burden until carrier and cargo are inseparable. Something inside continues knocking.
+The Collector's reach was immense because so many bindings answered to him. It was not the power to decide the fate of any life merely by thinking of it.
 
-### Borrowing across schools
+A true name let him reach a binding he possessed. The rogue's name led him to the broken transfer, whose other end was now in the rogue's hand. Until he recovered that end and completed the connection, commands written against their name could not reach the borrowed life inside them.
 
-Ordinary servants retain some familiarity with the magic that sustains them; their bindings absorb their own school's hexes more readily, reducing the harm. Foreign workings disturb the bindings more deeply. The Collector's composite necromancy has crossed too many schools to share this protection.
+The time already stolen had passed out of his keeping. He could not unspend its transfer or recall it by decree. Crossing out the name left in his book would surrender his remaining claim; it would not stop the fugitive's heart or return the missing interval to his circle. He had woven every renewal through the same promise that nothing entrusted to him would be released. To cut the unfinished claim out of that promise, he would have to reopen the departures he had forbidden throughout the Ledger.
 
-These distinctions give stolen spells an origin. They are pieces of particular lives and institutions, even when the rogue puts them to another use.
+He could wound them, surround them, send servants after them, or wait for their reserve to run out. To reclaim them while they still moved, he had to retrieve what they had taken.
 
-## 6. The Collector
+When the stolen time expired, the loose end went slack. The Ledger's unfinished renewal caught the magician's remains and recalled them to the place where the conversion had failed. It reconstituted their body and issued the advance meant to complete their enslavement.
 
-### What he has become
+The rogue stole that advance again.
 
-The Collector is a necromancer who believes every ending is an unfinished rescue.
+The renewals Sere had made automatic now repeated his mistake. Killing the magician's body only recalled the unfinished claim and gave the anomaly another chance to rise. He could not cancel that return from one side of the broken connection. Recovering the torn entry would let him complete their conversion or close their stolen existence for good. Abandoning the Ledger's unconditional renewals would let the captive dead depart. He chose pursuit.
 
-He no longer seeks a cure for the world. A cure would require admitting how much suffering he has preserved. Instead, he seeks enough power to keep every entry open indefinitely.
+The magician returned with memories carried along that unfinished tether. Their stolen spells and acquired workings were lost, but their hands learned the old lessons faster. Each escape wore the world's remaining forms thinner. The repeated chances had a cause, and that cause could be ended. They were never a promise that the world would last forever.
 
-His terror is specific: somewhere, someone will die while he still possesses the means to delay it. He has made that possibility intolerable, then forced everyone else to bear the cost.
+To the Collector, the rogue was more than a missing servant. They were the living obstruction to the work he had spent centuries preparing, and proof that something he held could leave by choosing to. Worse, they had learned enough of his craft to do so without him. His patience with their escape was costing him the permanence he believed would justify everything he had done.
 
-He remembers the names of his victims. He remembers who they loved, the work they did, and the things that once comforted them. Those details allow him to build more persuasive reasons to hold them. He treats their requests for release as symptoms to overcome.
+He offered to mend their record and return their name. He would give them a secure place among those whose renewals were guaranteed.
 
-Mara's crossed-out word remains beneath every revision of the Ledger. He has tried to remove it. The parchment tears everywhere except there.
+They would have to surrender the right to leave.
 
-### Body and presence
+If they refused, he would take the torn entry from their hands and end the anomaly himself. He could no longer afford to let their existence remain unresolved.
 
-His body has long since overstayed. He has stabilized its ruined form with thousands of overlapping bindings, making further ordinary transformation unnecessary. He wears burial cloth beneath his physician's coat. The cloth moves when the room is still.
+"Your bed is still made," he told them.
 
-His fingers are stained with ink that rises from the skin. Where the coat opens, paper seals cover a chest with no visible breath. Some bear the names of patients who once thanked him.
+## The way back
 
-He keeps the Last Lamp lit. Its wick is his original remaining lifespan, stretched so thin that the flame casts the shadows of people absent from the room.
+At first, the rogue wanted only their name.
 
-His voice is patient. He leaves room for an answer. When the answer displeases him, he continues as though the speaker has not yet understood.
+With the true name and the torn entry together, they could end the incomplete transfer and free themselves from recall. They imagined reaching the Ledger, taking what was theirs, and finding a door the House could not bring them back through.
 
-He does not need to scream to make a scene frightening. He can adjust a dying person's blanket while explaining why their death will not be permitted.
+They fought toward the master ward with spells caught from its guards. When a hex burst in their hand, they swore, shook the numb fingers, and reached for another. Near the end of a dwindling interval, their humor became very practical.
 
-### His claim on the protagonist
+"Come on. One more mistake. His, preferably."
 
-The rogue is evidence of a binding redirected without his authorization. To him, their escape is both theft and a dangerous demonstration: something in his custody has left because it chose to.
+They had seen suffering as a courier, but the routes they had been allowed to walk concealed its full duration. Deeper in the House, they found a ward with no restraints and no locked doors. Every bed held someone who had once asked Sere for another day.
 
-He offers restoration. He can return their name, mend their entry, and place them among the servants who no longer need to fear running out. He presents this as compassion.
+The beds were carefully tended. Water stood within reach of hands that could no longer lift it. Beside each pillow lay a record of consent dated centuries ago.
 
-The terms include surrendering the right to leave.
+One patient's unfiled request read: *I asked for time to see my son. He came. We spoke. He went home. What is the rest of this for?*
 
-He also recognizes their interceptions. Every caught spell resembles the careful work he once practiced at a bedside. He insists they are colleagues divided by inexperience, and points to each stolen refill of life as proof.
+Mara's bed was empty. Her brother had woven her tether through the Ledger, making the keeper of names continue her work inside the book. She could not close the entries herself; he had bound that work to his hand. But corrections survived in the margins, and pages opened where he did not intend them to.
 
-The resemblance should trouble the protagonist. The distinction lies in what they eventually do with the power: spend it to reach freedom, or gather enough that they never have to risk an ending again.
+*He remembers everything about us except the last thing we said.*
 
-### His battle as an argument
+Her notes showed the rogue where the removed dismissals had been concealed beneath the renewals. Restoring them would break the compulsory keeping. The living could continue spending the time genuinely theirs. The dead could leave, or use their released remainder for a final choice.
 
-The Collector's existing attacks become expressions of his necromancy:
+They also showed why the Collector had sent so many servants after one fugitive. Their unfinished entry was holding his final binding open. Until he settled it, the Ledger could still be opened; once he sealed the keeping, the departures Mara had preserved would be buried beyond their reach.
 
-- **Bolt stream — The Enumeration:** binding after binding, dispatched with the practiced steadiness of a physician repeating a procedure.
-- **Fan volley — The General Recall:** a broad summons that treats every possible escape route as another place to retrieve a missing possession.
-- **Sweep — The Closing Hand:** an attempt to pull the fugitive back into custody. Its parryable arc offers the rogue one exact moment to break that grasp.
-- **Ground slam — The Seal:** the authority of the Ledger driven through the floor. It cannot be answered with the same parry; the magician must leave its reach.
-- **Teleport — A Familiar Presence:** the keeper appears behind the person attempting to escape him. No additional creature follows; the coat and lamp arrive with him.
+The rogue understood what that meant for their own stolen life.
 
-These are narrative names for the current combat vocabulary, not requirements for new attacks or phases. His own returned bolts can wound him. The necromancer who keeps others bound must defend himself against bindings he has sent out and lost.
+They kept going.
 
-### His most terrible room
+Their purpose became definite: reach the master Ledger, take back their name, and restore the exits Sere had closed. They would not leave the wards as they had found them. They would not buy freedom by accepting his kind of permanence.
 
-Deep in the House is a ward containing no restraints, no guards, and no locked doors.
+## The last lamp
 
-Every bed holds someone who once asked Sere for another day. He granted it. Then, when that day ended, he renewed it without asking.
+The Collector waited in his physician's coat.
 
-The beds are meticulously tended. Water stands within reach of hands that can no longer lift it. Beside each pillow is a record of consent, dated centuries ago.
+He had once been human. His body had long since overstayed, held together by thousands of overlapping bindings and the captive lives routed through them. He had never allowed his own entry to close; his name still stood behind the spells he cast, sustained at everyone else's expense. Burial cloth moved beneath the coat when the air was still. Ink rose through the skin of his fingers. Paper seals covered a chest with no visible breath.
 
-Mara's bed is empty. Her tether is woven through the Ledger itself; the keeper of names has been made to keep them still. Some of the corrections in its margins are hers. Some pages fall open where he did not intend them to.
+Beside him burned the Last Lamp. Its wick was the remainder of his original life, stretched thin enough to cast the shadows of people absent from the room.
 
-She cannot defeat him for the rogue. She has managed to leave a way through his records.
+He remembered the rogue's work in the wards. He remembered every person whose time they had consumed to reach him. He spoke their names with the care that had once made families trust him.
 
-## 7. Death, return, and what carries forward
+"You have already spent several of my patients," he said. "Shall I tell you their names?"
 
-### The unsettled entry
+The rogue could not deny it.
 
-The stolen death entry still belongs to the master Ledger. When the protagonist's reserve expires, the tether recalls them to the place where their conversion failed. The unresolved binding briefly reconstitutes their body and supplies another finite advance.
+He called them a colleague divided from him by inexperience. Given enough time, he said, they would understand why no one should be allowed to surrender a life he could sustain.
 
-This explains the roguelike return. It is an attempt by the Collector's system to complete an interrupted act of possession. The magician steals that attempt again.
+Behind him, the Ledger lay open at their name. The unfinished line of the final binding trembled with each beat of their heart.
 
-Reconstitution never restores the world's lost years. Each return renews immediate bodies and arrangements inside a dominion that continues wearing out. Recalled servants and cover can appear again without making the wider world young.
+"Until your entry is settled," he said, "nothing can be finished."
 
-The loop grants repeated chances, not a settled promise of immortality. Its narrative limits need no additional attempt counter in gameplay.
+"You kept their signatures," the rogue answered. "Did you keep their answers?"
 
-### What the rogue remembers
+His face changed before his voice did.
 
-Knowledge travels along the unfinished tether. Reflexes learned in one life can be recovered in the next. Permanent mastery is this accumulated practice: the body may be temporary, but a skill can survive by being learned again through remembered experience.
+"They were tired."
 
-Borrowed attacks and the powers gathered during a run remain attached to that particular reconstruction. They cannot simply be carried out through death.
+"They told you what they wanted."
 
-### The price of greater power
+He reached for them.
 
-The fugitive can attach additional workings to the stolen entry, but each new attachment consumes part of the life sustaining it. Upgrades bought with health are literal exchanges of remaining existence for capability.
+The bindings came in measured streams, then spread across the ways out. He stepped through the tethered space of his House and appeared behind them. His hand swept to close around the stolen entry. When they broke the sweep, he drove the Ledger's seal into the floor beneath their feet.
 
-A working may stay for the rest of a run. Replacing it redirects an existing attachment; expanding or strengthening the set requires more life. Longevity within a run does not make it permanent beyond that life.
+The magician moved, caught, waited, and released.
 
-The **Blood Price** discipline learns to reclaim small amounts of imprisoned time through wounds before the whole enemy binding breaks. It is useful, intimate, and uncomfortably close to the Collector's craft.
+His own workings wounded him when returned. The powers that had sustained his reach had not made his body invulnerable. While the Ledger remained closed, it could eventually call even him back. Defeating him bought the rogue the opening they needed to reach it.
 
-Nothing requires every benefit to vanish immediately. A loan can last long enough to become familiar. That familiarity is why losing it matters.
+They laid the torn transfer beside their true name.
 
-## 8. The end of the keeping
+Mara's crossed-out word was still there.
 
-The narrative arc moves from **survival**, through **recognition**, toward **release**.
+They could close their own entry now. If they did so while the other departures remained buried, the final binding would at last have its unbroken circle. Their escape would leave everyone else inside.
 
-At first, the protagonist treats the Ledger as the place where their stolen future is locked. They discover it is also the place where other people's endings have been confiscated. Recovering their name restores the ability to close their own entry. It does not grant ownership of the lives around it.
+They left their name open and restored the dismissals.
 
-The proposed principal ending is **the Open Ledger**.
+## The open window
 
-After defeating The Collector, the rogue reaches the master record. They restore the dismissals he removed and break the compulsory renewals. Each captive life regains a route out of his keeping.
+The world did not become young.
 
-This does not erase every inhabitant or destroy the world at once. The living still have lives to spend. Some bound dead depart immediately. Others use their released remainder to speak, walk home, or choose who stays beside them. Buildings too exhausted to stand begin to fall. Places capable of growth can change again.
+Some of the bound dead departed immediately. Others spoke, stood, or asked someone to help them home. Buildings too exhausted to remain upright began to fall. A door opened onto a courtyard that had spent centuries remembering a garden. Rain reached the soil beneath it.
 
-There is no universal healing. Much of what was damaged cannot be recovered. Ending the keeping allows what remains to have a future instead of being forced to repeat its past.
+Mara's entry closed. The word beside it remained, with the crossing-out lifted away.
 
-The Collector receives no triumphant absolution. At last, the lives sustaining his body leave him. His fear returns with the ordinary scale of a single person facing death.
+*Enough.*
 
-He asks the rogue to stay until the lamp goes out.
+Much had been lost. The release could not bring it back. What remained could finally change without being dragged into its old shape again.
 
-They can stay without keeping him.
+The lives routed through the Collector's body left him. The renewals no longer reached to pull them back. His hands became small on the blanket someone had placed over him.
 
-The protagonist closes their own stolen entry last. Any unspent time returns through the restored Accord. They are no longer being recalled by the Ledger. What lies beyond their release remains unseen.
+He asked the rogue to stay until the lamp went out.
 
-In an endless-mode interpretation, the fugitive continues escaping successive recalls without reaching the master record. The Collector's return belongs to the surviving machinery of the keeping; it does not reverse the completed principal ending.
+They stayed.
 
-## 9. Voice and imagery
+They did not forgive him on anyone else's behalf. They did not promise another hour. They sat beside a frightened man whose ending, at last, was his own.
 
-The prose should stay close to things a person can touch: a wet cuff, a warm bowl, a loose tooth, ink under a nail. Let the impossible enter those familiar details. A bed is more frightening when it has been carefully made around someone who has wanted to leave it for three hundred years.
+"Is there someone I should send for?" they asked.
 
-Use the language of borrowing and collection where it belongs—in the Ledger, its servants, and the rogue's dangerous bargains. Let the world outside those institutions have weather, hunger, humor, and ordinary speech. People need more to talk about than their debts.
+He looked toward the window.
 
-Recurring images:
+The rogue opened it.
 
-- **Warmth moving between hands:** aid, theft, and the difficulty of distinguishing them.
-- **Open windows:** a departure offered freely; Mara's denied request.
-- **Gold at the edge of a dying spell:** the beautiful, dangerous moment before release.
-- **Care that has outlasted consent:** clean bandages on a body the patient wanted buried.
-- **Things deliberately left unfinished:** an unsealed letter, a gate unlatched, a final page with room below the last name.
+Outside, a cracked gutter spilled water down the wall, carrying soot into the courtyard. Somewhere in the House, a door closed. Another opened. A voice called a name and received an answer.
 
-Keep the rogue's humor brief and practical. The Collector speaks with professional tenderness until contradiction exposes the force beneath it. The dead deserve individual voices; they should not all speak in riddles.
+The lamp went out before the room grew dark.
 
-## 10. Text for the game
+The rogue closed their own entry last. The unused remainder passed out of their hands. There would be no further recall, no replacement body, no next advance taken from the dead.
 
-The following fragments are proposed writing material, suitable for adaptation to the game's eventual narrative presentation.
+They had returned the coins. Delivered the letters. Opened the window.
 
-### Opening
-
-The first breath tastes of ink.
-
-You are lying beneath a sheet with your name written on it. Someone has folded your hands for you. One is clenched around a scrap of paper. The other is cold.
-
-From beyond the curtain, a voice says, "That one is finished."
-
-Your heart beats.
-
-The paper shortens by a line.
-
-You understand, before you understand anything else, that another beat will cost another line.
-
-Then the curtain moves. A hand reaches through it, carrying a spell meant to put you back.
-
-You lift your empty hand.
-
-### The rogue
-
-- On catching a first hex: "Was that meant for me?"
-- Near expiry: "Come on. One more mistake. His, preferably."
-- After a backfire: "Held on too long."
-- Seeing a Pursuer: "They had a uniform picked out for me."
-- Buying an upgrade: "I'll need less time if this works."
-- At the Ledger: "You kept their signatures. Did you keep their answers?"
-
-### The Collector
-
-- Introduction: "There you are. Your bed is still made."
-- On the rogue's escape: "You were dead. I was attending to that."
-- On borrowed magic: "Your hands are empty until someone else's work fills them. You understand dependence perfectly well."
-- On the life stolen through combat: "You have already spent several of my patients. Shall I tell you their names?"
-- On an Overstayed servant: "The body is adapting. There is no cause for alarm."
-- On Mara: "She was tired. I should have made her more comfortable."
-- Under pressure: "Put that down. It is keeping someone alive."
-- Defeated: "The lamp. Please. Don't leave me in the dark."
-
-### Fragments found in the House
-
-**A patient's request, never filed**
-
-> I asked for time to see my son. He came. We spoke. He went home. What is the rest of this for?
-
-**A registrar's instruction**
-
-> A request to discontinue treatment is to be recorded as distress. Do not alter the renewal schedule.
-
-**Mara's correction**
-
-> He remembers everything about us except the last thing we said.
-
-**An old lesson in interception**
-
-> Catch with an empty hand. Hold only what you can release. If you cannot let go, it is no longer a trick.
-
-**A farewell concealed inside a medicine label**
-
-> Your scarf is in the second drawer. I mended the blue end. Wear it. It was never meant to outlast you in a cupboard.
-
-### Final scene
-
-For a while after the last entry opens, nothing happens.
-
-The rogue sits beside the physician. His hands lie on the blanket, palms upward. Without the bindings, they look smaller.
-
-"Is there someone I should send for?" the rogue asks.
-
-He looks toward the window.
-
-The rogue opens it.
-
-Outside, a cracked gutter begins to spill. Water runs down the wall, carrying soot into the courtyard. Somewhere in the House, a door closes. Another opens. A voice calls a name and receives an answer.
-
-The lamp goes out before the room grows dark.
-
-There is light at the window.
-
----
-
-## 11. Narrative guardrails
-
-- **Everything is temporary.** Victory restores the possibility of change and endings. It does not award eternal life or a permanently repaired world.
-- **The protagonist remains a rogue magician.** Their power comes through interception, redirection, practice, and dangerous borrowing. They are not secretly the rightful owner of all magic.
-- **Life drains because it is borrowed.** Kills release time held in hostile bindings; wounds and backfires consume the rogue's finite reserve.
-- **The world keeps decaying.** Recall can restore an arena's immediate arrangement without undoing the Afterlease's larger exhaustion.
-- **Enemies become worse when left alive.** Overstaying is the cost of forcibly maintaining something past the term of its shape.
-- **The Collector is responsible.** His history explains his choices. It does not erase his victims' refusal or make coercion necessary for their good.
-- **Narrative return has a cause and a limit.** The unresolved entry supports repeated runs; the proposed ending closes it. Endless play is a separate continuation of the unresolved state.
-- **The horror leaves room for tenderness.** A temporary kindness can be complete. The game should give the player reasons to care about a world that cannot be kept forever.
+There was light beyond it.

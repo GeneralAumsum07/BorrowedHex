@@ -114,6 +114,9 @@ namespace BorrowedHex.Player
             return es != null && es.IsPointerOverGameObject();
         }
 
+        /// <summary>Test hook: a pause press (Esc or P) without a keyboard device.</summary>
+        internal void SimulatePause() => pauseLatched = true;
+
         public bool ConsumePause()
         {
             bool p = pauseLatched;

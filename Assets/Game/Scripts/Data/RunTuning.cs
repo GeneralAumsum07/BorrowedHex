@@ -4,8 +4,8 @@ using UnityEngine;
 namespace BorrowedHex.Data
 {
     /// <summary>
-    /// The Collector (section 4, as changed by the owner, D38 and D48): 50 health and four
-    /// patterns — bolt stream, sweeping melee, fan volley, ground slam — chosen from the
+    /// The Collector: five patterns — bolt stream, sweeping melee, fan volley, ground slam
+    /// and a timed summon. The four offensive patterns are chosen from the
     /// player's position and line of sight. The two ranged patterns fire ordinary capturable
     /// bolts (the boss's ammunition for the player). The slam is an unparryable hazard; the
     /// sweep can be parried through its gold arc (D47). The rocket attack of the original plan
@@ -15,10 +15,11 @@ namespace BorrowedHex.Data
     public class BossTuning
     {
         public string displayName = "The Collector";
-        public int health = 50;
+        // Actor health is already fractional; keep the exact 1.75x increase instead of rounding.
+        public float health = 87.5f;
         public float bodyRadius = 0.9f;
-        // 2.6 → 3.0 (D49) → 3.3 (D54) → 3.6 (owner, D55).
-        public float moveSpeed = 3.6f;
+        // Another 15% above the previous 4.32; keep the exact fractional speed.
+        public float moveSpeed = 4.32f * 1.15f;
         [Tooltip("Life seconds lost to ANY boss attack, its bolts included.")]
         public int hitDamage = 20;
         [Tooltip("Life seconds lost on touching the boss's body.")]
@@ -48,10 +49,10 @@ namespace BorrowedHex.Data
         // sweep, and the player has usually stepped back out by the next choice.
         public float slamChooseDistance = 2.4f;
         [Tooltip("Closer than this (and in sight): sweep.")]
-        // 4.0 → 5.0 (owner, D53: "melee a little more often"); the fan band shrinks to 5-7.5.
+        // The fan band ends at 7 instead of 7.5 so the stream executes slightly more often.
         public float sweepChooseDistance = 5.0f;
         [Tooltip("Closer than this: fan volley; farther: bolt stream.")]
-        public float fanMaxDistance = 7.5f;
+        public float fanMaxDistance = 7f;
         [Tooltip("After this many melee patterns in a row the next is ranged, so bolts keep coming.")]
         public int maxMeleeInARow = 2;
         [Tooltip("The same pattern at most this many times in a row; then its partner (fan↔stream, slam↔sweep).")]
@@ -63,8 +64,8 @@ namespace BorrowedHex.Data
         [Tooltip("Only considered when the player is at least this far away.")]
         public float teleportMinDistance = 6f;
         [Tooltip("Chance per pattern start, when far away and off cooldown (seeded).")]
-        // 0.35 → 0.40 (D53) → 0.48 (owner, D55: "another 8%", read as 8 points).
-        [Range(0f, 1f)] public float teleportChance = 0.48f;
+        // Another relative 5% increase from 0.528, rather than five percentage points.
+        [Range(0f, 1f)] public float teleportChance = 0.528f * 1.05f;
         [Tooltip("Visible wind-up: the boss fades and the arrival spot is marked.")]
         public float teleportTelegraph = 0.6f;
         public float teleportCooldown = 5f;
@@ -72,10 +73,13 @@ namespace BorrowedHex.Data
         public float teleportBehindDistance = 2.6f;
 
         [Header("Bolt stream")]
-        public float streamTelegraph = 0.6f;
-        public float streamAimLock = 0.17f;
+        // A 15% increase in execution speed divides durations by 1.15 (not by subtracting 15%).
+        public float streamTelegraph = 0.6f / 1.15f;
+        public float streamAimLock = 0.17f / 1.15f;
         public int streamShots = 12;
-        public float streamInterval = 0.105f;
+        public float streamInterval = 0.105f / 1.15f;
+        [Tooltip("Multiplier on the shared bolt speed for BOTH Collector ranged attacks only.")]
+        public float rangedProjectileSpeedScale = 1.15f;
         [Tooltip("Degrees per second the stream turns to follow the player while firing.")]
         public float streamTurnRate = 70f;
         // Owner direction: the stream has no range limit. Its bolts ignore the bolt's lifetime
@@ -85,8 +89,8 @@ namespace BorrowedHex.Data
         public bool streamUnlimited = true;
 
         [Header("Fan volley")]
-        public float fanTelegraph = 0.72f;
-        public float fanAimLock = 0.25f;
+        public float fanTelegraph = 0.72f / 1.15f;
+        public float fanAimLock = 0.25f / 1.15f;
         public float[] fanSpreadDeg = { -48f, -36f, -24f, -12f, 0f, 12f, 24f, 36f, 48f };
         [Tooltip("Units a fan bolt travels before it expires (owner: very long, 30).")]
         public float fanRange = 30f;
@@ -122,6 +126,18 @@ namespace BorrowedHex.Data
         public float slamTelegraph = 0.8f;
         [Tooltip("Slam radius around the boss's centre.")]
         public float slamRadius = 3.2f;
+
+        [Header("Summon")]
+        [Tooltip("A seeded interval between summons, measured in active gameplay seconds.")]
+        public float summonIntervalMin = 25f;
+        public float summonIntervalMax = 30f;
+        [Tooltip("Visible cast before two independently chosen ordinary enemies arrive.")]
+        // 1.5x execution speed shortens only the cast; the 25–30 second cadence stays intact.
+        public float summonTelegraph = 1.4f / 1.5f;
+        [Tooltip("Summoned enemy centres appear this many units from the Collector, at least.")]
+        public float summonSpawnMinDistance = 2.5f;
+        [Tooltip("Maximum spawn distance from the Collector; blocked casts wait for nearby space.")]
+        public float summonSpawnMaxDistance = 4f;
     }
 
     /// <summary>
@@ -134,8 +150,8 @@ namespace BorrowedHex.Data
     {
         [Tooltip("The whole run's clock (active seconds). Running out ends the run TimeExpired.")]
         // 180 → 300 (owner, D56): the faster boss (D55) needs ~73 s even for an ideal bot.
-        // 300 → 180 (owner, D65): shorter life budget; shown as a heart + bar, not a timer.
-        public float runLength = 180f;
+        // 180 → 234: 30% more starting health and cap; passive drain is tuned independently.
+        public float runLength = 234f;
         public int encounterCount = 3;
         [Tooltip("Formations per encounter; the encounter ends when every member is dead.")]
         public int[] formationsPerEncounter = { 4, 5, 5 };

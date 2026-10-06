@@ -1,0 +1,120 @@
+// Run this source with Unity Pipeline eval_file after copying it to a .cs file
+// outside Assets. Mutations are limited to these newly created sprite assets.
+const string rootFolder = "Assets/Sprites/RogueMagician_Exact";
+var manifest = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(rootFolder + "/manifest.json"));
+AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+var sheetProperty = typeof(TextureImporter).GetProperty("spritesheet");
+if (sheetProperty == null) throw new System.Exception("Sprite slicing API unavailable");
+int totalSlices = 0, totalClips = 0;
+foreach (var viewToken in manifest["originalOrder"])
+{
+    string view = viewToken.ToString();
+    string texturePath = rootFolder + "/" + view + "/RogueMagician_" + view + "_Complete.png";
+    var importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+    if (importer == null) throw new System.Exception("Missing master: " + texturePath);
+    importer.textureType = TextureImporterType.Sprite;
+    importer.spriteImportMode = SpriteImportMode.Multiple;
+    importer.spritePixelsPerUnit = 320;
+    importer.filterMode = FilterMode.Point;
+    importer.mipmapEnabled = false;
+    importer.textureCompression = TextureImporterCompression.Uncompressed;
+    importer.alphaIsTransparency = true;
+    importer.npotScale = TextureImporterNPOTScale.None;
+    importer.maxTextureSize = 4096;
+    var settings = new TextureImporterSettings();
+    importer.ReadTextureSettings(settings);
+    settings.spriteMeshType = SpriteMeshType.FullRect;
+    importer.SetTextureSettings(settings);
+    var rects = new System.Collections.Generic.List<SpriteMetaData>();
+    foreach (var sequence in manifest["sequences"])
+    {
+        if (sequence["view"].ToString() != view) continue;
+        int row = sequence["masterRow"].ToObject<int>();
+        int count = sequence["frames"].ToObject<int>();
+        string prefix = "RogueMagician_" + view + "_" + sequence["state"].ToString();
+        for (int frame = 0; frame < count; frame++)
+            rects.Add(new SpriteMetaData {
+                name = prefix + "_" + frame.ToString("D2"),
+                rect = new Rect(frame * 320, 3200 - (row + 1) * 640, 320, 640),
+                alignment = (int)SpriteAlignment.Custom,
+                pivot = new Vector2(.5f, 70f / 640f),
+                border = Vector4.zero
+            });
+    }
+    // This project lacks the Sprite Editor package; its built-in importer
+    // already supports explicit rectangles. No package/config changes needed.
+    sheetProperty.SetValue(importer, rects.ToArray());
+    importer.SaveAndReimport();
+    var sprites = new System.Collections.Generic.Dictionary<string, Sprite>();
+    foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(texturePath))
+        if (asset is Sprite sprite) sprites.Add(sprite.name, sprite);
+    if (sprites.Count != 42) throw new System.Exception("Expected 42 original-size sprites in " + texturePath);
+    totalSlices += sprites.Count;
+    string clipFolder = rootFolder + "/Clips";
+    if (!AssetDatabase.IsValidFolder(clipFolder)) AssetDatabase.CreateFolder(rootFolder, "Clips");
+    foreach (var sequence in manifest["sequences"])
+    {
+        if (sequence["view"].ToString() != view) continue;
+        string name = "RogueMagician_" + view + "_" + sequence["state"].ToString();
+        int count = sequence["frames"].ToObject<int>();
+        int fps = sequence["fps"].ToObject<int>();
+        bool loop = sequence["loop"].ToObject<bool>();
+        string clipPath = rootFolder + "/" + sequence["clipFile"].ToString();
+        var clip = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+        bool create = clip == null;
+        if (create) clip = new AnimationClip();
+        clip.name = name;
+        clip.frameRate = fps;
+        clip.wrapMode = loop ? WrapMode.Loop : WrapMode.Once;
+        var keys = new ObjectReferenceKeyframe[count];
+        for (int frame = 0; frame < count; frame++)
+            keys[frame] = new ObjectReferenceKeyframe {
+                time = (float)frame / fps,
+                value = sprites[name + "_" + frame.ToString("D2")]
+            };
+        // Discrete sprite keys hold the last image for one frame automatically.
+        // A duplicate closing key would add an unintended pause to every loop.
+        AnimationUtility.SetObjectReferenceCurve(clip,
+            EditorCurveBinding.PPtrCurve("", typeof(SpriteRenderer), "m_Sprite"), keys);
+        var clipSettings = AnimationUtility.GetAnimationClipSettings(clip);
+        clipSettings.loopTime = loop;
+        clipSettings.startTime = 0;
+        clipSettings.stopTime = (float)count / fps;
+        AnimationUtility.SetAnimationClipSettings(clip, clipSettings);
+        if (create) AssetDatabase.CreateAsset(clip, clipPath);
+        else EditorUtility.SetDirty(clip);
+        totalClips++;
+    }
+}
+// Prepare exact-dimension references and optional individual state strips. Only
+// master sheets are sliced; strips are lossless source exports of the same keys.
+foreach (string file in System.IO.Directory.GetFiles(rootFolder, "*.png", System.IO.SearchOption.AllDirectories))
+{
+    string path = file.Replace('\\', '/');
+    if (path.Contains("_Complete.png")) continue;
+    var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+    if (importer == null) throw new System.Exception("Missing new texture: " + path);
+    importer.filterMode = FilterMode.Point;
+    importer.mipmapEnabled = false;
+    importer.textureCompression = TextureImporterCompression.Uncompressed;
+    importer.npotScale = TextureImporterNPOTScale.None;
+    importer.alphaIsTransparency = true;
+    importer.maxTextureSize = 4096;
+    // A directly usable resting sprite is helpful without altering the original
+    // draft's importer, whose GUID may already be referenced elsewhere.
+    if (path.EndsWith("_Detailed.png"))
+    {
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = 320;
+        var settings = new TextureImporterSettings();
+        importer.ReadTextureSettings(settings);
+        settings.spriteAlignment = (int)SpriteAlignment.Custom;
+        settings.spritePivot = new Vector2(.5f, 70f / 640f);
+        settings.spriteMeshType = SpriteMeshType.FullRect;
+        importer.SetTextureSettings(settings);
+    }
+    importer.SaveAndReimport();
+}
+AssetDatabase.SaveAssets();
+return new { slicedSprites = totalSlices, animationClips = totalClips, frameWidth = 320, frameHeight = 640 };

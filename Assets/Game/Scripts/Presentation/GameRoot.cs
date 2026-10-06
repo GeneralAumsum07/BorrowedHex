@@ -35,11 +35,15 @@ namespace BorrowedHex.Presentation
         public PlayerInputReader Input { get; private set; }
         public GameplayHud Hud { get; private set; }
         public PauseMenu Menu { get; private set; }
+        /// <summary>The foreground screen router: one top screen owns input, focus and Esc.</summary>
+        public ScreenStack Screens { get; } = new ScreenStack();
         public RunFlowPanels Flow { get; private set; }
         public ArenaView View { get; private set; }
 
         Camera cam;
         Canvas canvas;
+        /// <summary>The UI canvas, read-only: the layout sweep reaches its scaler through this.</summary>
+        public Canvas Canvas => canvas;
         float accumulator;
         int runCounter;
 
@@ -74,6 +78,8 @@ namespace BorrowedHex.Presentation
         void Awake()
         {
             if (config == null) config = GameConfig.CreateDefault();
+            // First, so the menus built below can already make sounds.
+            InitAudio();
             Input = gameObject.AddComponent<PlayerInputReader>();
             cam = Camera.main;
 
@@ -82,10 +88,12 @@ namespace BorrowedHex.Presentation
             Hud = GameplayHud.Create(canvas, () => SetMenuOpen(true), Restart);
             // Desktop pause menu: Main menu + Quit. In a browser tab Quit returns to the main
             // menu instead (Phase 8): closing the tab is the browser's job.
-            System.Action quit = IsWeb ? null : Application.Quit;
-            Menu = PauseMenu.Create(canvas, () => SetMenuOpen(false), Restart, quit);
-            Menu.AddButton(() => "Settings", OpenSettingsFromPause);
-            Menu.AddButton(() => IsWeb ? "Quit to menu" : "Main menu", ShowMainMenu);
+            // Task 12: every way out of a counted run from pause asks first (ConfirmLeave). The
+            // HUD's own Reset above is practice-only, so it restarts directly.
+            System.Action quit = IsWeb ? null : () => ConfirmLeave("Quit the game?", Application.Quit);
+            Menu = PauseMenu.Create(canvas, () => SetMenuOpen(false), () => ConfirmLeave("Restart run?", Restart), quit);
+            Menu.AddButton(() => "Settings", OpenSettingsFromPause, "Settings", first: true);
+            Menu.AddButton(() => IsWeb ? "Quit to menu" : "Main menu", () => ConfirmLeave("Abandon this run?", ShowMainMenu), "MainMenuButton");
             // uGUI draws later siblings on top: the pause menu is raised above the flow panels
             // so pausing during an upgrade choice shows the menu, not the panel behind it.
             // D96: a card click passes (card, replace-or--1); Continue is the free "take nothing".
@@ -96,6 +104,8 @@ namespace BorrowedHex.Presentation
             Menu.transform.SetAsLastSibling();
             BuildDevPanel();
             BuildMenus();
+            // After the menus, then slotted just under the pause menu (GameRoot.Narrative.cs).
+            BuildNarrative();
 
             ShowMainMenu();
         }
@@ -186,6 +196,7 @@ namespace BorrowedHex.Presentation
             if (kind == RunKind.Sandbox && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
             // The one path into the profile: finalized exactly once per run ID (section 8).
             Sim.Events.RunEnded += OnRunEnded;
+            BindAudio();
             // A freeze from the previous run must not carry into the new one.
             hitStopUntil = 0f;
             // Keep the authored arena meshes and bind their disposable state to each run.
@@ -210,9 +221,29 @@ namespace BorrowedHex.Presentation
             gameplayInput = null;
             if (kind == RunKind.Backdrop) Sim.SetPause(PauseReason.Menu, true);
             else SetMenuOpen(false);
+            // Last: cancels the previous run's scene and may start this run's prologue.
+            BindNarrative();
         }
 
         public void Restart() => BeginRun();
+
+        /// <summary>
+        /// A run whose result reaches the profile (records, mastery) and is still in progress:
+        /// leaving it throws something away. Practice, debug and finished runs lose nothing.
+        /// </summary>
+        public bool IsCountedRunActive =>
+            (kind == RunKind.Short || kind == RunKind.Endless) && Sim != null && !Sim.Setup.Debug && Sim.State != RunState.Results;
+
+        /// <summary>
+        /// Leave or restart, asking first when a counted run would be lost. The question is an
+        /// overlay on the pause menu with Cancel focused, so a stray Enter or Esc keeps the run.
+        /// </summary>
+        void ConfirmLeave(string title, System.Action go)
+        {
+            if (!IsCountedRunActive) { go(); return; }
+            Confirm.Ask(title, "Unfinished progress from this run is lost.",
+                title.StartsWith("Restart") ? "Restart" : title.StartsWith("Quit") ? "Quit" : "Leave", go, Screens);
+        }
 
         /// <summary>
         /// D97 (R14): R restarts ONLY from the results screen. In combat it would throw runs away
@@ -221,6 +252,10 @@ namespace BorrowedHex.Presentation
         /// </summary>
         public bool HandleRestartKey(bool pressed)
         {
+            // R never answers the confirm dialog: only its own buttons (or Esc) do.
+            if (Confirm != null && Screens.Top == Confirm.gameObject) return false;
+            // The victory ending holds the results: R cannot skip past it into a new run.
+            if (Story != null && Story.IsPlaying) return false;
             if (!pressed || InMainMenu || Sim == null || Sim.State != RunState.Results) return false;
             Restart();
             return true;
@@ -238,9 +273,28 @@ namespace BorrowedHex.Presentation
             // The results screen is its own menu; Esc there does nothing rather than stacking
             // a pause menu over it.
             if (open && Sim.State == RunState.Results) open = false;
-            if (!open) Settings.Hide();
             Sim.SetPause(PauseReason.Menu, open);
-            Menu.Show(open);
+            // Only the life bar stays over the pause; the rest of the HUD (and the drawer) hides.
+            Hud.SetCovered(open);
+            if (open)
+            {
+                // Already up (perhaps under Settings): a focus loss must not raise it over that.
+                if (!Screens.Contains(Menu.gameObject))
+                {
+                    // Task 13: the held upgrades, named and explained, for a calm look mid-run.
+                    Menu.SetHeld(Sim.HeldUpgrades, Sim.Config.upgrades);
+                    Menu.Show(true);
+                    Screens.Push(Menu.gameObject, () => Menu.DefaultFocus, () => SetMenuOpen(false));
+                }
+            }
+            else
+            {
+                Screens.Clear();
+                Menu.Show(false);
+                // Nothing focused in combat, so Enter cannot re-trigger the last menu button.
+                var es = UnityEngine.EventSystems.EventSystem.current;
+                if (es != null) es.SetSelectedGameObject(null);
+            }
             SyncGameplayInput();
         }
 
@@ -254,8 +308,9 @@ namespace BorrowedHex.Presentation
         void SyncGameplayInput()
         {
             var s = Sim.State;
-            bool on = !InMainMenu && !Menu.IsOpen && !Settings.IsOpen
+            bool on = !InMainMenu && Screens.Count == 0
                 && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition)
+                && !Sim.Clock.HasPauseReason(PauseReason.Narrative)
                 && (s == RunState.Ready || s == RunState.Combat || s == RunState.BossCombat);
             if (gameplayInput == on) return;
             gameplayInput = on;
@@ -267,30 +322,30 @@ namespace BorrowedHex.Presentation
             bool pausePressed = Input.ConsumePause();
             bool restartPressed = Input.ConsumeRestart();
             if (cam == null) cam = Camera.main;
+            // Menus fade on unscaled time: they animate while the run is paused.
+            Screens.Tick(Time.unscaledTime);
             if (InMainMenu)
             {
-                // Esc closes settings (or a later phase's sub-menu) back to the menu; it never
-                // starts or resumes anything.
-                if (pausePressed)
-                {
-                    if (Settings.IsOpen) CloseSettings();
-                    else if (CheatPanel.IsOpen) CloseCheats();
-                    else CloseSubMenus();
-                }
+                // Esc closes the top sub-screen back to the menu; on the menu itself it does
+                // nothing, and it never starts or resumes anything.
+                if (pausePressed) Screens.Escape();
                 SyncGameplayInput();
                 View.Render(1f);
                 return;
             }
             if (pausePressed)
             {
-                if (Settings.IsOpen) CloseSettings();
-                else SetMenuOpen(!Menu.IsOpen);
+                // One rule (plan Task 4): the top screen handles Esc. Only with nothing stacked
+                // does Esc reach the game, and then only to OPEN pause: the pause menu is on the
+                // stack, so closing it is its own onEscape (resume).
+                if (!Screens.Escape()) SetMenuOpen(true);
             }
             SyncGameplayInput();
             if (HandleRestartKey(restartPressed)) return;
+            TickNarrative();
             // The boss banner holds the frozen frame for a beat, then the fight starts.
             if (Sim.State == RunState.BossIntro && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition)
-                && Flow.BannerDone) Sim.CompleteBossIntro();
+                && Flow.BannerDone && !NarrativeHoldsBossIntro) Sim.CompleteBossIntro();
 
             if (Sim.Clock.IsPaused)
             {
@@ -331,9 +386,15 @@ namespace BorrowedHex.Presentation
         /// Focus loss pauses combat (section 8) and opens the pause menu, so coming back to the
         /// window (or browser tab) lands on Resume instead of straight into live combat.
         /// </summary>
+        /// <summary>
+        /// Editor tooling only (scripted screenshots): the unfocused editor would otherwise
+        /// auto-pause every run. Never set by game code, so players always get the focus pause.
+        /// </summary>
+        public static bool IgnoreFocus;
+
         public void SetFocus(bool hasFocus)
         {
-            if (Sim == null) return;
+            if (Sim == null || IgnoreFocus) return;
             Sim.SetPause(PauseReason.FocusLost, !hasFocus);
             if (!hasFocus) SetMenuOpen(true);
         }

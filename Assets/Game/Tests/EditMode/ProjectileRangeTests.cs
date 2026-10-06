@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace BorrowedHex.Tests
 {
-    // Hostile ranges (owner-approved, 2026-10-04): Scatter 10, Acolyte 15, Siege 22, the
+    // Hostile ranges (owner-revised, 2026-10-04): Scatter 8, Acolyte 12, Siege 17.6, the
     // Collector's fan 30, and its bolt stream unlimited. Acolyte, Scatter and the Collector all
     // fire the same "bolt" definition, so range belongs to the shooter, not the attack.
     public class ProjectileRangeTests
@@ -53,9 +53,9 @@ namespace BorrowedHex.Tests
             return e;
         }
 
-        [TestCase(ActorCategory.ScatterCaster, 10f)]
-        [TestCase(ActorCategory.Acolyte, 15f)]
-        [TestCase(ActorCategory.SiegeFamiliar, 22f)]
+        [TestCase(ActorCategory.ScatterCaster, 8f)]
+        [TestCase(ActorCategory.Acolyte, 12f)]
+        [TestCase(ActorCategory.SiegeFamiliar, 17.6f)]
         public void OrdinaryShooterShotsExpireAtTheirShootersRange(ActorCategory kind, float range)
         {
             var sim = OpenWorld(out var flights);
@@ -117,9 +117,9 @@ namespace BorrowedHex.Tests
             // per-kind initializer in CombatTuning, so the asset itself must hold each value.
             var cfg = UnityEditor.AssetDatabase.LoadAssetAtPath<Data.GameConfig>("Assets/Game/Data/GameConfig.asset");
             Assert.NotNull(cfg);
-            Assert.That(cfg.combat.scatter.range, Is.EqualTo(10f));
-            Assert.That(cfg.combat.acolyte.range, Is.EqualTo(15f));
-            Assert.That(cfg.combat.siege.range, Is.EqualTo(22f));
+            Assert.That(cfg.combat.scatter.range, Is.EqualTo(8f));
+            Assert.That(cfg.combat.acolyte.range, Is.EqualTo(12f));
+            Assert.That(cfg.combat.siege.range, Is.EqualTo(17.6f));
             Assert.That(cfg.collector.fanRange, Is.EqualTo(30f));
             Assert.That(cfg.collector.streamUnlimited, Is.True);
         }

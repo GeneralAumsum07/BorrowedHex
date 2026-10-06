@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BorrowedHex.Enemies
 {
-    public enum BossPattern { BoltStream, Sweep, FanVolley, Slam }
+    public enum BossPattern { BoltStream, Sweep, FanVolley, Slam, Summon }
 
     /// <summary>
     /// Where the boss is inside one pattern. Every pattern runs the same four steps, so every
@@ -21,6 +21,7 @@ namespace BorrowedHex.Enemies
         public BossPattern Pattern;
         public BossStage Stage;
         public double StageEndsAt;
+        public double TelegraphStartedAt;
         /// <summary>Patterns started so far.</summary>
         public int PatternsStarted;
         /// <summary>Melee patterns in a row; capped so ammunition keeps arriving (see Choose).</summary>
@@ -50,11 +51,17 @@ namespace BorrowedHex.Enemies
         public Vector2 TeleportTo;
         public double NextTeleportAt;
         public int Teleports;
+
+        // A separate timer makes Summon independent of player distance and pattern streaks.
+        public double NextSummonAt;
+        public int SummonsResolved;
+        public readonly Vector2[] SummonedPositions = new Vector2[2];
+        public readonly ActorCategory[] SummonedKinds = new ActorCategory[2];
     }
 
     /// <summary>
     /// The Collector (section 4, owner-revised in Phase 5 and again after its first playtest,
-    /// D38, D48). Four patterns, chosen from where the player IS rather than in a fixed order:
+    /// D38, D48). Four offensive patterns chosen by player position, plus a timed Summon:
     ///   - player hidden behind a pillar (no line of sight) → ground slam: it ignores line of
     ///     sight, so hiding is answered by the one attack a pillar cannot block;
     ///   - point-blank → slam; close → sweeping melee; mid range → fan volley; far → bolt stream.
@@ -88,6 +95,7 @@ namespace BorrowedHex.Enemies
                 e.Phase = EnemyPhase.Idle;
                 // No teleport on the very first pattern: the intro shows it where it stands.
                 b.NextTeleportAt = now + t.teleportCooldown;
+                b.NextSummonAt = now + sim.Random.Range(t.summonIntervalMin, t.summonIntervalMax);
                 BeginPattern(sim, e, t, now);
             }
 
@@ -109,6 +117,14 @@ namespace BorrowedHex.Enemies
                     break;
 
                 case BossStage.Reposition:
+                    if (b.Pattern == BossPattern.Summon)
+                    {
+                        // Reserve the cast at a pattern boundary, then wait for its wind-up
+                        // time. An overdue summon starts only after the preceding move and
+                        // its complete recovery; the timer never interrupts another pattern.
+                        if (now >= b.StageEndsAt) StartTelegraph(sim, e, t, now);
+                        break;
+                    }
                     e.AimDirection = dirToPlayer;
                     if (ReachedPosition(e, b, t, dist) || now >= b.StageEndsAt)
                     {
@@ -162,6 +178,20 @@ namespace BorrowedHex.Enemies
             e.AimLocked = false;
             e.ClearParryRim();
 
+            // Reserve enough time for a complete cast before the next random deadline.
+            // The bound includes a possible teleport + melee and a full bolt stream; otherwise
+            // a last-second attack would usually stretch the interval. This is considered
+            // only at a pattern boundary after full recovery: if a projectile-budget hold
+            // runs late, Summon waits for that attack instead of overriding it.
+            float offensiveDuration = t.teleportTelegraph + t.repositionMax + t.recover
+                + Mathf.Max(t.streamTelegraph + Mathf.Max(0, t.streamShots - 1) * t.streamInterval,
+                    Mathf.Max(t.fanTelegraph, Mathf.Max(t.sweepTelegraph + t.sweepDuration, t.slamTelegraph)));
+            if (!afterTeleport && now + offensiveDuration + t.summonTelegraph >= b.NextSummonAt)
+            {
+                BeginSummon(e, t, now);
+                return;
+            }
+
             // Far away: a seeded chance to blink behind the player instead of walking over.
             // The roll happens only when every other condition holds, so the random stream
             // (and with it a seed's replay) does not depend on rolls that could never matter.
@@ -208,6 +238,21 @@ namespace BorrowedHex.Enemies
             // slam's radius (3.2). The wind-up itself stays full length; it is the player's only
             // warning, and the slam cannot be parried.
             if (afterTeleport) StartTelegraph(sim, e, t, now);
+        }
+
+        static void BeginSummon(EnemyActor e, BossTuning t, double now)
+        {
+            var b = e.Boss;
+            b.Pattern = BossPattern.Summon;
+            b.SameStreak = 1;
+            b.PatternsStarted++;
+            // Preserve MeleeStreak: two Pursuer arrivals cannot replace the boss's guarantee
+            // of fresh ammunition after at most two melee attacks.
+            b.Stage = BossStage.Reposition;
+            b.StageEndsAt = System.Math.Max(now, b.NextSummonAt - t.summonTelegraph);
+            e.Phase = EnemyPhase.Idle;
+            e.AimLocked = false;
+            e.ClearParryRim();
         }
 
         /// <summary>
@@ -354,6 +399,7 @@ namespace BorrowedHex.Enemies
                 case BossPattern.BoltStream: return t.streamTelegraph;
                 case BossPattern.FanVolley: return t.fanTelegraph;
                 case BossPattern.Sweep: return t.sweepTelegraph;
+                case BossPattern.Summon: return t.summonTelegraph;
                 default: return t.slamTelegraph;
             }
         }
@@ -365,6 +411,7 @@ namespace BorrowedHex.Enemies
                 case BossPattern.BoltStream: return t.streamAimLock;
                 case BossPattern.FanVolley: return t.fanAimLock;
                 case BossPattern.Sweep: return t.sweepAimLock;
+                case BossPattern.Summon: return t.summonTelegraph;
                 // The slam is centred on the boss, so it has no aim to lock: lock at once.
                 default: return t.slamTelegraph;
             }
@@ -374,10 +421,16 @@ namespace BorrowedHex.Enemies
         {
             var b = e.Boss;
             b.Stage = BossStage.Telegraph;
+            b.TelegraphStartedAt = now;
             b.StageEndsAt = now + TelegraphOf(b.Pattern, t);
             e.Phase = EnemyPhase.Telegraph;
             e.PhaseEndsAt = b.StageEndsAt;
             e.AimLocked = false;
+            if (b.Pattern == BossPattern.Summon)
+                // Choose once per cast. Waiting for local space must not reroll the pair
+                // every tick or turn a blocked summon into a different enemy composition.
+                for (int i = 0; i < b.SummonedKinds.Length; i++)
+                    b.SummonedKinds[i] = SummonKinds[sim.Random.NextInt(0, SummonKinds.Length)];
             if (b.Pattern == BossPattern.Sweep)
             {
                 // Same shape as the Pursuer's rim (D46): up shortly after the wind-up starts,
@@ -395,6 +448,9 @@ namespace BorrowedHex.Enemies
         static void StartActive(ArenaSim sim, EnemyActor e, BossTuning t, double now)
         {
             var b = e.Boss;
+            // Plan both local arrivals before spawning either. A crowded cast holds its
+            // completed wind-up rather than producing half a pair or spawning across the arena.
+            if (b.Pattern == BossPattern.Summon && !FindSummonPair(sim, e, t)) return;
             b.Stage = BossStage.Active;
             e.Phase = EnemyPhase.Idle;
             e.ClearParryRim();
@@ -407,7 +463,16 @@ namespace BorrowedHex.Enemies
 
                 case BossPattern.FanVolley:
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
-                        FanOf(e, t), t.hitDamage, range: t.fanRange);
+                        FanOf(e, t), t.hitDamage, range: t.fanRange, speedScale: t.rangedProjectileSpeedScale);
+                    sim.Events.RaiseEnemyFired(e);
+                    Recover(e, t, now, t.recover);
+                    return;
+
+                case BossPattern.Summon:
+                    for (int i = 0; i < b.SummonedPositions.Length; i++)
+                        sim.SpawnEnemy(b.SummonedKinds[i], b.SummonedPositions[i], scaleForCycle: true);
+                    b.SummonsResolved++;
+                    b.NextSummonAt = now + sim.Random.Range(t.summonIntervalMin, t.summonIntervalMax);
                     sim.Events.RaiseEnemyFired(e);
                     Recover(e, t, now, t.recover);
                     return;
@@ -455,7 +520,7 @@ namespace BorrowedHex.Enemies
                     // so the held bolts are delayed, not lost or fired in a burst later.
                     if (!sim.HostileRoomFor(1)) { b.NextShotAt = now; break; }
                     AttackEmitter.FireVolley(sim, AttackIds.Bolt, e.ActorId, e.Position, e.Radius, e.AimDirection,
-                        ZeroSpread, t.hitDamage, unlimited: t.streamUnlimited);
+                        ZeroSpread, t.hitDamage, unlimited: t.streamUnlimited, speedScale: t.rangedProjectileSpeedScale);
                     sim.Events.RaiseEnemyFired(e);
                     b.ShotsLeft--;
                     b.NextShotAt += t.streamInterval;
@@ -481,6 +546,28 @@ namespace BorrowedHex.Enemies
         }
 
         static readonly float[] ZeroSpread = { 0f };
+        static readonly ActorCategory[] SummonKinds = { ActorCategory.Acolyte, ActorCategory.Pursuer,
+            ActorCategory.ScatterCaster, ActorCategory.SiegeFamiliar };
+
+        static bool FindSummonPair(ArenaSim sim, EnemyActor e, BossTuning t)
+        {
+            var b = e.Boss;
+            float firstRadius = sim.Config.combat.For(b.SummonedKinds[0]).bodyRadius;
+            float secondRadius = sim.Config.combat.For(b.SummonedKinds[1]).bodyRadius;
+            // A first legal position can occupy the only place the second body fits.
+            // Try several pairs before holding the cast, always keeping the same two kinds.
+            for (int attempt = 0; attempt < 8; attempt++)
+            {
+                if (!sim.TryFindSpawnPointNear(firstRadius, e.Position, t.summonSpawnMinDistance,
+                    t.summonSpawnMaxDistance, out var first)) return false;
+                if (!sim.TryFindSpawnPointNear(secondRadius, e.Position, t.summonSpawnMinDistance,
+                    t.summonSpawnMaxDistance, out var second, first, firstRadius)) continue;
+                b.SummonedPositions[0] = first;
+                b.SummonedPositions[1] = second;
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// The blade swept from <paramref name="fromDeg"/> to <paramref name="toDeg"/> (relative
