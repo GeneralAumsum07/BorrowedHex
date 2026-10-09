@@ -72,6 +72,26 @@ namespace BorrowedHex.Tests
             Assert.That(expired, Is.GreaterThan(0), $"{kind} fired and its shots ran out of range.");
         }
 
+        // Owner playtest: shooters fired from wherever they stood, so out-of-range volleys
+        // fizzled long before reaching the player. A shooter beyond its reach must walk in and
+        // only start a telegraph once the player is inside its range.
+        [TestCase(ActorCategory.ScatterCaster)]
+        [TestCase(ActorCategory.Acolyte)]
+        [TestCase(ActorCategory.SiegeFamiliar)]
+        public void OutOfRangeShooters_CloseInBeforeTheyTelegraph(ActorCategory kind)
+        {
+            var sim = OpenWorld(out _);
+            sim.Player.Position = new Vector2(10, 0);
+            float range = sim.Config.combat.For(kind).range;
+            // Start well beyond reach, on the same row so the open lane is the whole story.
+            var e = Ready(sim, kind, sim.Player.Position + Vector2.left * (range + 4f));
+            var distances = new List<float>();
+            sim.Events.EnemyTelegraph += en => { if (en == e) distances.Add((sim.Player.Position - en.Position).magnitude); };
+            Run(sim, 12);
+            Assert.That(distances, Is.Not.Empty, $"{kind} never closed in far enough to attack.");
+            foreach (var d in distances) Assert.That(d, Is.LessThanOrEqualTo(range), $"{kind} started a volley {d:0.0} away with a {range} range.");
+        }
+
         [Test]
         public void TheCollectorsFanReachesThirtyAndItsStreamNeverRunsOut()
         {

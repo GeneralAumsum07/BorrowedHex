@@ -460,6 +460,11 @@ namespace BorrowedHex.Tests
             MeleeHitsAt(float chooseAt, float standAt)
         {
             var (sim, boss) = BossFight();
+            // Hits must land but never end the run: with invulnerability cleared every tick,
+            // 30 s of slams drains the life clock, and a sweep that killed the player left the
+            // loop mid-swing, its hit counted but its swing (raised when the arc completes)
+            // not. Surfaced when the summoned casters' range fix shifted the random stream.
+            sim.Setup.Invincible = true;
             sim.Player.InvulnerableUntil = 1e9;
             var hits = new Dictionary<BossPattern, int> { [BossPattern.Sweep] = 0, [BossPattern.Slam] = 0 };
             var swings = new Dictionary<BossPattern, int> { [BossPattern.Sweep] = 0, [BossPattern.Slam] = 0 };

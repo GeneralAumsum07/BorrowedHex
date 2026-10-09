@@ -188,12 +188,18 @@ namespace BorrowedHex.Enemies
             var b = sim.Arena.bounds;
             float margin = e.Radius + 0.6f;
             Vector2 best = e.Position;
+            // Never pick a spot the next volley could not reach from: Scatter's band (5.5-8.5)
+            // runs past its 8-unit range, and an out-of-reach spot would only make it walk
+            // straight back in (RangedCaster gates firing on reach). Min guards a band that
+            // sits entirely beyond reach.
+            float maxDist = Mathf.Min(t.preferredMax, RangedCaster.EngageDistance(t));
+            float minDist = Mathf.Min(t.preferredMin, maxDist);
             for (int i = 0; i < 12; i++)
             {
                 // 40-110 degrees around the player, either side: a visible change of angle
                 // without crossing the whole arena.
                 float swing = sim.Random.Range(40f, 110f) * (sim.Random.NextFloat() < 0.5f ? -1f : 1f);
-                float dist = sim.Random.Range(t.preferredMin, t.preferredMax);
+                float dist = sim.Random.Range(minDist, maxDist);
                 Vector2 p = sim.Player.Position + Geometry2D.Rotate(Vector2.right, baseAngle + swing) * dist;
                 if (p.x < b.xMin + margin || p.x > b.xMax - margin || p.y < b.yMin + margin || p.y > b.yMax - margin) continue;
                 bool clear = true;
