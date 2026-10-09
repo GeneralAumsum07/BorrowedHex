@@ -1,5 +1,6 @@
 using static BorrowedHex.Tests.ClockFixtures;
 using System.Collections.Generic;
+using System.Linq;
 using BorrowedHex.Combat;
 using BorrowedHex.Core;
 using BorrowedHex.Data;
@@ -226,35 +227,44 @@ namespace BorrowedHex.Tests
         [Test]
         public void BossTransition_DespawnsOrdinariesWithoutReward_KeepsPackets_AndShowsTheBoss()
         {
+            // Lore plan Task 3: the boss transition now runs AT the final clear (the Sanctum
+            // comes before the last upgrade choice), so the leftovers are planted in the frame
+            // before the last kills land, and checked once the clear has happened.
             var sim = P5.Short();
             P5.Invulnerable(sim);
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++) { P5.ClearEncounter(sim); sim.ContinueFromUpgrade(); }
+            ProjectileActor bolt = null;
+            CapturedPacket packet = null;
+            int kills = -1;
+            for (int n = 0; n < 20000 && sim.State == RunState.Combat; n++)
             {
-                P5.ClearEncounter(sim);
-                if (i < 2) sim.ContinueFromUpgrade();
+                sim.Tick(P5.Still, P5.Dt);
+                var last = sim.Enemies.FirstOrDefault(e => e.Alive && !e.IsBoss && sim.Clock.Now >= e.ActiveAt);
+                if (bolt == null && last != null && sim.EnemiesLeftInEncounter() == sim.Enemies.Count(e => e.Alive && !e.IsBoss && sim.Clock.Now >= e.ActiveAt))
+                {
+                    // An enemy shot still in flight and a captured packet, as the encounter ends.
+                    var snap = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), last.ActorId, sim.Ids.Next(), 0f);
+                    bolt = sim.SpawnProjectile(snap, AttackFaction.Hostile, new Vector2(5f, 0f), Vector2.left);
+                    packet = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
+                    P5.KillActiveOrdinaries(sim);
+                    kills = sim.Score.Kills;
+                    continue;
+                }
+                P5.KillActiveOrdinaries(sim);
             }
+            Assert.NotNull(packet, "fixture: the last kills were reached");
             Assert.AreEqual(3, sim.TransitionsReached);
-            // Encounters end cleared, so plant leftovers to prove the cleanup: an ordinary
-            // enemy and one of its shots in flight.
-            var leftover = sim.SpawnEnemy(ActorCategory.Acolyte, new Vector2(6f, 0f));
-            leftover.ActiveAt = 0;
-            var bolt = AttackSnapshot.From(sim.Attacks.Get(AttackIds.Bolt), leftover.ActorId, sim.Ids.Next(), 0f);
-            sim.SpawnProjectile(bolt, AttackFaction.Hostile, new Vector2(5f, 0f), Vector2.left);
-            Assert.Greater(sim.AliveOrdinaryCount(), 0);
-            var packet = TestSims.Seed(sim.Packets, sim.Ids.Next(), 0, sim.Clock.Now, 3f, 12);
-            Assert.NotNull(packet);
-            int score = sim.Score.Score, kills = sim.Score.Kills;
-
-            Assert.IsTrue(sim.ContinueFromUpgrade());
-            Assert.AreEqual(RunState.BossIntro, sim.State);
+            Assert.AreEqual(RunState.UpgradeChoice, sim.State, "headless arrival passes straight to the choice");
             Assert.AreEqual(0, sim.AliveOrdinaryCount());
-            Assert.AreEqual(0, sim.CountProjectiles(AttackFaction.Hostile));
-            Assert.AreEqual(score, sim.Score.Score, "cleanup despawns give no score");
-            Assert.AreEqual(kills, sim.Score.Kills);
+            Assert.AreEqual(0, sim.CountProjectiles(AttackFaction.Hostile), "enemy shots are cleared at the transition");
+            Assert.AreEqual(kills, sim.Score.Kills, "cleanup despawns are not kills");
             CollectionAssert.Contains(sim.Packets.Packets, packet, "captured packets survive the transition");
             Assert.NotNull(sim.Boss);
             Assert.IsTrue(sim.Boss.Alive);
             Assert.AreEqual(87.5f, sim.Boss.MaxHealth);
+
+            Assert.IsTrue(sim.ContinueFromUpgrade());
+            Assert.AreEqual(RunState.BossIntro, sim.State);
             Assert.IsTrue(sim.Clock.IsPaused, "the intro banner holds the clock");
 
             Assert.IsTrue(sim.CompleteBossIntro());

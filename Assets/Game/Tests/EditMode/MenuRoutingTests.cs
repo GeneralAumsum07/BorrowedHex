@@ -14,6 +14,7 @@ namespace BorrowedHex.Tests
         [TestCase("mastery", MenuSlot.Character)]
         [TestCase("style", MenuSlot.Hidden)]
         [TestCase("records", MenuSlot.Records)]
+        [TestCase("story", MenuSlot.Story)]
         [TestCase("tutorial", MenuSlot.Training)]
         [TestCase("practice", MenuSlot.Training)]
         [TestCase("settings", MenuSlot.Settings)]

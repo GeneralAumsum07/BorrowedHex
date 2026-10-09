@@ -121,6 +121,11 @@ namespace BorrowedHex.Progression
             p.records ??= new List<RunRecord>();
             p.finalizedRunIds ??= new List<string>();
             if (string.IsNullOrEmpty(p.styleId)) p.styleId = "snatcher";
+            // A missing group (or list) is an older build's file: defaults, not damage.
+            p.narrative ??= new Narrative.NarrativeProfileState();
+            why = NarrativeDamage(p.narrative);
+            if (why != null) return false;
+            p.narrative.Repair();
 
             var s = p.settings;
             if (s.displayMode < -1 || s.displayMode > 1) { why = "displayMode"; return false; }
@@ -143,6 +148,24 @@ namespace BorrowedHex.Progression
             foreach (var r in p.records)
                 if (r == null || r.score < 0) { why = "record"; return false; }
             return ValidateExtra(p, out why);
+        }
+
+        /// <summary>
+        /// Same strictness as the rest of the file (D73): an unknown scene, a scene seen but never
+        /// unlocked, or a volume outside 0..1 can only come from damage or hand editing.
+        /// </summary>
+        static string NarrativeDamage(Narrative.NarrativeProfileState n)
+        {
+            if (n.settings != null && !(n.settings.dialogueVolume >= 0f && n.settings.dialogueVolume <= 1f)) return "dialogueVolume";
+            if (n.unlocked != null)
+            {
+                if (new HashSet<string>(n.unlocked).Count != n.unlocked.Count) return "duplicate scene";
+                foreach (var id in n.unlocked) if (Narrative.NarrativeCatalog.Get(id) == null) return "unknown scene";
+            }
+            if (n.seen != null)
+                foreach (var id in n.seen)
+                    if (n.unlocked == null || !n.unlocked.Contains(id)) return "seen but not unlocked";
+            return null;
         }
 
         // Later phases add their own checks (known node ids, ...) without growing this file.

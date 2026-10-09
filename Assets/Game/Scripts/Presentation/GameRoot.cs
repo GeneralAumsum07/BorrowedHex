@@ -192,6 +192,9 @@ namespace BorrowedHex.Presentation
             setup.WorldArenas = useWorldArenas && !setup.Tutorial
                 && FindFirstObjectByType<WorldArt.WorldPresentation>() != null;
             Sim = new ArenaSim(config, setup);
+            // GameRoot reports the end of the Sanctum pull itself (TickNarrative), so the
+            // anomaly can play between the arrival and the final upgrades (lore plan Task 3).
+            Sim.HoldSanctumArrival = true;
             // The sandbox upgrade picked on the dev button survives Reset, like auto-spawn.
             if (kind == RunKind.Sandbox && devUpgrade > 0) Sim.ForceUpgrade(UpgradeInfo.Pool[devUpgrade - 1]);
             // The one path into the profile: finalized exactly once per run ID (section 8).
@@ -327,8 +330,9 @@ namespace BorrowedHex.Presentation
             if (InMainMenu)
             {
                 // Esc closes the top sub-screen back to the menu; on the menu itself it does
-                // nothing, and it never starts or resumes anything.
-                if (pausePressed) Screens.Escape();
+                // nothing, and it never starts or resumes anything. During a Story replay Esc
+                // ends the replay, back onto the Story list (lore plan Task 4).
+                if (pausePressed && !EscapeReplay()) Screens.Escape();
                 SyncGameplayInput();
                 View.Render(1f);
                 return;

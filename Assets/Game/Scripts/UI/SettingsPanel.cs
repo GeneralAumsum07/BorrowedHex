@@ -23,14 +23,22 @@ namespace BorrowedHex.UI
         // they are being built (ToggleRow/StepperRow refresh once at creation), before any profile
         // exists. The brief's version left this null and would throw in Create.
         ProfileSettings settings = new ProfileSettings();
+        // Lore plan Task 4: the story settings live in the profile's narrative group.
+        Narrative.NarrativeSettings story = new Narrative.NarrativeSettings();
         Action onChanged, onBack;
         readonly List<UiKit.Row> rows = new List<UiKit.Row>();
+        UiKit.TabStrip tabs;
+        RectTransform generalRows, storyRows;
+        int firstStoryRow;
         Button back;
         bool allowWindowed;
 
         public bool IsOpen => gameObject.activeSelf;
         /// <summary>What the ScreenStack focuses when this screen comes up: the first row's control.</summary>
-        public GameObject DefaultFocus => rows[0].Control.gameObject;
+        public GameObject DefaultFocus => rows[tabs.Selected == 1 ? firstStoryRow : 0].Control.gameObject;
+
+        /// <summary>Dialogue volume steps: 5%, so the 35% default is reachable.</summary>
+        public static float StepVolume(float v, int dir) => Mathf.Clamp01(Mathf.Round(v * 20f + dir) / 20f);
 
         public static SettingsPanel Create(Canvas canvas, bool allowWindowed)
         {
@@ -75,11 +83,15 @@ namespace BorrowedHex.UI
         void Build(RectTransform root)
         {
             var frame = UiKit.Frame("Panel", root, UiKit.FrameKind.Ornate);
-            Ui.Place(frame.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880, 560));
+            // Two tabs of four rows (lore plan Task 4) rather than one column of eight: the panel
+            // keeps a height that fits the largest interface scale.
+            Ui.Place(frame.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(880, 640));
             var head = UiKit.Text("Heading", frame.transform, "Settings", UiFonts.Role.Heading, TextAnchor.MiddleCenter);
             Ui.Place(head.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -40), new Vector2(800, 64));
-            var body = Ui.Rect("Rows", frame.transform);
-            Ui.Place(body, new Vector2(0.5f, 1), new Vector2(0, -128), new Vector2(752, 4 * UiKit.RowHeight + 3 * 16));
+            tabs = UiKit.Tabs(frame.transform, new[] { "General", "Story" }, ShowTab);
+            Ui.Place(tabs.Rect, new Vector2(0.5f, 1), new Vector2(0, -116), new Vector2(tabs.Width, 64));
+            var body = generalRows = Ui.Rect("Rows", frame.transform);
+            Ui.Place(body, new Vector2(0.5f, 1), new Vector2(0, -208), new Vector2(752, 4 * UiKit.RowHeight + 3 * 16));
             Ui.Column(body, 16);
             // The lambdas read `settings` at click time: Show swaps in the live profile object.
             rows.Add(UiKit.StepperRow(body, "Display", () => settings.displayMode switch { 1 => "Fullscreen", 0 => "Windowed", _ => "As launched" },
@@ -88,13 +100,34 @@ namespace BorrowedHex.UI
                 d => { settings.uiScale = StepScale(settings.uiScale, d); onChanged?.Invoke(); }));
             rows.Add(UiKit.ToggleRow(body, "Reduce flashes", () => settings.reduceFlashes, v => { settings.reduceFlashes = v; onChanged?.Invoke(); }));
             rows.Add(UiKit.ToggleRow(body, "Control hints", () => settings.showHints, v => { settings.showHints = v; onChanged?.Invoke(); }));
+
+            storyRows = Ui.Rect("StoryRows", frame.transform);
+            Ui.Place(storyRows, new Vector2(0.5f, 1), new Vector2(0, -208), new Vector2(752, 4 * UiKit.RowHeight + 3 * 16));
+            Ui.Column(storyRows, 16);
+            firstStoryRow = rows.Count;
+            rows.Add(UiKit.ToggleRow(storyRows, "Skip familiar scenes", () => story.skipFamiliar, v => { story.skipFamiliar = v; onChanged?.Invoke(); }));
+            rows.Add(UiKit.ToggleRow(storyRows, "Instant story text", () => story.instantText, v => { story.instantText = v; onChanged?.Invoke(); }));
+            rows.Add(UiKit.StepperRow(storyRows, "Dialogue sound", () => $"{Mathf.RoundToInt(story.dialogueVolume * 100)}%",
+                d => { story.dialogueVolume = StepVolume(story.dialogueVolume, d); onChanged?.Invoke(); }));
+            rows.Add(UiKit.ToggleRow(storyRows, "Combat reactions", () => story.combatReactions, v => { story.combatReactions = v; onChanged?.Invoke(); }));
+            ShowTab(0);
             back = UiKit.Button("Back", frame.transform, "Back", () => onBack?.Invoke(), UiKit.Tier.Secondary);
             Ui.Place((RectTransform)back.transform, new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(320, 64));
         }
 
-        public void Show(ProfileSettings s, Action changed, Action back)
+        void ShowTab(int i)
+        {
+            tabs.Select(i);
+            generalRows.gameObject.SetActive(i == 0);
+            storyRows.gameObject.SetActive(i == 1);
+        }
+
+        public void Show(ProfileSettings s, Action changed, Action back) => Show(s, null, changed, back);
+
+        public void Show(ProfileSettings s, Narrative.NarrativeSettings storySettings, Action changed, Action back)
         {
             settings = s;
+            if (storySettings != null) story = storySettings;
             onChanged = changed;
             onBack = back;
             Refresh();

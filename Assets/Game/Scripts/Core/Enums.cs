@@ -21,7 +21,8 @@ namespace BorrowedHex.Core
     public enum PauseReason { Menu, UpgradeChoice, Results, FocusLost, BossIntro, Manual, WorldTransition, Narrative }
 
     // High-level run flow from Phase 5.
-    public enum RunState { Ready, Combat, UpgradeChoice, BossIntro, BossCombat, Paused, Results }
+    // SanctumArrival is appended (lore plan Task 3) so every existing value keeps its number.
+    public enum RunState { Ready, Combat, UpgradeChoice, BossIntro, BossCombat, Paused, Results, SanctumArrival }
 
     // Where a piece of damage came from, so score/combo/achievements can treat each
     // category by its own rule (orbit damage never builds combo, for example).

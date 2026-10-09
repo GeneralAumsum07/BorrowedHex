@@ -177,10 +177,18 @@ namespace BorrowedHex.Presentation.Audio
         {
             if (to == RunState.Combat && from == RunState.Ready) GameAudio.Play("run_start");
             else if (to == RunState.UpgradeChoice) GameAudio.Play("upgrade_offers");
+            // The Sanctum score is cut to the reveal's 7.8 s, so it plays when the reveal does:
+            // at SanctumArrival in a short run (lore plan Task 3), at BossIntro in endless.
+            // Outside the world arenas the plain reveal stinger carries BossIntro. Never both (README).
+            else if (to == RunState.SanctumArrival)
+            {
+                if (sim.ArenaStage == 3) GameAudio.Play("sanctum_intro", 0.9f);
+            }
             else if (to == RunState.BossIntro)
-                // The Sanctum score is cut to the reveal's 7.8 s; outside the world arenas the
-                // plain reveal stinger carries the moment instead. Never both (README).
-                GameAudio.Play(sim.ArenaStage == 3 ? "sanctum_intro" : "boss_reveal", 0.9f);
+            {
+                if (sim.ArenaStage != 3) GameAudio.Play("boss_reveal", 0.9f);
+                else if (!sim.IsShortRun) GameAudio.Play("sanctum_intro", 0.9f);
+            }
             else if (to == RunState.BossCombat) GameAudio.Play("boss_combat_start");
         }
 
@@ -193,6 +201,7 @@ namespace BorrowedHex.Presentation.Audio
                 case RunState.UpgradeChoice: return "upgrade_selection";
                 // The intro score (a one-shot) carries the reveal; the loop waits for the fight.
                 case RunState.BossIntro: return null;
+                case RunState.SanctumArrival: return null;
                 case RunState.BossCombat: return "collector_battle";
                 case RunState.Results: return ended == RunEndReason.Victory ? "victory_results" : "failure_results";
             }

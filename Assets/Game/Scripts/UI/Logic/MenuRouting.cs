@@ -1,6 +1,7 @@
 namespace BorrowedHex.UI
 {
-    public enum MenuSlot { Play, Mode, Character, Records, Training, Settings, Cheats, Quit, Hidden }
+    // Story is appended (lore plan Task 4) so existing values keep their numbers.
+    public enum MenuSlot { Play, Mode, Character, Records, Training, Settings, Cheats, Quit, Hidden, Story }
 
     /// <summary>
     /// Where each legacy main-menu key lives in the three-destination layout (spec 2). Keys stay
@@ -19,6 +20,7 @@ namespace BorrowedHex.UI
             "play_short" or "endless" => MenuSlot.Mode,
             "mastery" => MenuSlot.Character,
             "records" => MenuSlot.Records,
+            "story" => MenuSlot.Story,
             "tutorial" or "practice" => MenuSlot.Training,
             "settings" => MenuSlot.Settings,
             "cheats" => MenuSlot.Cheats,

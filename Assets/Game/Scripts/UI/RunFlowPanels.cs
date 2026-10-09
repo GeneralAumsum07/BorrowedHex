@@ -80,7 +80,26 @@ namespace BorrowedHex.UI
         bool bannerWasIntro;
 
         GameObject resultsDim;
-        Text resultsTitle, resultsSubtitle;
+        Text resultsTitle, resultsSubtitle, resultsRecall;
+        string recall;
+
+        /// <summary>
+        /// Lore plan section G: one muted line under the title after a story run ends in death
+        /// or time expiry (null hides it). Text only, never a scene, so Play again is as
+        /// immediate as ever. GameRoot sets it from RunEnded and clears it at every new run.
+        /// </summary>
+        public string Recall
+        {
+            get => recall;
+            set
+            {
+                recall = value;
+                // Live as well as at FillResults: RunEnded and the results opening share a frame,
+                // and either may come first.
+                if (resultsRecall != null) ShowRecall();
+            }
+        }
+        public Text RecallLabel => resultsRecall;
         Text scoreValue, durationValue, killsValue;   // the Headline's three stat blocks
         Text resultsBody;                             // full statistics, inside the collapsed Details
         RectTransform progress;                       // XP bar, XP line, level-up, rewards
@@ -267,6 +286,9 @@ namespace BorrowedHex.UI
 
             resultsTitle = Ui.Sized(UiKit.Text("Title", rp.transform, "", UiFonts.Role.Title, TextAnchor.MiddleCenter), 104);
             resultsSubtitle = Ui.Sized(UiKit.Text("Subtitle", rp.transform, "", UiFonts.Role.Sub, TextAnchor.MiddleCenter), 40);
+            resultsRecall = UiKit.Text("Recall", rp.transform, "", UiFonts.Role.Body, TextAnchor.MiddleCenter);
+            resultsRecall.color = UiPalette.Muted;
+            resultsRecall.gameObject.SetActive(false);
 
             // D97: the outcome reads in a glance. Three labelled blocks, value over label, so the
             // numbers are never a run-on "1234 · 3:20 · 40 kills" line the eye has to parse.
@@ -385,6 +407,17 @@ namespace BorrowedHex.UI
         /// <summary>True while the boss banner has held long enough to start the fight.</summary>
         public bool BannerDone => bannerShownAt >= 0f && Time.unscaledTime - bannerShownAt >= BannerHold;
 
+        /// <summary>
+        /// Lore plan Task 3: set by GameRoot while a story scene blocks the flow. The upgrade
+        /// cards stay hidden (not merely covered) so they open fresh, with their click guard
+        /// re-armed, only once the scene has ended.
+        /// </summary>
+        public bool HoldUpgrades { get; set; }
+        /// <summary>The upgrade choice is on screen and usable.</summary>
+        public bool UpgradesShowing => upgradeDim.activeSelf;
+        /// <summary>The boss name band is visible this frame.</summary>
+        public bool BannerShowing => banner.gameObject.activeSelf;
+
         /// <summary>The "Play again" button label, for testing that it contains [R].</summary>
         public string AgainLabel => againButton.GetComponentInChildren<Text>().text;
 
@@ -393,7 +426,7 @@ namespace BorrowedHex.UI
             if (sim == null) return;
             var state = sim.State;
 
-            bool upgrade = state == RunState.UpgradeChoice;
+            bool upgrade = state == RunState.UpgradeChoice && !HoldUpgrades;
             if (upgrade && !upgradeDim.activeSelf)
             {
                 // The wave-six choice is the one deferred until the boss fell. Encounters end on
@@ -691,7 +724,11 @@ namespace BorrowedHex.UI
                 bannerWasIntro = true;
                 bannerShownAt = Time.unscaledTime;
                 bannerName.text = BannerText(sim.Config.collector.displayName);
-                bannerLive = true;
+                // A short run's Sanctum reveal already showed the title at the arrival, before
+                // the final upgrades: the band is not repeated at the confrontation. The timer
+                // (BannerDone) still runs, so the normal spawn warning beat is kept. Classic
+                // arenas (no reveal) and endless (title shown during its own pull) keep the band.
+                bannerLive = !(sim.IsShortRun && sim.ArenaStage == 3);
             }
             // The run can end inside the fade (a fast kill, a death): the results must never
             // sit on top of a half-faded boss name.
@@ -720,6 +757,7 @@ namespace BorrowedHex.UI
             string sub = ResultsCopy.Subtitle(s.Reason, s.Mode, s.Cycle, s.WavesCompleted, s.BossesDefeated, s.VictoryBonus);
             resultsSubtitle.gameObject.SetActive(sub != null);
             resultsSubtitle.text = sub ?? "";
+            ShowRecall();
             int secs = Mathf.FloorToInt(s.Duration);
             scoreValue.text = s.Score.ToString();
             durationValue.text = $"{secs / 60}:{secs % 60:00}";
@@ -728,6 +766,15 @@ namespace BorrowedHex.UI
             detailsView.SetActive(false);
             detailsButton.GetComponentInChildren<Text>().text = "Details";
             FillBody(s);
+        }
+
+        void ShowRecall()
+        {
+            resultsRecall.gameObject.SetActive(!string.IsNullOrEmpty(recall));
+            resultsRecall.text = recall ?? "";
+            // Sized to its wrapped text (two lines at Body in the inner width): the column has
+            // no fixed box to leave dead space in (the layout test's gap rule).
+            Ui.Sized(resultsRecall, Mathf.Ceil(Ui.TextHeight(resultsRecall, ResultsInner)) + 4f);
         }
 
         /// <summary>

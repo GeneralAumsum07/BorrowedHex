@@ -137,7 +137,7 @@ namespace BorrowedHex.Presentation
 
         void OpenSettings()
         {
-            Settings.Show(Profile.Profile.settings, SettingsChanged, CloseSettings);
+            Settings.Show(Profile.Profile.settings, Profile.Profile.narrative.settings, SettingsChanged, CloseSettings);
             Screens.Push(Settings.gameObject, () => Settings.DefaultFocus, null);
         }
 

@@ -138,7 +138,8 @@ namespace BorrowedHex.Runs
                 hitsThisEncounter = 0;
             // Combat -> UpgradeChoice happens only when an encounter is cleared (D50); a resume
             // from a pause back into the choice is not a second clear.
-            else if (state == RunState.UpgradeChoice && previousState == RunState.Combat
+            // The final clear goes Combat -> SanctumArrival (lore plan Task 3); it counts the same.
+            else if ((state == RunState.UpgradeChoice || state == RunState.SanctumArrival) && previousState == RunState.Combat
                      && sim.Setup.Mode == GameMode.Short && hitsThisEncounter == 0)
                 UntouchableEncounters++;
             previousState = state;

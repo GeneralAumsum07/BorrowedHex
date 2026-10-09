@@ -76,7 +76,9 @@ namespace BorrowedHex.Tests
             for (int i = 0; i < 3; i++)
             {
                 P5.ClearEncounter(sim);
-                Assert.AreEqual(4, sim.Walls.Count);
+                // Lore plan Task 3: the final clear prepares the Sanctum (cover included) before
+                // the last choice, so that choice already shows restored cover.
+                Assert.AreEqual(i < 2 ? 4 : 8, sim.Walls.Count);
                 sim.ContinueFromUpgrade();
                 Assert.AreEqual(8, sim.Walls.Count);
                 foreach (var pillar in sim.Pillars) Assert.AreEqual(12, pillar.Durability);

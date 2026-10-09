@@ -43,7 +43,15 @@ namespace BorrowedHex.Tests
             typeof(ArenaSim).GetMethod("SetState", Private).Invoke(root.Sim, new object[] { RunState.UpgradeChoice });
         }
 
-        string Passage => root.Story.transform.Find("Passage").GetComponent<UnityEngine.UI.Text>().text;
+        // The final clear exactly as TickRunFlow runs it: offers drawn, then the Sanctum prepared.
+        void ForceFinalClear()
+        {
+            typeof(ArenaSim).GetProperty("TransitionsReached").SetValue(root.Sim, 3);
+            typeof(ArenaSim).GetMethod("OpenUpgradeChoice", Private).Invoke(root.Sim, new object[] { 1 });
+            typeof(ArenaSim).GetMethod("PrepareSanctum", Private).Invoke(root.Sim, null);
+        }
+
+        string Passage => root.Story.BodyLabel.text;
 
         IEnumerator Frames(float seconds)
         {
@@ -89,14 +97,24 @@ namespace BorrowedHex.Tests
             yield return null;
             root.Sim.ContinueFromUpgrade();
 
-            // Third clear: no scene over the upgrades; the Sanctum scene holds the boss intro.
-            ForceUpgradeChoice(3);
+            // Third clear (classic arena, no travel): clear → anomaly → upgrades → confrontation → fight.
+            ForceFinalClear();
             yield return null;
-            Assert.That(root.Story.IsPlaying, Is.False, "nothing should play over the third choice");
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.SanctumArrival));
+            Assert.That(root.Story.IsPlaying, Is.True, "anomaly did not open at the arrival");
+            Assert.That(root.Story.CurrentPage.Text, Does.StartWith("The Collector means"), "anomaly first");
+            Assert.That(root.Flow.UpgradesShowing, Is.False, "upgrades stay hidden under the anomaly");
+            root.Story.Skip();
+            yield return null;
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.UpgradeChoice), "upgrades follow the anomaly");
+            Assert.That(root.Story.IsPlaying, Is.False);
+            Assert.That(root.Flow.UpgradesShowing, Is.True);
+            Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.BossIntro), Is.True, "no combat between story and upgrades");
             root.Sim.ContinueFromUpgrade();
             yield return null;
             Assert.That(root.Sim.State, Is.EqualTo(RunState.BossIntro));
-            Assert.That(root.Story.IsPlaying, Is.True, "anomaly/confrontation did not open");
+            Assert.That(root.Story.IsPlaying, Is.True, "confrontation did not open");
+            Assert.That(root.Story.CurrentPage.Kind, Is.EqualTo(Narrative.PageKind.Dialogue));
             yield return Frames(3f);
             Assert.That(root.Sim.State, Is.EqualTo(RunState.BossIntro), "boss fight started under the story");
             root.Story.Skip();
@@ -127,23 +145,50 @@ namespace BorrowedHex.Tests
             yield return null;
             root.Story.Skip();
             yield return null;
-            typeof(ArenaSim).GetMethod("BeginBossIntro", Private).Invoke(root.Sim, new object[] { 0 });
+            ForceFinalClear();
 
-            // During the pull the story must not cover the travel; once it lands, it plays.
+            // During the pull the story must not cover the travel; once it lands, the anomaly plays.
             bool sawTravel = false;
             float until = Time.unscaledTime + 12f;
             while (Time.unscaledTime < until && !root.Story.IsPlaying)
             {
                 if (root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition)) sawTravel = true;
+                Assert.That(root.Sim.State, Is.EqualTo(RunState.SanctumArrival), "arrival left before the story");
                 yield return null;
             }
             Assert.That(sawTravel, Is.True, "no Sanctum pull happened");
-            Assert.That(root.Story.IsPlaying, Is.True, "Sanctum scene never opened");
+            Assert.That(root.Story.IsPlaying, Is.True, "anomaly never opened");
             Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition), Is.False, "scene opened over the pull");
-            Assert.That(root.Sim.State, Is.EqualTo(RunState.BossIntro), "the pull started the fight past the story");
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.SanctumArrival));
+            root.Story.Skip();
+            yield return null;
+            Assert.That(root.Sim.State, Is.EqualTo(RunState.UpgradeChoice));
+
+            // The final choice starts the intro in place: no second pull, the travel title not repeated.
+            root.Sim.ContinueFromUpgrade();
+            yield return null;
+            Assert.That(root.Story.IsPlaying, Is.True, "confrontation did not open");
+            yield return Frames(1f);
+            Assert.That(root.Sim.Clock.HasPauseReason(PauseReason.WorldTransition), Is.False, "the Sanctum was entered twice");
+            Assert.That(root.Flow.BannerShowing, Is.False, "the travel already showed the title");
             root.Story.Skip();
             yield return Frames(3f);
             Assert.That(root.Sim.State, Is.EqualTo(RunState.BossCombat));
+        }
+
+        [UnityTest]
+        public IEnumerator FamiliarScenesAreSkippedOnTheNextRun()
+        {
+            root.PlayShort();
+            yield return null;
+            Assert.That(root.Story.IsPlaying, Is.True);
+            root.Story.Skip();   // seen, by Skip
+            yield return null;
+            root.PlayShort();    // a fresh run in the same session
+            yield return null;
+            Assert.That(root.Story.IsPlaying, Is.False, "Skip familiar scenes is on by default");
+            yield return Frames(0.3f);
+            Assert.That(root.Sim.Clock.Now, Is.GreaterThan(0), "the run starts straight away");
         }
 
         [UnityTearDown]

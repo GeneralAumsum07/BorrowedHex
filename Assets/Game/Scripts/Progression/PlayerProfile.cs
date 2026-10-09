@@ -34,6 +34,12 @@ namespace BorrowedHex.Progression
         /// <summary>Selected capture style (Phase 11); unknown ids fall back to Snatcher.</summary>
         public string styleId = "snatcher";
 
+        /// <summary>
+        /// Lore plan Task 4: story discoveries and story settings. Additive, so the version
+        /// stays 1: an older save simply has no group, and Validate fills in the defaults.
+        /// </summary>
+        public Narrative.NarrativeProfileState narrative = new Narrative.NarrativeProfileState();
+
         public List<AchievementEntry> achievements = new List<AchievementEntry>();
         public List<RunRecord> records = new List<RunRecord>();
 

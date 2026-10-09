@@ -23,7 +23,7 @@ namespace BorrowedHex.UI
         // is what lets one Play button serve two keys and Character serve a key with no button.
         readonly Dictionary<string, Action> actions = new Dictionary<string, Action>();
         readonly Dictionary<string, bool> enabled = new Dictionary<string, bool>();
-        Button play, character, records, training, settings, cheats, quit;
+        Button play, character, records, story, training, settings, cheats, quit;
         UiKit.TabStrip modes;
         Text statusLine, warning, cheatNotice, badge, title;
         Image xpFill;
@@ -102,7 +102,11 @@ namespace BorrowedHex.UI
             badge.color = UiPalette.Honey;
             Ui.Place(badge.rectTransform, new Vector2(1, 0.5f), new Vector2(-24, 0), new Vector2(120, 48));
             records = UiKit.Button("Records", col, "Records", () => Press("records"));
-            Ui.Place((RectTransform)records.transform, new Vector2(0, 1), new Vector2(0, -592), new Vector2(560, 64));
+            // Lore plan Task 4: Story shares the Records row (both "look back" entries). A row of
+            // its own pushed the column into the Cheats button at the 130% interface scale.
+            Ui.Place((RectTransform)records.transform, new Vector2(0, 1), new Vector2(0, -592), new Vector2(272, 64));
+            story = UiKit.Button("Story", col, "Story", () => Press("story"));
+            Ui.Place((RectTransform)story.transform, new Vector2(0, 1), new Vector2(288, -592), new Vector2(272, 64));
 
             statusLine = UiKit.Text("Status", col, "", UiFonts.Role.Small);
             Ui.Place(statusLine.rectTransform, new Vector2(0, 1), new Vector2(0, -688), new Vector2(560, 40));
@@ -192,7 +196,7 @@ namespace BorrowedHex.UI
 
         Button ControlFor(string key) => MenuRouting.SlotFor(key) switch
         {
-            MenuSlot.Mode => play, MenuSlot.Character => character, MenuSlot.Records => records,
+            MenuSlot.Mode => play, MenuSlot.Character => character, MenuSlot.Records => records, MenuSlot.Story => story,
             MenuSlot.Training => training, MenuSlot.Settings => settings, MenuSlot.Cheats => cheats,
             MenuSlot.Quit => quit, _ => null,
         };
@@ -209,6 +213,7 @@ namespace BorrowedHex.UI
             RefreshPlay();
             character.interactable = IsEntryEnabled("mastery");
             records.interactable = IsEntryEnabled("records");
+            story.interactable = IsEntryEnabled("story");
             // Training opens while either of its entries works; the sub-menu greys the other.
             training.interactable = IsEntryEnabled("tutorial") || IsEntryEnabled("practice");
             settings.interactable = IsEntryEnabled("settings");

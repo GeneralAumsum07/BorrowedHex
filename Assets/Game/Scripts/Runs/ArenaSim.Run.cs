@@ -133,10 +133,56 @@ namespace BorrowedHex.Runs
                 // Section 6: the choice pauses gameplay; packets are untouched and every timer
                 // (packet expiry, combo) is frozen with the clock.
                 TransitionsReached++;
+                // Drawn here for every clear, the final one included, so a seed's offers are
+                // exactly what they were before the Sanctum moved ahead of the last choice.
                 OpenUpgradeChoice(1);
+                if (TransitionsReached >= sm.encounterCount) { PrepareSanctum(); return; }
                 Clock.SetPauseReason(PauseReason.UpgradeChoice, true);
                 SetState(RunState.UpgradeChoice);
             }
+        }
+
+        /// <summary>
+        /// Lore plan Task 3. True when a presenter (GameRoot) reports the end of the Sanctum
+        /// pull itself via <see cref="CompleteSanctumArrival"/>. Headless sims leave it false:
+        /// nobody would ever report the arrival, so it completes in the same tick.
+        /// </summary>
+        public bool HoldSanctumArrival;
+        bool sanctumPrepared;
+
+        /// <summary>
+        /// The short run's final clear (lore plan Task 3): the order is now clear → Sanctum →
+        /// final upgrades → boss intro, so the clear/select/spawn work that BeginBossIntro did
+        /// after the last choice happens here, ONCE. The boss pause holds from now until the
+        /// fight, so nothing moves between the arrival, the story and the upgrades.
+        /// </summary>
+        void PrepareSanctum()
+        {
+            if (sanctumPrepared) return;
+            sanctumPrepared = true;
+            // Same order as the old ContinueFromUpgrade → BeginBossIntro path: cover restored,
+            // then the arena cleared, the Sanctum selected (the pull starts) and the boss spawned.
+            RestoreClassicCover();
+            ClearArena();
+            SelectWorldArena(3);
+            spawnQueue.Clear();
+            Boss = SpawnBoss();
+            Clock.SetPauseReason(PauseReason.BossIntro, true);
+            SetState(RunState.SanctumArrival);
+            if (!HoldSanctumArrival) CompleteSanctumArrival();
+        }
+
+        /// <summary>
+        /// The pull and reveal (and any story) are done: open the final choice on the offers
+        /// drawn at the clear. Guarded: once, and never from a paused state.
+        /// </summary>
+        public bool CompleteSanctumArrival()
+        {
+            if (State != RunState.SanctumArrival) return false;
+            // The boss pause stays held underneath: no combat between the story and the upgrades.
+            Clock.SetPauseReason(PauseReason.UpgradeChoice, true);
+            SetState(RunState.UpgradeChoice);
+            return true;
         }
 
         /// <summary>Every formation of this encounter has arrived and every member is dead.</summary>
@@ -166,6 +212,9 @@ namespace BorrowedHex.Runs
             Offers.Clear();
             if (IsEndlessRun) { ContinueEndless(); return true; }
             Encounter++;
+            // The Sanctum was prepared at the clear: the final choice only starts the intro,
+            // with no second arena selection, cover reset, pull or boss.
+            if (sanctumPrepared) { SetState(RunState.BossIntro); return true; }
             RestoreClassicCover();
             // The Sanctum keeps its own relocation transition; every earlier edge only hands the
             // running glitch morph to its timed tail (the arena already changed mid-encounter).

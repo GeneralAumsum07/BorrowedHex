@@ -1,23 +1,28 @@
+using System;
 using BorrowedHex.Core;
+using BorrowedHex.Combat;
+using BorrowedHex.Narrative;
+using BorrowedHex.Presentation.Audio;
 using BorrowedHex.Runs;
 using BorrowedHex.UI;
 
 namespace BorrowedHex.Presentation
 {
     /// <summary>
-    /// Lore plan (Docs/LORE_IMPLEMENTATION_PLAN.md), submission cut: the short run's story told
-    /// on typed black screens. GameRoot owns WHEN a scene plays; NarrativePanel owns how it looks.
+    /// Lore plan (Docs/LORE_IMPLEMENTATION_PLAN.md) Task 3: the adapter between the run and the
+    /// story. NarrativeDirector decides WHICH scene a moment owes (and remembers what was seen);
+    /// NarrativeCatalog owns the words; NarrativePanel owns how a scene looks. This file only
+    /// turns sim/presentation moments into director triggers and holds the run while a scene is up.
     ///
-    /// Beats, all in a scored (non-debug) short run only, each at most once per run:
-    ///   run start          → prologue            (before the first gameplay tick)
-    ///   encounter 1 clear  → last kindness       (over the upgrade choice, before it is usable)
-    ///   encounter 2 clear  → forgotten answer    (likewise)
-    ///   Sanctum pull done  → anomaly + confrontation, before the boss fight starts
-    ///   victory            → open window         (before the results panel is usable)
-    ///
-    /// Deviation from the plan, deliberate for the deadline: the third upgrade choice still
-    /// comes BEFORE the Sanctum pull (the sim's existing order), so the anomaly plays after the
-    /// pull rather than between the pull and the upgrades. No sim reordering, no new RunState.
+    /// Short run order (scored, non-debug only):
+    ///   run start                → prologue, before the first gameplay tick
+    ///   encounter 1 / 2 clear     → scene over the (hidden) upgrade choice
+    ///   encounter 3 clear         → sim prepares the Sanctum and boss → SanctumArrival
+    ///   pull and reveal landed    → anomaly → CompleteSanctumArrival → final upgrades
+    ///   final choice              → BossIntro → confrontation → fight
+    ///   victory                   → ending, holding the results
+    /// Every other run (endless, practice, tutorial, debug) still passes through the same
+    /// handoffs here, with no scene: arrival completes and the fight starts as soon as allowed.
     ///
     /// Every scene holds PauseReason.Narrative, which only this file sets or clears: the clock
     /// is frozen (no life spent while reading) and any other hold keeps its own ownership.
@@ -25,6 +30,21 @@ namespace BorrowedHex.Presentation
     public sealed partial class GameRoot
     {
         public NarrativePanel Story { get; private set; }
+        /// <summary>The discovery rules, over the profile's narrative group (saved at story boundaries).</summary>
+        public NarrativeDirector Director { get; private set; }
+        /// <summary>The main menu's Story screen (lore plan Task 4).</summary>
+        public StoryPanel StoryMenu { get; private set; }
+        bool replaying;
+
+        /// <summary>The dialogue tick (lore plan Task 5), fed by Story.Ticked in runs and replays alike.</summary>
+        public DialogueTextAudio TickAudio { get; private set; }
+        /// <summary>The silent combat caption (lore plan Task 5, section G).</summary>
+        public UnityEngine.UI.Text ReactionCaption { get; private set; }
+        // How long a shown caption stays, counted only while it is actually visible.
+        const float ReactionSeconds = 3f;
+        float reactionLeft;
+        // Fresh per run: "once per run" is this object's lifetime.
+        CombatReactions reactions;
 
         /// <summary>
         /// Test hook only (like IgnoreFocus): older PlayMode tests drive a short run straight
@@ -32,9 +52,11 @@ namespace BorrowedHex.Presentation
         /// </summary>
         public static bool SkipStory;
 
-        // Per-run delivery flags. A pause/resume re-raises RunStateChanged with the same state,
-        // so without these a scene would replay on every resume.
-        bool storyEnc1, storyEnc2, storyBoss, storyEnd;
+        // The sim the story is bound to, so its subscriptions come off when it is replaced.
+        ArenaSim storySim;
+        // The arrival is reported once per run: pause/resume re-enters SanctumArrival.
+        bool arrivalReported;
+        int storyRunSerial;
 
         /// <summary>
         /// Story beats belong to scored short runs only: never the tutorial, practice, endless
@@ -43,140 +65,276 @@ namespace BorrowedHex.Presentation
         bool StoryRun => !SkipStory && kind == RunKind.Short && Sim != null && Sim.IsShortRun && !Sim.Setup.Debug;
 
         /// <summary>
-        /// The world presentation must not start the boss fight while the Sanctum scene is owed
-        /// or playing; GameRoot starts it once the scene ends (see TickNarrative).
+        /// The boss fight may not start: a scene is up, or this run still owes its confrontation.
+        /// GameRoot is the only caller of CompleteBossIntro for short runs (WorldPresentation
+        /// reports the pull's end by clearing WorldTransition and does no more).
         /// </summary>
-        public bool NarrativeHoldsBossIntro => Story != null && (Story.IsPlaying || (StoryRun && !storyBoss));
+        public bool NarrativeHoldsBossIntro => Story != null && (Story.IsPlaying || Director.HasPendingBossScene);
+
+        /// <summary>Dialogue sprites: the existing character art, never new portraits (plan Task 2).</summary>
+        static UnityEngine.Sprite Portrait(Speaker s) =>
+            s == Speaker.Collector ? PixelSprites.Get(PixelSprites.Kind.Collector)
+            : s == Speaker.Rogue ? PixelSprites.Get(PixelSprites.Kind.Magician)
+            : null;
 
         void BuildNarrative()
         {
-            Story = NarrativePanel.Create(canvas);
-            // Just under the pause menu: Esc during a scene shows the menu ON TOP of the story,
-            // and everything built later (confirm dialog, main-menu screens) stays above too.
-            Story.transform.SetSiblingIndex(Menu.transform.GetSiblingIndex());
+            // Bound to the live profile object: discoveries made in a run are in the profile at
+            // once, and reach disk at the next save point (Present's story boundaries). Debug,
+            // cheated, endless, practice and tutorial runs are ineligible, so the director never
+            // writes to it for them.
+            Director = new NarrativeDirector(Profile.Profile.narrative);
+            Story = NarrativePanel.Create(canvas, Portrait);
+            // Optional pictures (plan Task 6): a sprite at Resources/Narrative/<key> overrides
+            // the black of an illustrated lore page. None ship today; a missing one is null and
+            // the page stays black, so the story never depends on art. (Resources caches loads.)
+            Story.Illustrations = key => UnityEngine.Resources.Load<UnityEngine.Sprite>("Narrative/" + key);
+            DockStory();
+            StoryMenu = StoryPanel.Create(canvas);
+            Main.AddEntry("story", "Story", OpenStory);
+
+            TickAudio = gameObject.AddComponent<DialogueTextAudio>();
+            // Read at each tick, so a Settings change mid-scene is heard at the next letter.
+            TickAudio.Volume = () => Director.State.settings.dialogueVolume;
+            Story.Ticked += TickAudio.Tick;
+
+            // Compact, no box: one line just under the HUD's top band (objective -88, boss bar
+            // -128..-150), so it never covers the arena's centre or a HUD readout.
+            ReactionCaption = UiKit.Text("Reaction", canvas.transform, "", UiFonts.Role.Body, UnityEngine.TextAnchor.MiddleCenter);
+            Ui.Place(ReactionCaption.rectTransform, new UnityEngine.Vector2(0.5f, 1), new UnityEngine.Vector2(0, -184), new UnityEngine.Vector2(900, 40));
+            ReactionCaption.color = UiPalette.Honey;
+            ReactionCaption.raycastTarget = false;
+            ReactionCaption.gameObject.SetActive(false);
+            // Above the HUD and the upgrade panel (a paid upgrade's line shows over the cards),
+            // under the story and the pause menu.
+            ReactionCaption.transform.SetSiblingIndex(Story.transform.GetSiblingIndex());
         }
 
-        /// <summary>From BeginRun: drop the old run's scene and bind the new sim.</summary>
+        /// <summary>
+        /// Just under the pause menu: Esc during a scene shows the menu ON TOP of the story,
+        /// and everything built later (confirm dialog, main-menu screens) stays above too.
+        /// </summary>
+        void DockStory() => Story.transform.SetSiblingIndex(Menu.transform.GetSiblingIndex());
+
+        // ---- Story menu (lore plan Task 4) ---------------------------------------------
+
+        void OpenStory()
+        {
+            StoryMenu.Show(() => Profile.Profile.narrative, Replay, CloseStory);
+            Screens.Push(StoryMenu.gameObject, () => StoryMenu.DefaultFocus, CloseStory);
+        }
+
+        void CloseStory()
+        {
+            if (Screens.Top == StoryMenu.gameObject) Screens.Pop();
+        }
+
+        /// <summary>
+        /// Reread an unlocked scene from the main menu. No run starts (the backdrop stays the
+        /// backdrop), nothing is scored, and the director leaves seen/completed untouched.
+        /// </summary>
+        void Replay(string id)
+        {
+            var d = Director.Replay(id);
+            if (d == null || Story.IsPlaying) return;
+            Director.Start(d);
+            replaying = true;
+            // Above the Story list for the replay only; docked back under the pause menu after.
+            Story.transform.SetAsLastSibling();
+            Story.Frozen = false;
+            Story.ReduceFlashes = DisplayOptions.ReduceFlashes;
+            Story.InstantText = Director.State.settings.instantText;
+            Story.Play(d.Scene, how =>
+            {
+                TickAudio.Stop();
+                Director.Finish(how);
+                EndReplay();
+            });
+        }
+
+        void EndReplay()
+        {
+            replaying = false;
+            DockStory();
+            // Focus back on the list, where the replay was chosen.
+            var es = UnityEngine.EventSystems.EventSystem.current;
+            if (es != null && StoryMenu.IsOpen) es.SetSelectedGameObject(StoryMenu.DefaultFocus);
+        }
+
+        /// <summary>Esc on the main menu during a replay: end the replay, stay on the list.</summary>
+        bool EscapeReplay()
+        {
+            if (!replaying || !Story.IsPlaying) return false;
+            Story.Skip();
+            return true;
+        }
+
+        /// <summary>
+        /// From BeginRun: tear the old run's story down completely (subscriptions, typing, the
+        /// panel, the pending scenes) and bind the new sim. The old sim is discarded whole, so
+        /// its Narrative pause goes with it; nothing else's pause is touched.
+        /// </summary>
         void BindNarrative()
         {
-            Story.Cancel();
-            storyEnc1 = storyEnc2 = storyBoss = storyEnd = false;
-            if (!StoryRun) return;
+            UnbindNarrative();
+            arrivalReported = false;
+            Director.BeginRun($"run-{++storyRunSerial}", StoryRun);
+            reactions = new CombatReactions();
+            Flow.Recall = null;
+            storySim = Sim;
             Sim.Events.RunStateChanged += OnStoryRunState;
             Sim.Events.RunEnded += OnStoryRunEnded;
-            PlayScene(Prologue);
+            Sim.Events.ShotCaptured += OnReactCapture;
+            Sim.Events.PacketBackfired += OnReactBackfire;
+            Sim.Events.UpgradePaid += OnReactPaid;
+            Present(Director.OnRunStarted(), null);
+        }
+
+        void UnbindNarrative()
+        {
+            Story.Cancel();
+            TickAudio.Stop();
+            Director.Cancel();
+            if (replaying) EndReplay();
+            Flow.HoldUpgrades = false;
+            HideReaction();
+            if (storySim == null) return;
+            storySim.Events.RunStateChanged -= OnStoryRunState;
+            storySim.Events.RunEnded -= OnStoryRunEnded;
+            storySim.Events.ShotCaptured -= OnReactCapture;
+            storySim.Events.PacketBackfired -= OnReactBackfire;
+            storySim.Events.UpgradePaid -= OnReactPaid;
+            storySim = null;
         }
 
         void OnStoryRunState(RunState s)
         {
-            if (s != RunState.UpgradeChoice) return;
-            if (Sim.TransitionsReached == 1 && !storyEnc1) { storyEnc1 = true; PlayScene(LastKindness); }
-            else if (Sim.TransitionsReached == 2 && !storyEnc2) { storyEnc2 = true; PlayScene(ForgottenAnswer); }
+            // Encounters one and two. The third clear goes to SanctumArrival instead, and a
+            // resume re-raising UpgradeChoice is deduplicated by the director.
+            if (s == RunState.UpgradeChoice) Present(Director.OnEncounterCleared(Sim.TransitionsReached), null);
         }
 
         void OnStoryRunEnded(RunSummary summary)
         {
-            // Death and time expiry stay instantly restartable: no blocking scene there.
-            if (summary.Reason != RunEndReason.Victory || storyEnd) return;
-            storyEnd = true;
+            // Death and time expiry stay instantly restartable: no blocking scene there, only
+            // the recall line on the results (a retire is a choice, not a recall: no line).
+            if (summary.Reason == RunEndReason.Death || summary.Reason == RunEndReason.TimeExpired)
+            {
+                if (StoryRun) Flow.Recall = NarrativeCatalog.RecallCaption;
+                return;
+            }
+            if (summary.Reason != RunEndReason.Victory) return;
             // Score, records and rewards were finalized by OnRunEnded inside the same tick; the
             // ending only holds the results panel, it never finalizes anything again.
-            PlayScene(OpenWindow);
+            Present(Director.OnVictory(), null);
         }
 
-        void PlayScene(NarrativePage[] scene)
+        /// <summary>
+        /// Show <paramref name="delivery"/> (if any) under a Narrative hold, then run
+        /// <paramref name="then"/>. A null or familiar (auto-skipped) delivery hands on at once.
+        /// </summary>
+        void Present(NarrativeDelivery delivery, Action then)
         {
+            if (delivery == null) { then?.Invoke(); return; }
+            Director.Start(delivery);
+            // Story boundary: the trigger was reached, so its unlock is kept even if this run is
+            // abandoned mid-scene (plan Task 4). One write per scene start, never per letter.
+            Profile.Save();
+            if (!Director.IsPlaying) { then?.Invoke(); return; }   // AutoSkipped: never shown
+
             Sim.SetPause(PauseReason.Narrative, true);
+            TickAudio.Stop();   // a new scene: nothing from the last one plays on
             // Capture the sim this scene belongs to: a restart mid-scene cancels the panel
-            // (no callback), but this guard also keeps a stale callback off the new sim.
+            // (no callback), and this guard also keeps any stale callback off the new sim.
             var owner = Sim;
-            Story.Play(scene, () =>
+            Story.InstantText = Director.State.settings.instantText;
+            Story.Play(delivery.Scene, how =>
             {
                 if (Sim != owner) return;
+                TickAudio.Stop();
+                Director.Finish(how);
+                Profile.Save();   // story boundary: seen (and completion) reach disk
                 Sim.SetPause(PauseReason.Narrative, false);
                 SyncGameplayInput();
+                then?.Invoke();
             });
             SyncGameplayInput();
         }
 
         /// <summary>
         /// Every frame, before the boss-intro check: freeze typing under the pause menu, put
-        /// focus back after a scene, and deliver the Sanctum scene once the pull has landed.
+        /// focus back after a scene, and report the Sanctum arrival / deliver the confrontation
+        /// once their gates have cleared.
         /// </summary>
         void TickNarrative()
         {
-            if (Story == null) return;
-            Story.Frozen = Screens.Count > 0 || (Sim != null && Sim.Clock.HasPauseReason(PauseReason.FocusLost));
+            if (Story == null || Sim == null) return;
+            Story.Frozen = Screens.Count > 0 || Sim.Clock.HasPauseReason(PauseReason.FocusLost);
+            // Frozen typing raises no ticks; this cuts the one already sounding. Resuming plays
+            // only new letters' ticks, never the missed ones.
+            if (Story.Frozen) TickAudio.Stop();
+            TickReaction();
+            // Settings can change from the pause menu mid-scene; the setter ignores a repeat.
+            Story.InstantText = Director.State.settings.instantText;
+            Story.ReduceFlashes = DisplayOptions.ReduceFlashes;
             Story.RestoreFocusIfPending();
-            if (!StoryRun || storyBoss || Story.IsPlaying) return;
-            // Classic arenas have no travel, so this fires straight away; world arenas wait
-            // for the pull and reveal to finish (WorldTransition cleared).
-            if (Sim.State == RunState.BossIntro && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition))
+            // Upgrade cards open only once nothing is being read over them.
+            Flow.HoldUpgrades = Story.IsPlaying;
+            if (Story.IsPlaying) return;
+
+            // The pull and reveal have landed (classic arenas never travel, so at once). A
+            // pause menu shows State == Paused, so arrival is never reported under it.
+            if (Sim.State == RunState.SanctumArrival && !arrivalReported
+                && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition))
             {
-                storyBoss = true;
-                PlayScene(Confrontation);
+                arrivalReported = true;
+                Present(Director.OnSanctumArrived(), () => Sim.CompleteSanctumArrival());
+                return;
             }
+            // The final choice has been made: the confrontation, then GameRoot's boss start.
+            if (Sim.State == RunState.BossIntro && Director.HasPendingBossScene
+                && !Sim.Clock.HasPauseReason(PauseReason.WorldTransition))
+                Present(Director.OnFinalUpgradeResolved(), null);
         }
 
-        // ---- Script (plan section 2; kept in code so no optional asset can remove it) -------
+        // ---- Combat reactions (lore plan Task 5, section G) ------------------------------
+        // Silent, instant, never pausing, never typed, never asking for input. Only in a story
+        // run with the setting on; the rules (once per run, shared cooldown, discard) are
+        // CombatReactions'.
 
-        static NarrativePage N(string text) => new NarrativePage(null, text);
-        static NarrativePage S(string speaker, string text) => new NarrativePage(speaker, text);
+        void OnReactCapture(CapturedPacket p, AttackSnapshot a, UnityEngine.Vector2 at, CaptureResult r) => React(CombatReaction.FirstCapture);
+        void OnReactBackfire(CapturedPacket p) => React(CombatReaction.FirstBackfire);
+        void OnReactPaid(UpgradeOffer o, float cost) => React(CombatReaction.FirstPaidUpgrade);
 
-        static readonly NarrativePage[] Prologue =
+        void React(CombatReaction r)
         {
-            N("The Collector executed you. Your heart is beating again—but every beat spends time that isn't yours."),
-            N("The baker whispered warmth into his ovens. The healer borrowed another morning. You made coins disappear. The children waited, smiling, for their return."),
-            N("Later, you carried letters through wards where nobody left. Some letters escaped. One register didn't survive your visit. The next entry was your own."),
-            N("You caught the binding meant to claim you and stole its remaining time. Your true name stayed in his Ledger."),
-            N("A physician refused to let his patients die. He kept their bodies, their homes, and finally the world."),
-            N("Your world remained. Its health did not. Those who stayed too long became something worse."),
-            N("Every heartbeat spends that time. Your own spellmaking died with your life. Borrow your enemies' magic. Reach the Ledger. Take your name back."),
-        };
+            if (!StoryRun || !Director.State.settings.combatReactions) return;
+            // "Promptly": nothing blocking over the arena right now. UpgradeChoice counts as
+            // live, since the first paid upgrade happens on the upgrade panel itself.
+            var s = Sim.State;
+            bool canShow = !Story.IsPlaying && Screens.Count == 0
+                && (s == RunState.Combat || s == RunState.BossCombat || s == RunState.UpgradeChoice);
+            // Gameplay time, so a pause menu does not run the cooldown down.
+            if (!reactions.Offer(r, (float)Sim.Clock.Now, canShow)) return;
+            ReactionCaption.text = CombatReactions.Line(r);
+            reactionLeft = ReactionSeconds;
+        }
 
-        static readonly NarrativePage[] LastKindness =
+        void TickReaction()
         {
-            N("Before he was The Collector, Avel Sere was a mortal physician. During a famine, he borrowed years to keep his patients alive."),
-            N("His sister Mara recorded their last wishes. When her time came, she asked him to open the window."),
-            N("He closed it, cut the ending from her healing spell, and made her stay."),
-            N("Beside her name, she wrote: Enough. He crossed it out."),
-        };
+            if (reactionLeft <= 0f) return;
+            // Hidden, not dropped, under a story or a menu; its time runs only while seen.
+            bool visible = !Story.IsPlaying && Screens.Count == 0;
+            ReactionCaption.gameObject.SetActive(visible);
+            if (!visible) return;
+            reactionLeft -= UnityEngine.Time.unscaledDeltaTime;
+            if (reactionLeft <= 0f) HideReaction();
+        }
 
-        static readonly NarrativePage[] ForgottenAnswer =
+        void HideReaction()
         {
-            N("Deep in the House, patients lie beneath clean blankets. Beside each bed is a record of consent dated centuries ago."),
-            S("An unfiled request", "I asked for time to see my son. He came. We spoke. He went home. What is the rest of this for?"),
-            S("Mara's correction", "In the Ledger's margins, Mara writes: He remembers everything about us except the last thing we said."),
-        };
-
-        // The anomaly revelation runs straight into the confrontation: both play in the Sanctum,
-        // after the pull, before the fight.
-        static readonly NarrativePage[] Confrontation =
-        {
-            N("The Collector means to seal every renewal into one unbroken circle. Nothing within his keeping would ever be permitted to leave."),
-            N("But you are neither ordinarily alive nor one of his bound dead. Your unfinished entry keeps that circle open."),
-            N("Killing you only begins the failed renewal again. He must reclaim your torn entry. Mara's corrections show where the buried exits remain."),
-            S("The Collector", "There you are. Your bed is still made."),
-            S("The Collector", "You have already spent several of my patients. Shall I tell you their names?"),
-            S("You", "You kept their signatures. Did you keep their answers?"),
-            S("The Collector", "They were tired."),
-            S("You", "They told you what they wanted."),
-            S("The Collector", "Until your entry is settled, nothing can be finished."),
-            S("You", "Then I'm opening their entries before I close mine."),
-        };
-
-        static readonly NarrativePage[] OpenWindow =
-        {
-            N("The Collector falls. His Ledger remains. While its renewals endure, even he can be recalled."),
-            N("You place the torn transfer beside your true name. Closing only your entry would complete his circle."),
-            N("You leave your name open and restore the dismissals he buried."),
-            N("The dead can leave. Those with time remaining can spend it freely. Exhausted buildings fall. Places capable of growth can change again."),
-            N("Mara's entry closes. Beside it, one word remains: Enough."),
-            N("The world does not become young. What survives can finally have a future."),
-            S("The Collector", "The lamp. Please. Don't leave me in the dark."),
-            S("You", "Is there someone I should send for?"),
-            N("You open the window. You stay until the lamp goes out. Then you close your own entry."),
-            N("There will be no further recall. The unused time leaves your hands. There is light beyond the window."),
-        };
+            reactionLeft = 0f;
+            if (ReactionCaption != null) ReactionCaption.gameObject.SetActive(false);
+        }
     }
 }

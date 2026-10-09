@@ -267,8 +267,10 @@ namespace BorrowedHex.Presentation.WorldArt
                     previousGeometry?.Dispose(); previousGeometry = null; travelEffects.Clear();
                     fireFade = 1;
                     ApplyTheme(sim.Arena.worldTheme);
-                    // A short run's Sanctum scene plays first; GameRoot then starts the fight.
-                    if (sim.State == RunState.BossIntro && !root.NarrativeHoldsBossIntro) sim.CompleteBossIntro();
+                    // Lore plan Task 3: in a short run the pull ends at SanctumArrival, and GameRoot
+                    // owns every step after it (story, upgrades, confrontation, fight); clearing
+                    // WorldTransition above is the readiness report. Endless keeps its direct start.
+                    if (sim.State == RunState.BossIntro && !sim.IsShortRun) sim.CompleteBossIntro();
                 }
             }
             else
